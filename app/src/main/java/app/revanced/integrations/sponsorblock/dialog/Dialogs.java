@@ -18,10 +18,10 @@ import app.revanced.integrations.utils.ReVancedUtils;
 public class Dialogs {
     // Inject call from YT to this
     public static void showDialogsAtStartup(Activity activity) {
-		vxFirstRun(activity);
+		rvxFirstRun(activity);
     }
 
-    private static void vxFirstRun(Activity activity) {
+    private static void rvxFirstRun(Activity activity) {
         Context context = ReVancedUtils.getContext();
         boolean hintShownRVX = SettingsEnum.REVANCED_EXTENDED_HINT_SHOWN.getBoolean();
         // if the version is newer than v17.32.39 (1531051456) -> true

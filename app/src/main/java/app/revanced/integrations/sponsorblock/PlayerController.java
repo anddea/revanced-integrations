@@ -88,7 +88,7 @@ public class PlayerController {
      * Called when creating some kind of youtube internal player controlled, every time when new video starts to play
      */
     public static void onCreate(final Object o) {
-//        "Plugin.printStackTrace();
+        // "Plugin.printStackTrace();
 
         if (o == null) {
             LogHelper.printException(PlayerController.class, "onCreate called with null object");

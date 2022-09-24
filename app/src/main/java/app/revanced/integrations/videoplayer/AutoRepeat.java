@@ -30,7 +30,7 @@ public class AutoRepeat {
 
     public static void initializeAutoRepeat(Object constraintLayout) {
         try {
-            LogHelper.debug(AutoRepeat.class, "initializing auto repeat");            _constraintLayout = (ConstraintLayout) constraintLayout;
+            LogHelper.debug(AutoRepeat.class, "initializing auto repeat");
             _constraintLayout = (ConstraintLayout) constraintLayout;
             isAutoRepeatBtnEnabled = shouldBeShown();
             ImageView imageView = _constraintLayout.findViewById(getIdentifier("autoreplay_button", "id"));

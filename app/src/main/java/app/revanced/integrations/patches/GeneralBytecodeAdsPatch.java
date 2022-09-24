@@ -121,19 +121,7 @@ public class GeneralBytecodeAdsPatch {
                 anyMatch(blockList, value::contains)) {
                     return true;
             }
-			/*
-            if (containsAny(value,
-                    "home_video_with_context",
-                    "related_video_with_context",
-                    "search_video_with_context",
-                    "_video_with_context",
-                    "menu",
-                    "root",
-                    "-count",
-                    "flexible-space",
-                    "-button"
-            )) return false;
-			*/
+
             if (anyMatch(blockList, value::contains)) {
                 LogHelper.debug(GeneralBytecodeAdsPatch.class, "Blocking ad: " + value);
                 return true;
