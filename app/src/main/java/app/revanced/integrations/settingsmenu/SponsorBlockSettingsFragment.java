@@ -66,9 +66,21 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment implements 
             preference.setOnPreferenceChangeListener((preference1, newValue) -> {
                 final boolean value = (Boolean) newValue;
                 enableCategoriesIfNeeded(value);
-                SettingsEnum.SB_ENABLED.saveValue(newValue);
+                SettingsEnum.SB_ENABLED.saveValue(value);
                 return true;
             });
+        }
+
+        // Clear hint
+        if (SettingsEnum.DEBUG.getBoolean()) {
+            SwitchPreference preference = new SwitchPreference(context);
+            preferenceScreen.addPreference(preference);
+            preference.setKey(SettingsEnum.REVANCED_EXTENDED_HINT_SHOWN.getPath());
+            preference.setDefaultValue(SettingsEnum.REVANCED_EXTENDED_HINT_SHOWN.getDefaultValue());
+            preference.setChecked(SettingsEnum.REVANCED_EXTENDED_HINT_SHOWN.getBoolean());
+            preference.setTitle("ReVanced Extended Hint debug");
+            preference.setSummary("Debug toggle for clearing the hint shown preference");
+            preference.setOnPreferenceChangeListener((pref, newValue) -> true);
         }
 
         {
@@ -89,6 +101,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment implements 
                             .setNegativeButton(str("sb_guidelines_popup_already_read"), null)
                             .setPositiveButton(str("sb_guidelines_popup_open"), (dialogInterface, i) -> openGuidelines())
                             .show();
+                            SettingsEnum.SB_SEEN_GUIDELINES.saveValue(true);
                 }
                 SettingsEnum.SB_NEW_SEGMENT_ENABLED.saveValue(value);
                 return true;
@@ -267,6 +280,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment implements 
             screen.addPreference(preference);
         }
 
+        /*
         {
             Preference preference = new SwitchPreference(context);
             preference.setTitle(str("general_whitelisting"));
@@ -285,7 +299,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment implements 
             preferencesToDisableWhenSBDisabled.add(preference);
             screen.addPreference(preference);
         }
-
+        */
         {
             EditTextPreference preference = new EditTextPreference(context);
             preference.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);

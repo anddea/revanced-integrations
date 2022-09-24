@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
-import app.revanced.integrations.patches.downloads.DownloadsPatch;
+import app.revanced.integrations.videoplayer.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.StringRef;
 import app.revanced.integrations.utils.LogHelper;
@@ -22,7 +22,7 @@ import app.revanced.integrations.utils.SharedPrefHelper;
 
 /* loaded from: classes6.dex */
 //ToDo: Refactor
-public class DownloadButton {
+public class Download {
     static WeakReference<ImageView> _button = new WeakReference<>(null);
     static ConstraintLayout _constraintLayout;
     static int fadeDurationFast;
@@ -34,38 +34,38 @@ public class DownloadButton {
 
     public static void initializeDownloadButton(Object obj) {
         try {
-            LogHelper.debug(DownloadButton.class, "initializing");
+            LogHelper.debug(Download.class, "initializing");
             _constraintLayout = (ConstraintLayout) obj;
             isDownloadButtonEnabled = shouldBeShown();
             ImageView imageView = _constraintLayout.findViewById(getIdentifier("download_button", "id"));
             if (imageView == null) {
-                LogHelper.debug(DownloadButton.class, "Couldn't find imageView with id \"download_button\"");
+                LogHelper.debug(Download.class, "Couldn't find imageView with id \"download_button\"");
                 return;
             }
 
             imageView.setOnClickListener(view -> {
-                LogHelper.debug(DownloadButton.class, "Download button clicked");
+                LogHelper.debug(Download.class, "Download button clicked");
 
                 final var context = view.getContext();
-                var downloaderPackageName = SettingsEnum.DOWNLOADS_PACKAGE_NAME.getString();
+                String downloaderPackageName = SettingsEnum.DOWNLOADS_PACKAGE_NAME.getString().isEmpty() ? StringRef.str("revanced_default_downloader") : SettingsEnum.DOWNLOADS_PACKAGE_NAME.getString();
 
                 boolean packageEnabled = false;
                 try {
                     assert context != null;
                     packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
                 } catch (PackageManager.NameNotFoundException error) {
-                    LogHelper.debug(DownloadButton.class, "Downloader could not be found: " + error);
+                    LogHelper.debug(Download.class, "Downloader could not be found: " + error);
                 }
 
                 // If the package is not installed, show the toast
                 if (!packageEnabled) {
-                    Toast.makeText(context, downloaderPackageName + " " + StringRef.str("downloader_not_installed_warning"), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, getDownloaderName(downloaderPackageName) + " " + StringRef.str("downloader_not_installed_warning"), Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 // Launch PowerTube intent
                 try {
-                    String content = String.format("https://youtu.be/%s", DownloadsPatch.getCurrentVideoId());
+                    String content = String.format("https://youtu.be/%s", VideoInformation.currentVideoId);
 
                     Intent intent = new Intent("android.intent.action.SEND");
                     intent.setType("text/plain");
@@ -73,16 +73,16 @@ public class DownloadButton {
                     intent.putExtra("android.intent.extra.TEXT", content);
                     context.startActivity(intent);
 
-                    LogHelper.debug(DownloadButton.class, "Launched the intent with the content: " + content);
+                    LogHelper.debug(Download.class, "Launched the intent with the content: " + content);
                 } catch (Exception error) {
-                    LogHelper.debug(DownloadButton.class, "Failed to launch the intent: " + error);
+                    LogHelper.debug(Download.class, "Failed to launch the intent: " + error);
                 }
 
                 //var options = Arrays.asList("Video", "Audio").toArray(new CharSequence[0]);
                 //
                 //new AlertDialog.Builder(view.getContext())
                 //        .setItems(options, (dialog, which) -> {
-                //            LogHelper.debug(DownloadButton.class, String.valueOf(options[which]));
+                //            LogHelper.debug(Download.class, String.valueOf(options[which]));
                 //        })
                 //        .show();
                 // TODO: show popup and download via newpipe
@@ -100,8 +100,24 @@ public class DownloadButton {
             changeVisibility(false);
 
         } catch (Exception e) {
-            LogHelper.printException(DownloadButton.class, "Unable to set FrameLayout", e);
+            LogHelper.printException(Download.class, "Unable to set FrameLayout", e);
         }
+    }
+
+    public static String getDownloaderName(String DownloaderPackageName) {
+        String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe x SponsorBlock", "SnapTube"};
+        String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe", "com.snaptube.premium"};
+
+        try {
+            for (int i = 0; i < DownloaderNameList.length ; i++) {
+                if (DownloaderPackageNameList[i].equals(DownloaderPackageName)){
+                    return DownloaderNameList[i];
+                }
+            }
+        } catch (Exception e) {
+            LogHelper.printException(Download.class, "Unable to set DownloaderName", e);
+        }
+        return DownloaderPackageName;
     }
 
     public static void changeVisibility(boolean z) {
@@ -111,11 +127,11 @@ public class DownloadButton {
         ImageView imageView = _button.get();
         if (_constraintLayout != null && imageView != null) {
             if (z && isDownloadButtonEnabled) {
-                LogHelper.debug(DownloadButton.class, "Fading in");
+                LogHelper.debug(Download.class, "Fading in");
                 imageView.setVisibility(View.VISIBLE);
                 imageView.startAnimation(fadeIn);
             } else if (imageView.getVisibility() == View.VISIBLE) {
-                LogHelper.debug(DownloadButton.class, "Fading out");
+                LogHelper.debug(Download.class, "Fading out");
                 imageView.startAnimation(fadeOut);
                 imageView.setVisibility(View.GONE);
             }
@@ -133,7 +149,7 @@ public class DownloadButton {
 
         Context appContext = ReVancedUtils.getContext();
         if (appContext == null) {
-            LogHelper.printException(DownloadButton.class, "shouldBeShown - context is null!");
+            LogHelper.printException(Download.class, "shouldBeShown - context is null!");
             return false;
         }
         String string = SharedPrefHelper.getString(appContext, SharedPrefHelper.SharedPrefNames.YOUTUBE, "pref_download_button_list", "PLAYER" /* TODO: set the default to null, as this will be set by the settings page later */);

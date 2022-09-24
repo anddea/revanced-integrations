@@ -1,5 +1,6 @@
 package app.revanced.integrations.returnyoutubedislike.requests;
 
+import static app.revanced.integrations.videoplayer.VideoInformation.likeCount;
 import static app.revanced.integrations.videoplayer.VideoInformation.dislikeCount;
 import static app.revanced.integrations.whitelist.requests.Requester.parseJson;
 
@@ -29,6 +30,7 @@ public class ReturnYouTubeDislikeApi {
             connection.setConnectTimeout(5 * 1000);
             if (connection.getResponseCode() == 200) {
                 JSONObject json = getJSONObject(connection);
+                likeCount = json.getInt("likes");
                 dislikeCount = json.getInt("dislikes");
                 LogHelper.debug(ReturnYouTubeDislikeApi.class, "dislikes fetched - " + dislikeCount);
             } else {
@@ -37,6 +39,7 @@ public class ReturnYouTubeDislikeApi {
             connection.disconnect();
         } catch (Exception ex) {
             dislikeCount = null;
+            likeCount = null;
             LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch dislikes", ex);
         }
     }

@@ -1,6 +1,7 @@
 package app.revanced.integrations.videoplayer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -29,9 +30,7 @@ public class AutoRepeat {
 
     public static void initializeAutoRepeat(Object constraintLayout) {
         try {
-            LogHelper.debug(AutoRepeat.class, "initializing auto repeat");
-            CopyWithTimeStamp.initializeCopyButtonWithTimeStamp(constraintLayout);
-            Copy.initializeCopyButton(constraintLayout);
+            LogHelper.debug(AutoRepeat.class, "initializing auto repeat");            _constraintLayout = (ConstraintLayout) constraintLayout;
             _constraintLayout = (ConstraintLayout) constraintLayout;
             isAutoRepeatBtnEnabled = shouldBeShown();
             ImageView imageView = _constraintLayout.findViewById(getIdentifier("autoreplay_button", "id"));
@@ -63,8 +62,6 @@ public class AutoRepeat {
     }
 
     public static void changeVisibility(boolean visible) {
-        CopyWithTimeStamp.changeVisibility(visible);
-        Copy.changeVisibility(visible);
         if (isShowing != visible) {
             isShowing = visible;
             ImageView iView = _autoRepeatBtn.get();
@@ -108,12 +105,16 @@ public class AutoRepeat {
             LogHelper.printException(AutoRepeat.class, "ChangeSelected - context is null!");
             return false;
         }
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "pref_auto_repeat", false);
+        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_auto_repeat", false);
     }
 
     private static void setSelected(boolean selected) {
         Context context = ReVancedUtils.getContext();
-        SharedPrefHelper.saveBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "pref_auto_repeat", selected);
+        SettingsEnum.PREFERRED_AUTO_REPEAT.saveValue(selected);
+    }
+
+    public static void refreshShouldBeShown() {
+        isAutoRepeatBtnEnabled = shouldBeShown();
     }
 
     private static boolean shouldBeShown() {
@@ -122,7 +123,7 @@ public class AutoRepeat {
             LogHelper.printException(AutoRepeat.class, "ChangeSelected - context is null!");
             return false;
         }
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "pref_auto_repeat_button", false);
+        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_auto_repeat_button", false);
     }
 
     private static int getIdentifier(String name, String defType) {

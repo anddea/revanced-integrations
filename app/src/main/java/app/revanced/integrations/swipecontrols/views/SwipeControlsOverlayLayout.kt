@@ -1,5 +1,7 @@
 package app.revanced.integrations.swipecontrols.views
 
+import app.revanced.integrations.sponsorblock.StringRef.str;
+
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -125,7 +127,7 @@ class SwipeControlsOverlayLayout(
         if (brightness > 0) {
             showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
         } else {
-            showFeedbackView("AUTO", autoBrightnessIcon)
+            showFeedbackView(str("quality_auto"), autoBrightnessIcon)
         }
     }
 

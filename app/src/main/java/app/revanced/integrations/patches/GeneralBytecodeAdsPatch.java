@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
@@ -28,6 +30,7 @@ public class GeneralBytecodeAdsPatch {
             if (value == null || value.isEmpty() || !enabled) return false;
             LogHelper.debug(GeneralBytecodeAdsPatch.class, "Searching for AD: " + value);
 
+            String readableBuffer = new String(buffer.array(), ISO_8859_1);
             List<String> blockList = new ArrayList<>();
             List<String> bufferBlockList = new ArrayList<>();
 
@@ -43,6 +46,9 @@ public class GeneralBytecodeAdsPatch {
                 blockList.add("video_display_full_layout");
 
                 bufferBlockList.add("ad_cpn");
+                bufferBlockList.add("/ads.");
+                bufferBlockList.add("/googleads.");
+                bufferBlockList.add("/pagead/");
             }
             if (SettingsEnum.ADREMOVER_SUGGESTED_FOR_YOU_REMOVAL.getBoolean()) {
                 bufferBlockList.add("watch-vrecH");
@@ -52,11 +58,12 @@ public class GeneralBytecodeAdsPatch {
                 blockList.add("compact_movie");
                 blockList.add("horizontal_movie_shelf");
                 blockList.add("movie_and_show_upsell_card");
+                blockList.add("compact_tvfilm_item");
 
                 bufferBlockList.add("YouTube Movies");
             }
-            if (containsAny(value, "home_video_with_context", "related_video_with_context") &&
-                    anyMatch(bufferBlockList, new String(buffer.array(), StandardCharsets.UTF_8)::contains)
+            if (containsAny(readableBuffer, "ad", "_video_with_context") &&
+                    anyMatch(bufferBlockList, readableBuffer::contains)
             ) return true;
 
             if (SettingsEnum.ADREMOVER_COMMENTS_REMOVAL.getBoolean()) {
@@ -103,17 +110,30 @@ public class GeneralBytecodeAdsPatch {
                 blockList.add("channel_guidelines_entry_banner");
             }
 
+            if (!containsAny(value,
+                "_video_with_context",
+                "menu",
+                "-button",
+                "-count",
+                "flexible-space",
+                "root")
+                &&
+                anyMatch(blockList, value::contains)) {
+                    return true;
+            }
+			/*
             if (containsAny(value,
                     "home_video_with_context",
                     "related_video_with_context",
                     "search_video_with_context",
+                    "_video_with_context",
                     "menu",
                     "root",
                     "-count",
-                    "-space",
+                    "flexible-space",
                     "-button"
             )) return false;
-
+			*/
             if (anyMatch(blockList, value::contains)) {
                 LogHelper.debug(GeneralBytecodeAdsPatch.class, "Blocking ad: " + value);
                 return true;

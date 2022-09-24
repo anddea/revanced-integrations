@@ -1,7 +1,7 @@
 package app.revanced.integrations.videoplayer;
 
 import android.content.Context;
-
+import android.content.SharedPreferences;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
@@ -84,17 +84,14 @@ public class CopyWithTimeStamp {
     }
 
     private static boolean shouldBeShown() {
-        Context appContext = ReVancedUtils.getContext();
-        if (appContext == null) {
-            LogHelper.printException(CopyWithTimeStamp.class, "shouldBeShown - context is null!");
+        Context context = ReVancedUtils.getContext();
+        if (context == null) {
+            LogHelper.printException(AutoRepeat.class, "ChangeSelected - context is null!");
             return false;
         }
-
-        String string = SharedPrefHelper.getString(appContext, SharedPrefHelper.SharedPrefNames.YOUTUBE, "pref_copy_video_url_timestamp_button_list", null);
-        if (string == null || string.isEmpty()) {
-            return false;
-        }
-        return string.equalsIgnoreCase("PLAYER") || string.equalsIgnoreCase("BOTH");
+        //SharedPreferences sharedPreferences = context.getSharedPreferences("youtube", 0);
+        //return sharedPreferences.getBoolean("revanced_pref_copy_video_url_timestamp_button", false);
+        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_copy_video_url_timestamp_button", false);
     }
 
     private static int getIdentifier(String str, String str2) {

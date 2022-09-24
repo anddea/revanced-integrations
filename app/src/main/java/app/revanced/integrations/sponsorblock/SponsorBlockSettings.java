@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.SharedPrefHelper;
@@ -25,8 +26,14 @@ public class SponsorBlockSettings {
     public static final SegmentBehaviour DefaultBehaviour = SegmentBehaviour.IGNORE;
     public static String sponsorBlockUrlCategories = "[]";
 
+    @SuppressWarnings("unused")
+    @Deprecated
+    public SponsorBlockSettings(Context ignored) {}
+
     public static void update(Context context) {
-        if (context == null) return;
+        if (context == null) {
+			context = ReVancedUtils.getContext();
+		}
 
         SharedPreferences preferences = SharedPrefHelper.getPreferences(context, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK);
 
@@ -86,7 +93,7 @@ public class SponsorBlockSettings {
             sponsorBlockUrlCategories = "[%22" + TextUtils.join("%22,%22", enabledCategories) + "%22]";
 
         String uuid = SettingsEnum.SB_UUID.getString();
-        if (uuid == null) {
+        if (uuid == null || uuid.isEmpty()) {
             uuid = (UUID.randomUUID().toString() +
                     UUID.randomUUID().toString() +
                     UUID.randomUUID().toString())
@@ -135,8 +142,8 @@ public class SponsorBlockSettings {
         INTERACTION("interaction", sf("segments_subscribe"), sf("skipped_subscribe"), sf("segments_subscribe_sum"), SegmentBehaviour.SKIP_AUTOMATICALLY, 0xFFcc00ff),
         SELF_PROMO("selfpromo", sf("segments_selfpromo"), sf("skipped_selfpromo"), sf("segments_selfpromo_sum"), SegmentBehaviour.SKIP_AUTOMATICALLY, 0xFFffff00),
         MUSIC_OFFTOPIC("music_offtopic", sf("segments_nomusic"), sf("skipped_nomusic"), sf("segments_nomusic_sum"), SegmentBehaviour.MANUAL_SKIP, 0xFFff9900),
-        PREVIEW("preview", sf("segments_preview"), sf("skipped_preview"), sf("segments_preview_sum"), DefaultBehaviour, 0xFF008fd6),
-        FILLER("filler", sf("segments_filler"), sf("skipped_filler"), sf("segments_filler_sum"), DefaultBehaviour, 0xFF7300FF),
+        PREVIEW("preview", sf("segments_preview"), sf("skipped_preview"), sf("segments_preview_sum"), SegmentBehaviour.MANUAL_SKIP, 0xFF008fd6),
+        FILLER("filler", sf("segments_filler"), sf("skipped_filler"), sf("segments_filler_sum"), SegmentBehaviour.MANUAL_SKIP, 0xFF7300FF),
         UNSUBMITTED("unsubmitted", StringRef.empty, sf("skipped_unsubmitted"), StringRef.empty, SegmentBehaviour.SKIP_AUTOMATICALLY, 0xFFFFFFFF);
 
         private static final SegmentInfo[] mValuesWithoutUnsubmitted = new SegmentInfo[]{

@@ -1,5 +1,7 @@
 package app.revanced.integrations.settings;
 
+import app.revanced.integrations.sponsorblock.StringRef;
+
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -15,11 +17,13 @@ public enum SettingsEnum {
     //Download Settings
     // TODO: DOWNLOAD_PATH("revanced_download_path", Environment.getExternalStorageDirectory().getPath() + "/Download", ReturnType.STRING),
     DOWNLOADS_BUTTON_SHOWN("revanced_downloads", true, ReturnType.BOOLEAN, true),
-    DOWNLOADS_PACKAGE_NAME("revanced_downloads_package_name", "org.schabi.newpipe" /* NewPipe */, ReturnType.STRING),
+    DOWNLOADS_PACKAGE_NAME("revanced_downloads_package_name", StringRef.str("revanced_default_downloader"), ReturnType.STRING),
 
     //Video Settings
     OLD_STYLE_QUALITY_SETTINGS("revanced_use_old_style_quality_settings", true, ReturnType.BOOLEAN),
     PREFERRED_VIDEO_SPEED("revanced_pref_video_speed", -2.0f, ReturnType.FLOAT),
+    PREFERRED_VIDEO_QUALITY_WIFI("revanced_pref_video_quality_wifi", -2, ReturnType.INTEGER),
+    PREFERRED_VIDEO_QUALITY_MOBILE("revanced_pref_video_quality_mobile", -2, ReturnType.INTEGER),
 
     //Whitelist Settings
     //ToDo: Not used atm, Patch missing
@@ -30,7 +34,7 @@ public enum SettingsEnum {
     VIDEO_ADS_REMOVAL("revanced_video_ads_removal", true, ReturnType.BOOLEAN, true),
     ADREMOVER_AD_REMOVAL("revanced_adremover_ad_removal", true, ReturnType.BOOLEAN, true),
     ADREMOVER_MERCHANDISE_REMOVAL("revanced_adremover_merchandise", true, ReturnType.BOOLEAN, true),
-    ADREMOVER_COMMUNITY_POSTS_REMOVAL("revanced_adremover_community_posts_removal", true, ReturnType.BOOLEAN, true),
+    ADREMOVER_COMMUNITY_POSTS_REMOVAL("revanced_adremover_community_posts_removal", false, ReturnType.BOOLEAN, true),
     ADREMOVER_COMPACT_BANNER_REMOVAL("revanced_adremover_compact_banner_removal", true, ReturnType.BOOLEAN, true),
     ADREMOVER_COMMENTS_REMOVAL("revanced_adremover_comments_removal", false, ReturnType.BOOLEAN, true),
     ADREMOVER_MOVIE_REMOVAL("revanced_adremover_movie", true, ReturnType.BOOLEAN, true),
@@ -40,7 +44,7 @@ public enum SettingsEnum {
     ADREMOVER_EMERGENCY_BOX_REMOVAL("revanced_adremover_emergency_box_removal", true, ReturnType.BOOLEAN, true),
     ADREMOVER_INFO_PANEL_REMOVAL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN, true),
     ADREMOVER_MEDICAL_PANEL_REMOVAL("revanced_adremover_medical_panel", true, ReturnType.BOOLEAN, true),
-    ADREMOVER_PAID_CONTECT_REMOVAL("revanced_adremover_paid_content", true, ReturnType.BOOLEAN, true),
+    ADREMOVER_PAID_CONTECT_REMOVAL("revanced_adremover_paid_content", false, ReturnType.BOOLEAN, true),
     ADREMOVER_SUGGESTED_FOR_YOU_REMOVAL("revanced_adremover_suggested", true, ReturnType.BOOLEAN, true),
     ADREMOVER_HIDE_SUGGESTIONS("revanced_adremover_hide_suggestions", true, ReturnType.BOOLEAN, true),
     ADREMOVER_HIDE_LATEST_POSTS("revanced_adremover_hide_latest_posts", true, ReturnType.BOOLEAN, true),
@@ -48,24 +52,41 @@ public enum SettingsEnum {
 
     //Layout settings
     REEL_BUTTON_SHOWN("revanced_reel_button_enabled", false, ReturnType.BOOLEAN, true),
-    INFO_CARDS_SHOWN("revanced_info_cards_enabled", false, ReturnType.BOOLEAN),
+    INFO_CARDS_SHOWN("revanced_info_cards_enabled", true, ReturnType.BOOLEAN, true),
+    SUGGESTIONS_SHOWN("revanced_info_card_suggestions_enabled", true, ReturnType.BOOLEAN, true),
     BRANDING_SHOWN("revanced_branding_watermark_enabled", false, ReturnType.BOOLEAN),
     CAST_BUTTON_SHOWN("revanced_cast_button_enabled", false, ReturnType.BOOLEAN, true),
     AUTOPLAY_BUTTON_SHOWN("revanced_autoplay_button_enabled", false, ReturnType.BOOLEAN, true),
+
+    //ToDo: Not used atm, Patch missing
     USE_TABLET_MINIPLAYER("revanced_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
     CREATE_BUTTON_ENABLED("revanced_create_button_enabled", false, ReturnType.BOOLEAN, true),
     WIDE_SEARCHBAR("revanced_wide_searchbar", false, ReturnType.BOOLEAN, true),
     SHORTS_BUTTON_SHOWN("revanced_shorts_button_enabled", false, ReturnType.BOOLEAN, true),
-    FULLSCREEN_PANELS_SHOWN("revanced_fullscreen_panels_enabled", false, ReturnType.BOOLEAN), //ToDo: Add to prefs
-    PLAYER_POPUP_PANELS("revanced_player_popup_panels_enabled", false, ReturnType.BOOLEAN),
-    HIDE_TIME_AND_SEEKBAR("revanced_hide_time_and_seekbar", false, ReturnType.BOOLEAN),
+    PLAYER_POPUP_PANELS("revanced_player_popup_panels_enabled", false, ReturnType.BOOLEAN, true),
 
     //Misc. Settings
-    CAPTIONS_ENABLED("revanced_autocaptions_enabled", false, ReturnType.BOOLEAN, false),
-    PREFERRED_AUTO_REPEAT("revanced_pref_auto_repeat", false, ReturnType.BOOLEAN),
-    USE_HDR_AUTO_BRIGHTNESS("revanced_pref_hdr_autobrightness", true, ReturnType.BOOLEAN),
+    //ToDo: Not used atm, Patch missing
+    CAPTIONS_ENABLED("revanced_autocaptions_enabled", false, ReturnType.BOOLEAN, true),
+    PREFERRED_COPY_BUTTON("revanced_pref_copy_video_url_button", false, ReturnType.BOOLEAN),
+    PREFERRED_COPY_WITH_TIMESTAMP_BUTTON("revanced_pref_copy_video_url_timestamp_button", false, ReturnType.BOOLEAN),
+    PREFERRED_AUTO_REPEAT_BUTTON("revanced_pref_auto_repeat_button", false, ReturnType.BOOLEAN),
+    PREFERRED_AUTO_REPEAT("revanced_pref_auto_repeat", false, ReturnType.BOOLEAN, true),
+    USE_HDR_AUTO_BRIGHTNESS("revanced_pref_hdr_autobrightness", false, ReturnType.BOOLEAN),
     TAP_SEEKING_ENABLED("revanced_enable_tap_seeking", true, ReturnType.BOOLEAN),
     ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
+
+	//Extended
+	CUSTOM_PLAYBACK_SPEED_ENABLED("revanced_pref_custom_playback_speed", false, ReturnType.BOOLEAN, true),
+	SAVE_VIDEO_QUALITY("revanced_pref_save_video_quality", true, ReturnType.BOOLEAN, true),
+    SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
+    PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
+	
+	//Experimental Flags
+    EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
+    DISABLE_NEWLAYOUT("revanced_disable_new_layout", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
+    FULLSCREEN_ROTATION("revanced_fullscreen_rotation", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_fullscreen"),
+    RYD_NEWLAYOUT("revanced_ryd_new_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
 
     //Swipe controls
     ENABLE_SWIPE_BRIGHTNESS("revanced_enable_swipe_brightness", true, ReturnType.BOOLEAN),
@@ -73,9 +94,9 @@ public enum SettingsEnum {
     ENABLE_PRESS_TO_SWIPE("revanced_enable_press_to_swipe", false, ReturnType.BOOLEAN),
     ENABLE_SWIPE_HAPTIC_FEEDBACK("revanced_enable_swipe_haptic_feedback", true, ReturnType.BOOLEAN),
     SWIPE_OVERLAY_TIMEOUT("revanced_swipe_overlay_timeout", 500L, ReturnType.LONG),
-    SWIPE_OVERLAY_TEXT_SIZE("revanced_swipe_overlay_text_size", 22f, ReturnType.FLOAT),
+    SWIPE_OVERLAY_TEXT_SIZE("revanced_swipe_overlay_text_size", 27f, ReturnType.FLOAT),
     SWIPE_OVERLAY_BACKGROUND_ALPHA("revanced_swipe_overlay_background_alpha", 127, ReturnType.INTEGER),
-    SWIPE_MAGNITUDE_THRESHOLD("revanced_swipe_magnitude_threshold", 30f, ReturnType.FLOAT),
+    SWIPE_MAGNITUDE_THRESHOLD("revanced_swipe_magnitude_threshold", 0f, ReturnType.FLOAT),
 
     //Buffer Settings
     MAX_BUFFER("revanced_pref_max_buffer_ms", 120000, ReturnType.INTEGER),
@@ -94,7 +115,7 @@ public enum SettingsEnum {
     SB_ENABLED("sb-enabled", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_SHOW_TOAST_WHEN_SKIP("show-toast", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_COUNT_SKIPS("count-skips", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_UUID("uuid", "", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
+    SB_UUID("uuid", null, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
     SB_ADJUST_NEW_SEGMENT_STEP("new-segment-step-accuracy", 150, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.INTEGER),
     SB_MIN_DURATION("sb-min-duration", 0F, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.FLOAT),
     SB_SEEN_GUIDELINES("sb-seen-gl", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
@@ -106,14 +127,15 @@ public enum SettingsEnum {
     SB_IS_VIP("sb-is-vip", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_LAST_VIP_CHECK("sb-last-vip-check", 0L, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.LONG),
     SB_SHOW_BROWSER_BUTTON("sb-browser-button", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_API_URL("sb-api-url", "https://sponsor.ajay.app/api/", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING);
+    SB_API_URL("sb-api-url", "https://sponsor.ajay.app/api/", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
+    REVANCED_EXTENDED_HINT_SHOWN("rvx_hint_shown", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN);	
 
-    public static boolean shorts_playing = false;
     private final String path;
     private final Object defaultValue;
     private final SharedPrefHelper.SharedPrefNames sharedPref;
     private final ReturnType returnType;
     private final boolean rebootApp;
+    private final String rebootApp_Warning;
 
     private Object value = null;
 
@@ -123,6 +145,7 @@ public enum SettingsEnum {
         this.sharedPref = SharedPrefHelper.SharedPrefNames.YOUTUBE;
         this.returnType = returnType;
         this.rebootApp = false;
+        this.rebootApp_Warning = "";
     }
 
     SettingsEnum(String path, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName, ReturnType returnType) {
@@ -131,6 +154,7 @@ public enum SettingsEnum {
         this.sharedPref = prefName;
         this.returnType = returnType;
         this.rebootApp = false;
+        this.rebootApp_Warning = "";
     }
 
     SettingsEnum(String path, Object defaultValue, ReturnType returnType, Boolean rebootApp) {
@@ -139,6 +163,16 @@ public enum SettingsEnum {
         this.sharedPref = SharedPrefHelper.SharedPrefNames.YOUTUBE;
         this.returnType = returnType;
         this.rebootApp = rebootApp;
+        this.rebootApp_Warning = "";
+    }
+
+    SettingsEnum(String path, Object defaultValue, ReturnType returnType, Boolean rebootApp, String rebootApp_Warning) {
+        this.path = path;
+        this.defaultValue = defaultValue;
+        this.sharedPref = SharedPrefHelper.SharedPrefNames.YOUTUBE;
+        this.returnType = returnType;
+        this.rebootApp = rebootApp;
+        this.rebootApp_Warning = rebootApp_Warning;
     }
 
     static {
@@ -251,4 +285,9 @@ public enum SettingsEnum {
     public boolean shouldRebootOnChange() {
         return rebootApp;
     }
+
+    public String shouldWarningOnChange() {
+        return rebootApp_Warning;
+    }
+
 }

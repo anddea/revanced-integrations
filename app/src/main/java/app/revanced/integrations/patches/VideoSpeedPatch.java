@@ -12,16 +12,17 @@ import app.revanced.integrations.utils.ReVancedUtils;
 
 public class VideoSpeedPatch {
 
-    public static final float[] videoSpeeds = { 0, 0 }; // Values are useless as they are being overridden by the respective patch
+    public static final float[] videoSpeeds = {0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 2.25f, 2.5f, 3.0f, 5.0f};
+    private static Boolean newVideo = false;
     private static Boolean userChangedSpeed = false;
 
     public static int getDefaultSpeed(Object[] speeds, int speed, Object qInterface) {
         int speed2;
         Exception e;
-        if (!ReVancedUtils.isNewVideoStarted()) {
+        if (!(newVideo || userChangedSpeed) || qInterface == null) {
             return speed;
         }
-        ReVancedUtils.setNewVideo(false);
+        newVideo = false;
         LogHelper.debug(VideoSpeedPatch.class, "Speed: " + speed);
         float preferredSpeed = SettingsEnum.PREFERRED_VIDEO_SPEED.getFloat();
         LogHelper.debug(VideoSpeedPatch.class, "Preferred speed: " + preferredSpeed);
@@ -91,18 +92,23 @@ public class VideoSpeedPatch {
 
     public static void userChangedSpeed() {
         userChangedSpeed = true;
+        newVideo = false;
+    }
+
+    public static void newVideoStarted(String videoId) {
+        newVideo = true;
     }
 
     public static float getSpeedValue(Object[] speeds, int speed) {
         int i = 0;
-        if (!ReVancedUtils.isNewVideoStarted() || userChangedSpeed) {
+        if (!newVideo || userChangedSpeed) {
             if (SettingsEnum.DEBUG.getBoolean() && userChangedSpeed) {
                 LogHelper.debug(VideoSpeedPatch.class, "Skipping speed change because user changed it: " + speed);
             }
             userChangedSpeed = false;
             return -1.0f;
         }
-        ReVancedUtils.setNewVideo(false);
+		newVideo = false;
         LogHelper.debug(VideoSpeedPatch.class, "Speed: " + speed);
         float preferredSpeed = SettingsEnum.PREFERRED_VIDEO_SPEED.getFloat();
         LogHelper.debug(VideoSpeedPatch.class, "Preferred speed: " + preferredSpeed);
