@@ -23,7 +23,7 @@ import app.revanced.integrations.utils.SharedPrefHelper;
 public class ReturnYouTubeDislike {
     private static boolean isEnabled;
     private static boolean fixNewLayout;
-    private static boolean afterN;
+    private static boolean afterAndroidN;
     private static boolean RTL;
     private static Thread _dislikeFetchThread = null;
     private static Thread _votingThread = null;
@@ -37,13 +37,13 @@ public class ReturnYouTubeDislike {
         LogHelper.debug(ReturnYouTubeDislike.class, "locale - " + locale);
         isEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
         fixNewLayout = SettingsEnum.RYD_NEWLAYOUT.getBoolean();
-        afterN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? true : false;
+        afterAndroidN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
         RTL = isRTL(locale);
         if (isEnabled) {
             registration = new Registration();
             voting = new Voting(registration);
         }
-        if (afterN) {
+        if (afterAndroidN) {
             compactNumberFormatter = CompactDecimalFormat.getInstance(
                     locale,
                     CompactDecimalFormat.CompactStyle.SHORT
@@ -162,7 +162,7 @@ public class ReturnYouTubeDislike {
     }
 
     private static String formatDislikes(int dislikes) {
-        if (afterN && compactNumberFormatter != null) {
+        if (afterAndroidN && compactNumberFormatter != null) {
             final String formatted = compactNumberFormatter.format(dislikes);
             LogHelper.debug(ReturnYouTubeDislike.class, "Formatting dislikes - " + dislikes + " - " + formatted);
             return formatted;
@@ -172,7 +172,7 @@ public class ReturnYouTubeDislike {
     }
 
     private static String formatLikesDislikes(int likes, int dislikes) {
-        if (afterN && compactNumberFormatter != null) {
+        if (afterAndroidN && compactNumberFormatter != null) {
             final String formatted = RTL ? compactNumberFormatter.format(dislikes) + "  |  " + compactNumberFormatter.format(likes) : compactNumberFormatter.format(likes) + "  |  " + compactNumberFormatter.format(dislikes);
             LogHelper.debug(ReturnYouTubeDislike.class, "Formatting likes|dislikes - " + likes + "|" + dislikes + " - " + formatted);
             return formatted;
@@ -183,7 +183,7 @@ public class ReturnYouTubeDislike {
 
     private static boolean isRTL(Locale locale) {
         try {
-            if (afterN) {
+            if (afterAndroidN) {
                 final int directionality = Character.getDirectionality(Locale.getDefault().getDisplayName().charAt(0));
                 return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
                        directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;
