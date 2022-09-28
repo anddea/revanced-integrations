@@ -308,13 +308,16 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     public void VersionOverrideLinks() {
         try {
-            // if the version is newer than v17.32.39 (1531051456) -> true
-            boolean after33 = getVersionCode() > 1531051456 ? true : false;
+            // if the version is newer than v17.32.39 (1531051456) & older than v17.38.32 -> true
+            boolean hasissue = (getVersionCode() > 1531051456) && (getVersionCode() < 1531823552);
             SwitchPreference switchPreference = (SwitchPreference) findPreferenceOnScreen("revanced_fullscreen_rotation");
-            if (!after33) {
+            this.miscPreferenceScreen.removePreference(this.Rotation);
+            if (hasissue) {
+                this.miscPreferenceScreen.addPreference(this.Rotation);
+                switchPreference.setEnabled(hasissue);
+            } else if (!hasissue) {
                 SettingsEnum.FULLSCREEN_ROTATION.saveValue(false);
                 SettingsEnum.EXPERIMENTAL_FLAG.saveValue(true);
-                this.miscPreferenceScreen.removePreference(this.Rotation);
                 return;
             } else if (!SettingsEnum.FULLSCREEN_ROTATION.getBoolean()) {
                 switchPreference.setEnabled(false);
@@ -322,9 +325,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 return;
             }
             if (SettingsEnum.EXPERIMENTAL_FLAG.getBoolean()) return;
-            switchPreference.setEnabled(after33);
             SettingsEnum.EXPERIMENTAL_FLAG.saveValue(true);
-            SettingsEnum.FULLSCREEN_ROTATION.saveValue(after33);
+            SettingsEnum.FULLSCREEN_ROTATION.saveValue(hasissue);
             return;
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting VersionOverrideLinks" + th);
@@ -334,7 +336,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void VersionOverrideLinks2() {
         try {
             // 17.28.35 | 1530518976
-            boolean after29 = getVersionCode() > 1530518976 ? true : false;
+            boolean after29 = getVersionCode() > 1530518976;
             boolean oldlayout = SettingsEnum.DISABLE_NEWLAYOUT.getBoolean();
             SwitchPreference switchPreference = (SwitchPreference) findPreferenceOnScreen("revanced_fullscreen_rotation");
             if (!after29) {
