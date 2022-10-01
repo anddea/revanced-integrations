@@ -24,12 +24,12 @@ public class Dialogs {
     private static void rvxFirstRun(Activity activity) {
         Context context = ReVancedUtils.getContext();
         boolean hintShownRVX = SettingsEnum.REVANCED_EXTENDED_HINT_SHOWN.getBoolean();
-        // if the version is newer than v17.32.39 (1531051456) & older than v17.38.32 -> true
-        boolean hasissue = (ReVancedSettingsFragment.getVersionCode() > 1531051456) && (ReVancedSettingsFragment.getVersionCode() < 1531823552);
+        // if the version is newer than v17.32.39 (1531051456) & older than v17.38.32 (1531823552) -> true
+        boolean hasrotationissue = (ReVancedSettingsFragment.getVersionCode() > 1531051456) && (ReVancedSettingsFragment.getVersionCode() < 1531823552);
         String msg = "\n\n" + str("settings") + " > " + str("revanced_settings") + " > " + str("revanced_misc_title") + " > " + str("revanced_force_fullscreen_rotation_title");
 
         // If SB is enabled or hint has been shown, exit
-        if (hintShownRVX || !hasissue) {
+        if (hintShownRVX || !hasrotationissue) {
             return;
         }
 

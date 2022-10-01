@@ -45,7 +45,6 @@ public enum SettingsEnum {
     ADREMOVER_INFO_PANEL_REMOVAL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN, true),
     ADREMOVER_MEDICAL_PANEL_REMOVAL("revanced_adremover_medical_panel", true, ReturnType.BOOLEAN, true),
     ADREMOVER_PAID_CONTECT_REMOVAL("revanced_adremover_paid_content", false, ReturnType.BOOLEAN, true),
-    ADREMOVER_SUGGESTED_FOR_YOU_REMOVAL("revanced_adremover_suggested", true, ReturnType.BOOLEAN, true),
     ADREMOVER_HIDE_SUGGESTIONS("revanced_adremover_hide_suggestions", true, ReturnType.BOOLEAN, true),
     ADREMOVER_HIDE_LATEST_POSTS("revanced_adremover_hide_latest_posts", true, ReturnType.BOOLEAN, true),
     ADREMOVER_HIDE_CHANNEL_GUIDELINES("revanced_adremover_hide_channel_guidelines", true, ReturnType.BOOLEAN, true),
@@ -64,7 +63,8 @@ public enum SettingsEnum {
     WIDE_SEARCHBAR("revanced_wide_searchbar", false, ReturnType.BOOLEAN, true),
     SHORTS_BUTTON_SHOWN("revanced_shorts_button_enabled", false, ReturnType.BOOLEAN, true),
     PLAYER_POPUP_PANELS("revanced_player_popup_panels_enabled", false, ReturnType.BOOLEAN, true),
-    HIDE_EMAIL_ADDRESS("revanced_hide_email_address", true, ReturnType.BOOLEAN, true),
+    HIDE_EMAIL_ADDRESS("revanced_hide_email_address", false, ReturnType.BOOLEAN, true),
+    DISABLE_STARTUP_SHORTS_PLAYER("revanced_startup_shorts_player_enabled", false, ReturnType.BOOLEAN),
 
     //Misc. Settings
     //ToDo: Not used atm, Patch missing

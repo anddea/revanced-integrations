@@ -308,14 +308,14 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     public void VersionOverrideLinks() {
         try {
-            // if the version is newer than v17.32.39 (1531051456) & older than v17.38.32 -> true
-            boolean hasissue = (getVersionCode() > 1531051456) && (getVersionCode() < 1531823552);
+            // if the version is newer than v17.32.39 (1531051456) & older than v17.38.32 (1531823552) -> true
+            boolean hasrotationissue = (ReVancedSettingsFragment.getVersionCode() > 1531051456) && (ReVancedSettingsFragment.getVersionCode() < 1531823552);
             SwitchPreference switchPreference = (SwitchPreference) findPreferenceOnScreen("revanced_fullscreen_rotation");
             this.miscPreferenceScreen.removePreference(this.Rotation);
-            if (hasissue) {
+            if (hasrotationissue) {
                 this.miscPreferenceScreen.addPreference(this.Rotation);
-                switchPreference.setEnabled(hasissue);
-            } else if (!hasissue) {
+                switchPreference.setEnabled(hasrotationissue);
+            } else if (!hasrotationissue) {
                 SettingsEnum.FULLSCREEN_ROTATION.saveValue(false);
                 SettingsEnum.EXPERIMENTAL_FLAG.saveValue(true);
                 return;
@@ -326,7 +326,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             }
             if (SettingsEnum.EXPERIMENTAL_FLAG.getBoolean()) return;
             SettingsEnum.EXPERIMENTAL_FLAG.saveValue(true);
-            SettingsEnum.FULLSCREEN_ROTATION.saveValue(hasissue);
+            SettingsEnum.FULLSCREEN_ROTATION.saveValue(hasrotationissue);
             return;
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting VersionOverrideLinks" + th);

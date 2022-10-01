@@ -1,3 +1,38 @@
+## [0.46.2](https://github.com/revanced/revanced-integrations/compare/v0.46.1...v0.46.2) (2022-10-01)
+
+
+### Performance Improvements
+
+* **general-ads:** hook pathBuilder ([c7756e1](https://github.com/revanced/revanced-integrations/commit/c7756e1299bdc2e241525ad89561ea67bc372e3a))
+
+## [0.46.1](https://github.com/revanced/revanced-integrations/compare/v0.46.0...v0.46.1) (2022-09-30)
+
+
+### Bug Fixes
+
+* **general-ads:** remove duplicate blocklist entry ([#165](https://github.com/revanced/revanced-integrations/issues/165)) ([9bcb04d](https://github.com/revanced/revanced-integrations/commit/9bcb04de8e8bd0c8c46ce797db42eb758e632580))
+
+# [0.46.0](https://github.com/revanced/revanced-integrations/compare/v0.45.0...v0.46.0) (2022-09-30)
+
+
+### Features
+
+* **general-ads:** block additional home ads ([5a24e84](https://github.com/revanced/revanced-integrations/commit/5a24e8486809b73f6c5a95b3f6d28a3da1cddbb8))
+
+# [0.45.0](https://github.com/revanced/revanced-integrations/compare/v0.44.1...v0.45.0) (2022-09-29)
+
+
+### Features
+
+* `disable-startup-shorts-player` patch ([#164](https://github.com/revanced/revanced-integrations/issues/164)) ([149a90a](https://github.com/revanced/revanced-integrations/commit/149a90a2e8711a95ec4a310c7ba1e8f0ef6a218f))
+
+## [0.44.1](https://github.com/revanced/revanced-integrations/compare/v0.44.0...v0.44.1) (2022-09-29)
+
+
+### Bug Fixes
+
+* **hide-email-address:** invalid initial switch toggle state ([#163](https://github.com/revanced/revanced-integrations/issues/163)) ([8bb93a4](https://github.com/revanced/revanced-integrations/commit/8bb93a439be21c2f564f3bc2adaedf669977f1fb))
+
 # [0.44.0](https://github.com/revanced/revanced-integrations/compare/v0.43.1...v0.44.0) (2022-09-28)
 
 
