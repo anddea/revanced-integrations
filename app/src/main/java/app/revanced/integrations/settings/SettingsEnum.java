@@ -82,12 +82,23 @@ public enum SettingsEnum {
     SAVE_VIDEO_QUALITY("revanced_pref_save_video_quality", true, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
+    IS_NEWLAYOUT("experimental_flags_is_new_layout", false, ReturnType.BOOLEAN, true),
 	
     //Experimental Flags
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     DISABLE_NEWLAYOUT("revanced_disable_new_layout", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     FULLSCREEN_ROTATION("revanced_fullscreen_rotation", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_fullscreen"),
     RYD_NEWLAYOUT("revanced_ryd_new_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
+
+    //ToDo: Experimental Flags
+    HIDE_PLAYER_LIVE_CHAT_BUTTON("revanced_hide_player_live_chat_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_REPORT_BUTTON("revanced_hide_player_report_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_CREATE_SHORT_BUTTON("revanced_hide_player_create_short_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_THANKS_BUTTON("revanced_hide_player_thanks_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_CREATE_CLIP_BUTTON("revanced_hide_player_create_clip_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_DOWNLOAD_BUTTON("revanced_hide_player_download_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_SPOILER_COMMENT("revanced_hide_player_spoiler_comment", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_EXTERNAL_COMMENT_BOX("revanced_hide_player_external_comment_box", false, ReturnType.BOOLEAN),
 
     //Swipe controls
     ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", true, ReturnType.BOOLEAN),

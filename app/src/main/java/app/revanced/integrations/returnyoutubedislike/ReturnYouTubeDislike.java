@@ -82,10 +82,21 @@ public class ReturnYouTubeDislike {
     }
 
     public static void onComponentCreated(Object conversionContext, AtomicReference<Object> textRef) {
+        // layoutA: old layout, layoutB: new layout
+        boolean layoutA = conversionContext.toString().contains("|dislike_button.eml|");
+        boolean layoutB = conversionContext.toString().contains("|segmented_like_dislike_button.eml|");
+		
+        if (layoutA) {
+            SettingsEnum.IS_NEWLAYOUT.saveValue(false);
+        } else if (layoutB) {
+            SettingsEnum.IS_NEWLAYOUT.saveValue(true);
+		} else {
+			return;
+		}
+
         if (!isEnabled || PlayerController.shorts_playing) return;
 
         try {
-            boolean newlayout = false;
             // Contains a pathBuilder string, used to distinguish from other litho components:
             // video_action_bar.eml|27b56b54d5dcba20|video_action_bar_unwrapper.eml|c5a1d399b660e52e|CellType
             // |ScrollableContainerType|ContainerType|ContainerType|dislike_button.eml|966ee2cd7db5e29f
@@ -94,11 +105,6 @@ public class ReturnYouTubeDislike {
             // |966ee2cd7db5e29f|video_action_toggle_button.eml|8fd9d44a8e3c9162|video_action_button.eml
             // |9dd3b4b44979c3af|ContainerType|TextType|on_toggle_button.eml|8fd9d44a8e3c9162|video_action_button.eml
             // |9dd3b4b44979c3af|ContainerType|TextType|
-            if (conversionContext.toString().contains("|segmented_like_dislike_button.eml|") && fixNewLayout) {
-				newlayout = true;
-			} else if (!conversionContext.toString().contains("|dislike_button.eml|")) {
-				return;
-			}
 
             LogHelper.debug(ReturnYouTubeDislike.class, "dislike button was created");
 
@@ -106,9 +112,9 @@ public class ReturnYouTubeDislike {
             // There's no known way to edit the text after creation yet
             if (_dislikeFetchThread != null) _dislikeFetchThread.join();
 
-            if (newlayout && likeCount != null && dislikeCount != null) {
+            if (layoutB && fixNewLayout && likeCount != null && dislikeCount != null) {
                 updateDislikeText(textRef, formatLikesDislikes(likeCount, dislikeCount));
-            } else if (dislikeCount != null) {
+            } else if (layoutA && dislikeCount != null) {
                 updateDislikeText(textRef, formatDislikes(dislikeCount));
             }
         } catch (Exception ex) {
