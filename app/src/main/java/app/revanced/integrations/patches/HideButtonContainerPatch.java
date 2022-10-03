@@ -23,6 +23,9 @@ public class HideButtonContainerPatch {
         //Action Bar Buttons
         List<String> actionButtonsBlockList = new ArrayList<>();
 
+        if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
+            actionButtonsBlockList.add("yt_outline_share");
+        }
         if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_message_bubble_overlap");
         }
@@ -44,8 +47,24 @@ public class HideButtonContainerPatch {
             return true;
         }
 
+        if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean() &&
+        containsAny(inflatedTemplate, "ContainerType|ContainerType|like_button")) {
+            return true;
+        }
+
+        if (SettingsEnum.HIDE_DISLIKE_BUTTON.getBoolean() &&
+        (containsAny(inflatedTemplate, "ContainerType|ContainerType|dislike_button") ||
+        containsAny(inflatedTemplate, "ContainerType|ContainerType|segmented_like_dislike_button"))) {
+            return true;
+        }
+
         if (SettingsEnum.HIDE_DOWNLOAD_BUTTON.getBoolean() &&
             containsAny(inflatedTemplate, "ContainerType|ContainerType|download_button")) {
+            return true;
+        }
+
+        if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean() &&
+            containsAny(inflatedTemplate, "ContainerType|ContainerType|save_to_playlist_button")) {
             return true;
         }
 

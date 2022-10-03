@@ -90,12 +90,16 @@ public enum SettingsEnum {
     RYD_NEWLAYOUT("revanced_ryd_new_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
 
     //ToDo: Experimental Flags
+    HIDE_LIKE_BUTTON("revanced_hide_like_button", false, ReturnType.BOOLEAN),
+    HIDE_DISLIKE_BUTTON("revanced_hide_dislike_button", false, ReturnType.BOOLEAN),
+    HIDE_SHARE_BUTTON("revanced_hide_share_button", false, ReturnType.BOOLEAN),
     HIDE_LIVE_CHAT_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
     HIDE_REPORT_BUTTON("revanced_hide_report_button", false, ReturnType.BOOLEAN),
     HIDE_CREATE_SHORT_BUTTON("revanced_hide_create_short_button", false, ReturnType.BOOLEAN),
     HIDE_THANKS_BUTTON("revanced_hide_thanks_button", false, ReturnType.BOOLEAN),
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_create_clip_button", false, ReturnType.BOOLEAN),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_download_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYLIST_BUTTON("revanced_hide_playlist_button", false, ReturnType.BOOLEAN),
     HIDE_SPOILER_COMMENT("revanced_hide_spoiler_comment", false, ReturnType.BOOLEAN),
     HIDE_EXTERNAL_COMMENT_BOX("revanced_hide_external_comment_box", false, ReturnType.BOOLEAN),
 
