@@ -72,13 +72,6 @@ public class HideButtonContainerPatch {
         return false;
     }
 
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder builder = new StringBuilder(bytes.length * 2);
-        for (byte b : bytes)
-            builder.append(String.format("%02x", b));
-        return builder.toString();
-    }
-
     private static <T> boolean anyMatch(List<T> value, APredicate<? super T> predicate) {
         for (T t : value) {
             if (predicate.test(t)) return true;
