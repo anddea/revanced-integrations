@@ -1,3 +1,29 @@
+## [0.47.1](https://github.com/revanced/revanced-integrations/compare/v0.47.0...v0.47.1) (2022-10-03)
+
+
+### Bug Fixes
+
+* **general-ads:** null check for identifier ([d10c546](https://github.com/revanced/revanced-integrations/commit/d10c5462f4a1ec20715686d07fb1219f3e4a1f78))
+
+# [0.47.0](https://github.com/revanced/revanced-integrations/compare/v0.46.3...v0.47.0) (2022-10-02)
+
+
+### Features
+
+* **general-ads:** block carousel ad ([26c208e](https://github.com/revanced/revanced-integrations/commit/26c208e9ed37ebc686f88756e3203f886cadba10))
+
+## [0.46.3](https://github.com/revanced/revanced-integrations/compare/v0.46.2...v0.46.3) (2022-10-02)
+
+
+### Bug Fixes
+
+* **general-ads:** block remaining ads ([18a749f](https://github.com/revanced/revanced-integrations/commit/18a749f87def79642205d685fef0af2bea21c087))
+
+
+### Performance Improvements
+
+* **general-ads:** initialize blocks once ([5add970](https://github.com/revanced/revanced-integrations/commit/5add970f610c567f4b49f2a2ec8574ab393b5b5c))
+
 ## [0.46.2](https://github.com/revanced/revanced-integrations/compare/v0.46.1...v0.46.2) (2022-10-01)
 
 
