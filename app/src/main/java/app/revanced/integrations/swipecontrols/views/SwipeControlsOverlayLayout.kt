@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.swipecontrols.SwipeControlsConfigurationProvider
 import app.revanced.integrations.swipecontrols.misc.SwipeControlsOverlay
 import app.revanced.integrations.swipecontrols.misc.applyDimension
@@ -124,10 +125,18 @@ class SwipeControlsOverlayLayout(
     }
 
     override fun onBrightnessChanged(brightness: Double) {
-        if (brightness >= 0) {
-            showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
+        if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
+            if (brightness >= 0) {
+                showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
+            } else {
+                showFeedbackView(str("quality_auto"), autoBrightnessIcon)
+            }
         } else {
-            showFeedbackView(str("quality_auto"), autoBrightnessIcon)
+            if (brightness > 0) {
+                showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
+            } else {
+                showFeedbackView(str("quality_auto"), autoBrightnessIcon)
+            }
         }
     }
 

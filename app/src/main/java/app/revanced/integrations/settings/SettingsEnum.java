@@ -90,6 +90,7 @@ public enum SettingsEnum {
     RYD_NEWLAYOUT("revanced_ryd_new_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
 
     //Swipe controls
+    ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", true, ReturnType.BOOLEAN),
     ENABLE_SWIPE_BRIGHTNESS("revanced_enable_swipe_brightness", true, ReturnType.BOOLEAN),
     ENABLE_SWIPE_VOLUME("revanced_enable_swipe_volume", true, ReturnType.BOOLEAN),
     ENABLE_PRESS_TO_SWIPE("revanced_enable_press_to_swipe", false, ReturnType.BOOLEAN),

@@ -76,10 +76,18 @@ open class SwipeGestureController(
         )
     ) { _, _, direction ->
         controller.screen?.apply {
-            if (screenBrightness >= 0 || direction > 0) {
-                screenBrightness += direction
+            if (!controller.config.enableAutoBrightnessControl) {
+                if (screenBrightness >= 0 || direction > 0) {
+                    screenBrightness += direction
+                } else {
+                    restoreDefaultBrightness()
+                }
             } else {
-                restoreDefaultBrightness()
+                if (screenBrightness > 0 || direction > 0) {
+                    screenBrightness += direction
+                } else {
+                    restoreDefaultBrightness()
+                }
             }
 
             controller.overlay.onBrightnessChanged(screenBrightness)
