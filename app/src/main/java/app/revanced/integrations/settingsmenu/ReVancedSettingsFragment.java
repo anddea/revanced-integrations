@@ -50,7 +50,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private boolean Registered = false;
     private boolean settingsInitialized = false;
-    private PreferenceScreen miscPreferenceScreen;
+    private PreferenceScreen extendedPreferenceScreen;
     private Preference ExperimentalFlag;
     private SwitchPreference Rotation;
     private SwitchPreference OldLayout;
@@ -202,11 +202,14 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("interactions"));
             this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("layout"));
             this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("misc"));
-            this.miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
-            this.ExperimentalFlag = (Preference) this.miscPreferenceScreen.findPreference("revanced_experimental_flag");
-            this.Rotation = (SwitchPreference) this.miscPreferenceScreen.findPreference("revanced_fullscreen_rotation");
-            this.OldLayout = (SwitchPreference) this.miscPreferenceScreen.findPreference("revanced_disable_new_layout");
-            this.RydNewLayout = (SwitchPreference) this.miscPreferenceScreen.findPreference("revanced_ryd_new_layout");
+            this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("video_settings"));
+            this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton"));
+            this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("extended"));
+            this.extendedPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("extended");
+            this.ExperimentalFlag = (Preference) this.extendedPreferenceScreen.findPreference("revanced_experimental_flag");
+            this.Rotation = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_fullscreen_rotation");
+            this.OldLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_disable_new_layout");
+            this.RydNewLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_ryd_new_layout");
 			AutoRepeatLinks();
             VersionOverrideLinks();
             VersionOverrideLinks2();
@@ -219,7 +222,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.videoSpeedEntries[4] = NORMAL;
             this.videoSpeedEntries2[4] = NORMAL;
 
-            final ListPreference listPreference3 = (ListPreference) screens.get(3).findPreference("revanced_pref_video_speed");
+            final ListPreference listPreference3 = (ListPreference) screens.get(4).findPreference("revanced_pref_video_speed");
             setSpeedListPreferenceData(listPreference3);
 
             listPreference3.setOnPreferenceClickListener(preference -> {
@@ -227,7 +230,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 return false;
             });
 
-            final ListPreference listPreference4 = (ListPreference) screens.get(3).findPreference("revanced_pref_video_quality_wifi");
+            final ListPreference listPreference4 = (ListPreference) screens.get(4).findPreference("revanced_pref_video_quality_wifi");
             setListPreferenceData(listPreference4, true);
 
             listPreference4.setOnPreferenceClickListener(preference -> {
@@ -235,7 +238,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 return false;
             });
 
-            final ListPreference listPreference5 = (ListPreference) screens.get(3).findPreference("revanced_pref_video_quality_mobile");
+            final ListPreference listPreference5 = (ListPreference) screens.get(4).findPreference("revanced_pref_video_quality_mobile");
             setListPreferenceData(listPreference5, false);
 
             listPreference5.setOnPreferenceClickListener(preference -> {
@@ -243,12 +246,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 return false;
             });
 
-            final EditTextPreference editTextPreference = (EditTextPreference) screens.get(3).findPreference("revanced_downloads_package_name");
+            final EditTextPreference editTextPreference = (EditTextPreference) screens.get(5).findPreference("revanced_downloads_package_name");
             editTextPreference.setSummary(editTextPreference.getText());
 
             for (int i = 0; i < DownloaderNameList.length ; i++) {
                 int tempint = i;
-                Preference tmp = (Preference) screens.get(3).findPreference(DownloaderNameList[tempint]);
+                Preference tmp = (Preference) screens.get(5).findPreference(DownloaderNameList[tempint]);
                 tmp.setOnPreferenceClickListener(preference -> {
                     setDownloaderPreferenceDialog(editTextPreference, tempint);
                     return false;
@@ -311,9 +314,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             // if the version is newer than v17.32.39 (1531051456) & older than v17.38.32 (1531823552) -> true
             boolean hasrotationissue = (ReVancedSettingsFragment.getVersionCode() > 1531051456) && (ReVancedSettingsFragment.getVersionCode() < 1531823552);
             SwitchPreference switchPreference = (SwitchPreference) findPreferenceOnScreen("revanced_fullscreen_rotation");
-            this.miscPreferenceScreen.removePreference(this.Rotation);
+            this.extendedPreferenceScreen.removePreference(this.Rotation);
             if (hasrotationissue) {
-                this.miscPreferenceScreen.addPreference(this.Rotation);
+                this.extendedPreferenceScreen.addPreference(this.Rotation);
                 switchPreference.setEnabled(hasrotationissue);
             } else if (!hasrotationissue) {
                 SettingsEnum.FULLSCREEN_ROTATION.saveValue(false);
@@ -342,10 +345,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             if (!after29) {
                 SettingsEnum.DISABLE_NEWLAYOUT.saveValue(false);
                 SettingsEnum.RYD_NEWLAYOUT.saveValue(false);
-                this.miscPreferenceScreen.removePreference(this.OldLayout);
-                this.miscPreferenceScreen.removePreference(this.RydNewLayout);
-                this.miscPreferenceScreen.removePreference(this.ExperimentalFlag);
-                this.miscPreferenceScreen.removePreference(this.Rotation);
+                this.extendedPreferenceScreen.removePreference(this.OldLayout);
+                this.extendedPreferenceScreen.removePreference(this.RydNewLayout);
+                this.extendedPreferenceScreen.removePreference(this.ExperimentalFlag);
+                this.extendedPreferenceScreen.removePreference(this.Rotation);
                 return;
             }
             if (oldlayout) {
@@ -491,7 +494,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         SharedPreferences sharedPreferences = context.getSharedPreferences("youtube", 0);
         boolean old = sharedPreferences.getBoolean(path, false);
         sharedPreferences.edit().putBoolean(path, !old);
-        SwitchPreference switchpref = (SwitchPreference) this.miscPreferenceScreen.findPreference(path);
+        SwitchPreference switchpref = (SwitchPreference) this.extendedPreferenceScreen.findPreference(path);
         switchpref.setChecked(!old);
     }
 

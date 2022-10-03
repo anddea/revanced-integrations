@@ -14,17 +14,6 @@ import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 public enum SettingsEnum {
-    //Download Settings
-    // TODO: DOWNLOAD_PATH("revanced_download_path", Environment.getExternalStorageDirectory().getPath() + "/Download", ReturnType.STRING),
-    DOWNLOADS_BUTTON_SHOWN("revanced_downloads", true, ReturnType.BOOLEAN, true),
-    DOWNLOADS_PACKAGE_NAME("revanced_downloads_package_name", StringRef.str("revanced_default_downloader"), ReturnType.STRING),
-
-    //Video Settings
-    OLD_STYLE_QUALITY_SETTINGS("revanced_use_old_style_quality_settings", true, ReturnType.BOOLEAN),
-    PREFERRED_VIDEO_SPEED("revanced_pref_video_speed", -2.0f, ReturnType.FLOAT),
-    PREFERRED_VIDEO_QUALITY_WIFI("revanced_pref_video_quality_wifi", -2, ReturnType.INTEGER),
-    PREFERRED_VIDEO_QUALITY_MOBILE("revanced_pref_video_quality_mobile", -2, ReturnType.INTEGER),
-
     //Whitelist Settings
     //ToDo: Not used atm, Patch missing
     ENABLE_WHITELIST("revanced_whitelist_ads_enabled", false, ReturnType.BOOLEAN),
@@ -50,36 +39,45 @@ public enum SettingsEnum {
     ADREMOVER_HIDE_CHANNEL_GUIDELINES("revanced_adremover_hide_channel_guidelines", true, ReturnType.BOOLEAN, true),
 
     //Layout settings
+    OLD_STYLE_QUALITY_SETTINGS("revanced_use_old_style_quality_settings", true, ReturnType.BOOLEAN),
     REEL_BUTTON_SHOWN("revanced_reel_button_enabled", false, ReturnType.BOOLEAN, true),
     INFO_CARDS_SHOWN("revanced_info_cards_enabled", true, ReturnType.BOOLEAN, true),
     SUGGESTIONS_SHOWN("revanced_info_card_suggestions_enabled", true, ReturnType.BOOLEAN, true),
     BRANDING_SHOWN("revanced_branding_watermark_enabled", false, ReturnType.BOOLEAN),
     CAST_BUTTON_SHOWN("revanced_cast_button_enabled", false, ReturnType.BOOLEAN, true),
     AUTOPLAY_BUTTON_SHOWN("revanced_autoplay_button_enabled", false, ReturnType.BOOLEAN, true),
-
-    //ToDo: Not used atm, Patch missing
-    USE_TABLET_MINIPLAYER("revanced_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
     CREATE_BUTTON_ENABLED("revanced_create_button_enabled", false, ReturnType.BOOLEAN, true),
-    WIDE_SEARCHBAR("revanced_wide_searchbar", false, ReturnType.BOOLEAN, true),
     SHORTS_BUTTON_SHOWN("revanced_shorts_button_enabled", false, ReturnType.BOOLEAN, true),
+    WIDE_SEARCHBAR("revanced_wide_searchbar", false, ReturnType.BOOLEAN, true),
+    USE_TABLET_MINIPLAYER("revanced_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
+    CAPTIONS_ENABLED("revanced_autocaptions_enabled", false, ReturnType.BOOLEAN, true),
     PLAYER_POPUP_PANELS("revanced_player_popup_panels_enabled", false, ReturnType.BOOLEAN, true),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", false, ReturnType.BOOLEAN, true),
     DISABLE_STARTUP_SHORTS_PLAYER("revanced_startup_shorts_player_enabled", false, ReturnType.BOOLEAN),
 
-    //Misc. Settings
-    //ToDo: Not used atm, Patch missing
-    CAPTIONS_ENABLED("revanced_autocaptions_enabled", false, ReturnType.BOOLEAN, true),
-    PREFERRED_COPY_BUTTON("revanced_pref_copy_video_url_button", false, ReturnType.BOOLEAN),
-    PREFERRED_COPY_WITH_TIMESTAMP_BUTTON("revanced_pref_copy_video_url_timestamp_button", false, ReturnType.BOOLEAN),
-    PREFERRED_AUTO_REPEAT_BUTTON("revanced_pref_auto_repeat_button", false, ReturnType.BOOLEAN),
-    PREFERRED_AUTO_REPEAT("revanced_pref_auto_repeat", false, ReturnType.BOOLEAN, true),
+    //Misc Settings
     USE_HDR_AUTO_BRIGHTNESS("revanced_pref_hdr_autobrightness", false, ReturnType.BOOLEAN),
     TAP_SEEKING_ENABLED("revanced_enable_tap_seeking", true, ReturnType.BOOLEAN),
     ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
 
-    //Extended
+    //Video Settings
+    PREFERRED_VIDEO_SPEED("revanced_pref_video_speed", -2.0f, ReturnType.FLOAT),
+    PREFERRED_VIDEO_QUALITY_WIFI("revanced_pref_video_quality_wifi", -2, ReturnType.INTEGER),
+    PREFERRED_VIDEO_QUALITY_MOBILE("revanced_pref_video_quality_mobile", -2, ReturnType.INTEGER),
     CUSTOM_PLAYBACK_SPEED_ENABLED("revanced_pref_custom_playback_speed", false, ReturnType.BOOLEAN, true),
-    SAVE_VIDEO_QUALITY("revanced_pref_save_video_quality", true, ReturnType.BOOLEAN, true),
+    SAVE_VIDEO_QUALITY("revanced_pref_save_video_quality", true, ReturnType.BOOLEAN),
+
+    //Overlaybutton Settings
+    PREFERRED_COPY_BUTTON("revanced_pref_copy_video_url_button", false, ReturnType.BOOLEAN),
+    PREFERRED_COPY_WITH_TIMESTAMP_BUTTON("revanced_pref_copy_video_url_timestamp_button", false, ReturnType.BOOLEAN),
+    PREFERRED_AUTO_REPEAT_BUTTON("revanced_pref_auto_repeat_button", false, ReturnType.BOOLEAN),
+    PREFERRED_AUTO_REPEAT("revanced_pref_auto_repeat", false, ReturnType.BOOLEAN, true),
+    //Download Settings
+    // TODO: DOWNLOAD_PATH("revanced_download_path", Environment.getExternalStorageDirectory().getPath() + "/Download", ReturnType.STRING),
+    DOWNLOADS_BUTTON_SHOWN("revanced_downloads", true, ReturnType.BOOLEAN, true),
+    DOWNLOADS_PACKAGE_NAME("revanced_downloads_package_name", StringRef.str("revanced_default_downloader"), ReturnType.STRING),
+
+    //Extended
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
     IS_NEWLAYOUT("experimental_flags_is_new_layout", false, ReturnType.BOOLEAN, true),
