@@ -90,9 +90,9 @@ public class ReturnYouTubeDislike {
             SettingsEnum.IS_NEWLAYOUT.saveValue(false);
         } else if (layoutB) {
             SettingsEnum.IS_NEWLAYOUT.saveValue(true);
-		} else {
-			return;
-		}
+        } else {
+            return;
+        }
 
         if (!isEnabled || PlayerController.shorts_playing) return;
 
