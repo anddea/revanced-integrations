@@ -23,19 +23,19 @@ public class HideButtonContainerPatch {
         //Action Bar Buttons
         List<String> actionButtonsBlockList = new ArrayList<>();
 
-        if (SettingsEnum.HIDE_PLAYER_LIVE_CHAT_BUTTON.getBoolean()) {
+        if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_message_bubble_overlap");
         }
-        if (SettingsEnum.HIDE_PLAYER_REPORT_BUTTON.getBoolean()) {
+        if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_flag");
         }
-        if (SettingsEnum.HIDE_PLAYER_CREATE_SHORT_BUTTON.getBoolean()) {
+        if (SettingsEnum.HIDE_CREATE_SHORT_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_youtube_shorts_plus");
         }
-        if (SettingsEnum.HIDE_PLAYER_THANKS_BUTTON.getBoolean()) {
+        if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_dollar_sign_heart");
         }
-        if (SettingsEnum.HIDE_PLAYER_CREATE_CLIP_BUTTON.getBoolean()) {
+        if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_scissors");
         }
 
@@ -44,7 +44,7 @@ public class HideButtonContainerPatch {
             return true;
         }
 
-        if (SettingsEnum.HIDE_PLAYER_DOWNLOAD_BUTTON.getBoolean() &&
+        if (SettingsEnum.HIDE_DOWNLOAD_BUTTON.getBoolean() &&
             containsAny(inflatedTemplate, "ContainerType|ContainerType|download_button")) {
             return true;
         }
@@ -52,10 +52,10 @@ public class HideButtonContainerPatch {
         //Comments Teasers
         List<String> commentsTeaserBlockList = new ArrayList<>();
 
-        if (SettingsEnum.HIDE_PLAYER_SPOILER_COMMENT.getBoolean()) {
+        if (SettingsEnum.HIDE_SPOILER_COMMENT.getBoolean()) {
             commentsTeaserBlockList.add("ContainerType|comments_entry_point_teaser");
         }
-        if (SettingsEnum.HIDE_PLAYER_EXTERNAL_COMMENT_BOX.getBoolean()) {
+        if (SettingsEnum.HIDE_EXTERNAL_COMMENT_BOX.getBoolean()) {
             commentsTeaserBlockList.add("ContainerType|comments_entry_point_simplebox");
         }
 
