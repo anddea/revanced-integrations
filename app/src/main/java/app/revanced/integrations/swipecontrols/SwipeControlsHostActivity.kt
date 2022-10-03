@@ -1,7 +1,6 @@
 package app.revanced.integrations.swipecontrols
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -11,9 +10,8 @@ import app.revanced.integrations.swipecontrols.controller.AudioVolumeController
 import app.revanced.integrations.swipecontrols.controller.ScreenBrightnessController
 import app.revanced.integrations.swipecontrols.controller.SwipeZonesController
 import app.revanced.integrations.swipecontrols.controller.VolumeKeysController
-import app.revanced.integrations.swipecontrols.controller.gesture.ClassicSwipeController
-import app.revanced.integrations.swipecontrols.controller.gesture.PressToSwipeController
-import app.revanced.integrations.swipecontrols.controller.gesture.core.GestureController
+import app.revanced.integrations.swipecontrols.controller.gesture.NoPtSSwipeGestureController
+import app.revanced.integrations.swipecontrols.controller.gesture.SwipeGestureController
 import app.revanced.integrations.swipecontrols.misc.Rectangle
 import app.revanced.integrations.swipecontrols.views.SwipeControlsOverlayLayout
 import app.revanced.integrations.utils.LogHelper
@@ -54,7 +52,7 @@ class SwipeControlsHostActivity : Activity() {
     /**
      * main gesture controller
      */
-    private lateinit var gesture: GestureController
+    private lateinit var gesture: SwipeGestureController
 
     /**
      * main volume keys controller
@@ -69,66 +67,17 @@ class SwipeControlsHostActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initialize()
-    }
 
-    override fun onStart() {
-        super.onStart()
-        reAttachOverlays()
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        ensureInitialized()
-        return if ((ev != null) && gesture.submitTouchEvent(ev)) true else {
-            super.dispatchTouchEvent(ev)
-        }
-    }
-
-    override fun dispatchKeyEvent(ev: KeyEvent?): Boolean {
-        ensureInitialized()
-        return if ((ev != null) && keys.onKeyEvent(ev)) true else {
-            super.dispatchKeyEvent(ev)
-        }
-    }
-
-    /**
-     * dispatch a touch event to downstream views
-     *
-     * @param event the event to dispatch
-     * @return was the event consumed?
-     */
-    fun dispatchDownstreamTouchEvent(event: MotionEvent) =
-        super.dispatchTouchEvent(event)
-
-    /**
-     * ensures that swipe controllers are initialized and attached.
-     * on some ROMs with SDK <= 23, [onCreate] and [onStart] may not be called correctly.
-     * see https://github.com/revanced/revanced-patches/issues/446
-     */
-    private fun ensureInitialized() {
-        if (!this::config.isInitialized) {
-            LogHelper.printException(
-                this.javaClass,
-                "swipe controls were not initialized in onCreate, initializing on-the-fly (SDK is ${Build.VERSION.SDK_INT})"
-            )
-            initialize()
-            reAttachOverlays()
-        }
-    }
-
-    /**
-     * initializes controllers, only call once
-     */
-    private fun initialize() {
         // create controllers
         LogHelper.info(this.javaClass, "initializing swipe controls controllers")
         config = SwipeControlsConfigurationProvider(this)
+        gesture = createGestureController()
         keys = VolumeKeysController(this)
         audio = createAudioController()
         screen = createScreenController()
 
         // create overlay
-        SwipeControlsOverlayLayout(this, config).let {
+        SwipeControlsOverlayLayout(this).let {
             overlay = it
             contentRoot.addView(it)
         }
@@ -143,9 +92,6 @@ class SwipeControlsHostActivity : Activity() {
             )
         }
 
-        // create the gesture controller
-        gesture = createGestureController()
-
         // listen for changes in the player type
         PlayerType.onChange += this::onPlayerTypeChanged
 
@@ -153,14 +99,35 @@ class SwipeControlsHostActivity : Activity() {
         currentHost = WeakReference(this)
     }
 
-    /**
-     * (re) attaches swipe overlays
-     */
-    private fun reAttachOverlays() {
+    override fun onStart() {
+        super.onStart()
+
+        // (re) attach overlay
         LogHelper.info(this.javaClass, "attaching swipe controls overlay")
         contentRoot.removeView(overlay)
         contentRoot.addView(overlay)
     }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if ((ev != null) && gesture.onTouchEvent(ev)) true else {
+            super.dispatchTouchEvent(ev)
+        }
+    }
+
+    override fun dispatchKeyEvent(ev: KeyEvent?): Boolean {
+        return if((ev != null) && keys.onKeyEvent(ev)) true else {
+            super.dispatchKeyEvent(ev)
+        }
+    }
+
+    /**
+     * dispatch a touch event to downstream views
+     *
+     * @param event the event to dispatch
+     * @return was the event consumed?
+     */
+    fun dispatchDownstreamTouchEvent(event: MotionEvent) =
+        super.dispatchTouchEvent(event)
 
     /**
      * called when the player type changes
@@ -196,8 +163,8 @@ class SwipeControlsHostActivity : Activity() {
      */
     private fun createGestureController() =
         if (config.shouldEnablePressToSwipe)
-            PressToSwipeController(this)
-        else ClassicSwipeController(this)
+            SwipeGestureController(this)
+        else NoPtSSwipeGestureController(this)
 
     companion object {
         /**

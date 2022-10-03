@@ -124,7 +124,7 @@ class SwipeControlsOverlayLayout(
     }
 
     override fun onBrightnessChanged(brightness: Double) {
-        if (brightness > 0) {
+        if (brightness >= 0) {
             showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
         } else {
             showFeedbackView(str("quality_auto"), autoBrightnessIcon)
