@@ -33,12 +33,6 @@ class SwipeControlsConfigurationProvider(
         get() = SettingsEnum.ENABLE_SWIPE_BRIGHTNESS.boolean
 
     /**
-     * should swipe control for auto-brightness be enabled?
-     */
-    val enableAutoBrightnessControl: Boolean
-        get() = SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.boolean
-
-    /**
      * is the video player currently in fullscreen mode?
      */
     private val isFullscreenVideo: Boolean
