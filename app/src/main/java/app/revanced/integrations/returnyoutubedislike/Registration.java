@@ -34,7 +34,7 @@ public class Registration {
         }
 
         try {
-            int maxCount = (int) (Math.pow(2, difficulty + 1) * 5);
+            int maxCount = (int) (Math.pow(2, difficulty + 1) * 3);
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             for (int i = 0; i < maxCount; i++) {
                 buffer[0] = (byte) i;
