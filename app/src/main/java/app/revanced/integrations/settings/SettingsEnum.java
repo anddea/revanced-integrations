@@ -79,6 +79,7 @@ public enum SettingsEnum {
     DOWNLOADS_PACKAGE_NAME("revanced_downloads_package_name", StringRef.str("revanced_default_downloader"), ReturnType.STRING),
 
     //Extended
+    DONATION_COMPANION_SHOWN("revanced_donation_companion", true, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
     IS_NEWLAYOUT("experimental_flags_is_new_layout", false, ReturnType.BOOLEAN, true),
