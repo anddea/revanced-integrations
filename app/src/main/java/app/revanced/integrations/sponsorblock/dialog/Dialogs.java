@@ -55,7 +55,7 @@ public class Dialogs {
 
         // Set learn more action (set here so clicking it doesn't dismiss the dialog)
         dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            Uri uri = Uri.parse("https://t.me/revanced_mod_archive/111");
+            Uri uri = Uri.parse("https://t.me/revanced_extended/111");
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             activity.startActivity(intent);
         });
