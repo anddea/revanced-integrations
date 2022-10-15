@@ -145,6 +145,7 @@ class GeneralBytecodeAdsPatch extends Filter {
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTECT_REMOVAL, "paid_content_overlay");
         var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE_REMOVAL, "product_carousel");
         var shorts = new BlockRule(SettingsEnum.ADREMOVER_SHORTS_SHELF_REMOVAL, "shorts_shelf");
+        var image = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF_REMOVAL, "image_shelf");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL_REMOVAL, "publisher_transparency_panel", "single_item_information_panel");
         var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS_REMOVAL, "horizontal_video_shelf");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_HIDE_LATEST_POSTS, "post_shelf");
@@ -176,6 +177,7 @@ class GeneralBytecodeAdsPatch extends Filter {
                 communityPosts,
                 paidContent,
                 shorts,
+                image,
                 suggestions,
                 latestPosts,
                 movieAds,

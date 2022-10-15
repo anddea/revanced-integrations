@@ -30,6 +30,7 @@ public enum SettingsEnum {
     ADREMOVER_MOVIE_REMOVAL("revanced_adremover_movie", true, ReturnType.BOOLEAN),
     ADREMOVER_FEED_SURVEY_REMOVAL("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
     ADREMOVER_SHORTS_SHELF_REMOVAL("revanced_adremover_shorts_shelf", true, ReturnType.BOOLEAN),
+    ADREMOVER_IMAGE_SHELF_REMOVAL("revanced_adremover_image_shelf", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_GUIDELINES_REMOVAL("revanced_adremover_community_guidelines", true, ReturnType.BOOLEAN),
     ADREMOVER_EMERGENCY_BOX_REMOVAL("revanced_adremover_emergency_box_removal", true, ReturnType.BOOLEAN),
     ADREMOVER_INFO_PANEL_REMOVAL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN),
@@ -47,7 +48,7 @@ public enum SettingsEnum {
     BRANDING_SHOWN("revanced_branding_watermark_enabled", false, ReturnType.BOOLEAN),
     CAST_BUTTON_SHOWN("revanced_cast_button_enabled", false, ReturnType.BOOLEAN, true),
     AUTOPLAY_BUTTON_SHOWN("revanced_autoplay_button_enabled", false, ReturnType.BOOLEAN, true),
-    CAPTIONS_BUTTON_SHOWN("revanced_captions_button_enabled", true, ReturnType.BOOLEAN, true),
+    CAPTIONS_BUTTON_SHOWN("revanced_captions_button_enabled", true, ReturnType.BOOLEAN),
     CREATE_BUTTON_ENABLED("revanced_create_button_enabled", false, ReturnType.BOOLEAN, true),
     SHORTS_BUTTON_SHOWN("revanced_shorts_button_enabled", false, ReturnType.BOOLEAN, true),
     WIDE_SEARCHBAR("revanced_wide_searchbar", false, ReturnType.BOOLEAN, true),
@@ -86,6 +87,7 @@ public enum SettingsEnum {
     IS_NEWLAYOUT("experimental_flags_is_new_layout", false, ReturnType.BOOLEAN, true),
 	
     //Experimental Flags
+    MY_MIX_SHOWN("revanced_my_mix", false, ReturnType.BOOLEAN, true),
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     DISABLE_NEWLAYOUT("revanced_disable_new_layout", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     FULLSCREEN_ROTATION("revanced_fullscreen_rotation", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_fullscreen"),
