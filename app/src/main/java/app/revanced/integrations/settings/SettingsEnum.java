@@ -81,7 +81,7 @@ public enum SettingsEnum {
     DOWNLOADS_PACKAGE_NAME("revanced_downloads_package_name", StringRef.str("revanced_default_downloader"), ReturnType.STRING),
 
     //Extended
-    MY_MIX_SHOWN("revanced_my_mix", false, ReturnType.BOOLEAN, true),
+    MY_MIX_SHOWN("revanced_my_mix", true, ReturnType.BOOLEAN, true),
     DONATION_COMPANION_SHOWN("revanced_donation_companion", true, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
