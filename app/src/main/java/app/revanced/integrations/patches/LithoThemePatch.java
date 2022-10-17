@@ -3,15 +3,29 @@ package app.revanced.integrations.patches;
 import app.revanced.integrations.utils.ThemeHelper;
 
 public class LithoThemePatch {
-    //Used by app.revanced.patches.youtube.layout.theme.patch.LithoThemePatch
+    // color constants used in relation with litho components
+    private static final int[] WHITECONSTANTS = {
+        -1, // comments chip background
+        -394759, // music related results panel background
+        -83886081, // video chapters list background
+    };
+    private static final int[] DARKCONSTANTS = {
+        -14606047, // comments chip background
+        -15198184, // music related results panel background
+        -15790321, // comments chip background (new layout)
+        -98492127 // video chapters list background
+    };
+
+    // Used by app.revanced.patches.youtube.layout.theme.patch.LithoThemePatch
     public static int applyLithoTheme(int originalValue) {
-        int[] ColorList = {-14606047, -15198184, -15790321, -98492127};
-
-        if (!ThemeHelper.isDarkTheme() && originalValue == -1) return 0;
-        for (int i = 0; i < ColorList.length ; i++) {
-            if (ColorList[i] == originalValue) return 0;
-        }
-
+        if ((!ThemeHelper.isDarkTheme() && anyEquals(originalValue, WHITECONSTANTS)) ||
+            (ThemeHelper.isDarkTheme() && anyEquals(originalValue, DARKCONSTANTS)))
+                return 0;
         return originalValue;
+    }
+
+    private static boolean anyEquals(int value, int... of) {
+        for (int v : of) if (value == v) return true;
+        return false;
     }
 }
