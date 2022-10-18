@@ -21,30 +21,32 @@ public class HideButtonContainerPatch {
         String readableBuffer = new String(buffer.array(), StandardCharsets.UTF_8);
 
         //Action Bar Buttons
-        List<String> actionButtonsBlockList = new ArrayList<>();
+        List<byte[]> actionButtonsBlockList = new ArrayList<>();
 
         if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
-            actionButtonsBlockList.add("yt_outline_share");
+            actionButtonsBlockList.add("yt_outline_share".getBytes());
         }
         if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
-            actionButtonsBlockList.add("yt_outline_message_bubble_overlap");
+            actionButtonsBlockList.add("yt_outline_message_bubble_overlap".getBytes());
         }
         if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
-            actionButtonsBlockList.add("yt_outline_flag");
+            actionButtonsBlockList.add("yt_outline_flag".getBytes());
         }
         if (SettingsEnum.HIDE_CREATE_SHORT_BUTTON.getBoolean()) {
-            actionButtonsBlockList.add("yt_outline_youtube_shorts_plus");
+            actionButtonsBlockList.add("yt_outline_youtube_shorts_plus".getBytes());
         }
         if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean()) {
-            actionButtonsBlockList.add("yt_outline_dollar_sign_heart");
+            actionButtonsBlockList.add("yt_outline_dollar_sign_heart".getBytes());
         }
         if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
-            actionButtonsBlockList.add("yt_outline_scissors");
+            actionButtonsBlockList.add("yt_outline_scissors".getBytes());
         }
 
-        if (!SettingsEnum.IS_NEWLAYOUT.getBoolean() && containsAny(inflatedTemplate, "ContainerType|ContainerType|video_action_button") &&
-            anyMatch(actionButtonsBlockList, readableBuffer::contains)) {
-            return true;
+        if (containsAny(inflatedTemplate, "video_action_button")) {
+            for (byte[] b: actionButtonsBlockList) {
+                int bufferIndex = indexOf(buffer.array(), b);
+                if (bufferIndex > 0 && bufferIndex < 2000) return true;
+            }
         }
 
         if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean() &&
@@ -59,33 +61,40 @@ public class HideButtonContainerPatch {
         }
 
         if (SettingsEnum.HIDE_DOWNLOAD_BUTTON.getBoolean() &&
-            containsAny(inflatedTemplate, "ContainerType|ContainerType|download_button")) {
+            containsAny(inflatedTemplate, "download_button")) {
             return true;
         }
 
         if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean() &&
-            containsAny(inflatedTemplate, "ContainerType|ContainerType|save_to_playlist_button")) {
+            containsAny(inflatedTemplate, "save_to_playlist_button")) {
             return true;
         }
 
-        if (SettingsEnum.MY_MIX_SHOWN.getBoolean() &&
-            containsAny(inflatedTemplate, "related_video_with_context") &&
-            indexOf(buffer.array(), "mix-watch".getBytes()) > 0) {
-            return true;
+        List<byte[]> genericBufferList = new ArrayList<>();
+
+        if (SettingsEnum.MY_MIX_SHOWN.getBoolean()) {
+            genericBufferList.add("for you".getBytes());
+            genericBufferList.add("mix-watch".getBytes());
         }
 
+        if (containsAny(inflatedTemplate, "related_video_with_context", "search_video_with_context")) {
+            for (byte[] b: genericBufferList) {
+                if (indexOf(buffer.array(), b) > 0) return true;
+            }
+        }
 
         //Comments Teasers
         List<String> commentsTeaserBlockList = new ArrayList<>();
 
         if (SettingsEnum.HIDE_SPOILER_COMMENT.getBoolean()) {
-            commentsTeaserBlockList.add("ContainerType|comments_entry_point_teaser");
+            commentsTeaserBlockList.add("comments_entry_point_teaser");
         }
         if (SettingsEnum.HIDE_EXTERNAL_COMMENT_BOX.getBoolean()) {
-            commentsTeaserBlockList.add("ContainerType|comments_entry_point_simplebox");
+            commentsTeaserBlockList.add("comments_entry_point_simplebox");
         }
 
-        if (anyMatch(commentsTeaserBlockList, inflatedTemplate::contains)) {
+        if (containsAny(inflatedTemplate, "ContainerType|carousel_item") &&
+            anyMatch(commentsTeaserBlockList, readableBuffer::contains)) {
             return true;
         }
 
