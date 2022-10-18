@@ -151,44 +151,44 @@ class GeneralBytecodeAdsPatch extends Filter {
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_HIDE_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var generalAds = new BlockRule(
-                SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL,
-                // could be required
-                //"full_width_square_image_layout",
-                "video_display_full_buttoned_layout",
-                "_ad",
-                "ad_",
-                "ads_video_with_context",
-                "cell_divider",
-                "reels_player_overlay",
-                "shelf_header",
-                "watch_metadata_app_promo",
-                "video_display_full_layout"
+            SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL,
+            // could be required
+            //"full_width_square_image_layout",
+            "video_display_full_buttoned_layout",
+            "_ad",
+            "ad_",
+            "ads_video_with_context",
+            "cell_divider",
+            "reels_player_overlay",
+            "shelf_header",
+            "watch_metadata_app_promo",
+            "video_display_full_layout"
         );
         var movieAds = new BlockRule(
-                SettingsEnum.ADREMOVER_MOVIE_REMOVAL,
-                "browsy_bar",
-                "compact_movie",
-                "horizontal_movie_shelf",
-                "movie_and_show_upsell_card"
+            SettingsEnum.ADREMOVER_MOVIE_REMOVAL,
+            "browsy_bar",
+            "compact_movie",
+            "horizontal_movie_shelf",
+            "movie_and_show_upsell_card"
         );
 
         this.register.registerAll(
-                generalAds,
-                communityPosts,
-                paidContent,
-                shorts,
-                image,
-                suggestions,
-                latestPosts,
-                movieAds,
-                comments,
-                communityGuidelines,
-                compactBanner,
-                inFeedSurvey,
-                medicalPanel,
-                merchandise,
-                infoPanel,
-                channelGuidelines
+            generalAds,
+            communityPosts,
+            paidContent,
+            shorts,
+            image,
+            suggestions,
+            latestPosts,
+            movieAds,
+            comments,
+            communityGuidelines,
+            compactBanner,
+            inFeedSurvey,
+            medicalPanel,
+            merchandise,
+            infoPanel,
+            channelGuidelines
         );
 
         // Block for the ComponentContext.identifier field
@@ -198,16 +198,16 @@ class GeneralBytecodeAdsPatch extends Filter {
     public boolean filter(final String path, final String identifier) {
         // Do not block on these
         if (Extensions.containsAny(path,
-                "home_video_with_context",
-                "related_video_with_context",
-                "search_video_with_context",
-                "download_",
-                "library_recent_shelf",
-                "menu",
-                "root",
-                "-count",
-                "-space",
-                "-button"
+            "home_video_with_context",
+            "related_video_with_context",
+            "search_video_with_context",
+            "download_",
+            "library_recent_shelf",
+            "menu",
+            "root",
+            "-count",
+            "-space",
+            "-button"
         )) return false;
 
         for (var rule : register) {
