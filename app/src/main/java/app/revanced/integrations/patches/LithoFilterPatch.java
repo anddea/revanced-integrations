@@ -136,7 +136,7 @@ class GeneralBytecodeAdsPatch extends Filter {
     private final BlockRule identifierBlock;
 
     public GeneralBytecodeAdsPatch() {
-        var comments = new BlockRule(SettingsEnum.ADREMOVER_COMMENTS_REMOVAL, "comments_");
+        var comments = new BlockRule(SettingsEnum.ADREMOVER_COMMENTS_REMOVAL, "comments_", "video_metadata_carousel");
         var communityPosts = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_POSTS_REMOVAL, "post_base_wrapper");
         var communityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_GUIDELINES_REMOVAL, "community_guidelines");
         var compactBanner = new BlockRule(SettingsEnum.ADREMOVER_COMPACT_BANNER_REMOVAL, "compact_banner");
