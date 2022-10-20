@@ -89,7 +89,7 @@ public enum SettingsEnum {
     IS_NEWLAYOUT("experimental_flags_is_new_layout", false, ReturnType.BOOLEAN, true),
 	
     //Experimental Flags
-    FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", false, ReturnType.BOOLEAN, true),
+    FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", true, ReturnType.BOOLEAN, true),
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     DISABLE_NEWLAYOUT("revanced_disable_new_layout", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     FULLSCREEN_ROTATION("revanced_fullscreen_rotation", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_fullscreen"),
@@ -110,7 +110,7 @@ public enum SettingsEnum {
     HIDE_EXTERNAL_COMMENT_BOX("revanced_hide_external_comment_box", false, ReturnType.BOOLEAN),
 
     //Swipe controls
-    ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", true, ReturnType.BOOLEAN),
+    ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", false, ReturnType.BOOLEAN),
     ENABLE_SWIPE_BRIGHTNESS("revanced_enable_swipe_brightness", true, ReturnType.BOOLEAN),
     ENABLE_SWIPE_VOLUME("revanced_enable_swipe_volume", true, ReturnType.BOOLEAN),
     ENABLE_PRESS_TO_SWIPE("revanced_enable_press_to_swipe", false, ReturnType.BOOLEAN),
