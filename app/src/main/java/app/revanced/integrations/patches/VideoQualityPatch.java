@@ -136,7 +136,7 @@ public class VideoQualityPatch {
             LogHelper.debug(VideoQualityPatch.class, "Quality changed to: " + qualityIndex);
             if (qualityIndex == -2) {
                 newVideo = true;
-			}
+        	}
             return qualityIndex;
         } catch (Exception ex) {
             LogHelper.printException(VideoQualityPatch.class, "Failed to set quality", ex);

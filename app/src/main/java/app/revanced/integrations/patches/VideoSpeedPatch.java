@@ -25,7 +25,7 @@ public class VideoSpeedPatch {
         }
         newVideo = false;
         LogHelper.debug(VideoSpeedPatch.class, "Speed: " + speed);
-		float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", -2.0f);
+        float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", -2.0f);
         LogHelper.debug(VideoSpeedPatch.class, "Preferred speed: " + preferredSpeed);
         if (preferredSpeed == -2.0f) {
             return speed;
@@ -110,9 +110,9 @@ public class VideoSpeedPatch {
             userChangedSpeed = false;
             return -1.0f;
         }
-		newVideo = false;
+        newVideo = false;
         LogHelper.debug(VideoSpeedPatch.class, "Speed: " + speed);
-		float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", -2.0f);
+        float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", -2.0f);
         LogHelper.debug(VideoSpeedPatch.class, "Preferred speed: " + preferredSpeed);
         if (preferredSpeed == -2.0f) {
             return -1.0f;
