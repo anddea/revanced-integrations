@@ -13,7 +13,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
@@ -62,11 +61,11 @@ public class ReturnYouTubeDislike {
     }
 
     public static void newVideoLoaded(String videoId) {
+        if (!isEnabled || videoId == null) return;
         LogHelper.debug(ReturnYouTubeDislike.class, "newVideoLoaded - " + videoId);
 
         likeCount = null;
         dislikeCount = null;
-        if (!isEnabled || PlayerController.shorts_playing) return;
 
         try {
             if (_dislikeFetchThread != null && _dislikeFetchThread.getState() != Thread.State.TERMINATED) {
@@ -94,7 +93,7 @@ public class ReturnYouTubeDislike {
             return;
         }
 
-        if (!isEnabled || PlayerController.shorts_playing) return;
+        if (!isEnabled) return;
 
         try {
             // Contains a pathBuilder string, used to distinguish from other litho components:
@@ -123,7 +122,7 @@ public class ReturnYouTubeDislike {
     }
 
     public static void sendVote(int vote) {
-        if (!isEnabled || PlayerController.shorts_playing) return;
+        if (!isEnabled) return;
 
         Context context = ReVancedUtils.getContext();
         if (SharedPrefHelper.getBoolean(Objects.requireNonNull(context), SharedPrefHelper.SharedPrefNames.YOUTUBE, "user_signed_out", true))

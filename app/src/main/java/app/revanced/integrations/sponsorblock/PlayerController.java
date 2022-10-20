@@ -48,7 +48,7 @@ public class PlayerController {
     private static float sponsorBarRight = 1f;
     private static float sponsorBarThickness = 2f;
     private static TimerTask skipSponsorTask = null;
-    public static boolean shorts_playing = false;
+    //public static Boolean shorts_playing = false;
 
     public static String getCurrentVideoId() {
         return currentVideoId;
@@ -61,6 +61,12 @@ public class PlayerController {
             return;
         }
 
+        if (videoId.equals(currentVideoId)) return;
+
+        //shorts_playing = videoId.equals(VideoInformation.currentVideoId);
+
+        //if (shorts_playing && !SettingsEnum.SB_ENABLED_SHORTS.getBoolean()) return;
+
         Context context = ReVancedUtils.getContext();
         SponsorBlockSettings.update(context);
 
@@ -68,9 +74,6 @@ public class PlayerController {
             currentVideoId = null;
             return;
         }
-
-        if (videoId.equals(currentVideoId))
-            return;
 
         currentVideoId = videoId;
         sponsorSegmentsOfCurrentVideo = null;
@@ -116,7 +119,7 @@ public class PlayerController {
     public static void executeDownloadSegments(String videoId) {
         videoHasSegments = false;
         timeWithoutSegments = "";
-        if (Whitelist.isChannelSBWhitelisted() || shorts_playing)
+        if (Whitelist.isChannelSBWhitelisted())
             return;
         SponsorSegment[] segments = SBRequester.getSegments(videoId);
         Arrays.sort(segments);

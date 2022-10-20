@@ -71,6 +71,31 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment implements 
             });
         }
 
+        /*
+        {
+            SwitchPreference preference = new SwitchPreference(context);
+            preferenceScreen.addPreference(preference);
+            preference.setKey(SettingsEnum.SB_ENABLED_SHORTS.getPath());
+            preference.setDefaultValue(SettingsEnum.SB_ENABLED_SHORTS.getDefaultValue());
+            preference.setChecked(SettingsEnum.SB_ENABLED_SHORTS.getBoolean());
+            preference.setTitle(str("enable_sb_shorts"));
+            preference.setSummary(str("enable_sb_shorts_sum"));
+            preferencesToDisableWhenSBDisabled.add(preference);
+            preference.setOnPreferenceChangeListener((preference12, o) -> {
+                final boolean value = (Boolean) o;
+                if (value && !SettingsEnum.SB_SEEN_EXPERIMENTAL_HINT.getBoolean()) {
+                    new AlertDialog.Builder(preference12.getContext())
+                            .setTitle(str("enable_sb_shorts"))
+                            .setMessage(str("enable_sb_shorts_content"))
+                            .setNegativeButton(str("playback_control_close"), null)
+                            .setNeutralButton(str("sb_shorts_example_video"), (dialogInterface, i) -> openExampleVideo())
+                            .show();
+                }
+                SettingsEnum.SB_ENABLED_SHORTS.saveValue(value);
+                return true;
+            });
+        }
+        */
         // Clear hint
         if (SettingsEnum.DEBUG.getBoolean()) {
             SwitchPreference preference = new SwitchPreference(context);
@@ -140,6 +165,17 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment implements 
         intent.setData(Uri.parse("https://wiki.sponsor.ajay.app/w/Guidelines"));
         context.startActivity(intent);
     }
+
+    /*
+    private void openExampleVideo() {
+        final Context context = getActivity();
+        //SettingsEnum.SB_SEEN_EXPERIMENTAL_HINT.saveValue(true);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://youtube.com/shorts/3WouYgzxbN8"));
+        context.startActivity(intent);
+    }
+    */
 
     private void enableCategoriesIfNeeded(boolean value) {
         for (Preference preference : preferencesToDisableWhenSBDisabled)
