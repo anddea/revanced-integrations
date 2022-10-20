@@ -129,7 +129,7 @@ class SwipeControlsOverlayLayout(
             if (brightness >= 0) {
                 showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
             } else {
-                showFeedbackView(str("quality_auto"), autoBrightnessIcon)
+                showFeedbackView("${round(0.0).toInt()}%", manualBrightnessIcon)
             }
         } else {
             if (brightness > 0) {

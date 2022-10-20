@@ -49,10 +49,11 @@ abstract class BaseGestureController(
 
         // check if we should drop this motion
         val dropped = shouldDropMotion(me)
+        /*
         if (dropped) {
             me.action = MotionEvent.ACTION_CANCEL
         }
-
+        */
         // send the event to the detector
         // if we force intercept events, the event is always consumed
         val consumed = detector.onTouchEvent(me) || shouldForceInterceptEvents
