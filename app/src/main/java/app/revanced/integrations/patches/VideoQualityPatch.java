@@ -34,6 +34,7 @@ public class VideoQualityPatch {
         if (isConnectedWifi(context)) {
             try {
                 SettingsEnum.PREFERRED_VIDEO_QUALITY_WIFI.saveValue(defaultQuality);
+                SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_quality_wifi", defaultQuality + "");
             } catch (Exception ex) {
                 LogHelper.printException(VideoQualityPatch.class, "Failed to change default WI-FI quality" + ex);
                 Toast.makeText(context, str("revanced_video_quality_wifi_error"), Toast.LENGTH_SHORT).show();
@@ -43,6 +44,7 @@ public class VideoQualityPatch {
         } else if (isConnectedMobile(context)) {
             try {
                 SettingsEnum.PREFERRED_VIDEO_QUALITY_MOBILE.saveValue(defaultQuality);
+                SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_quality_mobile", defaultQuality + "");
             } catch (Exception ex) {
                 LogHelper.debug(VideoQualityPatch.class, "Failed to change default mobile data quality" + ex);
                 Toast.makeText(context, str("revanced_video_quality_mobile_error"), Toast.LENGTH_SHORT).show();
@@ -59,7 +61,7 @@ public class VideoQualityPatch {
     public static int setVideoQuality(Object[] qualities, int quality, Object qInterface, String qIndexMethod) {
         int preferredQuality;
         Field[] fields;
-        if (!(newVideo || userChangedQuality) || qInterface == null) {
+        if (!newVideo || qInterface == null) {
             return quality;
         }
         Class<?> intType = Integer.TYPE;
@@ -95,13 +97,14 @@ public class VideoQualityPatch {
         Context context = ReVancedUtils.getContext();
         if (context == null) {
             LogHelper.printException(VideoQualityPatch.class, "Context is null or settings not initialized, returning quality: " + quality);
+            newVideo = true;
             return quality;
         }
         if (isConnectedWifi(context)) {
-            preferredQuality = SettingsEnum.PREFERRED_VIDEO_QUALITY_WIFI.getInt();
+            preferredQuality = SharedPrefHelper.getInt(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_quality_wifi", -2);
             LogHelper.debug(VideoQualityPatch.class, "Wi-Fi connection detected, preferred quality: " + preferredQuality);
         } else if (isConnectedMobile(context)) {
-            preferredQuality = SettingsEnum.PREFERRED_VIDEO_QUALITY_MOBILE.getInt();
+            preferredQuality = SharedPrefHelper.getInt(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_quality_mobile", -2);
             LogHelper.debug(VideoQualityPatch.class, "Mobile data connection detected, preferred quality: " + preferredQuality);
         } else {
             LogHelper.debug(VideoQualityPatch.class, "No Internet connection!");
@@ -131,6 +134,9 @@ public class VideoQualityPatch {
             LogHelper.debug(VideoQualityPatch.class, "Method is: " + qIndexMethod);
             m.invoke(qInterface, iStreamQualities.get(qualityIndex));
             LogHelper.debug(VideoQualityPatch.class, "Quality changed to: " + qualityIndex);
+            if (qualityIndex == -2) {
+                newVideo = true;
+			}
             return qualityIndex;
         } catch (Exception ex) {
             LogHelper.printException(VideoQualityPatch.class, "Failed to set quality", ex);
@@ -145,6 +151,7 @@ public class VideoQualityPatch {
     }
 
     public static void newVideoStarted(String videoId) {
+        if (videoId == null) return;
         newVideo = true;
     }
 
