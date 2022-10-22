@@ -118,7 +118,7 @@ public class VideoSpeedPatch {
             return -1.0f;
         } else if (!SettingsEnum.CUSTOM_PLAYBACK_SPEED_ENABLED.getBoolean() && preferredSpeed >= 2.0f) {
             preferredSpeed = 2.0f;
-		}
+        }
         Class<?> floatType = Float.TYPE;
         ArrayList<Float> iStreamSpeeds = new ArrayList<>();
         try {
