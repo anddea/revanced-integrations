@@ -150,6 +150,7 @@ class GeneralBytecodeAdsPatch extends Filter {
         var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS_REMOVAL, "horizontal_video_shelf");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_HIDE_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
+        var musicContainer = new BlockRule(SettingsEnum.MUSIC_CONTAINER_SHOWN, "official_card");
         var generalAds = new BlockRule(
             SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL,
             // could be required
@@ -189,7 +190,8 @@ class GeneralBytecodeAdsPatch extends Filter {
             medicalPanel,
             merchandise,
             infoPanel,
-            channelGuidelines
+            channelGuidelines,
+            musicContainer
         );
 
         // Block for the ComponentContext.identifier field

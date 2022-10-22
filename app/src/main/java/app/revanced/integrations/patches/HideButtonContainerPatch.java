@@ -72,7 +72,7 @@ public class HideButtonContainerPatch {
 
         List<byte[]> genericBufferList = new ArrayList<>();
 
-        if (SettingsEnum.MY_MIX_SHOWN.getBoolean()) {
+        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean()) {
             genericBufferList.add("for you".getBytes());
             genericBufferList.add("mix-watch".getBytes());
         }

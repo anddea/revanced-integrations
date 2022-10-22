@@ -5,10 +5,10 @@ import android.view.View;
 import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.settings.SettingsEnum;
 
-public class HideMyMixPatch {
+public class HideMusicContainerPatch {
 
-    public static void HideMyMix(View view) {
-        if (SettingsEnum.MY_MIX_SHOWN.getBoolean()) {
+    public static void hideMusicContainer(View view) {
+        if (SettingsEnum.MUSIC_CONTAINER_SHOWN.getBoolean()) {
             AdRemoverAPI.HideViewWithLayout1dp(view);
         }
     }
