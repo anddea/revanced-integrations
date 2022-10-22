@@ -116,7 +116,9 @@ public class VideoSpeedPatch {
         LogHelper.debug(VideoSpeedPatch.class, "Preferred speed: " + preferredSpeed);
         if (preferredSpeed == -2.0f) {
             return -1.0f;
-        }
+        } else if (!SettingsEnum.CUSTOM_PLAYBACK_SPEED_ENABLED.getBoolean() && preferredSpeed >= 2.0f) {
+            preferredSpeed = 2.0f;
+		}
         Class<?> floatType = Float.TYPE;
         ArrayList<Float> iStreamSpeeds = new ArrayList<>();
         try {
@@ -165,7 +167,8 @@ public class VideoSpeedPatch {
             return -1.0f;
         }
         LogHelper.debug(VideoSpeedPatch.class, "Speed changed to: " + newSpeedIndex);
-        return getSpeedByIndex(newSpeedIndex);
+        return preferredSpeed;
+        //return getSpeedByIndex(newSpeedIndex);
     }
 
     private static float getSpeedByIndex(int index) {
