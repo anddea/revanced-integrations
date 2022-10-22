@@ -103,7 +103,7 @@ public class VideoSpeedPatch {
 
     public static float getSpeedValue(Object[] speeds, int speed) {
         int i = 0;
-        if (!newVideo || userChangedSpeed) {
+        if (!(newVideo || userChangedSpeed)) {
             if (SettingsEnum.DEBUG.getBoolean() && userChangedSpeed) {
                 LogHelper.debug(VideoSpeedPatch.class, "Skipping speed change because user changed it: " + speed);
             }

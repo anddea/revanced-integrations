@@ -128,10 +128,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                         String value = sharedPreferences.getString(setting.getPath(), setting.getDefaultValue() + "");
                         listPref.setDefaultValue(value);
                         if (SettingsEnum.CUSTOM_PLAYBACK_SPEED_ENABLED.getBoolean()) {
-							listPref.setSummary(videoSpeedEntries[listPref.findIndexOfValue(String.valueOf(value))]);
+                            listPref.setSummary(videoSpeedEntries[listPref.findIndexOfValue(String.valueOf(value))]);
                         } else {
-							listPref.setSummary(videoSpeedEntries2[listPref.findIndexOfValue(String.valueOf(value))]);
-						}
+                            listPref.setSummary(videoSpeedEntries2[listPref.findIndexOfValue(String.valueOf(value))]);
+                        }
                         SettingsEnum.PREFERRED_VIDEO_SPEED.saveValue(Float.parseFloat(value));
                         SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", value + "");
                         //rebootDialog_Warning2(getActivity());
