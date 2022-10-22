@@ -48,8 +48,9 @@ abstract class BaseGestureController(
         val me = MotionEvent.obtain(motionEvent)
 
         // check if we should drop this motion
-        val dropped = shouldDropMotion(me)
         /*
+        val dropped = shouldDropMotion(me)
+
         if (dropped) {
             me.action = MotionEvent.ACTION_CANCEL
         }
@@ -68,7 +69,7 @@ abstract class BaseGestureController(
 
         // do not consume dropped events
         // or events outside of any swipe zone
-        return !dropped && consumed && isInSwipeZone(me)
+        return consumed && isInSwipeZone(me)
     }
 
     /**
