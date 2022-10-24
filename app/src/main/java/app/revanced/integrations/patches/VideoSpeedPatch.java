@@ -25,7 +25,7 @@ public class VideoSpeedPatch {
         }
         newVideo = false;
         LogHelper.debug(VideoSpeedPatch.class, "Speed: " + speed);
-        float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", -2.0f);
+        float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_video_speed", -2.0f);
         LogHelper.debug(VideoSpeedPatch.class, "Preferred speed: " + preferredSpeed);
         if (preferredSpeed == -2.0f) {
             return speed;
@@ -97,13 +97,12 @@ public class VideoSpeedPatch {
     }
 
     public static void newVideoStarted(String videoId) {
-        if (videoId == null) return;
         newVideo = true;
     }
 
     public static float getSpeedValue(Object[] speeds, int speed) {
         int i = 0;
-        if (!(newVideo || userChangedSpeed)) {
+        if (!newVideo || userChangedSpeed) {
             if (SettingsEnum.DEBUG.getBoolean() && userChangedSpeed) {
                 LogHelper.debug(VideoSpeedPatch.class, "Skipping speed change because user changed it: " + speed);
             }
@@ -112,7 +111,7 @@ public class VideoSpeedPatch {
         }
         newVideo = false;
         LogHelper.debug(VideoSpeedPatch.class, "Speed: " + speed);
-        float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", -2.0f);
+        float preferredSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_video_speed", -2.0f);
         LogHelper.debug(VideoSpeedPatch.class, "Preferred speed: " + preferredSpeed);
         if (preferredSpeed == -2.0f) {
             return -1.0f;
@@ -157,30 +156,6 @@ public class VideoSpeedPatch {
                 LogHelper.debug(VideoSpeedPatch.class, "Speed loop at index " + newSpeedIndex + ": " + streamSpeed3);
             }
         }
-        if (newSpeedIndex == -1) {
-            LogHelper.debug(VideoSpeedPatch.class, "Speed was not found");
-            newSpeedIndex = 3;
-        }
-        if (newSpeedIndex == speed) {
-            LogHelper.debug(VideoSpeedPatch.class, "Trying to set speed to what it already is, skipping...: " + newSpeedIndex);
-            newVideo = true;
-            return -1.0f;
-        }
-        LogHelper.debug(VideoSpeedPatch.class, "Speed changed to: " + newSpeedIndex);
         return preferredSpeed;
-        //return getSpeedByIndex(newSpeedIndex);
-    }
-
-    private static float getSpeedByIndex(int index) {
-        if (index == -2) {
-            newVideo = true;
-            return 1.0f;
-        }
-        try {
-            return videoSpeeds[index];
-        } catch (Exception e) {
-            newVideo = true;
-            return 1.0f;
-        }
     }
 }

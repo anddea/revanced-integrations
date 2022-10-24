@@ -133,8 +133,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                             listPref.setSummary(videoSpeedEntries2[listPref.findIndexOfValue(String.valueOf(value))]);
                         }
                         SettingsEnum.PREFERRED_VIDEO_SPEED.saveValue(Float.parseFloat(value));
-                        SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_speed", value + "");
-                        //rebootDialog_Warning2(getActivity());
+                        SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_video_speed", value + "");
+                        //rebootDialog(getActivity());
                     } catch (Throwable th) {
                         LogHelper.printException(ReVancedSettingsFragment.class, "Error setting value of speed" + th);
                     }
@@ -144,11 +144,11 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
                 if (setting == SettingsEnum.PREFERRED_VIDEO_QUALITY_WIFI) {
                     try {
-                        String value = sharedPreferences.getString(setting.getPath(), setting.getDefaultValue() + "");
+                        String value = Integer.toString(SharedPrefHelper.getInt(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_video_quality_wifi", -2));
                         listPref.setDefaultValue(value);
                         listPref.setSummary(videoQualityEntries[listPref.findIndexOfValue(String.valueOf(value))]);
                         SettingsEnum.PREFERRED_VIDEO_QUALITY_WIFI.saveValue(Integer.parseInt(value));
-                        SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_quality_wifi", value + "");
+                        SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_video_quality_wifi", value + "");
                     } catch (Throwable th) {
                         LogHelper.printException(ReVancedSettingsFragment.class, "Error setting value of wifi quality" + th);
                     }
@@ -158,11 +158,11 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
                 if (setting == SettingsEnum.PREFERRED_VIDEO_QUALITY_MOBILE) {
                     try {
-                        String value = sharedPreferences.getString(setting.getPath(), setting.getDefaultValue() + "");
+                        String value = Integer.toString(SharedPrefHelper.getInt(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_video_quality_mobile", -2));
                         listPref.setDefaultValue(value);
                         listPref.setSummary(videoQualityEntries[listPref.findIndexOfValue(String.valueOf(value))]);
                         SettingsEnum.PREFERRED_VIDEO_QUALITY_MOBILE.saveValue(Integer.parseInt(value));
-                        SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.REVANCED_PREFS, "revanced_pref_video_quality_mobile", value + "");
+                        SharedPrefHelper.saveString(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_pref_video_quality_mobile", value + "");
                     } catch (Throwable th) {
                         LogHelper.printException(ReVancedSettingsFragment.class, "Error setting value of mobile quality" + th);
                     }

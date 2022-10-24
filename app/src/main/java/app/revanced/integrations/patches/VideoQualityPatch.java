@@ -24,12 +24,12 @@ public class VideoQualityPatch {
     private static Boolean userChangedQuality = false;
 
     public static void changeDefaultQuality(int defaultQuality) {
-        Context context = ReVancedUtils.getContext();
-
         if (!SettingsEnum.SAVE_VIDEO_QUALITY.getBoolean()) {
             userChangedQuality = false;
             return;
         }
+
+        Context context = ReVancedUtils.getContext();
 
         if (isConnectedWifi(context)) {
             try {
@@ -101,7 +101,7 @@ public class VideoQualityPatch {
             preferredQuality = SettingsEnum.PREFERRED_VIDEO_QUALITY_WIFI.getInt();
             LogHelper.debug(VideoQualityPatch.class, "Wi-Fi connection detected, preferred quality: " + preferredQuality);
         } else if (isConnectedMobile(context)) {
-            preferredQuality = SettingsEnum.PREFERRED_VIDEO_QUALITY_WIFI.getInt();
+            preferredQuality = SettingsEnum.PREFERRED_VIDEO_QUALITY_MOBILE.getInt();
             LogHelper.debug(VideoQualityPatch.class, "Mobile data connection detected, preferred quality: " + preferredQuality);
         } else {
             LogHelper.debug(VideoQualityPatch.class, "No Internet connection!");
