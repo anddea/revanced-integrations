@@ -93,7 +93,7 @@ public class HideButtonContainerPatch {
             commentsTeaserBlockList.add("comments_entry_point_simplebox");
         }
 
-        if (containsAny(inflatedTemplate, "ContainerType|carousel_item") &&
+        if (containsAny(inflatedTemplate, "ContainerType|carousel_item") ||
             anyMatch(commentsTeaserBlockList, readableBuffer::contains)) {
             return true;
         }
