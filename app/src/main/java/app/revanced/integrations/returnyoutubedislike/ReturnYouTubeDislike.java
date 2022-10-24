@@ -24,6 +24,7 @@ public class ReturnYouTubeDislike {
     private static boolean fixNewLayout;
     private static boolean afterAndroidN;
     private static boolean RTL;
+    private static String currentVideoId;
     private static Thread _dislikeFetchThread = null;
     private static Thread _votingThread = null;
     private static Registration registration;
@@ -61,11 +62,12 @@ public class ReturnYouTubeDislike {
     }
 
     public static void newVideoLoaded(String videoId) {
-        if (!isEnabled || videoId == null) return;
+        if (!isEnabled || videoId == null || videoId.equals(currentVideoId)) return;
         LogHelper.debug(ReturnYouTubeDislike.class, "newVideoLoaded - " + videoId);
 
         likeCount = null;
         dislikeCount = null;
+        currentVideoId = videoId;
 
         try {
             if (_dislikeFetchThread != null && _dislikeFetchThread.getState() != Thread.State.TERMINATED) {
