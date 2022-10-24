@@ -163,7 +163,9 @@ class GeneralBytecodeAdsPatch extends Filter {
             "reels_player_overlay",
             "shelf_header",
             "watch_metadata_app_promo",
+            "spacing_cell",
             "banner_text_icon",
+            "active_view_display_container",
             "video_display_full_layout"
         );
         var movieAds = new BlockRule(
