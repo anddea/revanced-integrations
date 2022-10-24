@@ -26,7 +26,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.widget.Toast;
 
-import com.google.android.apps.youtube.app.YouTubeTikTokRoot_Application;
 import com.google.android.apps.youtube.app.application.Shell_HomeActivity;
 
 import java.io.File;
@@ -432,7 +431,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     */
 
     private String getPackageName() {
-        Context context = YouTubeTikTokRoot_Application.getAppContext();
+        Context context = ReVancedUtils.getContext();
         if (context == null) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Context is null, returning com.google.android.youtube!");
             return "com.google.android.youtube";
@@ -519,7 +518,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public static int getVersionCode() {
         // 17.32.39 | 1531051456
         int versionCode = 1531051456;
-        Context context = YouTubeTikTokRoot_Application.getAppContext();
+        Context context = ReVancedUtils.getContext();
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             versionCode = pInfo.versionCode;

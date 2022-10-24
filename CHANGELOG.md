@@ -1,3 +1,29 @@
+# [0.55.0](https://github.com/revanced/revanced-integrations/compare/v0.54.1...v0.55.0) (2022-10-22)
+
+
+### Bug Fixes
+
+* revert removing getAppContext() ([0be0ffd](https://github.com/revanced/revanced-integrations/commit/0be0ffd42abdf20e699a63e02b3474b82d798f24))
+
+
+### Features
+
+* remove getAppContext() ([#182](https://github.com/revanced/revanced-integrations/issues/182)) ([f4650b1](https://github.com/revanced/revanced-integrations/commit/f4650b1139e94577d702c8aa141ee19455547e58))
+
+## [0.54.1](https://github.com/revanced/revanced-integrations/compare/v0.54.0...v0.54.1) (2022-10-22)
+
+
+### Bug Fixes
+
+* **youtube/general-ads:** remove leftover ad banner ([#179](https://github.com/revanced/revanced-integrations/issues/179)) ([0253fef](https://github.com/revanced/revanced-integrations/commit/0253fef2aa5d695521ec70694931522705328d05))
+
+# [0.54.0](https://github.com/revanced/revanced-integrations/compare/v0.53.0...v0.54.0) (2022-10-20)
+
+
+### Features
+
+* **youtube:** `hide-captions-button` patch ([#175](https://github.com/revanced/revanced-integrations/issues/175)) ([867645e](https://github.com/revanced/revanced-integrations/commit/867645ea5b853c01e9f3f0a87797b0bba62460fa))
+
 # [0.53.0](https://github.com/revanced/revanced-integrations/compare/v0.52.1...v0.53.0) (2022-10-20)
 
 
