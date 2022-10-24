@@ -48,13 +48,13 @@ abstract class BaseGestureController(
         val me = MotionEvent.obtain(motionEvent)
 
         // check if we should drop this motion
-        /*
+
         val dropped = shouldDropMotion(me)
 
         if (dropped) {
             me.action = MotionEvent.ACTION_CANCEL
         }
-        */
+
         // send the event to the detector
         // if we force intercept events, the event is always consumed
         val consumed = detector.onTouchEvent(me) || shouldForceInterceptEvents
@@ -69,7 +69,7 @@ abstract class BaseGestureController(
 
         // do not consume dropped events
         // or events outside of any swipe zone
-        return consumed && isInSwipeZone(me)
+        return !dropped && consumed && isInSwipeZone(me)
     }
 
     /**
