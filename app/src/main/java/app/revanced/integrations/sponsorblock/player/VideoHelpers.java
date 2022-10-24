@@ -7,7 +7,7 @@ import static app.revanced.integrations.sponsorblock.StringRef.str;
 
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
-import app.revanced.integrations.videoplayer.VideoInformation;
+import app.revanced.integrations.videoplayer.NewVideoInformation;
 
 public class VideoHelpers {
 
@@ -21,7 +21,7 @@ public class VideoHelpers {
 
     private static void generateVideoUrl(boolean appendTimeStamp) {
         try {
-            String videoId = VideoInformation.currentVideoId;
+            String videoId = NewVideoInformation.currentVideoId;
             if (videoId == null || videoId.isEmpty()) {
                 LogHelper.debug(VideoHelpers.class, "VideoId was empty");
                 return;
@@ -29,7 +29,7 @@ public class VideoHelpers {
 
             String videoUrl = String.format("https://youtu.be/%s", videoId);
             if (appendTimeStamp) {
-                long videoTime = VideoInformation.lastKnownVideoTime;
+                long videoTime = NewVideoInformation.lastKnownVideoTime;
                 videoUrl += String.format("?t=%s", (videoTime / 1000));
             }
 

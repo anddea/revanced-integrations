@@ -23,7 +23,7 @@ import java.util.TimerTask;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.videoplayer.VideoInformation;
+import app.revanced.integrations.videoplayer.NewVideoInformation;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.sponsorblock.requests.SBRequester;
@@ -63,7 +63,7 @@ public class PlayerController {
 
         if (videoId.equals(currentVideoId)) return;
 
-        //shorts_playing = videoId.equals(VideoInformation.currentVideoId);
+        //shorts_playing = videoId.equals(NewVideoInformation.currentVideoId);
 
         //if (shorts_playing && !SettingsEnum.SB_ENABLED_SHORTS.getBoolean()) return;
 
@@ -105,7 +105,7 @@ public class PlayerController {
             setMillisecondMethod.setAccessible(true);
 
             lastKnownVideoTime = 0;
-            VideoInformation.lastKnownVideoTime = 0;
+            NewVideoInformation.lastKnownVideoTime = 0;
             currentVideoLength = 1;
             currentPlayerController = new WeakReference<>(o);
 
@@ -137,7 +137,7 @@ public class PlayerController {
      */
     public static void setCurrentVideoTime(long millis) {
         LogHelper.debug(PlayerController.class, "setCurrentVideoTime: current video time: " + millis);
-        VideoInformation.lastKnownVideoTime = millis;
+        NewVideoInformation.lastKnownVideoTime = millis;
         if (!SettingsEnum.SB_ENABLED.getBoolean()) return;
         lastKnownVideoTime = millis;
         if (millis <= 0) return;
@@ -169,7 +169,7 @@ public class PlayerController {
                         public void run() {
                             skipSponsorTask = null;
                             lastKnownVideoTime = segment.start + 1;
-                            VideoInformation.lastKnownVideoTime = lastKnownVideoTime;
+                            NewVideoInformation.lastKnownVideoTime = lastKnownVideoTime;
                             new Handler(Looper.getMainLooper()).post(findAndSkipSegmentRunnable);
                         }
                     };
@@ -226,7 +226,7 @@ public class PlayerController {
         }
         if (lastKnownVideoTime > 0) {
             lastKnownVideoTime = millis;
-            VideoInformation.lastKnownVideoTime = lastKnownVideoTime;
+            NewVideoInformation.lastKnownVideoTime = lastKnownVideoTime;
         } else
             setCurrentVideoTime(millis);
     }
@@ -381,7 +381,7 @@ public class PlayerController {
             try {
                 LogHelper.debug(PlayerController.class, "Skipping to millis=" + finalMillisecond);
                 lastKnownVideoTime = finalMillisecond;
-                VideoInformation.lastKnownVideoTime = lastKnownVideoTime;
+                NewVideoInformation.lastKnownVideoTime = lastKnownVideoTime;
                 setMillisecondMethod.invoke(currentObj, finalMillisecond);
             } catch (Exception e) {
                 LogHelper.printException(PlayerController.class, "Cannot skip to millisecond", e);

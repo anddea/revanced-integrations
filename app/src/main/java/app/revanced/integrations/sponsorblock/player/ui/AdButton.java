@@ -1,6 +1,6 @@
 package app.revanced.integrations.sponsorblock.player.ui;
 
-import static app.revanced.integrations.videoplayer.VideoInformation.currentVideoId;
+import static app.revanced.integrations.videoplayer.NewVideoInformation.currentVideoId;
 import static app.revanced.integrations.sponsorblock.StringRef.str;
 
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.videoplayer.VideoInformation;
+import app.revanced.integrations.videoplayer.NewVideoInformation;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.whitelist.WhitelistType;
 import app.revanced.integrations.whitelist.requests.WhitelistRequester;
@@ -50,7 +50,7 @@ public class AdButton extends SlimButton {
 
     private void removeFromWhitelist() {
         try {
-            Whitelist.removeFromWhitelist(WhitelistType.ADS, this.context, VideoInformation.channelName);
+            Whitelist.removeFromWhitelist(WhitelistType.ADS, this.context, NewVideoInformation.channelName);
             changeEnabled(false);
         } catch (Exception ex) {
             LogHelper.printException(AdButton.class, "Failed to remove from whitelist", ex);

@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.videoplayer.VideoInformation;
+import app.revanced.integrations.videoplayer.NewVideoInformation;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
 
@@ -30,7 +30,7 @@ public class SBBrowserButton extends SlimButton {
 
     @Override
     public void onClick(View v) {
-        Uri uri = Uri.parse(BROWSER_URL + VideoInformation.currentVideoId);
+        Uri uri = Uri.parse(BROWSER_URL + NewVideoInformation.currentVideoId);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         context.startActivity(intent);
     }
