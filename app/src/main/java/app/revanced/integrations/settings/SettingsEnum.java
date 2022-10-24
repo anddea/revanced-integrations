@@ -90,7 +90,6 @@ public enum SettingsEnum {
     DONATION_COMPANION_SHOWN("revanced_donation_companion", true, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
-    IS_NEWLAYOUT("experimental_flags_is_new_layout", false, ReturnType.BOOLEAN, true),
 
     //Experimental Flags
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),

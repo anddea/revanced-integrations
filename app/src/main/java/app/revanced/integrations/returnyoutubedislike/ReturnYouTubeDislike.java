@@ -81,19 +81,11 @@ public class ReturnYouTubeDislike {
     }
 
     public static void onComponentCreated(Object conversionContext, AtomicReference<Object> textRef) {
+        if (!isEnabled) return;
+
         // layoutA: old layout, layoutB: new layout
         boolean layoutA = conversionContext.toString().contains("|dislike_button.eml|");
         boolean layoutB = conversionContext.toString().contains("|segmented_like_dislike_button.eml|");
-		
-        if (layoutA) {
-            SettingsEnum.IS_NEWLAYOUT.saveValue(false);
-        } else if (layoutB) {
-            SettingsEnum.IS_NEWLAYOUT.saveValue(true);
-        } else {
-            return;
-        }
-
-        if (!isEnabled) return;
 
         try {
             // Contains a pathBuilder string, used to distinguish from other litho components:
