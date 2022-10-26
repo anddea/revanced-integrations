@@ -1,9 +1,13 @@
 package app.revanced.integrations.utils;
 
+import static app.revanced.integrations.sponsorblock.StringRef.str;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
+import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 import app.revanced.integrations.sponsorblock.player.PlayerType;
 
@@ -63,4 +67,16 @@ public class ReVancedUtils {
     public static boolean isTablet(Context context) {
         return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
     }
+
+    public static void checkMicroG() {
+        try {
+            getContext().getPackageManager().getPackageInfo("com.mgoogle.android.gms", PackageManager.GET_ACTIVITIES);
+            LogHelper.debug(ReVancedUtils.class, "MicroG is installed on the device");
+        } catch (PackageManager.NameNotFoundException exception) {
+            LogHelper.printException(ReVancedUtils.class, "MicroG was not found", exception);
+            Toast.makeText(getContext(), str("microg_not_installed_warning"), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), str("microg_not_installed_notice"), Toast.LENGTH_LONG).show();
+        }
+    }
+
 }

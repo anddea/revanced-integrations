@@ -442,18 +442,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         return PACKAGE_NAME;
     }
 
-    public static void checkMicroG() {
-        try {
-            PackageManager pm = ReVancedUtils.getContext().getPackageManager();
-            pm.getPackageInfo("com.mgoogle.android.gms", PackageManager.GET_ACTIVITIES);
-            LogHelper.debug(ReVancedSettingsFragment.class, "MicroG is installed on the device");
-        } catch (PackageManager.NameNotFoundException e) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "MicroG was not found", e);
-            Toast.makeText(ReVancedUtils.getContext(), str("microg_not_installed_warning"), Toast.LENGTH_LONG).show();
-            Toast.makeText(ReVancedUtils.getContext(), str("microg_not_installed_notice"), Toast.LENGTH_LONG).show();
-        }
-    }
-
     public boolean deleteCache(File dir) {
         try {
             if (dir != null && dir.isDirectory()) {
