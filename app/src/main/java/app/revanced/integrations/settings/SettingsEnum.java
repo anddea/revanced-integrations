@@ -59,6 +59,7 @@ public enum SettingsEnum {
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", false, ReturnType.BOOLEAN, true),
     DISABLE_STARTUP_SHORTS_PLAYER("revanced_startup_shorts_player_enabled", false, ReturnType.BOOLEAN),
     HIDE_MIX_PLAYLISTS("revanced_mix_playlists_hidden", false, ReturnType.BOOLEAN, true),
+    HIDE_CROWDFUNDING_BOX("revanced_crowdfunding_box", false, ReturnType.BOOLEAN, true),
 
     //Misc Settings
     USE_HDR_AUTO_BRIGHTNESS("revanced_pref_hdr_autobrightness", false, ReturnType.BOOLEAN),
@@ -87,7 +88,6 @@ public enum SettingsEnum {
     URI_REDIRECT("revanced_uri_redirect", true, ReturnType.BOOLEAN, true),
     MUSIC_CONTAINER_SHOWN("revanced_music_container", true, ReturnType.BOOLEAN, true),
     FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", true, ReturnType.BOOLEAN, true),
-    DONATION_COMPANION_SHOWN("revanced_donation_companion", true, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
 
