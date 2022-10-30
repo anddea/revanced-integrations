@@ -57,7 +57,7 @@ public enum SettingsEnum {
     HIDE_TIME_AND_SEEKBAR("revanced_hide_time_and_seekbar", true, ReturnType.BOOLEAN),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", false, ReturnType.BOOLEAN, true),
     DISABLE_STARTUP_SHORTS_PLAYER("revanced_startup_shorts_player_enabled", false, ReturnType.BOOLEAN),
-    HIDE_MIX_PLAYLISTS("revanced_mix_playlists_hidden", false, ReturnType.BOOLEAN, true),
+    HIDE_MIX_PLAYLISTS("revanced_mix_playlists_hidden", true, ReturnType.BOOLEAN, true),
     HIDE_CROWDFUNDING_BOX("revanced_crowdfunding_box", false, ReturnType.BOOLEAN, true),
 
     //Button Container
@@ -104,7 +104,7 @@ public enum SettingsEnum {
     URI_REDIRECT("revanced_uri_redirect", true, ReturnType.BOOLEAN, true),
     MUSIC_CONTAINER_SHOWN("revanced_music_container", true, ReturnType.BOOLEAN, true),
     FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", true, ReturnType.BOOLEAN, true),
-    SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
+    SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", true, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
     BREAKING_NEWS_PANELS("revanced_breaking_news_panels", false, ReturnType.BOOLEAN, true),
     HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", false, ReturnType.BOOLEAN, true),
