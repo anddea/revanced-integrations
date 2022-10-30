@@ -83,18 +83,20 @@ public class HideButtonContainerPatch {
             }
         }
 
-        //Comments Teasers
-        List<String> commentsTeaserBlockList = new ArrayList<>();
+        List<String> newBlockList = new ArrayList<>();
 
-        if (SettingsEnum.HIDE_SPOILER_COMMENT.getBoolean()) {
-            commentsTeaserBlockList.add("comments_entry_point_teaser");
-        }
-        if (SettingsEnum.HIDE_EXTERNAL_COMMENT_BOX.getBoolean()) {
-            commentsTeaserBlockList.add("comments_entry_point_simplebox");
+        if (SettingsEnum.VIEW_PRODUCTS.getBoolean()) {
+            newBlockList.add("product_item");
+            newBlockList.add("products_in_video");
         }
 
-        if (containsAny(inflatedTemplate, "ContainerType|carousel_item") ||
-            anyMatch(commentsTeaserBlockList, readableBuffer::contains)) {
+        if (SettingsEnum.TIMED_REACTIONS.getBoolean()) {
+            newBlockList.add("emoji_control_panel");
+            newBlockList.add("timed_reaction_player_animation");
+            newBlockList.add("timed_reaction_live_player_overlay");
+        }
+
+        if (anyMatch(newBlockList, inflatedTemplate::contains)) {
             return true;
         }
 

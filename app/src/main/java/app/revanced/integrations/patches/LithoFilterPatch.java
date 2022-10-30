@@ -136,7 +136,6 @@ class GeneralBytecodeAdsPatch extends Filter {
     private final BlockRule identifierBlock;
 
     public GeneralBytecodeAdsPatch() {
-        var comments = new BlockRule(SettingsEnum.ADREMOVER_COMMENTS_REMOVAL, "comments_", "video_metadata_carousel");
         var communityPosts = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_POSTS_REMOVAL, "post_base_wrapper");
         var communityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_GUIDELINES_REMOVAL, "community_guidelines");
         var compactBanner = new BlockRule(SettingsEnum.ADREMOVER_COMPACT_BANNER_REMOVAL, "compact_banner");
@@ -151,21 +150,26 @@ class GeneralBytecodeAdsPatch extends Filter {
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_HIDE_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var musicContainer = new BlockRule(SettingsEnum.MUSIC_CONTAINER_SHOWN, "official_card");
+        var comments = new BlockRule(SettingsEnum.HIDE_COMMENTS_SECTION, "comments_", "video_metadata_carousel");
+        var previewComment = new BlockRule(
+                SettingsEnum.HIDE_PREVIEW_COMMENT,
+                "carousel_item",
+                "comments_entry_point_teaser",
+                "comments_entry_point_simplebox"
+        );
         var generalAds = new BlockRule(
             SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL,
             // could be required
             //"full_width_square_image_layout",
             "video_display_full_buttoned_layout",
             "_ad",
+            "active_view_display_container",
             "ad_",
             "ads_video_with_context",
             "cell_divider",
             "reels_player_overlay",
             "shelf_header",
             "watch_metadata_app_promo",
-            "spacing_cell",
-            "banner_text_icon",
-            "active_view_display_container",
             "video_display_full_layout"
         );
         var movieAds = new BlockRule(
@@ -193,7 +197,8 @@ class GeneralBytecodeAdsPatch extends Filter {
             merchandise,
             infoPanel,
             channelGuidelines,
-            musicContainer
+            musicContainer,
+            previewComment
         );
 
         // Block for the ComponentContext.identifier field

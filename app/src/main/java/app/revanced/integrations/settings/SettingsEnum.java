@@ -26,7 +26,6 @@ public enum SettingsEnum {
     ADREMOVER_MERCHANDISE_REMOVAL("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_POSTS_REMOVAL("revanced_adremover_community_posts_removal", false, ReturnType.BOOLEAN),
     ADREMOVER_COMPACT_BANNER_REMOVAL("revanced_adremover_compact_banner_removal", true, ReturnType.BOOLEAN),
-    ADREMOVER_COMMENTS_REMOVAL("revanced_adremover_comments_removal", false, ReturnType.BOOLEAN),
     ADREMOVER_MOVIE_REMOVAL("revanced_adremover_movie", true, ReturnType.BOOLEAN),
     ADREMOVER_FEED_SURVEY_REMOVAL("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
     ADREMOVER_SHORTS_SHELF_REMOVAL("revanced_adremover_shorts_shelf", true, ReturnType.BOOLEAN),
@@ -35,7 +34,7 @@ public enum SettingsEnum {
     ADREMOVER_EMERGENCY_BOX_REMOVAL("revanced_adremover_emergency_box_removal", true, ReturnType.BOOLEAN),
     ADREMOVER_INFO_PANEL_REMOVAL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_MEDICAL_PANEL_REMOVAL("revanced_adremover_medical_panel", true, ReturnType.BOOLEAN),
-    ADREMOVER_PAID_CONTECT_REMOVAL("revanced_adremover_paid_content", false, ReturnType.BOOLEAN),
+    ADREMOVER_PAID_CONTECT_REMOVAL("revanced_adremover_paid_content", false, ReturnType.BOOLEAN, true),
     ADREMOVER_SUGGESTIONS_REMOVAL("revanced_adremover_hide_suggestions", true, ReturnType.BOOLEAN),
     ADREMOVER_HIDE_LATEST_POSTS("revanced_adremover_hide_latest_posts", true, ReturnType.BOOLEAN),
     ADREMOVER_HIDE_CHANNEL_GUIDELINES("revanced_adremover_hide_channel_guidelines", true, ReturnType.BOOLEAN),
@@ -60,6 +59,23 @@ public enum SettingsEnum {
     DISABLE_STARTUP_SHORTS_PLAYER("revanced_startup_shorts_player_enabled", false, ReturnType.BOOLEAN),
     HIDE_MIX_PLAYLISTS("revanced_mix_playlists_hidden", false, ReturnType.BOOLEAN, true),
     HIDE_CROWDFUNDING_BOX("revanced_crowdfunding_box", false, ReturnType.BOOLEAN, true),
+
+    //Button Container
+    HIDE_LIKE_BUTTON("revanced_hide_like_button", false, ReturnType.BOOLEAN),
+    HIDE_DISLIKE_BUTTON("revanced_hide_dislike_button", false, ReturnType.BOOLEAN),
+    HIDE_SHARE_BUTTON("revanced_hide_share_button", false, ReturnType.BOOLEAN),
+    HIDE_LIVE_CHAT_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
+    HIDE_REPORT_BUTTON("revanced_hide_report_button", false, ReturnType.BOOLEAN),
+    HIDE_CREATE_SHORT_BUTTON("revanced_hide_create_short_button", false, ReturnType.BOOLEAN),
+    HIDE_THANKS_BUTTON("revanced_hide_thanks_button", false, ReturnType.BOOLEAN),
+    HIDE_CREATE_CLIP_BUTTON("revanced_hide_create_clip_button", false, ReturnType.BOOLEAN),
+    HIDE_DOWNLOAD_BUTTON("revanced_hide_download_button", false, ReturnType.BOOLEAN),
+    HIDE_PLAYLIST_BUTTON("revanced_hide_playlist_button", false, ReturnType.BOOLEAN),
+
+    //Button Container
+    HIDE_COMMENTS_SECTION("revanced_hide_comments_section", false, ReturnType.BOOLEAN),
+    HIDE_PREVIEW_COMMENT("revanced_hide_preview_comment", false, ReturnType.BOOLEAN),
+    HIDE_SHORTS_COMMENTS_BUTTON("revanced_hide_shorts_comments_button", false, ReturnType.BOOLEAN),
 
     //Misc Settings
     USE_HDR_AUTO_BRIGHTNESS("revanced_pref_hdr_autobrightness", false, ReturnType.BOOLEAN),
@@ -90,26 +106,17 @@ public enum SettingsEnum {
     FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", true, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", false, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
+    BREAKING_NEWS_PANELS("revanced_breaking_news_panels", false, ReturnType.BOOLEAN, true),
+    HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", false, ReturnType.BOOLEAN, true),
+    VIEW_PRODUCTS("revanced_view_products", false, ReturnType.BOOLEAN, true),
+    TIMED_REACTIONS("revanced_timed_reactions", false, ReturnType.BOOLEAN, true),
 
     //Experimental Flags
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     DISABLE_NEWLAYOUT("revanced_disable_new_layout", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     FULLSCREEN_ROTATION("revanced_fullscreen_rotation", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_fullscreen"),
-    RYD_NEWLAYOUT("revanced_ryd_new_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
-
-    //ToDo: Experimental Flags
-    HIDE_LIKE_BUTTON("revanced_hide_like_button", false, ReturnType.BOOLEAN),
-    HIDE_DISLIKE_BUTTON("revanced_hide_dislike_button", false, ReturnType.BOOLEAN),
-    HIDE_SHARE_BUTTON("revanced_hide_share_button", false, ReturnType.BOOLEAN),
-    HIDE_LIVE_CHAT_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
-    HIDE_REPORT_BUTTON("revanced_hide_report_button", false, ReturnType.BOOLEAN),
-    HIDE_CREATE_SHORT_BUTTON("revanced_hide_create_short_button", false, ReturnType.BOOLEAN),
-    HIDE_THANKS_BUTTON("revanced_hide_thanks_button", false, ReturnType.BOOLEAN),
-    HIDE_CREATE_CLIP_BUTTON("revanced_hide_create_clip_button", false, ReturnType.BOOLEAN),
-    HIDE_DOWNLOAD_BUTTON("revanced_hide_download_button", false, ReturnType.BOOLEAN),
-    HIDE_PLAYLIST_BUTTON("revanced_hide_playlist_button", false, ReturnType.BOOLEAN),
-    HIDE_SPOILER_COMMENT("revanced_hide_spoiler_comment", false, ReturnType.BOOLEAN),
-    HIDE_EXTERNAL_COMMENT_BOX("revanced_hide_external_comment_box", false, ReturnType.BOOLEAN),
+    RYD_NEWLAYOUT("revanced_ryd_new_layout", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
+    TABLET_LAYOUT("revanced_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
 
     //Swipe controls
     ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", false, ReturnType.BOOLEAN),

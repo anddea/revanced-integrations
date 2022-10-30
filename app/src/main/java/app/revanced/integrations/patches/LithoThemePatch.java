@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches;
 
+import android.util.Log;
+
 import app.revanced.integrations.utils.ThemeHelper;
 
 public class LithoThemePatch {
@@ -18,8 +20,9 @@ public class LithoThemePatch {
 
     // Used by app.revanced.patches.youtube.layout.theme.patch.LithoThemePatch
     public static int applyLithoTheme(int originalValue) {
-        if ((!ThemeHelper.isDarkTheme() && anyEquals(originalValue, WHITECONSTANTS)) ||
-            (ThemeHelper.isDarkTheme() && anyEquals(originalValue, DARKCONSTANTS)))
+        var isDarkTheme = ThemeHelper.isDarkTheme();
+        
+        if ((isDarkTheme && anyEquals(originalValue, DARKCONSTANTS)) || (!isDarkTheme  && anyEquals(originalValue, WHITECONSTANTS)))
                 return 0;
         return originalValue;
     }

@@ -1,3 +1,71 @@
+# [0.63.0](https://github.com/revanced/revanced-integrations/compare/v0.62.0...v0.63.0) (2022-10-29)
+
+
+### Features
+
+* **youtube/sponsorblock:** skip segments once automatically ([#190](https://github.com/revanced/revanced-integrations/issues/190)) ([06bebd7](https://github.com/revanced/revanced-integrations/commit/06bebd7017980880765a5735b1dc0502a01c5037))
+
+# [0.62.0](https://github.com/revanced/revanced-integrations/compare/v0.61.0...v0.62.0) (2022-10-29)
+
+
+### Features
+
+* **youtube/comments:** hide shorts comments button ([#188](https://github.com/revanced/revanced-integrations/issues/188)) ([69a585d](https://github.com/revanced/revanced-integrations/commit/69a585da6f49b343664eda7fe9119007234dc077))
+
+# [0.61.0](https://github.com/revanced/revanced-integrations/compare/v0.60.0...v0.61.0) (2022-10-29)
+
+
+### Features
+
+* **youtube/microg-support:** handle availability of Vanced MicroG ([afa9d3c](https://github.com/revanced/revanced-integrations/commit/afa9d3cbb12f8abd9a7f1beb74e454fee6e4b0a7))
+
+# [0.60.0](https://github.com/revanced/revanced-integrations/compare/v0.59.0...v0.60.0) (2022-10-28)
+
+
+### Features
+
+* **youtube/return-youtube-dislike:** compatibility for old and new button layout ([a92c932](https://github.com/revanced/revanced-integrations/commit/a92c932a20e72ba55880081325fceee443955de5))
+
+# [0.59.0](https://github.com/revanced/revanced-integrations/compare/v0.58.0...v0.59.0) (2022-10-25)
+
+
+### Bug Fixes
+
+* add missing list separator ([5566cfd](https://github.com/revanced/revanced-integrations/commit/5566cfdda94988df1d54106577bb784c69f00dfb))
+
+
+### Features
+
+* `comment` patch ([#185](https://github.com/revanced/revanced-integrations/issues/185)) ([97efc17](https://github.com/revanced/revanced-integrations/commit/97efc17da7ed442516cd0d51264eeaa6d1fe15be))
+
+# [0.58.0](https://github.com/revanced/revanced-integrations/compare/v0.57.0...v0.58.0) (2022-10-25)
+
+
+### Features
+
+* `hide-album-cards` patch ([#184](https://github.com/revanced/revanced-integrations/issues/184)) ([74c96be](https://github.com/revanced/revanced-integrations/commit/74c96beb208e30d4a0d8e7f510e49e9fab18cbf9))
+
+# [0.57.0](https://github.com/revanced/revanced-integrations/compare/v0.56.0...v0.57.0) (2022-10-25)
+
+
+### Features
+
+* `hide-artist-card` patch ([#186](https://github.com/revanced/revanced-integrations/issues/186)) ([ac3a835](https://github.com/revanced/revanced-integrations/commit/ac3a835215299d9f0be330678bd91adee6f61210))
+
+# [0.56.0](https://github.com/revanced/revanced-integrations/compare/v0.55.1...v0.56.0) (2022-10-25)
+
+
+### Features
+
+* `hide-crowdfunding-box` patch ([#183](https://github.com/revanced/revanced-integrations/issues/183)) ([db71824](https://github.com/revanced/revanced-integrations/commit/db718242e7ffa0db0f8933616275b60755b6a070))
+
+## [0.55.1](https://github.com/revanced/revanced-integrations/compare/v0.55.0...v0.55.1) (2022-10-25)
+
+
+### Bug Fixes
+
+* **youtube/theme:** theme litho UI components ([#176](https://github.com/revanced/revanced-integrations/issues/176)) ([f06935d](https://github.com/revanced/revanced-integrations/commit/f06935ddacf86cd606740dc8b6ec0c7dd54c5cce))
+
 # [0.55.0](https://github.com/revanced/revanced-integrations/compare/v0.54.1...v0.55.0) (2022-10-22)
 
 
