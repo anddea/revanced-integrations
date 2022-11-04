@@ -117,7 +117,7 @@ public enum SettingsEnum {
     FULLSCREEN_ROTATION("revanced_fullscreen_rotation", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_fullscreen"),
     RYD_NEWLAYOUT("revanced_ryd_new_layout", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
     TABLET_LAYOUT("revanced_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
-    PHONE_LAYOUT("revanced_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
+    PHONE_LAYOUT("revanced_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
 
     //Swipe controls
     ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", false, ReturnType.BOOLEAN),
