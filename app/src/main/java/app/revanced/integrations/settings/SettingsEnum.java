@@ -104,11 +104,11 @@ public enum SettingsEnum {
     //Extended
     INAPP_BROWSER("revanced_inapp_browser", false, ReturnType.BOOLEAN, true),
     URI_REDIRECT("revanced_uri_redirect", true, ReturnType.BOOLEAN, true),
-    FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", true, ReturnType.BOOLEAN, true),
+    FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", false, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", true, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
     BREAKING_NEWS_PANELS("revanced_breaking_news_panels", false, ReturnType.BOOLEAN, true),
-    HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", false, ReturnType.BOOLEAN, true),
+    HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", true, ReturnType.BOOLEAN, true),
     VIEW_PRODUCTS("revanced_view_products", false, ReturnType.BOOLEAN, true),
     TIMED_REACTIONS("revanced_timed_reactions", false, ReturnType.BOOLEAN, true),
 

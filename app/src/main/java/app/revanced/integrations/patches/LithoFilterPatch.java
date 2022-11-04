@@ -59,6 +59,7 @@ final class BlockRule {
 
     private final SettingsEnum setting;
     private final String[] blocks;
+    private final boolean invert;
 
     /**
      * Initialize a new rule for components.
@@ -69,10 +70,17 @@ final class BlockRule {
     public BlockRule(final SettingsEnum setting, final String... blocks) {
         this.setting = setting;
         this.blocks = blocks;
+        this.invert = false;
+    }
+
+    public BlockRule(final SettingsEnum setting, final boolean invert, final String... blocks) {
+        this.setting = setting;
+        this.blocks = blocks;
+        this.invert = invert;
     }
 
     public boolean isEnabled() {
-        return setting.getBoolean();
+        return invert ? !setting.getBoolean() : setting.getBoolean();
     }
 
     public BlockResult check(final String string) {
@@ -149,7 +157,7 @@ class GeneralBytecodeAdsPatch extends Filter {
         var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS_REMOVAL, "horizontal_video_shelf");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_HIDE_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
-        var officialCard = new BlockRule(SettingsEnum.HIDE_OFFICIAL_CARDS, "official_card");
+        var officialCard = new BlockRule(SettingsEnum.HIDE_OFFICIAL_CARDS, true, "official_card");
         var comments = new BlockRule(SettingsEnum.HIDE_COMMENTS_SECTION, "comments_", "video_metadata_carousel");
         var previewComment = new BlockRule(
                 SettingsEnum.HIDE_PREVIEW_COMMENT,
