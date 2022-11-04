@@ -139,7 +139,7 @@ class GeneralBytecodeAdsPatch extends Filter {
         var communityPosts = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_POSTS_REMOVAL, "post_base_wrapper");
         var communityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_GUIDELINES_REMOVAL, "community_guidelines");
         var compactBanner = new BlockRule(SettingsEnum.ADREMOVER_COMPACT_BANNER_REMOVAL, "compact_banner");
-        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY_REMOVAL, "in_feed_survey");
+        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY_REMOVAL, "in_feed_survey", "slimline_survey");
         var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL_REMOVAL, "medical_panel");
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTECT_REMOVAL, "paid_content_overlay");
         var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE_REMOVAL, "product_carousel");
@@ -149,7 +149,7 @@ class GeneralBytecodeAdsPatch extends Filter {
         var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS_REMOVAL, "horizontal_video_shelf");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_HIDE_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
-        var musicContainer = new BlockRule(SettingsEnum.MUSIC_CONTAINER_SHOWN, "official_card");
+        var officialCard = new BlockRule(SettingsEnum.HIDE_OFFICIAL_CARDS, "official_card");
         var comments = new BlockRule(SettingsEnum.HIDE_COMMENTS_SECTION, "comments_", "video_metadata_carousel");
         var previewComment = new BlockRule(
                 SettingsEnum.HIDE_PREVIEW_COMMENT,
@@ -197,7 +197,7 @@ class GeneralBytecodeAdsPatch extends Filter {
             merchandise,
             infoPanel,
             channelGuidelines,
-            musicContainer,
+            officialCard,
             previewComment
         );
 

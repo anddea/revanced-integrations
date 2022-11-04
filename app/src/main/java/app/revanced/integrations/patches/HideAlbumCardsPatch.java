@@ -5,10 +5,10 @@ import android.view.View;
 import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.settings.SettingsEnum;
 
-public class HideMusicContainerPatch {
+public class HideAlbumCardsPatch {
 
-    public static void hideMusicContainer(View view) {
-        if (SettingsEnum.MUSIC_CONTAINER_SHOWN.getBoolean()) {
+    public static void hideAlbumCards(View view) {
+        if (!SettingsEnum.HIDE_ALBUM_CARDS.getBoolean()) {
             AdRemoverAPI.HideViewWithLayout1dp(view);
         }
     }

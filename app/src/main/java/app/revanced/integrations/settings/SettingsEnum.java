@@ -59,6 +59,8 @@ public enum SettingsEnum {
     DISABLE_STARTUP_SHORTS_PLAYER("revanced_startup_shorts_player_enabled", false, ReturnType.BOOLEAN),
     HIDE_MIX_PLAYLISTS("revanced_mix_playlists_hidden", true, ReturnType.BOOLEAN, true),
     HIDE_CROWDFUNDING_BOX("revanced_crowdfunding_box", false, ReturnType.BOOLEAN, true),
+    HIDE_OFFICIAL_CARDS("revanced_official_card_in_search", true, ReturnType.BOOLEAN, true),
+    HIDE_ALBUM_CARDS("revanced_album_card_in_search", true, ReturnType.BOOLEAN),
 
     //Button Container
     HIDE_LIKE_BUTTON("revanced_hide_like_button", false, ReturnType.BOOLEAN),
@@ -102,7 +104,6 @@ public enum SettingsEnum {
     //Extended
     INAPP_BROWSER("revanced_inapp_browser", false, ReturnType.BOOLEAN, true),
     URI_REDIRECT("revanced_uri_redirect", true, ReturnType.BOOLEAN, true),
-    MUSIC_CONTAINER_SHOWN("revanced_music_container", true, ReturnType.BOOLEAN, true),
     FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", true, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", true, ReturnType.BOOLEAN, true),
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
