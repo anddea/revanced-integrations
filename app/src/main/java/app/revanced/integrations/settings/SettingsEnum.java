@@ -117,6 +117,7 @@ public enum SettingsEnum {
     DISABLE_NEWLAYOUT("revanced_disable_new_layout", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
     FULLSCREEN_ROTATION("revanced_fullscreen_rotation", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_fullscreen"),
     RYD_NEWLAYOUT("revanced_ryd_new_layout", true, ReturnType.BOOLEAN, true, "revanced_reboot_warning_ryd"),
+    FIX_PLAYBACK("revanced_fix_playback", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_playback"),
     TABLET_LAYOUT("revanced_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
     PHONE_LAYOUT("revanced_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
 
