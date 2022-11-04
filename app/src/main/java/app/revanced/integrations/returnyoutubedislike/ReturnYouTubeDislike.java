@@ -89,6 +89,8 @@ public class ReturnYouTubeDislike {
         boolean layoutA = conversionContext.toString().contains("|dislike_button.eml|");
         boolean layoutB = conversionContext.toString().contains("|segmented_like_dislike_button.eml|");
 
+        if (!(layoutA || layoutB)) return;
+
         try {
             // Contains a pathBuilder string, used to distinguish from other litho components:
             // video_action_bar.eml|27b56b54d5dcba20|video_action_bar_unwrapper.eml|c5a1d399b660e52e|CellType
