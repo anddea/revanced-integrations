@@ -5,17 +5,11 @@ import android.view.View;
 import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.settings.SettingsEnum;
 
-public class TabletLayoutOverridePatch {
+public class LayoutSwitchOverridePatch {
 
-    public static int getTabletLayoutOverride(int original) {
+    public static int getLayoutSwitchOverride(int original) {
         if (SettingsEnum.TABLET_LAYOUT.getBoolean()) return 720;
+        if (SettingsEnum.PHONE_LAYOUT.getBoolean()) return 480;
         return original;
     }
-
-    public static void hideShelfHeader(View view) {
-        if (SettingsEnum.TABLET_LAYOUT.getBoolean()) {
-            AdRemoverAPI.HideViewWithLayout1dp(view);
-        }
-    }
-
 }

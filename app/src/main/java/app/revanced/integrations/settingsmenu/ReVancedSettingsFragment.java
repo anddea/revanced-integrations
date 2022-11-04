@@ -54,6 +54,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private SwitchPreference Rotation;
     private SwitchPreference OldLayout;
     private SwitchPreference RydNewLayout;
+    private SwitchPreference TabletLayout;
+    private SwitchPreference PhoneLayout;
 
     private final CharSequence[] videoQualityEntries = {"Auto", "144p", "240p", "360p", "480p", "720p", "1080p", "1440p", "2160p"};
     private final CharSequence[] videoQualityentryValues = {"-2", "144", "240", "360", "480", "720", "1080", "1440", "2160"};
@@ -209,9 +211,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.Rotation = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_fullscreen_rotation");
             this.OldLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_disable_new_layout");
             this.RydNewLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_ryd_new_layout");
+            this.TabletLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_tablet_layout");
+            this.PhoneLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_phone_layout");
 			AutoRepeatLinks();
             VersionOverrideLinks();
             VersionOverrideLinks2();
+            LayoutOverrideLinks();
 
             String AUTO = str("quality_auto");
 			this.videoSpeedEntries[0] = AUTO;
@@ -359,6 +364,27 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             return;
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting VersionOverrideLinks2" + th);
+        }
+    }
+
+    public void LayoutOverrideLinks() {
+        try {
+            Context context = ReVancedUtils.getContext();
+            boolean istablet = ReVancedUtils.isTablet(context);
+            SwitchPreference tabletPreference = (SwitchPreference) findPreferenceOnScreen("revanced_tablet_layout");
+            SwitchPreference phonePreference = (SwitchPreference) findPreferenceOnScreen("revanced_phone_layout");
+            if (istablet) {
+                tabletPreference.setEnabled(false);
+                SettingsEnum.TABLET_LAYOUT.saveValue(false);
+                this.extendedPreferenceScreen.removePreference(this.TabletLayout);
+                return;
+            }
+            phonePreference.setEnabled(false);
+            SettingsEnum.PHONE_LAYOUT.saveValue(false);
+            this.extendedPreferenceScreen.removePreference(this.PhoneLayout);
+            return;
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
         }
     }
 
