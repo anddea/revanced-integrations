@@ -26,21 +26,21 @@ public final class FixPlaybackPatch {
         }
 
         currentThread = new Thread(() -> {
-            while (true) {
-                var currentVideoLength = PlayerControllerPatch.getCurrentVideoLength();
-                long lastKnownVideoTime = NewVideoInformation.lastKnownVideoTime;
-                if ((currentVideoLength > 1) || (lastKnownVideoTime > 1)) {
-                    PlayerControllerPatch.seekTo(currentVideoLength);
-                    PlayerControllerPatch.seekTo(1);
-                    PlayerControllerPatch.seekTo(lastKnownVideoTime);
-                    return;
-                }
+            try {
+                while (true) {
+                    var currentVideoLength = PlayerControllerPatch.getCurrentVideoLength();
+                    long currentVideoVideoTime = NewVideoInformation.lastKnownVideoTime;
 
-                try {
+                    if ((currentVideoLength > 1) || (currentVideoVideoTime > 1)) {
+                        PlayerControllerPatch.seekTo(currentVideoLength);
+                        PlayerControllerPatch.seekTo(currentVideoVideoTime);
+                        return;
+                    }
+
                     Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    LogHelper.debug(FixPlaybackPatch.class, "Thread was interrupted");
                 }
+            } catch (InterruptedException e) {
+                LogHelper.debug(FixPlaybackPatch.class, "Thread was interrupted");
             }
         });
 
