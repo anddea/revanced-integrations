@@ -2,6 +2,8 @@ package app.revanced.integrations.patches;
 
 import android.util.Log;
 
+import app.revanced.integrations.utils.ThemeHelper;
+
 public class LithoThemePatch {
     private static final int[] CONSTANTS = {
         -14606047, // comments chip background
@@ -10,7 +12,7 @@ public class LithoThemePatch {
         -14145496 // drawer content view background
     };
 
-    private static final int[] EXCEPTION = {
+    private static final int[] DARKCONSTANTS = {
         -15790321 // comments chip background (new layout)
     };
 
@@ -18,8 +20,7 @@ public class LithoThemePatch {
     // Used by app.revanced.patches.youtube.layout.theme.patch.LithoThemePatch
     public static int applyLithoTheme(int originalValue) {
         
-        if (anyEquals(originalValue, CONSTANTS)) return 0;
-        else if (anyEquals(originalValue, EXCEPTION)) return -16777216;
+        if (anyEquals(originalValue, CONSTANTS) || (ThemeHelper.isDarkTheme() && anyEquals(originalValue, DARKCONSTANTS))) return 0;
         return originalValue;
     }
 
