@@ -111,6 +111,7 @@ public enum SettingsEnum {
     HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", true, ReturnType.BOOLEAN, true),
     VIEW_PRODUCTS("revanced_view_products", false, ReturnType.BOOLEAN, true),
     TIMED_REACTIONS("revanced_timed_reactions", false, ReturnType.BOOLEAN, true),
+    CUTOUT_GLITCH("revanced_cutout_glitch", true, ReturnType.BOOLEAN, true),
 
     //Experimental Flags
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),

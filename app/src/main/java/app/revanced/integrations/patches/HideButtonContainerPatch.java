@@ -96,6 +96,10 @@ public class HideButtonContainerPatch {
             newBlockList.add("timed_reaction_live_player_overlay");
         }
 
+        if (SettingsEnum.CUTOUT_GLITCH.getBoolean()) {
+            newBlockList.add("endorsement_header_foote");
+        }
+
         if (anyMatch(newBlockList, inflatedTemplate::contains)) {
             return true;
         }
