@@ -50,11 +50,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private boolean Registered = false;
     private boolean settingsInitialized = false;
     private PreferenceScreen extendedPreferenceScreen;
+    private PreferenceScreen layoutPreferenceScreen;
     private Preference ExperimentalFlag;
     private SwitchPreference Rotation;
     private SwitchPreference OldLayout;
     private SwitchPreference TabletLayout;
     private SwitchPreference PhoneLayout;
+    private SwitchPreference MixPlaylists;
 
     private final CharSequence[] videoQualityEntries = {"Auto", "144p", "240p", "360p", "480p", "720p", "1080p", "1440p", "2160p"};
     private final CharSequence[] videoQualityentryValues = {"-2", "144", "240", "360", "480", "720", "1080", "1440", "2160"};
@@ -206,15 +208,18 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton"));
             this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("extended"));
             this.extendedPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("extended");
+            this.layoutPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("layout");
             this.ExperimentalFlag = (Preference) this.extendedPreferenceScreen.findPreference("revanced_experimental_flag");
             this.Rotation = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_fullscreen_rotation");
             this.OldLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_disable_new_layout");
             this.TabletLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_tablet_layout");
             this.PhoneLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_phone_layout");
+            this.MixPlaylists = (SwitchPreference) this.layoutPreferenceScreen.findPreference("revanced_mix_playlists_hidden");
 			AutoRepeatLinks();
             VersionOverrideLinks();
             VersionOverrideLinks2();
             LayoutOverrideLinks();
+            MixPlaylistsLinks();
 
             String AUTO = str("quality_auto");
 			this.videoSpeedEntries[0] = AUTO;
@@ -381,6 +386,25 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             return;
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
+        }
+    }
+
+    public void MixPlaylistsLinks() {
+        try {
+            Context context = ReVancedUtils.getContext();
+            boolean istabletlayout = ReVancedUtils.isTablet(context) && !SettingsEnum.PHONE_LAYOUT.getBoolean();
+            SwitchPreference mixplaylistPreference = (SwitchPreference) findPreferenceOnScreen("revanced_mix_playlists_hidden");
+            if (istabletlayout) {
+                mixplaylistPreference.setEnabled(false);
+                SettingsEnum.HIDE_MIX_PLAYLISTS.saveValue(true);
+                this.layoutPreferenceScreen.removePreference(this.MixPlaylists);
+                return;
+            }
+            mixplaylistPreference.setEnabled(true);
+            this.layoutPreferenceScreen.addPreference(this.MixPlaylists);
+            return;
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting MixPlaylistsLinks" + th);
         }
     }
 
