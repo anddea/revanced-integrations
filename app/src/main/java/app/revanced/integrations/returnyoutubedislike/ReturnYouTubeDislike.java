@@ -1,9 +1,5 @@
 package app.revanced.integrations.returnyoutubedislike;
 
-import static app.revanced.integrations.videoplayer.VideoInformation.currentVideoId;
-import static app.revanced.integrations.videoplayer.VideoInformation.likeCount;
-import static app.revanced.integrations.videoplayer.VideoInformation.dislikeCount;
-
 import android.content.Context;
 import android.icu.text.CompactDecimalFormat;
 import android.os.Build;
@@ -20,11 +16,26 @@ import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class ReturnYouTubeDislike {
-    private static boolean isEnabled;
-    private static boolean fixNewLayout;
-    private static boolean afterAndroidN;
-    private static boolean RTL;
     private static String currentVideoId;
+    public static Integer likeCount;
+    public static Integer dislikeCount;
+
+    private static boolean isEnabled;
+    private static boolean segmentedButton;
+    private static boolean RTL;
+
+    public enum Vote {
+        LIKE(1),
+        DISLIKE(-1),
+        LIKE_REMOVE(0);
+
+        public int value;
+
+        Vote(int value) {
+            this.value = value;
+        }
+    }
+
     private static Thread _dislikeFetchThread = null;
     private static Thread _votingThread = null;
     private static Registration registration;
@@ -33,17 +44,16 @@ public class ReturnYouTubeDislike {
 
     static {
         Context context = ReVancedUtils.getContext();
-        Locale locale = context.getResources().getConfiguration().locale;
-        LogHelper.debug(ReturnYouTubeDislike.class, "locale - " + locale);
         isEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
-        fixNewLayout = SettingsEnum.RYD_NEWLAYOUT.getBoolean();
-        afterAndroidN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-        RTL = isRTL(locale);
         if (isEnabled) {
             registration = new Registration();
             voting = new Voting(registration);
         }
-        if (afterAndroidN) {
+
+        Locale locale = context.getResources().getConfiguration().locale;
+        LogHelper.debug(ReturnYouTubeDislike.class, "locale - " + locale);
+        RTL = isRTL(locale);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             compactNumberFormatter = CompactDecimalFormat.getInstance(
                     locale,
                     CompactDecimalFormat.CompactStyle.SHORT
@@ -85,31 +95,24 @@ public class ReturnYouTubeDislike {
     public static void onComponentCreated(Object conversionContext, AtomicReference<Object> textRef) {
         if (!isEnabled) return;
 
-        // layoutA: old layout, layoutB: new layout
-        boolean layoutA = conversionContext.toString().contains("|dislike_button.eml|");
-        boolean layoutB = conversionContext.toString().contains("|segmented_like_dislike_button.eml|");
-
-        if (!(layoutA || layoutB)) return;
-
         try {
-            // Contains a pathBuilder string, used to distinguish from other litho components:
-            // video_action_bar.eml|27b56b54d5dcba20|video_action_bar_unwrapper.eml|c5a1d399b660e52e|CellType
-            // |ScrollableContainerType|ContainerType|ContainerType|dislike_button.eml|966ee2cd7db5e29f
-            // |video_actipathBuilder=video_action_bar.eml|27b56b54d5dcba20|video_action_bar_unwrapper.eml
-            // |c5a1d399b660e52e|CellType|ScrollableContainerType|ContainerType|ContainerType|dislike_button.eml
-            // |966ee2cd7db5e29f|video_action_toggle_button.eml|8fd9d44a8e3c9162|video_action_button.eml
-            // |9dd3b4b44979c3af|ContainerType|TextType|on_toggle_button.eml|8fd9d44a8e3c9162|video_action_button.eml
-            // |9dd3b4b44979c3af|ContainerType|TextType|
+            var conversionContextString = conversionContext.toString();
 
-            LogHelper.debug(ReturnYouTubeDislike.class, "dislike button was created");
-
+            // Check for new component
+            if (conversionContextString.contains("|segmented_like_dislike_button.eml|"))
+                segmentedButton = true;
+            else if (!conversionContextString.contains("|dislike_button.eml|"))
+                return;
+			
             // Have to block the current thread until fetching is done
             // There's no known way to edit the text after creation yet
             if (_dislikeFetchThread != null) _dislikeFetchThread.join();
 
-            if (layoutB && fixNewLayout && likeCount != null && dislikeCount != null) {
+            if (likeCount == null || dislikeCount == null) return;
+
+            if (segmentedButton) {
                 updateDislikeText(textRef, formatLikesDislikes(likeCount, dislikeCount));
-            } else if (layoutA && dislikeCount != null) {
+            } else {
                 updateDislikeText(textRef, formatDislikes(dislikeCount));
             }
         } catch (Exception ex) {
@@ -117,7 +120,7 @@ public class ReturnYouTubeDislike {
         }
     }
 
-    public static void sendVote(int vote) {
+    public static void sendVote(Vote vote) {
         if (!isEnabled) return;
 
         Context context = ReVancedUtils.getContext();
@@ -163,7 +166,7 @@ public class ReturnYouTubeDislike {
     }
 
     private static String formatDislikes(int dislikes) {
-        if (afterAndroidN && compactNumberFormatter != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && compactNumberFormatter != null) {
             final String formatted = compactNumberFormatter.format(dislikes);
             LogHelper.debug(ReturnYouTubeDislike.class, "Formatting dislikes - " + dislikes + " - " + formatted);
             return formatted;
@@ -173,7 +176,7 @@ public class ReturnYouTubeDislike {
     }
 
     private static String formatLikesDislikes(int likes, int dislikes) {
-        if (afterAndroidN && compactNumberFormatter != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && compactNumberFormatter != null) {
             final String formatted = RTL ? compactNumberFormatter.format(dislikes) + "  |  " + compactNumberFormatter.format(likes) : compactNumberFormatter.format(likes) + "  |  " + compactNumberFormatter.format(dislikes);
             LogHelper.debug(ReturnYouTubeDislike.class, "Formatting likes|dislikes - " + likes + "|" + dislikes + " - " + formatted);
             return formatted;
@@ -184,7 +187,7 @@ public class ReturnYouTubeDislike {
 
     private static boolean isRTL(Locale locale) {
         try {
-            if (afterAndroidN) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 final int directionality = Character.getDirectionality(Locale.getDefault().getDisplayName().charAt(0));
                 return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
                        directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;

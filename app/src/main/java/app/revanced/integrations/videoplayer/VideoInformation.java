@@ -4,13 +4,9 @@ import app.revanced.integrations.utils.LogHelper;
 
 public class VideoInformation {
     public static String currentVideoId;
-    public static Integer likeCount;
-    public static Integer dislikeCount;
 
     private static boolean tempInfoSaved = false;
     private static String tempVideoId;
-    private static Integer tempLikeCount;
-    private static Integer tempDislikeCount;
 
     // Call hook in the YT code when the video changes
     public static void setCurrentVideoId(final String videoId) {
@@ -47,8 +43,6 @@ public class VideoInformation {
     private static void clearInformation(boolean full) {
         if (full) {
             currentVideoId = null;
-            likeCount = null;
-            dislikeCount = null;
         }
     }
 
@@ -57,18 +51,12 @@ public class VideoInformation {
     // the information can be restored without having to fetch again
     private static void saveTempInformation() {
         tempVideoId = currentVideoId;
-        tempLikeCount = likeCount;
-        tempDislikeCount = dislikeCount;
         tempInfoSaved = true;
     }
 
     private static void restoreTempInformation() {
         currentVideoId = tempVideoId;
-        dislikeCount = tempDislikeCount;
-        likeCount = tempLikeCount;
         tempVideoId = null;
-        tempLikeCount = null;
-        tempDislikeCount = null;
         tempInfoSaved = false;
     }
 }
