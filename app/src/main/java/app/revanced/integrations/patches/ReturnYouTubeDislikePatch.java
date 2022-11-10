@@ -25,15 +25,9 @@ public class ReturnYouTubeDislikePatch {
 
     /**
      * Called when the like/dislike button is clicked
-     *
      * @param vote -1 (dislike), 0 (none) or 1 (like)
      */
     public static void sendVote(int vote) {
-        for (ReturnYouTubeDislike.Vote v : ReturnYouTubeDislike.Vote.values()) {
-            if (v.value == vote) {
-                ReturnYouTubeDislike.sendVote(v);
-                return;
-            }
-        }
+        ReturnYouTubeDislike.sendVote(vote);
     }
 }

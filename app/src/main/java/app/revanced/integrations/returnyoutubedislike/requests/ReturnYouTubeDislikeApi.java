@@ -36,9 +36,9 @@ public class ReturnYouTubeDislikeApi {
             }
             connection.disconnect();
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch dislikes", ex);
-            ReturnYouTubeDislike.likeCount = null;
             ReturnYouTubeDislike.dislikeCount = null;
+            ReturnYouTubeDislike.likeCount = null;
+            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch dislikes", ex);
         }
     }
 

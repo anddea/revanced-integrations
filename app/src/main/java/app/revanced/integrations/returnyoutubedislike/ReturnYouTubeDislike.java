@@ -24,18 +24,6 @@ public class ReturnYouTubeDislike {
     private static boolean segmentedButton;
     private static boolean RTL;
 
-    public enum Vote {
-        LIKE(1),
-        DISLIKE(-1),
-        LIKE_REMOVE(0);
-
-        public int value;
-
-        Vote(int value) {
-            this.value = value;
-        }
-    }
-
     private static Thread _dislikeFetchThread = null;
     private static Thread _votingThread = null;
     private static Registration registration;
@@ -120,7 +108,7 @@ public class ReturnYouTubeDislike {
         }
     }
 
-    public static void sendVote(Vote vote) {
+    public static void sendVote(int vote) {
         if (!isEnabled) return;
 
         Context context = ReVancedUtils.getContext();
