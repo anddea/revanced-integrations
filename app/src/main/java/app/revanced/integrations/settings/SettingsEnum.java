@@ -43,7 +43,7 @@ public enum SettingsEnum {
     OLD_STYLE_QUALITY_SETTINGS("revanced_use_old_style_quality_settings", true, ReturnType.BOOLEAN),
     REEL_BUTTON_SHOWN("revanced_reel_button_enabled", false, ReturnType.BOOLEAN, true),
     INFO_CARDS_SHOWN("revanced_info_cards_enabled", true, ReturnType.BOOLEAN, true),
-    SUGGESTIONS_SHOWN("revanced_info_card_suggestions_enabled", true, ReturnType.BOOLEAN, true),
+    ENDSCREEN_CARDS("revanced_endscreen_cards", true, ReturnType.BOOLEAN, true),
     BRANDING_SHOWN("revanced_branding_watermark_enabled", false, ReturnType.BOOLEAN),
     CAST_BUTTON_SHOWN("revanced_cast_button_enabled", false, ReturnType.BOOLEAN, true),
     AUTOPLAY_BUTTON_SHOWN("revanced_autoplay_button_enabled", false, ReturnType.BOOLEAN, true),
