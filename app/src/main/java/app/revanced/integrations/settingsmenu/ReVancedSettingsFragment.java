@@ -53,7 +53,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private Preference ExperimentalFlag;
     private SwitchPreference Rotation;
     private SwitchPreference OldLayout;
-    private SwitchPreference RydNewLayout;
     private SwitchPreference TabletLayout;
     private SwitchPreference PhoneLayout;
 
@@ -210,7 +209,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.ExperimentalFlag = (Preference) this.extendedPreferenceScreen.findPreference("revanced_experimental_flag");
             this.Rotation = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_fullscreen_rotation");
             this.OldLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_disable_new_layout");
-            this.RydNewLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_ryd_new_layout");
             this.TabletLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_tablet_layout");
             this.PhoneLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_phone_layout");
 			AutoRepeatLinks();
@@ -348,9 +346,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             SwitchPreference switchPreference = (SwitchPreference) findPreferenceOnScreen("revanced_fullscreen_rotation");
             if (!after29) {
                 SettingsEnum.DISABLE_NEWLAYOUT.saveValue(false);
-                SettingsEnum.RYD_NEWLAYOUT.saveValue(false);
                 this.extendedPreferenceScreen.removePreference(this.OldLayout);
-                this.extendedPreferenceScreen.removePreference(this.RydNewLayout);
                 this.extendedPreferenceScreen.removePreference(this.ExperimentalFlag);
                 this.extendedPreferenceScreen.removePreference(this.Rotation);
                 return;
