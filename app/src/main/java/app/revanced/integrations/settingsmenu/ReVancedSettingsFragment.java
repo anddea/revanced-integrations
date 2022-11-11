@@ -216,7 +216,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.TabletLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_tablet_layout");
             this.PhoneLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_phone_layout");
             this.MixPlaylists = (SwitchPreference) this.layoutPreferenceScreen.findPreference("revanced_mix_playlists_hidden");
-            this.FullscreenButton = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_fullscreen_button_container");
+            this.FullscreenButton = (SwitchPreference) this.layoutPreferenceScreen.findPreference("revanced_fullscreen_button_container");
 			AutoRepeatLinks();
             VersionOverrideLinks();
             VersionOverrideLinks2();
