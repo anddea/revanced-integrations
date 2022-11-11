@@ -1,7 +1,9 @@
 package app.revanced.integrations.patches;
 
+import android.content.Context;
 import android.util.Log;
 
+import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ThemeHelper;
 
 public class LithoThemePatch {
@@ -19,8 +21,9 @@ public class LithoThemePatch {
 
     // Used by app.revanced.patches.youtube.layout.theme.patch.LithoThemePatch
     public static int applyLithoTheme(int originalValue) {
-        
-        if (anyEquals(originalValue, CONSTANTS) || (ThemeHelper.isDarkTheme() && anyEquals(originalValue, DARKCONSTANTS))) return 0;
+        Context context = ReVancedUtils.getContext();
+        if (anyEquals(originalValue, CONSTANTS)) return context.getResources().getIdentifier("full_transparent", "color", context.getPackageName());
+        else if (ThemeHelper.isDarkTheme() && anyEquals(originalValue, DARKCONSTANTS)) return 0;
         return originalValue;
     }
 

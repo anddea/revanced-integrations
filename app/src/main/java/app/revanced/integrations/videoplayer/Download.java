@@ -105,8 +105,8 @@ public class Download {
     }
 
     public static String getDownloaderName(String DownloaderPackageName) {
-        String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe x SponsorBlock", "SnapTube"};
-        String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe", "com.snaptube.premium"};
+        String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe x SponsorBlock", "Seal", "SnapTube"};
+        String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe", "com.junkfood.seal", "com.snaptube.premium"};
 
         try {
             for (int i = 0; i < DownloaderNameList.length ; i++) {

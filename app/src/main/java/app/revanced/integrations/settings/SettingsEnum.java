@@ -28,7 +28,6 @@ public enum SettingsEnum {
     ADREMOVER_COMPACT_BANNER_REMOVAL("revanced_adremover_compact_banner_removal", true, ReturnType.BOOLEAN),
     ADREMOVER_MOVIE_REMOVAL("revanced_adremover_movie", true, ReturnType.BOOLEAN),
     ADREMOVER_FEED_SURVEY_REMOVAL("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
-    ADREMOVER_SHORTS_SHELF_REMOVAL("revanced_adremover_shorts_shelf", true, ReturnType.BOOLEAN),
     ADREMOVER_IMAGE_SHELF_REMOVAL("revanced_adremover_image_shelf", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_GUIDELINES_REMOVAL("revanced_adremover_community_guidelines", true, ReturnType.BOOLEAN),
     ADREMOVER_EMERGENCY_BOX_REMOVAL("revanced_adremover_emergency_box_removal", true, ReturnType.BOOLEAN),
@@ -49,14 +48,12 @@ public enum SettingsEnum {
     AUTOPLAY_BUTTON_SHOWN("revanced_autoplay_button_enabled", false, ReturnType.BOOLEAN, true),
     CAPTIONS_BUTTON_SHOWN("revanced_captions_button_enabled", true, ReturnType.BOOLEAN),
     CREATE_BUTTON_ENABLED("revanced_create_button_enabled", false, ReturnType.BOOLEAN, true),
-    SHORTS_BUTTON_SHOWN("revanced_shorts_button_enabled", false, ReturnType.BOOLEAN, true),
     WIDE_SEARCHBAR("revanced_wide_searchbar", false, ReturnType.BOOLEAN, true),
     USE_TABLET_MINIPLAYER("revanced_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
     CAPTIONS_ENABLED("revanced_autocaptions_enabled", false, ReturnType.BOOLEAN, true),
     PLAYER_POPUP_PANELS("revanced_player_popup_panels_enabled", false, ReturnType.BOOLEAN, true),
     HIDE_TIME_AND_SEEKBAR("revanced_hide_time_and_seekbar", true, ReturnType.BOOLEAN),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", false, ReturnType.BOOLEAN, true),
-    DISABLE_STARTUP_SHORTS_PLAYER("revanced_startup_shorts_player_enabled", false, ReturnType.BOOLEAN),
     HIDE_MIX_PLAYLISTS("revanced_mix_playlists_hidden", true, ReturnType.BOOLEAN, true),
     HIDE_CROWDFUNDING_BOX("revanced_crowdfunding_box", false, ReturnType.BOOLEAN, true),
     HIDE_OFFICIAL_CARDS("revanced_official_card_in_search", true, ReturnType.BOOLEAN, true),
@@ -77,7 +74,6 @@ public enum SettingsEnum {
     //Button Container
     HIDE_COMMENTS_SECTION("revanced_hide_comments_section", false, ReturnType.BOOLEAN),
     HIDE_PREVIEW_COMMENT("revanced_hide_preview_comment", false, ReturnType.BOOLEAN),
-    HIDE_SHORTS_COMMENTS_BUTTON("revanced_hide_shorts_comments_button", false, ReturnType.BOOLEAN),
 
     //Misc Settings
     USE_HDR_AUTO_BRIGHTNESS("revanced_pref_hdr_autobrightness", false, ReturnType.BOOLEAN),
@@ -89,7 +85,7 @@ public enum SettingsEnum {
     PREFERRED_VIDEO_QUALITY_WIFI("revanced_pref_video_quality_wifi", -2, ReturnType.INTEGER),
     PREFERRED_VIDEO_QUALITY_MOBILE("revanced_pref_video_quality_mobile", -2, ReturnType.INTEGER),
     CUSTOM_PLAYBACK_SPEED_ENABLED("revanced_pref_custom_playback_speed", false, ReturnType.BOOLEAN, true),
-    SAVE_VIDEO_QUALITY("revanced_pref_save_video_quality", true, ReturnType.BOOLEAN),
+    SAVE_VIDEO_QUALITY("revanced_pref_save_video_quality", false, ReturnType.BOOLEAN),
 
     //Overlaybutton Settings
     PREFERRED_COPY_BUTTON("revanced_pref_copy_video_url_button", false, ReturnType.BOOLEAN),
@@ -109,9 +105,19 @@ public enum SettingsEnum {
     PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
     BREAKING_NEWS_PANELS("revanced_breaking_news_panels", false, ReturnType.BOOLEAN, true),
     HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", true, ReturnType.BOOLEAN, true),
-    VIEW_PRODUCTS("revanced_view_products", false, ReturnType.BOOLEAN, true),
+    VIEW_PRODUCTS("revanced_view_products", true, ReturnType.BOOLEAN, true),
     TIMED_REACTIONS("revanced_timed_reactions", false, ReturnType.BOOLEAN, true),
     CUTOUT_GLITCH("revanced_cutout_glitch", true, ReturnType.BOOLEAN, true),
+    PALYER_OVERLAY_BACKGROUND("revanced_player_overlay_background", false, ReturnType.BOOLEAN, true),
+
+    //Shorts component
+    SHORTS_BUTTON("revanced_shorts_button", false, ReturnType.BOOLEAN, true),
+    SHORTS_SHELF("revanced_shorts_shelf", false, ReturnType.BOOLEAN),
+    STARTUP_SHORTS_PLAYER("revanced_disable_startup_shorts_player", false, ReturnType.BOOLEAN),
+    SHORTS_COMMENTS_BUTTON("revanced_shorts_comments_button", true, ReturnType.BOOLEAN),
+    SHORTS_REMIX_BUTTON("revanced_shorts_remix_button", true, ReturnType.BOOLEAN),
+    SHORTS_PLAYER_THANKS("revanced_shorts_player_thanks", true, ReturnType.BOOLEAN, true),
+    SHORTS_PLAYER_SUBSCRIPTIONS("revanced_shorts_player_subscriptions", true, ReturnType.BOOLEAN, true),
 
     //Experimental Flags
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),

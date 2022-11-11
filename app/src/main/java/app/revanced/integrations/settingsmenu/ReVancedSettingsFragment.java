@@ -49,14 +49,15 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private boolean Registered = false;
     private boolean settingsInitialized = false;
-    private PreferenceScreen extendedPreferenceScreen;
     private PreferenceScreen layoutPreferenceScreen;
+    private PreferenceScreen extendedPreferenceScreen;
     private Preference ExperimentalFlag;
     private SwitchPreference Rotation;
     private SwitchPreference OldLayout;
     private SwitchPreference TabletLayout;
     private SwitchPreference PhoneLayout;
     private SwitchPreference MixPlaylists;
+    private SwitchPreference FullscreenButton;
 
     private final CharSequence[] videoQualityEntries = {"Auto", "144p", "240p", "360p", "480p", "720p", "1080p", "1440p", "2160p"};
     private final CharSequence[] videoQualityentryValues = {"-2", "144", "240", "360", "480", "720", "1080", "1440", "2160"};
@@ -64,9 +65,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private final CharSequence[] videoSpeedentryValues = {"-2", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0", "2.25", "2.5", "3.0", "5.0"};
     private final CharSequence[] videoSpeedEntries2 = {"Auto", "0.25x", "0.5x", "0.75x", "Normal", "1.25x", "1.5x", "1.75x", "2x"};
     private final CharSequence[] videoSpeedentryValues2 = {"-2", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
-    private final String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe_SponsorBlock"};
-    private final String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe"};
-    private final String[] DownloaderURLList = {"https://github.com/razar-dev/PowerTube/releases/latest", "https://github.com/TeamNewPipe/NewPipe/releases/latest", "https://github.com/polymorphicshade/NewPipe/releases/latest"};
+    private final String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe_SponsorBlock", "Seal"};
+    private final String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe", "com.junkfood.seal"};
+    private final String[] DownloaderURLList = {"https://github.com/razar-dev/PowerTube/releases/latest", "https://github.com/TeamNewPipe/NewPipe/releases/latest", "https://github.com/polymorphicshade/NewPipe/releases/latest", "https://github.com/JunkFood02/Seal/releases/latest"};
     //private final CharSequence[] buttonLocationEntries = {"None", "In player", "Under player", "Both"};
     //private final CharSequence[] buttonLocationentryValues = {"NONE", "PLAYER", "BUTTON_BAR", "BOTH"};
 
@@ -215,11 +216,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.TabletLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_tablet_layout");
             this.PhoneLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_phone_layout");
             this.MixPlaylists = (SwitchPreference) this.layoutPreferenceScreen.findPreference("revanced_mix_playlists_hidden");
+            this.FullscreenButton = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_fullscreen_button_container");
 			AutoRepeatLinks();
             VersionOverrideLinks();
             VersionOverrideLinks2();
             LayoutOverrideLinks();
-            MixPlaylistsLinks();
+            TabletLayoutLinks();
 
             String AUTO = str("quality_auto");
 			this.videoSpeedEntries[0] = AUTO;
@@ -389,22 +391,28 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
 
-    public void MixPlaylistsLinks() {
+    public void TabletLayoutLinks() {
         try {
             Context context = ReVancedUtils.getContext();
-            boolean istabletlayout = ReVancedUtils.isTablet(context) && !SettingsEnum.PHONE_LAYOUT.getBoolean();
+            boolean istabletlayout = (ReVancedUtils.isTablet(context) && !SettingsEnum.PHONE_LAYOUT.getBoolean()) || SettingsEnum.TABLET_LAYOUT.getBoolean();
             SwitchPreference mixplaylistPreference = (SwitchPreference) findPreferenceOnScreen("revanced_mix_playlists_hidden");
+            SwitchPreference fullscreenbuttonlistPreference = (SwitchPreference) findPreferenceOnScreen("revanced_fullscreen_button_container");
             if (istabletlayout) {
                 mixplaylistPreference.setEnabled(false);
+                fullscreenbuttonlistPreference.setEnabled(false);
                 SettingsEnum.HIDE_MIX_PLAYLISTS.saveValue(true);
+                SettingsEnum.FULLSCREEN_BUTTON_CONTAINER_SHOWN.saveValue(false);
                 this.layoutPreferenceScreen.removePreference(this.MixPlaylists);
+                this.layoutPreferenceScreen.removePreference(this.FullscreenButton);
                 return;
             }
             mixplaylistPreference.setEnabled(true);
+            fullscreenbuttonlistPreference.setEnabled(true);
             this.layoutPreferenceScreen.addPreference(this.MixPlaylists);
+            this.layoutPreferenceScreen.addPreference(this.FullscreenButton);
             return;
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting MixPlaylistsLinks" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting TabletLayoutLinks" + th);
         }
     }
 

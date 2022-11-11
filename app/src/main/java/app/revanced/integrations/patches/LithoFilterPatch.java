@@ -151,7 +151,7 @@ class GeneralBytecodeAdsPatch extends Filter {
         var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL_REMOVAL, "medical_panel");
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTECT_REMOVAL, "paid_content_overlay");
         var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE_REMOVAL, "product_carousel");
-        var shorts = new BlockRule(SettingsEnum.ADREMOVER_SHORTS_SHELF_REMOVAL, "shorts_shelf");
+        var shorts = new BlockRule(SettingsEnum.SHORTS_SHELF, true, "shorts_shelf");
         var image = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF_REMOVAL, "image_shelf");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL_REMOVAL, "publisher_transparency_panel", "single_item_information_panel");
         var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS_REMOVAL, "horizontal_video_shelf");
@@ -169,7 +169,7 @@ class GeneralBytecodeAdsPatch extends Filter {
             SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL,
             // could be required
             //"full_width_square_image_layout",
-            "video_display_full_buttoned_layout",
+            "video_display_full",
             "_ad",
             "active_view_display_container",
             "ad_",
@@ -178,7 +178,7 @@ class GeneralBytecodeAdsPatch extends Filter {
             "reels_player_overlay",
             "shelf_header",
             "watch_metadata_app_promo",
-            "video_display_full_layout"
+            "legal_disclosure_cell"
         );
         var movieAds = new BlockRule(
             SettingsEnum.ADREMOVER_MOVIE_REMOVAL,

@@ -12,7 +12,7 @@ public class HideShortsButtonPatch {
     //Used by app.revanced.patches.youtube.layout.shorts.button.patch.ShortsButtonRemoverPatch
     public static void hideShortsButton(View view) {
         if (lastPivotTab != null && lastPivotTab.name() == "TAB_SHORTS") {
-            boolean show = SettingsEnum.SHORTS_BUTTON_SHOWN.getBoolean();
+            boolean show = SettingsEnum.SHORTS_BUTTON.getBoolean();
             String message = show ? "Shorts button: shown" : "Shorts button: hidden";
             LogHelper.debug(HideShortsButtonPatch.class, message);
             if (!show) {

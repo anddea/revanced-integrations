@@ -97,7 +97,11 @@ public class HideButtonContainerPatch {
         }
 
         if (SettingsEnum.CUTOUT_GLITCH.getBoolean()) {
-            newBlockList.add("endorsement_header_foote");
+            newBlockList.add("endorsement_header_footer");
+        }
+
+        if (!SettingsEnum.SHORTS_PLAYER_THANKS.getBoolean()) {
+            newBlockList.add("suggested_action");
         }
 
         if (anyMatch(newBlockList, inflatedTemplate::contains)) {

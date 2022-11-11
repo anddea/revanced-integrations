@@ -1,3 +1,37 @@
+# [0.68.0](https://github.com/revanced/revanced-integrations/compare/v0.67.2...v0.68.0) (2022-11-09)
+
+
+### Features
+
+* **youtube:** `open-links-directly` patch ([#201](https://github.com/revanced/revanced-integrations/issues/201)) ([c3c1656](https://github.com/revanced/revanced-integrations/commit/c3c16563ea4e55234b8dea24732ce5e53bb562c8))
+
+## [0.67.2](https://github.com/revanced/revanced-integrations/compare/v0.67.1...v0.67.2) (2022-11-08)
+
+
+### Bug Fixes
+
+* **youtube/hide-endscreen-cards:** restore functionality ([#200](https://github.com/revanced/revanced-integrations/issues/200)) ([d866558](https://github.com/revanced/revanced-integrations/commit/d86655874ba37c380c3dfefad0380a728ea5e74f))
+
+## [0.67.1](https://github.com/revanced/revanced-integrations/compare/v0.67.0...v0.67.1) (2022-11-07)
+
+
+### Bug Fixes
+
+* **youtube/hide-info-cards:** remove initial popup of info-cards ([#199](https://github.com/revanced/revanced-integrations/issues/199)) ([85971bc](https://github.com/revanced/revanced-integrations/commit/85971bcd5e25e05d565e7d18d97b672363113ded))
+
+# [0.67.0](https://github.com/revanced/revanced-integrations/compare/v0.66.0...v0.67.0) (2022-11-05)
+
+
+### Bug Fixes
+
+* **fix-playback:** seek to maximum end ([fd69010](https://github.com/revanced/revanced-integrations/commit/fd69010defdf9a459dd93173208ecc3867037ad9))
+* remove left over not existing code references ([ac81695](https://github.com/revanced/revanced-integrations/commit/ac81695747ca932f16fdfc34774325154d9893ab))
+
+
+### Features
+
+* **video-information:** hook video time ([6aa0ca9](https://github.com/revanced/revanced-integrations/commit/6aa0ca95568fe3cbee50c28342448259892112d8))
+
 # [0.66.0](https://github.com/revanced/revanced-integrations/compare/v0.65.0...v0.66.0) (2022-11-01)
 
 
