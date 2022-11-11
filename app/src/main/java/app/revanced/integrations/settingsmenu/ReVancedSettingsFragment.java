@@ -50,6 +50,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private boolean Registered = false;
     private boolean settingsInitialized = false;
     private PreferenceScreen layoutPreferenceScreen;
+    private PreferenceScreen containerPreferenceScreen;
     private PreferenceScreen extendedPreferenceScreen;
     private Preference ExperimentalFlag;
     private SwitchPreference Rotation;
@@ -210,13 +211,14 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.screens.add((PreferenceScreen) getPreferenceScreen().findPreference("extended"));
             this.extendedPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("extended");
             this.layoutPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("layout");
+            this.containerPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("revanced_button_container");
             this.ExperimentalFlag = (Preference) this.extendedPreferenceScreen.findPreference("revanced_experimental_flag");
             this.Rotation = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_fullscreen_rotation");
             this.OldLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_disable_new_layout");
             this.TabletLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_tablet_layout");
             this.PhoneLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_phone_layout");
             this.MixPlaylists = (SwitchPreference) this.layoutPreferenceScreen.findPreference("revanced_mix_playlists_hidden");
-            this.FullscreenButton = (SwitchPreference) this.layoutPreferenceScreen.findPreference("revanced_fullscreen_button_container");
+            this.FullscreenButton = (SwitchPreference) this.containerPreferenceScreen.findPreference("revanced_fullscreen_button_container");
 			AutoRepeatLinks();
             VersionOverrideLinks();
             VersionOverrideLinks2();
@@ -403,13 +405,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_MIX_PLAYLISTS.saveValue(true);
                 SettingsEnum.FULLSCREEN_BUTTON_CONTAINER_SHOWN.saveValue(false);
                 this.layoutPreferenceScreen.removePreference(this.MixPlaylists);
-                this.layoutPreferenceScreen.removePreference(this.FullscreenButton);
+                this.containerPreferenceScreen.removePreference(this.FullscreenButton);
                 return;
             }
             mixplaylistPreference.setEnabled(true);
             fullscreenbuttonlistPreference.setEnabled(true);
             this.layoutPreferenceScreen.addPreference(this.MixPlaylists);
-            this.layoutPreferenceScreen.addPreference(this.FullscreenButton);
+            this.containerPreferenceScreen.addPreference(this.FullscreenButton);
             return;
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting TabletLayoutLinks" + th);
