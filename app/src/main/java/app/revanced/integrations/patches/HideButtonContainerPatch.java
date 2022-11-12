@@ -100,6 +100,14 @@ public class HideButtonContainerPatch {
             newBlockList.add("endorsement_header_footer");
         }
 
+        if (SettingsEnum.EXPANSION_CARD.getBoolean()) {
+            newBlockList.add("expandable_metadata");
+        }
+
+        if (SettingsEnum.WEB_SEARCH_PANELS.getBoolean()) {
+            newBlockList.add("web_link_panel");
+        }
+
         if (!SettingsEnum.SHORTS_PLAYER_THANKS.getBoolean()) {
             newBlockList.add("suggested_action");
         }

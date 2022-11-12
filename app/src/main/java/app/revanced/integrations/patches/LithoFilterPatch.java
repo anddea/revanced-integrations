@@ -151,7 +151,7 @@ class GeneralBytecodeAdsPatch extends Filter {
         var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL_REMOVAL, "medical_panel");
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTECT_REMOVAL, "paid_content_overlay");
         var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE_REMOVAL, "product_carousel");
-        var shorts = new BlockRule(SettingsEnum.SHORTS_SHELF, true, "shorts_shelf");
+        var shorts = new BlockRule(SettingsEnum.SHORTS_SHELF, true, "shorts_shelf", "shelf_header");
         var image = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF_REMOVAL, "image_shelf");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL_REMOVAL, "publisher_transparency_panel", "single_item_information_panel");
         var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS_REMOVAL, "horizontal_video_shelf");
@@ -172,11 +172,10 @@ class GeneralBytecodeAdsPatch extends Filter {
             "video_display_full",
             "_ad",
             "active_view_display_container",
-            "ad_",
+            "|ad_",
             "ads_video_with_context",
             "cell_divider",
             "reels_player_overlay",
-            "shelf_header",
             "watch_metadata_app_promo",
             "legal_disclosure_cell"
         );
@@ -219,13 +218,9 @@ class GeneralBytecodeAdsPatch extends Filter {
             "home_video_with_context",
             "related_video_with_context",
             "search_video_with_context",
-            "download_",
-            "library_recent_shelf",
-            "menu",
-            "root",
-            "-count",
-            "-space",
-            "-button"
+            "comment_thread",
+            "horizontal_shelf",
+            "playlist_add_to_option_wrapper"
         )) return false;
 
         for (var rule : register) {

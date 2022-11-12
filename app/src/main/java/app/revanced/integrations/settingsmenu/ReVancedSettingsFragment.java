@@ -219,17 +219,17 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.PhoneLayout = (SwitchPreference) this.extendedPreferenceScreen.findPreference("revanced_phone_layout");
             this.MixPlaylists = (SwitchPreference) this.layoutPreferenceScreen.findPreference("revanced_mix_playlists_hidden");
             this.FullscreenButton = (SwitchPreference) this.containerPreferenceScreen.findPreference("revanced_fullscreen_button_container");
-			AutoRepeatLinks();
+            AutoRepeatLinks();
             VersionOverrideLinks();
             VersionOverrideLinks2();
             LayoutOverrideLinks();
             TabletLayoutLinks();
 
             String AUTO = str("quality_auto");
-			this.videoSpeedEntries[0] = AUTO;
-			this.videoSpeedEntries2[0] = AUTO;
-			this.videoQualityEntries[0] = AUTO;
-			String NORMAL = str("pref_subtitles_scale_normal");
+            this.videoSpeedEntries[0] = AUTO;
+            this.videoSpeedEntries2[0] = AUTO;
+            this.videoQualityEntries[0] = AUTO;
+            String NORMAL = str("pref_subtitles_scale_normal");
             this.videoSpeedEntries[4] = NORMAL;
             this.videoSpeedEntries2[4] = NORMAL;
 
@@ -396,15 +396,17 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void TabletLayoutLinks() {
         try {
             Context context = ReVancedUtils.getContext();
-            boolean istabletlayout = (ReVancedUtils.isTablet(context) && !SettingsEnum.PHONE_LAYOUT.getBoolean()) || SettingsEnum.TABLET_LAYOUT.getBoolean();
+            boolean istablet = ReVancedUtils.isTablet(context) && !SettingsEnum.PHONE_LAYOUT.getBoolean();
+            boolean istabletlayout = istablet || SettingsEnum.TABLET_LAYOUT.getBoolean();
             SwitchPreference mixplaylistPreference = (SwitchPreference) findPreferenceOnScreen("revanced_mix_playlists_hidden");
             SwitchPreference fullscreenbuttonlistPreference = (SwitchPreference) findPreferenceOnScreen("revanced_fullscreen_button_container");
             if (istabletlayout) {
-                mixplaylistPreference.setEnabled(false);
+                if (istablet) this.layoutPreferenceScreen.removePreference(this.MixPlaylists);
+                else this.layoutPreferenceScreen.addPreference(this.MixPlaylists);
+                mixplaylistPreference.setEnabled(!istablet);
+                SettingsEnum.HIDE_MIX_PLAYLISTS.saveValue(istablet);
                 fullscreenbuttonlistPreference.setEnabled(false);
-                SettingsEnum.HIDE_MIX_PLAYLISTS.saveValue(true);
                 SettingsEnum.FULLSCREEN_BUTTON_CONTAINER_SHOWN.saveValue(false);
-                this.layoutPreferenceScreen.removePreference(this.MixPlaylists);
                 this.containerPreferenceScreen.removePreference(this.FullscreenButton);
                 return;
             }
@@ -425,12 +427,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             listPreference.setValue(value);
         }
         if (SettingsEnum.CUSTOM_PLAYBACK_SPEED_ENABLED.getBoolean()) {
-			listPreference.setEntries(this.videoSpeedEntries);
-			listPreference.setEntryValues(this.videoSpeedentryValues);
+            listPreference.setEntries(this.videoSpeedEntries);
+            listPreference.setEntryValues(this.videoSpeedentryValues);
             listPreference.setSummary(this.videoSpeedEntries[listPreference.findIndexOfValue(value)]);
         } else {
-			listPreference.setEntries(this.videoSpeedEntries2);
-			listPreference.setEntryValues(this.videoSpeedentryValues2);
+            listPreference.setEntries(this.videoSpeedEntries2);
+            listPreference.setEntryValues(this.videoSpeedentryValues2);
             listPreference.setSummary(this.videoSpeedEntries2[listPreference.findIndexOfValue(value)]);
         }
     }

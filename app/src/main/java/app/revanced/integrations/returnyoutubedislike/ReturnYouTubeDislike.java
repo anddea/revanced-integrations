@@ -91,7 +91,7 @@ public class ReturnYouTubeDislike {
                 segmentedButton = true;
             else if (!conversionContextString.contains("|dislike_button.eml|"))
                 return;
-			
+            
             // Have to block the current thread until fetching is done
             // There's no known way to edit the text after creation yet
             if (_dislikeFetchThread != null) _dislikeFetchThread.join();
@@ -175,18 +175,15 @@ public class ReturnYouTubeDislike {
 
     private static boolean isRTL(Locale locale) {
         try {
+            final String language = locale.getLanguage();
+            String[] RTLLanguageList = {"ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi"};
+            for (int i = 0; i < RTLLanguageList.length ; i++) {
+                if (RTLLanguageList[i].equals(language)) return true;
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 final int directionality = Character.getDirectionality(Locale.getDefault().getDisplayName().charAt(0));
                 return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
                        directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;
-            } else {
-                final String language = locale.getLanguage();
-                String[] RTLLanguageList = {"ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi"};
-                for (int i = 0; i < RTLLanguageList.length ; i++) {
-                    if (RTLLanguageList[i].equals(language)){
-                        return true;
-                    }
-                }
             }
         } catch (Exception ex) {
             LogHelper.printException(ReturnYouTubeDislike.class, "Failed to get locale", ex);

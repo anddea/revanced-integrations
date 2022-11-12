@@ -8,7 +8,6 @@ import app.revanced.integrations.utils.ThemeHelper;
 
 public class LithoThemePatch {
     private static final int[] CONSTANTS = {
-        -14606047, // comments chip background
         -15198184, // music related results panel background
         -98492127, // video chapters list background
         -14145496 // drawer content view background
@@ -18,12 +17,15 @@ public class LithoThemePatch {
         -15790321 // comments chip background (new layout)
     };
 
+    private static final int[] EXCEPTION = {
+        -14606047 // comments chip background
+    };
 
     // Used by app.revanced.patches.youtube.layout.theme.patch.LithoThemePatch
     public static int applyLithoTheme(int originalValue) {
         Context context = ReVancedUtils.getContext();
-        if (anyEquals(originalValue, CONSTANTS)) return context.getResources().getIdentifier("full_transparent", "color", context.getPackageName());
-        else if (ThemeHelper.isDarkTheme() && anyEquals(originalValue, DARKCONSTANTS)) return 0;
+        if (anyEquals(originalValue, CONSTANTS) || (ThemeHelper.isDarkTheme() && anyEquals(originalValue, DARKCONSTANTS))) return 0;
+        else if (anyEquals(originalValue, EXCEPTION)) return context.getResources().getColor(context.getResources().getIdentifier("yt_black1", "color", context.getPackageName()));
         return originalValue;
     }
 

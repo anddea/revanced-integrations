@@ -26,7 +26,7 @@ public enum SettingsEnum {
     ADREMOVER_MERCHANDISE_REMOVAL("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_POSTS_REMOVAL("revanced_adremover_community_posts_removal", false, ReturnType.BOOLEAN),
     ADREMOVER_COMPACT_BANNER_REMOVAL("revanced_adremover_compact_banner_removal", true, ReturnType.BOOLEAN),
-    ADREMOVER_MOVIE_REMOVAL("revanced_adremover_movie", true, ReturnType.BOOLEAN),
+    ADREMOVER_MOVIE_REMOVAL("revanced_adremover_movie", false, ReturnType.BOOLEAN),
     ADREMOVER_FEED_SURVEY_REMOVAL("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
     ADREMOVER_IMAGE_SHELF_REMOVAL("revanced_adremover_image_shelf", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_GUIDELINES_REMOVAL("revanced_adremover_community_guidelines", true, ReturnType.BOOLEAN),
@@ -58,8 +58,10 @@ public enum SettingsEnum {
     HIDE_CROWDFUNDING_BOX("revanced_crowdfunding_box", false, ReturnType.BOOLEAN, true),
     HIDE_OFFICIAL_CARDS("revanced_official_card_in_search", true, ReturnType.BOOLEAN, true),
     HIDE_ALBUM_CARDS("revanced_album_card_in_search", true, ReturnType.BOOLEAN),
+    HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", true, ReturnType.BOOLEAN, true),
 
     //Button Container
+    FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", false, ReturnType.BOOLEAN, true),
     HIDE_LIKE_BUTTON("revanced_hide_like_button", false, ReturnType.BOOLEAN),
     HIDE_DISLIKE_BUTTON("revanced_hide_dislike_button", false, ReturnType.BOOLEAN),
     HIDE_SHARE_BUTTON("revanced_hide_share_button", false, ReturnType.BOOLEAN),
@@ -97,27 +99,28 @@ public enum SettingsEnum {
     DOWNLOADS_BUTTON_SHOWN("revanced_downloads", true, ReturnType.BOOLEAN, true),
     DOWNLOADS_PACKAGE_NAME("revanced_downloads_package_name", StringRef.str("revanced_default_downloader"), ReturnType.STRING),
 
-    //Extended
-    INAPP_BROWSER("revanced_inapp_browser", false, ReturnType.BOOLEAN, true),
-    URI_REDIRECT("revanced_uri_redirect", true, ReturnType.BOOLEAN, true),
-    FULLSCREEN_BUTTON_CONTAINER_SHOWN("revanced_fullscreen_button_container", false, ReturnType.BOOLEAN, true),
-    SUGGESTED_ACTION_SHOWN("revanced_suggested_actions", true, ReturnType.BOOLEAN, true),
-    PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
-    BREAKING_NEWS_PANELS("revanced_breaking_news_panels", false, ReturnType.BOOLEAN, true),
-    HIDE_WATCH_IN_VR("revanced_hide_watch_in_vr", true, ReturnType.BOOLEAN, true),
-    VIEW_PRODUCTS("revanced_view_products", true, ReturnType.BOOLEAN, true),
-    TIMED_REACTIONS("revanced_timed_reactions", false, ReturnType.BOOLEAN, true),
-    CUTOUT_GLITCH("revanced_cutout_glitch", true, ReturnType.BOOLEAN, true),
-    PALYER_OVERLAY_BACKGROUND("revanced_player_overlay_background", false, ReturnType.BOOLEAN, true),
-
     //Shorts component
     SHORTS_BUTTON("revanced_shorts_button", false, ReturnType.BOOLEAN, true),
     SHORTS_SHELF("revanced_shorts_shelf", false, ReturnType.BOOLEAN),
     STARTUP_SHORTS_PLAYER("revanced_disable_startup_shorts_player", false, ReturnType.BOOLEAN),
-    SHORTS_COMMENTS_BUTTON("revanced_shorts_comments_button", true, ReturnType.BOOLEAN),
-    SHORTS_REMIX_BUTTON("revanced_shorts_remix_button", true, ReturnType.BOOLEAN),
-    SHORTS_PLAYER_THANKS("revanced_shorts_player_thanks", true, ReturnType.BOOLEAN, true),
-    SHORTS_PLAYER_SUBSCRIPTIONS("revanced_shorts_player_subscriptions", true, ReturnType.BOOLEAN, true),
+    SHORTS_COMMENTS_BUTTON("revanced_shorts_player_comments_button", true, ReturnType.BOOLEAN),
+    SHORTS_REMIX_BUTTON("revanced_shorts_player_remix_button", true, ReturnType.BOOLEAN),
+    SHORTS_PLAYER_THANKS("revanced_shorts_player_thanks", true, ReturnType.BOOLEAN),
+    SHORTS_PLAYER_SUBSCRIPTIONS("revanced_shorts_player_subscriptions", true, ReturnType.BOOLEAN),
+
+    //Extended
+    INAPP_BROWSER("revanced_inapp_browser", false, ReturnType.BOOLEAN, true),
+    URI_REDIRECT("revanced_uri_redirect", true, ReturnType.BOOLEAN, true),
+    WEB_SEARCH_PANELS("revanced_web_search_panels", true, ReturnType.BOOLEAN, true),
+    EXPANSION_CARD("revanced_expansion_card", true, ReturnType.BOOLEAN, true),
+    BREAKING_NEWS_PANELS("revanced_breaking_news_panels", false, ReturnType.BOOLEAN, true),
+    SUGGESTED_ACTION("revanced_suggested_actions", true, ReturnType.BOOLEAN, true),
+    TIMED_REACTIONS("revanced_timed_reactions", false, ReturnType.BOOLEAN, true),
+    VIEW_PRODUCTS("revanced_view_products", true, ReturnType.BOOLEAN, true),
+    CUTOUT_GLITCH("revanced_cutout_glitch", true, ReturnType.BOOLEAN, true),
+    PALYER_OVERLAY_BACKGROUND("revanced_player_overlay_background", false, ReturnType.BOOLEAN, true),
+    ENDSCREEN_OVERLAY("revanced_endscreen_overlay", false, ReturnType.BOOLEAN, true),
+    PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
 
     //Experimental Flags
     EXPERIMENTAL_FLAG("experimental_flags_init", false, ReturnType.BOOLEAN, true, "pref_refresh_config"),
