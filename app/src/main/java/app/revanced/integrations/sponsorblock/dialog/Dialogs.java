@@ -18,7 +18,7 @@ import app.revanced.integrations.utils.ReVancedUtils;
 public class Dialogs {
     // Inject call from YT to this
     public static void showDialogsAtStartup(Activity activity) {
-		rvxFirstRun(activity);
+        rvxFirstRun(activity);
     }
 
     private static void rvxFirstRun(Activity activity) {

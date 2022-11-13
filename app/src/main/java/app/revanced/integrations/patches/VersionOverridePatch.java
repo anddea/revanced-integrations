@@ -14,7 +14,7 @@ public class VersionOverridePatch {
         boolean oldlayout = SettingsEnum.DISABLE_NEWLAYOUT.getBoolean();
         if (after29 && oldlayout){
             version = "17.28.35";
-		} else if (hasrotationissue && rotation && !oldlayout){
+        } else if (hasrotationissue && rotation && !oldlayout){
             version = "17.32.39";
         }
         return version;

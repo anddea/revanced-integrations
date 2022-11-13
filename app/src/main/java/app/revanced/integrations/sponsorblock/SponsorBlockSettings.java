@@ -32,8 +32,8 @@ public class SponsorBlockSettings {
 
     public static void update(Context context) {
         if (context == null) {
-			context = ReVancedUtils.getContext();
-		}
+            context = ReVancedUtils.getContext();
+        }
 
         SharedPreferences preferences = SharedPrefHelper.getPreferences(context, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK);
 
