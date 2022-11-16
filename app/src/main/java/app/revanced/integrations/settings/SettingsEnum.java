@@ -19,7 +19,6 @@ public enum SettingsEnum {
     ENABLE_WHITELIST("revanced_whitelist_ads_enabled", false, ReturnType.BOOLEAN),
 
     //Ad settings
-    ADREMOVER_CUSTOM("revanced_adremover_custom_removal", "", ReturnType.STRING),
     HOME_ADS_REMOVAL("revanced_home_ads_removal", true, ReturnType.BOOLEAN, true),
     VIDEO_ADS_REMOVAL("revanced_video_ads_removal", true, ReturnType.BOOLEAN, true),
     ADREMOVER_GENERAL_ADS_REMOVAL("revanced_adremover_ad_removal", true, ReturnType.BOOLEAN, true),
@@ -37,6 +36,8 @@ public enum SettingsEnum {
     ADREMOVER_SUGGESTIONS_REMOVAL("revanced_adremover_hide_suggestions", true, ReturnType.BOOLEAN),
     ADREMOVER_HIDE_LATEST_POSTS("revanced_adremover_hide_latest_posts", true, ReturnType.BOOLEAN),
     ADREMOVER_HIDE_CHANNEL_GUIDELINES("revanced_adremover_hide_channel_guidelines", true, ReturnType.BOOLEAN),
+    ADREMOVER_SELF_SPONSOR_REMOVAL("revanced_adremover_self_sponsor", true, ReturnType.BOOLEAN),
+    ADREMOVER_CHAPTER_TEASER_REMOVAL("revanced_adremover_chapter_teaser", true, ReturnType.BOOLEAN),
 
     //Layout settings
     OLD_STYLE_QUALITY_SETTINGS("revanced_use_old_style_quality_settings", true, ReturnType.BOOLEAN),
@@ -112,7 +113,6 @@ public enum SettingsEnum {
     INAPP_BROWSER("revanced_inapp_browser", false, ReturnType.BOOLEAN, true),
     URI_REDIRECT("revanced_uri_redirect", true, ReturnType.BOOLEAN, true),
     WEB_SEARCH_PANELS("revanced_web_search_panels", true, ReturnType.BOOLEAN, true),
-    EXPANSION_CARD("revanced_expansion_card", true, ReturnType.BOOLEAN, true),
     BREAKING_NEWS_PANELS("revanced_breaking_news_panels", false, ReturnType.BOOLEAN, true),
     SUGGESTED_ACTION("revanced_suggested_actions", true, ReturnType.BOOLEAN, true),
     TIMED_REACTIONS("revanced_timed_reactions", false, ReturnType.BOOLEAN, true),

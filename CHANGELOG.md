@@ -1,3 +1,63 @@
+# [0.71.0](https://github.com/revanced/revanced-integrations/compare/v0.70.0...v0.71.0) (2022-11-15)
+
+
+### Bug Fixes
+
+* **youtube/general-ads:** do not force to restart on general ads switches ([0a90289](https://github.com/revanced/revanced-integrations/commit/0a90289dc59e8bedfc90d62a27b46d406520ead5))
+
+
+### Features
+
+* **youtube/general-ads:** hide chapter teaser under videos ([3fb337b](https://github.com/revanced/revanced-integrations/commit/3fb337b856033965881e2c93fb43b5a34f48ee93))
+* **youtube/general-ads:** hide shorts in search ([d82b989](https://github.com/revanced/revanced-integrations/commit/d82b9898a850d3e1c5163461341dbe1b34199250))
+
+# [0.70.0](https://github.com/revanced/revanced-integrations/compare/v0.69.2...v0.70.0) (2022-11-14)
+
+
+### Bug Fixes
+
+* **youtube/general-ads:** do not force to restart on general ads switches ([7f18520](https://github.com/revanced/revanced-integrations/commit/7f1852064695f3281e31e8f7c6d9f8801751c400))
+
+
+### Features
+
+* **youtube/general-ads:** hide self sponsored cards ([e93ce3e](https://github.com/revanced/revanced-integrations/commit/e93ce3eaa92930688da770555be9d18de84e594e))
+
+## [0.69.2](https://github.com/revanced/revanced-integrations/compare/v0.69.1...v0.69.2) (2022-11-14)
+
+
+### Bug Fixes
+
+* **youtube/general-ads-patch:** revert reducing filter exclusions ([af86dd8](https://github.com/revanced/revanced-integrations/commit/af86dd8ec6084be7f42de1edaa14501d2c0a2eb7))
+
+## [0.69.1](https://github.com/revanced/revanced-integrations/compare/v0.69.0...v0.69.1) (2022-11-14)
+
+
+### Bug Fixes
+
+* **youtube/theme:** revert comment box background color hook ([#210](https://github.com/revanced/revanced-integrations/issues/210)) ([197f003](https://github.com/revanced/revanced-integrations/commit/197f0034a18d3ed796f9a2076aca9659987ed2ed))
+
+# [0.69.0](https://github.com/revanced/revanced-integrations/compare/v0.68.3...v0.69.0) (2022-11-14)
+
+
+### Features
+
+* **youtube/theme:** color explore drawer background ([#203](https://github.com/revanced/revanced-integrations/issues/203)) ([cb40408](https://github.com/revanced/revanced-integrations/commit/cb404086ad7b74a4280ccfaaed49e1edafe6eaf8))
+
+## [0.68.3](https://github.com/revanced/revanced-integrations/compare/v0.68.2...v0.68.3) (2022-11-13)
+
+
+### Bug Fixes
+
+* **youtube/general-ads-patch:** exclude playlists wrapper from filtering ([#206](https://github.com/revanced/revanced-integrations/issues/206)) ([e357ac6](https://github.com/revanced/revanced-integrations/commit/e357ac664b920a348bc8e98fc2b2a11e40045353))
+
+## [0.68.2](https://github.com/revanced/revanced-integrations/compare/v0.68.1...v0.68.2) (2022-11-13)
+
+
+### Performance Improvements
+
+* **youtube/general-ads-patch:** reduce amount of components to filter ([#204](https://github.com/revanced/revanced-integrations/issues/204)) ([502feaf](https://github.com/revanced/revanced-integrations/commit/502feaf4448bf0442f852fbb8fdcb639239664db))
+
 ## [0.68.1](https://github.com/revanced/revanced-integrations/compare/v0.68.0...v0.68.1) (2022-11-13)
 
 

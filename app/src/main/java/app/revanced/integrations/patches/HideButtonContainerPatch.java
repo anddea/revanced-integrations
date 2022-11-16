@@ -75,6 +75,7 @@ public class HideButtonContainerPatch {
         if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean()) {
             genericBufferList.add("for you".getBytes());
             genericBufferList.add("mix-watch".getBytes());
+            genericBufferList.add("rellist".getBytes());
         }
 
         if (containsAny(inflatedTemplate, "related_video_with_context", "search_video_with_context")) {
@@ -100,8 +101,13 @@ public class HideButtonContainerPatch {
             newBlockList.add("endorsement_header_footer");
         }
 
-        if (SettingsEnum.EXPANSION_CARD.getBoolean()) {
-            newBlockList.add("expandable_metadata");
+        if (SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL.getBoolean()) {
+            newBlockList.add("brand_promo_base");
+            newBlockList.add("brand_video_shelf");
+        }
+
+        if (SettingsEnum.ADREMOVER_FEED_SURVEY_REMOVAL.getBoolean()) {
+            newBlockList.add("slimline_survey");
         }
 
         if (SettingsEnum.WEB_SEARCH_PANELS.getBoolean()) {
