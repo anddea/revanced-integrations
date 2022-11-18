@@ -185,7 +185,6 @@ final class GeneralBytecodeAdsPatch extends Filter {
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_HIDE_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR_REMOVAL, "cta_shelf_card");
-        var chapterTeaser = new BlockRule(SettingsEnum.ADREMOVER_CHAPTER_TEASER_REMOVAL, "expandable_metadata");
         var officialCard = new BlockRule(SettingsEnum.HIDE_OFFICIAL_CARDS, true, "official_card");
         var generalAds = new BlockRule(
             SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL,
@@ -219,7 +218,6 @@ final class GeneralBytecodeAdsPatch extends Filter {
             suggestions,
             latestPosts,
             movieAds,
-            chapterTeaser,
             communityGuidelines,
             compactBanner,
             inFeedSurvey,

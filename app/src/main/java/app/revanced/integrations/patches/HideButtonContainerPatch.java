@@ -101,6 +101,10 @@ public class HideButtonContainerPatch {
             newBlockList.add("endorsement_header_footer");
         }
 
+        if (SettingsEnum.ADREMOVER_CHAPTER_TEASER_REMOVAL.getBoolean()) {
+            newBlockList.add("expandable_metadata");
+        }
+
         if (SettingsEnum.ADREMOVER_GENERAL_ADS_REMOVAL.getBoolean()) {
             newBlockList.add("brand_promo_base");
             newBlockList.add("brand_video_shelf");
