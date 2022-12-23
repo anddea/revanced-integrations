@@ -1,7 +1,5 @@
 package app.revanced.integrations.swipecontrols.views
 
-import app.revanced.integrations.sponsorblock.StringRef.str;
-
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -13,11 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import app.revanced.integrations.patches.misc.HDRAutoBrightnessPatch
 import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.swipecontrols.SwipeControlsConfigurationProvider
 import app.revanced.integrations.swipecontrols.misc.SwipeControlsOverlay
 import app.revanced.integrations.swipecontrols.misc.applyDimension
-import app.revanced.integrations.utils.ReVancedUtils
+import app.revanced.integrations.utils.ResourceType
+import app.revanced.integrations.utils.ResourceUtils.identifier
+import app.revanced.integrations.utils.StringRef.str
 import kotlin.math.round
 
 /**
@@ -42,7 +43,7 @@ class SwipeControlsOverlayLayout(
 
     private fun getDrawable(name: String, width: Int, height: Int): Drawable {
         return resources.getDrawable(
-            ReVancedUtils.getResourceIdByName(context, "drawable", name),
+            identifier(name, ResourceType.DRAWABLE, context),
             context.theme
         ).apply {
             setTint(config.overlayForegroundColor)
@@ -125,7 +126,9 @@ class SwipeControlsOverlayLayout(
     }
 
     override fun onBrightnessChanged(brightness: Double) {
-        if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
+        if (HDRAutoBrightnessPatch.getHDRVideo()) {
+            showFeedbackView("HDR", autoBrightnessIcon)
+        } else if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
             if (brightness >= 0) {
                 showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
             } else {

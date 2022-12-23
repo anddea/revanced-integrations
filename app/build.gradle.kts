@@ -7,24 +7,23 @@ plugins {
 }
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "32.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.1"
     namespace = "app.revanced.integrations"
 
     defaultConfig {
-        applicationId = "app.revanced.integrations"
-        minSdk = 23
-        targetSdk = 32
-        versionCode = 1
-        versionName = "1.0"
-        multiDexEnabled = false
-
         val properties = Properties()
         if (rootProject.file("local.properties").exists()) {
             properties.load(FileInputStream(rootProject.file("local.properties")))
         }
+        properties.load(FileInputStream(rootProject.file("gradle.properties")))
 
-        buildConfigField("String", "YT_API_KEY", "\"${properties.getProperty("youtubeAPIKey", "")}\"")
+        applicationId = "app.revanced.integrations"
+        minSdk = 26
+        targetSdk = 33
+        versionCode = 1
+        versionName = properties.getProperty("version", "")
+        multiDexEnabled = false
     }
 
     buildTypes {

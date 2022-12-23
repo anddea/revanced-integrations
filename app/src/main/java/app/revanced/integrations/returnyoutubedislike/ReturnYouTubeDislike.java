@@ -1,194 +1,269 @@
 package app.revanced.integrations.returnyoutubedislike;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.icu.text.CompactDecimalFormat;
-import android.os.Build;
+import android.icu.text.DecimalFormat;
+import android.icu.text.DecimalFormatSymbols;
 import android.text.SpannableString;
+
+import androidx.annotation.GuardedBy;
+import androidx.annotation.Nullable;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import app.revanced.integrations.returnyoutubedislike.requests.RYDVoteData;
 import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ReVancedHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class ReturnYouTubeDislike {
+    /**
+     * Maximum amount of time to block the UI from updates while waiting for dislike network call to complete.
+     *
+     * Must be less than 5 seconds, as per:
+     * https://developer.android.com/topic/performance/vitals/anr
+     */
+    private static final long MILLISECONDS_TO_BLOCK_UI_WHILE_WAITING_FOR_DISLIKE_FETCH_TO_COMPLETE = 4000;
+
+    /**
+     * Used to send votes, one by one, in the same order the user created them
+     */
+    private static final ExecutorService voteSerialExecutor = Executors.newSingleThreadExecutor();
+
+    // Must be volatile, since this is read/wright from different threads
+    private static volatile boolean isEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
+
+    /**
+     * Used to guard {@link #currentVideoId} and {@link #voteFetchFuture},
+     * as multiple threads access this class.
+     */
+    private static final Object videoIdLockObject = new Object();
+
+    @GuardedBy("videoIdLockObject")
     private static String currentVideoId;
-    public static Integer likeCount;
-    public static Integer dislikeCount;
 
-    private static boolean isEnabled;
-    private static boolean segmentedButton;
-    private static boolean RTL;
+    /**
+     * Stores the results of the vote api fetch, and used as a barrier to wait until fetch completes
+     */
+    @GuardedBy("videoIdLockObject")
+    private static Future<RYDVoteData> voteFetchFuture;
 
-    private static Thread _dislikeFetchThread = null;
-    private static Thread _votingThread = null;
-    private static Registration registration;
-    private static Voting voting;
-    private static CompactDecimalFormat compactNumberFormatter;
+    public enum Vote {
+        LIKE(1),
+        DISLIKE(-1),
+        LIKE_REMOVE(0);
 
-    static {
-        Context context = ReVancedUtils.getContext();
-        isEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
-        if (isEnabled) {
-            registration = new Registration();
-            voting = new Voting(registration);
-        }
+        public final int value;
 
-        Locale locale = context.getResources().getConfiguration().locale;
-        LogHelper.debug(ReturnYouTubeDislike.class, "locale - " + locale);
-        RTL = isRTL(locale);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            compactNumberFormatter = CompactDecimalFormat.getInstance(
-                    locale,
-                    CompactDecimalFormat.CompactStyle.SHORT
-            );
+        Vote(int value) {
+            this.value = value;
         }
     }
+
+    private ReturnYouTubeDislike() {
+    } // only static methods
+
+    /**
+     * Used to format like/dislike count.
+     */
+    @GuardedBy("ReturnYouTubeDislike.class") // not thread safe
+    private static CompactDecimalFormat dislikeCountFormatter;
+
+    /**
+     * Used to format like/dislike count.
+     */
+    @GuardedBy("ReturnYouTubeDislike.class") // not thread safe
+    private static DecimalFormat dislikePercentageFormatter;
 
     public static void onEnabledChange(boolean enabled) {
         isEnabled = enabled;
-        if (registration == null) {
-            registration = new Registration();
-        }
-        if (voting == null) {
-            voting = new Voting(registration);
+    }
+
+    private static String getCurrentVideoId() {
+        synchronized (videoIdLockObject) {
+            return currentVideoId;
         }
     }
 
+    private static Future<RYDVoteData> getVoteFetchFuture() {
+        synchronized (videoIdLockObject) {
+            return voteFetchFuture;
+        }
+    }
+
+    // It is unclear if this method is always called on the main thread (since the YouTube app is the one making the call)
+    // treat this as if any thread could call this method
     public static void newVideoLoaded(String videoId) {
-        if (!isEnabled || videoId == null || videoId.equals(currentVideoId)) return;
-        LogHelper.debug(ReturnYouTubeDislike.class, "newVideoLoaded - " + videoId);
-
-        likeCount = null;
-        dislikeCount = null;
-        currentVideoId = videoId;
-
+        if (!isEnabled) return;
         try {
-            if (_dislikeFetchThread != null && _dislikeFetchThread.getState() != Thread.State.TERMINATED) {
-                LogHelper.debug(ReturnYouTubeDislike.class, "Interrupting the thread. Current state " + _dislikeFetchThread.getState());
-                _dislikeFetchThread.interrupt();
+            Objects.requireNonNull(videoId);
+
+            synchronized (videoIdLockObject) {
+                currentVideoId = videoId;
+                // no need to wrap the fetchDislike call in a try/catch,
+                // as any exceptions are propagated out in the later Future#Get call
+                voteFetchFuture = ReVancedUtils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "Error in the dislike fetch thread", ex);
+            LogHelper.printException(ReturnYouTubeDislike.class, "Failed to load new video: " + videoId, ex);
         }
-
-        _dislikeFetchThread = new Thread(() -> ReturnYouTubeDislikeApi.fetchDislikes(videoId));
-        _dislikeFetchThread.start();
     }
 
+    // BEWARE! This method is sometimes called on the main thread, but it usually is called _off_ the main thread!
     public static void onComponentCreated(Object conversionContext, AtomicReference<Object> textRef) {
         if (!isEnabled) return;
 
         try {
             var conversionContextString = conversionContext.toString();
 
+            boolean isSegmentedButton = false;
             // Check for new component
-            if (conversionContextString.contains("|segmented_like_dislike_button.eml|"))
-                segmentedButton = true;
-            else if (!conversionContextString.contains("|dislike_button.eml|"))
+            if (conversionContextString.contains("|segmented_like_dislike_button.eml|")) {
+                isSegmentedButton = true;
+            } else if (!conversionContextString.contains("|dislike_button.eml|")) {
                 return;
-            
+            }
+
             // Have to block the current thread until fetching is done
             // There's no known way to edit the text after creation yet
-            if (_dislikeFetchThread != null) _dislikeFetchThread.join();
-
-            if (likeCount == null || dislikeCount == null) return;
-
-            if (segmentedButton) {
-                updateDislikeText(textRef, formatLikesDislikes(likeCount, dislikeCount));
-            } else {
-                updateDislikeText(textRef, formatDislikes(dislikeCount));
+            RYDVoteData votingData;
+            try {
+                Future<RYDVoteData> fetchFuture = getVoteFetchFuture();
+                fetchFuture.isDone();
+                votingData = fetchFuture.get(MILLISECONDS_TO_BLOCK_UI_WHILE_WAITING_FOR_DISLIKE_FETCH_TO_COMPLETE, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException e) {
+                return;
             }
+            if (votingData == null) {
+                return;
+            }
+
+            updateDislike(textRef, isSegmentedButton, votingData);
         } catch (Exception ex) {
             LogHelper.printException(ReturnYouTubeDislike.class, "Error while trying to set dislikes text", ex);
         }
     }
 
-    public static void sendVote(int vote) {
+    public static void sendVote(Vote vote) {
         if (!isEnabled) return;
-
-        Context context = ReVancedUtils.getContext();
-        if (SharedPrefHelper.getBoolean(Objects.requireNonNull(context), SharedPrefHelper.SharedPrefNames.YOUTUBE, "user_signed_out", true))
-            return;
-
-        LogHelper.debug(ReturnYouTubeDislike.class, "sending vote - " + vote + " for video " + currentVideoId);
         try {
-            if (_votingThread != null && _votingThread.getState() != Thread.State.TERMINATED) {
-                LogHelper.debug(ReturnYouTubeDislike.class, "Interrupting the thread. Current state " + _votingThread.getState());
-                _votingThread.interrupt();
+            Objects.requireNonNull(vote);
+            Context context = Objects.requireNonNull(ReVancedUtils.getContext());
+            if (SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "user_signed_out", true)) {
+                return;
             }
-        } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "Error in the voting thread", ex);
-        }
 
-        _votingThread = new Thread(() -> {
-            try {
-                boolean result = voting.sendVote(currentVideoId, vote);
-                LogHelper.debug(ReturnYouTubeDislike.class, "sendVote status " + result);
-            } catch (Exception ex) {
-                LogHelper.printException(ReturnYouTubeDislike.class, "Failed to send vote", ex);
-            }
-        });
-        _votingThread.start();
+            // Must make a local copy of videoId, since it may change between now and when the vote thread runs
+            String videoIdToVoteFor = getCurrentVideoId();
+
+            voteSerialExecutor.execute(() -> {
+                // must wrap in try/catch to properly log exceptions
+                try {
+                    String userId = getUserId();
+                    if (userId != null) {
+                        ReturnYouTubeDislikeApi.sendVote(videoIdToVoteFor, userId, vote);
+                    }
+                } catch (Exception ex) {
+                    LogHelper.printException(ReturnYouTubeDislike.class, "Failed to send vote", ex);
+                }
+            });
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislike.class, "Error while trying to send vote", ex);
+        }
     }
 
-    private static void updateDislikeText(AtomicReference<Object> textRef, String text) {
-        // textRef = View where Dislike counts are stored
-        SpannableString oldString = (SpannableString) textRef.get();
-        // text = Dislike count received through fetchDislikes
-        SpannableString newString = new SpannableString(text);
-        // How can I append a String to a SpannableString?
+    /**
+     * Must call off main thread, as this will make a network call if user has not yet been registered
+     *
+     * @return ReturnYouTubeDislike user ID. If user registration has never happened
+     * and the network call fails, this will return NULL
+     */
+    @Nullable
+    private static String getUserId() {
+        ReVancedUtils.verifyOffMainThread();
 
+        String userId = SettingsEnum.RYD_USER_ID.getString();
+        if (userId != null) {
+            return userId;
+        }
+
+        userId = ReturnYouTubeDislikeApi.registerAsNewUser(); // blocks until network call is completed
+        if (userId != null) {
+            SettingsEnum.RYD_USER_ID.saveValue(userId);
+        }
+        return userId;
+    }
+
+    private static void updateDislike(AtomicReference<Object> textRef, boolean isSegmentedButton, RYDVoteData voteData) {
+        SpannableString oldSpannableString = (SpannableString) textRef.get();
+
+        String newString = SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
+                ? formatPercentage(voteData.dislikePercentage)
+                : formatCount(voteData.dislikeCount);
+
+        if (isSegmentedButton) {
+            ReVancedHelper.setRTL();
+            String oldString = ReVancedHelper.getOldString(oldSpannableString.toString());
+            
+            String likesString = formatCount(voteData.likeCount);
+            if (!oldString.contains(".")) {
+                try {
+                    likesString = formatCount(Long.parseLong(oldString));
+                } catch (Exception ignored) {}
+            }
+
+            newString = ReVancedHelper.setRTLString(likesString, newString);
+        }
+
+        SpannableString newSpannableString = new SpannableString(newString);
         // Copy style (foreground color, etc) to new string
-        Object[] spans = oldString.getSpans(0, oldString.length(), Object.class);
+        Object[] spans = oldSpannableString.getSpans(0, oldSpannableString.length(), Object.class);
         for (Object span : spans) {
-            int flags = oldString.getSpanFlags(span);
-            newString.setSpan(span, 0, newString.length(), flags);
+            newSpannableString.setSpan(span, 0, newString.length(), oldSpannableString.getSpanFlags(span));
         }
-
-        textRef.set(newString);
+        textRef.set(newSpannableString);
     }
 
-    private static String formatDislikes(int dislikes) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && compactNumberFormatter != null) {
-            final String formatted = compactNumberFormatter.format(dislikes);
-            LogHelper.debug(ReturnYouTubeDislike.class, "Formatting dislikes - " + dislikes + " - " + formatted);
-            return formatted;
-        }
-        LogHelper.debug(ReturnYouTubeDislike.class, "Couldn't format dislikes, using the unformatted count - " + dislikes);
-        return String.valueOf(dislikes);
-    }
-
-    private static String formatLikesDislikes(int likes, int dislikes) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && compactNumberFormatter != null) {
-            final String formatted = RTL ? compactNumberFormatter.format(dislikes) + "  |  " + compactNumberFormatter.format(likes) : compactNumberFormatter.format(likes) + "  |  " + compactNumberFormatter.format(dislikes);
-            LogHelper.debug(ReturnYouTubeDislike.class, "Formatting likes|dislikes - " + likes + "|" + dislikes + " - " + formatted);
-            return formatted;
-        }
-        LogHelper.debug(ReturnYouTubeDislike.class, "Couldn't format dislikes, using the unformatted count - " + dislikes);
-        return RTL ? (String.valueOf(dislikes) + "  |  " + String.valueOf(likes)) : (String.valueOf(likes) + "  |  " + String.valueOf(dislikes));
-    }
-
-    private static boolean isRTL(Locale locale) {
-        try {
-            final String language = locale.getLanguage();
-            String[] RTLLanguageList = {"ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi"};
-            for (int i = 0; i < RTLLanguageList.length ; i++) {
-                if (RTLLanguageList[i].equals(language)) return true;
+    @SuppressLint("NewApi")
+    private static String formatCount(long dislikeCount) {
+        String formatted;
+        synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
+            if (dislikeCountFormatter == null) {
+                Locale locale = ReVancedUtils.getContext().getResources().getConfiguration().locale;
+                dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                final int directionality = Character.getDirectionality(Locale.getDefault().getDisplayName().charAt(0));
-                return directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
-                       directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;
-            }
-        } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "Failed to get locale", ex);
-            return false;
+            formatted = dislikeCountFormatter.format(dislikeCount);
         }
-        return false;
+        return formatted;
+    }
+
+    @SuppressLint("NewApi")
+    private static String formatPercentage(float dislikePercentage) {
+        String formatted;
+        synchronized (ReturnYouTubeDislikeMirror.class) { // number formatter is not thread safe, must synchronize
+            if (dislikePercentageFormatter == null) {
+                Locale locale = ReVancedUtils.getContext().getResources().getConfiguration().locale;
+                dislikePercentageFormatter = new DecimalFormat("", new DecimalFormatSymbols(locale));
+            }
+            if (dislikePercentage == 0 || dislikePercentage >= 0.01) { // zero, or at least 1%
+                dislikePercentageFormatter.applyLocalizedPattern("0"); // show only whole percentage points
+            } else { // between (0, 1)%
+                dislikePercentageFormatter.applyLocalizedPattern("0.#"); // show 1 digit precision
+            }
+            final char percentChar = dislikePercentageFormatter.getDecimalFormatSymbols().getPercent();
+            formatted = dislikePercentageFormatter.format(100 * dislikePercentage) + percentChar;
+        }
+        return formatted;
     }
 }

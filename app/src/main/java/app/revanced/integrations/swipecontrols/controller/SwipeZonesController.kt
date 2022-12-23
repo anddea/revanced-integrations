@@ -5,7 +5,8 @@ import android.util.TypedValue
 import android.view.ViewGroup
 import app.revanced.integrations.swipecontrols.misc.Rectangle
 import app.revanced.integrations.swipecontrols.misc.applyDimension
-import app.revanced.integrations.utils.ReVancedUtils
+import app.revanced.integrations.utils.ResourceType
+import app.revanced.integrations.utils.ResourceUtils
 import kotlin.math.min
 
 /** 
@@ -56,7 +57,7 @@ class SwipeZonesController(
     /**
      * id for R.id.player_view
      */
-    private val playerViewId = ReVancedUtils.getResourceIdByName(host, "id", "player_view")
+    private val playerViewId = ResourceUtils.identifier("player_view", ResourceType.ID, host)
 
     /**
      * current bounding rectangle of the player

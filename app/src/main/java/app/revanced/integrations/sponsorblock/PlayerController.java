@@ -5,27 +5,19 @@ import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.videoHasS
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
-
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import app.revanced.integrations.patches.PlayerControllerPatch;
+import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.videoplayer.NewVideoInformation;
-import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.sponsorblock.requests.SBRequester;
 import app.revanced.integrations.utils.LogHelper;
@@ -39,8 +31,9 @@ public class PlayerController {
     public static WeakReference<Activity> playerActivity = new WeakReference<>(null);
     public static SponsorSegment[] sponsorSegmentsOfCurrentVideo;
     private static long allowNextSkipRequestTime = 0L;
-    private static String currentVideoId;
-    private static long lastKnownVideoTime = -1L;
+    public static String currentVideoId;
+    public static long lastKnownVideoTime = -1L;
+    public static long lastKnownVideoLength = 1L;
     private static final Runnable findAndSkipSegmentRunnable = () -> {
         findAndSkipSegment(false);
     };
@@ -48,14 +41,13 @@ public class PlayerController {
     private static float sponsorBarRight = 1f;
     private static float sponsorBarThickness = 2f;
     private static TimerTask skipSponsorTask = null;
-    //public static Boolean shorts_playing = false;
 
     public static String getCurrentVideoId() {
         return currentVideoId;
     }
 
     public static void setCurrentVideoId(final String videoId) {
-        if (videoId == null) {
+        if (videoId == null || !SettingsEnum.SB_ENABLED.getBoolean()) {
             currentVideoId = null;
             sponsorSegmentsOfCurrentVideo = null;
             return;
@@ -63,21 +55,10 @@ public class PlayerController {
 
         if (videoId.equals(currentVideoId)) return;
 
-        //shorts_playing = videoId.equals(NewVideoInformation.currentVideoId);
-
-        //if (shorts_playing && !SettingsEnum.SB_ENABLED_SHORTS.getBoolean()) return;
-
-        Context context = ReVancedUtils.getContext();
-        SponsorBlockSettings.update(context);
-
-        if (!SettingsEnum.SB_ENABLED.getBoolean()) {
-            currentVideoId = null;
-            return;
-        }
+        SponsorBlockSettings.update(ReVancedUtils.getContext());
 
         currentVideoId = videoId;
         sponsorSegmentsOfCurrentVideo = null;
-        LogHelper.debug(PlayerController.class, "setCurrentVideoId: videoId=" + videoId);
 
         sponsorTimer.schedule(new TimerTask() {
             @Override
@@ -92,7 +73,6 @@ public class PlayerController {
      */
     public static void initialize(Object _o) {
         lastKnownVideoTime = 0;
-        NewVideoInformation.lastKnownVideoTime = 0;
         SkipSegmentView.hide();
         NewSegmentHelperLayout.hide();
     }
@@ -102,29 +82,22 @@ public class PlayerController {
         timeWithoutSegments = "";
         if (Whitelist.isChannelSBWhitelisted())
             return;
+
         SponsorSegment[] segments = SBRequester.getSegments(videoId);
         Arrays.sort(segments);
 
-        for (SponsorSegment segment : segments) {
-            LogHelper.debug(PlayerController.class, "Detected segment: " + segment.toString());
-        }
-
         sponsorSegmentsOfCurrentVideo = segments;
-//        new Handler(Looper.getMainLooper()).post(findAndSkipSegmentRunnable);
     }
 
     /**
      * Called when it's time to update the UI with new second, about once per second, only when playing, also in background
      */
     public static void setCurrentVideoTime(long millis) {
-        LogHelper.debug(PlayerController.class, "setCurrentVideoTime: current video time: " + millis);
-        NewVideoInformation.lastKnownVideoTime = millis;
         if (!SettingsEnum.SB_ENABLED.getBoolean()) return;
         lastKnownVideoTime = millis;
         if (millis <= 0) return;
-        //findAndSkipSegment(false);
 
-        if (millis == PlayerControllerPatch.getCurrentVideoLength()) {
+        if (millis == lastKnownVideoLength) {
             SponsorBlockUtils.hideShieldButton();
             SponsorBlockUtils.hideVoteButton();
             return;
@@ -138,35 +111,30 @@ public class PlayerController {
 
         for (final SponsorSegment segment : segments) {
             if (segment.start > millis) {
-                if (segment.start > startTimerAtMillis)
-                    break; // it's more then START_TIMER_BEFORE_SEGMENT_MILLIS far away
-                if (!segment.category.behaviour.skip)
-                    break;
+                if (segment.start > startTimerAtMillis) break; // it's more then START_TIMER_BEFORE_SEGMENT_MILLIS far away
+                if (!segment.category.getBehaviour().getSkip()) break;
 
                 if (skipSponsorTask == null) {
-                    LogHelper.debug(PlayerController.class, "Scheduling skipSponsorTask");
                     skipSponsorTask = new TimerTask() {
                         @Override
                         public void run() {
                             skipSponsorTask = null;
                             lastKnownVideoTime = segment.start + 1;
-                            NewVideoInformation.lastKnownVideoTime = lastKnownVideoTime;
-                            new Handler(Looper.getMainLooper()).post(findAndSkipSegmentRunnable);
+                            VideoInformation.lastKnownVideoTime = lastKnownVideoTime;
+                            ReVancedUtils.runOnMainThread(findAndSkipSegmentRunnable);
                         }
                     };
                     sponsorTimer.schedule(skipSponsorTask, segment.start - millis);
-                } else {
-                    LogHelper.debug(PlayerController.class, "skipSponsorTask is already scheduled...");
                 }
 
                 break;
             }
 
-            if (segment.end < millis)
-                continue;
+            if (segment.end < millis) continue;
 
             // we are in the segment!
-            if (segment.category.behaviour.skip && !(segment.category.behaviour.key.equals("skip-once") && segment.didAutoSkipped)) {
+            final var behaviour = segment.category.getBehaviour();
+            if (behaviour.getSkip() && !(behaviour.getKey().equals("skip-once") && segment.hasAutoSkipped)) {
                 sendViewRequestAsync(millis, segment);
                 skipSegment(segment, false);
                 break;
@@ -180,40 +148,33 @@ public class PlayerController {
 
     private static void sendViewRequestAsync(final long millis, final SponsorSegment segment) {
         if (segment.category != SponsorBlockSettings.SegmentInfo.UNSUBMITTED) {
-            Context context = ReVancedUtils.getContext();
-            if (context != null) {
-                long newSkippedTime = SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.getLong() + (segment.end - segment.start);
-                SettingsEnum.SB_SKIPPED_SEGMENTS.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS.getInt() + 1);
-                SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.saveValue(newSkippedTime);
-            }
+            long newSkippedTime = SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.getLong() + (segment.end - segment.start);
+            SettingsEnum.SB_SKIPPED_SEGMENTS.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS.getInt() + 1);
+            SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.saveValue(newSkippedTime);
         }
-        new Thread(() -> {
-            if (SettingsEnum.SB_COUNT_SKIPS.getBoolean() &&
-                    segment.category != SponsorBlockSettings.SegmentInfo.UNSUBMITTED &&
-                    millis - segment.start < 2000) {
-                // Only skips from the start should count as a view
-                SBRequester.sendViewCountRequest(segment);
-            }
-        }).start();
+        if (SettingsEnum.SB_COUNT_SKIPS.getBoolean() &&
+                segment.category != SponsorBlockSettings.SegmentInfo.UNSUBMITTED &&
+                millis - segment.start < 2000) {
+            // Only skips from the start should count as a view
+            new Thread(() -> SBRequester.sendViewCountRequest(segment)).start();
+        }
     }
 
     /**
      * Called very high frequency (once every about 100ms), also in background. It sometimes triggers when a video is paused (couple times in the row with the same value)
      */
     public static void setCurrentVideoTimeHighPrecision(final long millis) {
-        if ((millis < lastKnownVideoTime && lastKnownVideoTime >= PlayerControllerPatch.getCurrentVideoLength()) || millis == 0) {
+        if ((millis < lastKnownVideoTime && lastKnownVideoTime >= lastKnownVideoLength) || millis == 0) {
             SponsorBlockUtils.showShieldButton(); // skipping from end to the video will show the buttons again
             SponsorBlockUtils.showVoteButton();
         }
         if (lastKnownVideoTime > 0) {
             lastKnownVideoTime = millis;
-            NewVideoInformation.lastKnownVideoTime = lastKnownVideoTime;
-        } else
-            setCurrentVideoTime(millis);
+        } else setCurrentVideoTime(millis);
     }
 
     public static long getCurrentVideoLength() {
-        return PlayerControllerPatch.getCurrentVideoLength();
+        return VideoInformation.getCurrentVideoLength();
     }
 
     public static long getLastKnownVideoTime() {
@@ -225,7 +186,6 @@ public class PlayerController {
     }
 
     public static void setSponsorBarAbsoluteLeft(final float left) {
-        LogHelper.debug(PlayerController.class, String.format("setSponsorBarLeft: left=%.2f", left));
 
         sponsorBarLeft = left;
     }
@@ -249,7 +209,6 @@ public class PlayerController {
     }
 
     public static void setSponsorBarAbsoluteRight(final float right) {
-        LogHelper.debug(PlayerController.class, String.format("setSponsorBarRight: right=%.2f", right));
 
         sponsorBarRight = right;
     }
@@ -259,47 +218,38 @@ public class PlayerController {
     }
 
     public static void setSponsorBarThickness(final float thickness) {
-//        if (VERBOSE_DRAW_OPTIONS)
-//            LogH(PlayerController.class, String.format("setSponsorBarThickness: thickness=%.2f", thickness));
-
         sponsorBarThickness = thickness;
     }
 
     public static void onSkipSponsorClicked() {
-        LogHelper.debug(PlayerController.class, "Skip segment clicked");
         findAndSkipSegment(true);
     }
 
 
     public static void addSkipSponsorView15(final View view) {
         playerActivity = new WeakReference<>((Activity) view.getContext());
-        LogHelper.debug(PlayerController.class, "addSkipSponsorView15: view=" + view.toString());
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        ReVancedUtils.runDelayed(() -> {
             final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) view).getChildAt(2);
-            Activity context = ((Activity) viewGroup.getContext());
-            NewSegmentHelperLayout.context = context;
-        }, 500);
+            NewSegmentHelperLayout.context = viewGroup.getContext();
+        }, 500L);
     }
 
     public static void addSkipSponsorView14(final View view) {
         playerActivity = new WeakReference<>((Activity) view.getContext());
-        LogHelper.debug(PlayerController.class, "addSkipSponsorView14: view=" + view.toString());
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        ReVancedUtils.runDelayed(() -> {
             final ViewGroup viewGroup = (ViewGroup) view.getParent();
-            Activity activity = (Activity) viewGroup.getContext();
-            NewSegmentHelperLayout.context = activity;
-        }, 500);
+            NewSegmentHelperLayout.context = viewGroup.getContext();
+        }, 500L);
     }
 
 
     /**
      * Called when it's time to draw time bar
      */
-    public static void drawSponsorTimeBars(final Canvas canvas, final float posY) {
+    public static void drawSponsorTimeBars(final Canvas canvas, final float posY) throws InterruptedException {
         if (sponsorBarThickness < 0.1) return;
         if (sponsorSegmentsOfCurrentVideo == null) return;
-
 
         final float thicknessDiv2 = sponsorBarThickness / 2;
         final float top = posY - thicknessDiv2;
@@ -307,11 +257,11 @@ public class PlayerController {
         final float absoluteLeft = sponsorBarLeft;
         final float absoluteRight = sponsorBarRight;
 
-        final float tmp1 = 1f / (float) PlayerControllerPatch.getCurrentVideoLength() * (absoluteRight - absoluteLeft);
+        final float tmp1 = 1f / (float) lastKnownVideoLength * (absoluteRight - absoluteLeft);
         for (SponsorSegment segment : sponsorSegmentsOfCurrentVideo) {
             float left = segment.start * tmp1 + absoluteLeft;
             float right = segment.end * tmp1 + absoluteLeft;
-            canvas.drawRect(left, top, right, bottom, segment.category.paint);
+            canvas.drawRect(left, top, right, bottom, segment.category.getPaint());
         }
     }
 
@@ -329,20 +279,16 @@ public class PlayerController {
         // I put this block so that skip can be made only once per some time
         long now = System.currentTimeMillis();
         if (now < allowNextSkipRequestTime) {
-            LogHelper.debug(PlayerController.class, "skipToMillisecond: to fast, slow down, because you'll fail");
             return false;
         }
         allowNextSkipRequestTime = now + 100;
 
-        LogHelper.debug(PlayerController.class, String.format("Requesting skip to millis=%d on thread %s", millisecond, Thread.currentThread().toString()));
 
         final long finalMillisecond = millisecond;
 
         try {
-            LogHelper.debug(PlayerController.class, "Skipping to millis=" + finalMillisecond);
             lastKnownVideoTime = finalMillisecond;
-            NewVideoInformation.lastKnownVideoTime = lastKnownVideoTime;
-            PlayerControllerPatch.seekTo(finalMillisecond);
+            VideoInformation.seekTo(finalMillisecond);
         } catch (Exception e) {
             LogHelper.printException(PlayerController.class, "Cannot skip to millisecond", e);
         }
@@ -358,14 +304,14 @@ public class PlayerController {
         final long millis = lastKnownVideoTime;
 
         for (SponsorSegment segment : sponsorSegmentsOfCurrentVideo) {
-            if (segment.start > millis)
-                break;
+            if (segment.start > millis) break;
 
-            if (segment.end < millis)
-                continue;
+            if (segment.end < millis) continue;
 
             SkipSegmentView.show();
-            if (!((segment.category.behaviour.skip && !(segment.category.behaviour.key.equals("skip-once") && segment.didAutoSkipped)) || wasClicked))
+
+            final var behaviour = segment.category.getBehaviour();
+            if (!((behaviour.getSkip() && !(behaviour.getKey().equals("skip-once") && segment.hasAutoSkipped)) || wasClicked))
                 return;
 
             sendViewRequestAsync(millis, segment);
@@ -379,14 +325,12 @@ public class PlayerController {
     private static void skipSegment(SponsorSegment segment, boolean wasClicked) {
 //        if (lastSkippedSegment == segment) return;
 //        lastSkippedSegment = segment;
-        LogHelper.debug(PlayerController.class, "Skipping segment: " + segment.toString());
 
-        if (SettingsEnum.SB_SHOW_TOAST_WHEN_SKIP.getBoolean() && !wasClicked)
-            SkipSegmentView.notifySkipped(segment);
+        if (SettingsEnum.SB_SHOW_TOAST_WHEN_SKIP.getBoolean()) SkipSegmentView.notifySkipped(segment);
 
         boolean didSucceed = skipToMillisecond(segment.end + 2);
         if (didSucceed && !wasClicked) {
-            segment.didAutoSkipped = true;
+            segment.hasAutoSkipped = true;
         }
         SkipSegmentView.hide();
         if (segment.category == SponsorBlockSettings.SegmentInfo.UNSUBMITTED) {

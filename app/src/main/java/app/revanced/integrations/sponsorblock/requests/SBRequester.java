@@ -3,8 +3,8 @@ package app.revanced.integrations.sponsorblock.requests;
 import static android.text.Html.fromHtml;
 import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.timeWithoutSegments;
 import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.videoHasSegments;
-import static app.revanced.integrations.sponsorblock.StringRef.str;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
+import static app.revanced.integrations.utils.StringRef.str;
 
 import android.content.Context;
 import android.preference.EditTextPreference;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import app.revanced.integrations.whitelist.requests.Requester;
-import app.revanced.integrations.whitelist.requests.Route;
+import app.revanced.integrations.requests.Requester;
+import app.revanced.integrations.requests.Route;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.sponsorblock.SponsorBlockSettings;
@@ -31,6 +31,7 @@ import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
 import app.revanced.integrations.sponsorblock.SponsorBlockUtils.VoteOption;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.sponsorblock.objects.UserStats;
+import app.revanced.integrations.utils.ReVancedUtils;
 
 public class SBRequester {
     private static final String TIME_TEMPLATE = "%.3f";
@@ -40,13 +41,14 @@ public class SBRequester {
 
     public static synchronized SponsorSegment[] getSegments(String videoId) {
         List<SponsorSegment> segments = new ArrayList<>();
+        boolean dismiss = false;
         try {
-            HttpURLConnection connection = getConnectionFromRoute(SBRoutes.GET_SEGMENTS, videoId, SponsorBlockSettings.sponsorBlockUrlCategories);
+            HttpURLConnection connection = getConnectionFromRoute(SBRoutes.GET_SEGMENTS, videoId, SponsorBlockSettings.getUrlCategories());
             int responseCode = connection.getResponseCode();
             runVipCheck();
 
             if (responseCode == 200) {
-                JSONArray responseArray = Requester.getJSONArray(connection);
+                JSONArray responseArray = Requester.parseJSONArrayAndDisconnect(connection);
                 int length = responseArray.length();
                 for (int i = 0; i < length; i++) {
                     JSONObject obj = (JSONObject) responseArray.get(i);
@@ -63,7 +65,7 @@ public class SBRequester {
                     boolean locked = obj.getInt("locked") == 1;
 
                     SponsorBlockSettings.SegmentInfo segmentCategory = SponsorBlockSettings.SegmentInfo.byCategoryKey(category);
-                    if (segmentCategory != null && segmentCategory.behaviour.showOnTimeBar) {
+                    if (segmentCategory != null && segmentCategory.getBehaviour().getShowOnTimeBar()) {
                         SponsorSegment sponsorSegment = new SponsorSegment(start, end, segmentCategory, uuid, locked);
                         segments.add(sponsorSegment);
                     }
@@ -73,10 +75,13 @@ public class SBRequester {
                     timeWithoutSegments = SponsorBlockUtils.getTimeWithoutSegments(segments.toArray(new SponsorSegment[0]));
                 }
             }
+            dismiss = true;
             connection.disconnect();
         } catch (Exception ex) {
+			if (!dismiss) setMirror();
             ex.printStackTrace();
         }
+
         return segments.toArray(new SponsorSegment[0]);
     }
 
@@ -84,7 +89,7 @@ public class SBRequester {
         try {
             String start = String.format(Locale.US, TIME_TEMPLATE, startTime);
             String end = String.format(Locale.US, TIME_TEMPLATE, endTime);
-            String duration = String.valueOf(PlayerController.getCurrentVideoLength() / 1000);
+            String duration = String.valueOf(PlayerController.lastKnownVideoLength / 1000);
             HttpURLConnection connection = getConnectionFromRoute(SBRoutes.SUBMIT_SEGMENTS, videoId, uuid, start, end, category, duration);
             int responseCode = connection.getResponseCode();
 
@@ -96,13 +101,13 @@ public class SBRequester {
                     SponsorBlockUtils.messageToToast = str("submit_failed_duplicate");
                     break;
                 case 403:
-                    SponsorBlockUtils.messageToToast = str("submit_failed_forbidden", Requester.parseErrorJson(connection));
+                    SponsorBlockUtils.messageToToast = str("submit_failed_forbidden", Requester.parseErrorJsonAndDisconnect(connection));
                     break;
                 case 429:
                     SponsorBlockUtils.messageToToast = str("submit_failed_rate_limit");
                     break;
                 case 400:
-                    SponsorBlockUtils.messageToToast = str("submit_failed_invalid", Requester.parseErrorJson(connection));
+                    SponsorBlockUtils.messageToToast = str("submit_failed_invalid", Requester.parseErrorJsonAndDisconnect(connection));
                     break;
                 default:
                     SponsorBlockUtils.messageToToast = str("submit_failed_unknown_error", responseCode, connection.getResponseMessage());
@@ -117,7 +122,7 @@ public class SBRequester {
 
     public static void sendViewCountRequest(SponsorSegment segment) {
         try {
-            HttpURLConnection connection = getConnectionFromRoute(SBRoutes.VIEWED_SEGMENT, segment.UUID);
+            HttpURLConnection connection = getConnectionFromRoute(SBRoutes.VIEWED_SEGMENT, segment.uuid);
             connection.disconnect();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -127,7 +132,7 @@ public class SBRequester {
     public static void voteForSegment(SponsorSegment segment, VoteOption voteOption, Context context, String... args) {
         new Thread(() -> {
             try {
-                String segmentUuid = segment.UUID;
+                String segmentUuid = segment.uuid;
                 String uuid = SettingsEnum.SB_UUID.getString();
                 String vote = Integer.toString(voteOption == VoteOption.UPVOTE ? 1 : 0);
 
@@ -143,7 +148,7 @@ public class SBRequester {
                         SponsorBlockUtils.messageToToast = str("vote_succeeded");
                         break;
                     case 403:
-                        SponsorBlockUtils.messageToToast = str("vote_failed_forbidden", Requester.parseErrorJson(connection));
+                        SponsorBlockUtils.messageToToast = str("vote_failed_forbidden", Requester.parseErrorJsonAndDisconnect(connection));
                         break;
                     default:
                         SponsorBlockUtils.messageToToast = str("vote_failed_unknown_error", responseCode, connection.getResponseMessage());
@@ -213,6 +218,17 @@ public class SBRequester {
         }
     }
 
+    public static void setMirror() {
+        if (SettingsEnum.SB_MIRROR_ENABLED.getBoolean()) {
+            runOnMainThread(() -> {
+                Toast.makeText(ReVancedUtils.getContext(), str("sb_connection_failed"), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ReVancedUtils.getContext(), str("sb_switching_to_mirror"), Toast.LENGTH_SHORT).show();
+            });
+			SettingsEnum.SB_API_URL.saveValue(SettingsEnum.SB_API_MIRROR_URL.getString());
+			runOnMainThread(() -> Toast.makeText(ReVancedUtils.getContext(), str("sb_switching_success"), Toast.LENGTH_SHORT).show());
+        }
+    }
+
     // helpers
 
     private static HttpURLConnection getConnectionFromRoute(Route route, String... params) throws IOException {
@@ -220,6 +236,6 @@ public class SBRequester {
     }
 
     private static JSONObject getJSONObject(Route route, String... params) throws Exception {
-        return Requester.getJSONObject(getConnectionFromRoute(route, params));
+        return Requester.parseJSONObjectAndDisconnect(getConnectionFromRoute(route, params));
     }
 }

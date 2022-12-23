@@ -1,13 +1,14 @@
 package app.revanced.integrations.whitelist;
 
-import static app.revanced.integrations.sponsorblock.StringRef.str;
+import static app.revanced.integrations.utils.StringRef.str;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 public enum WhitelistType {
-    ADS(SharedPrefHelper.SharedPrefNames.YOUTUBE, SettingsEnum.ENABLE_WHITELIST.getPath()),
-    SPONSORBLOCK(SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, "revanced_whitelist_sb_enabled");
+    ADS(SharedPrefHelper.SharedPrefNames.REVANCED, SettingsEnum.ADS_WHITELIST.getPath()),
+    SPEED(SharedPrefHelper.SharedPrefNames.REVANCED, SettingsEnum.SPEED_WHITELIST.getPath()),
+    SPONSORBLOCK(SharedPrefHelper.SharedPrefNames.REVANCED, SettingsEnum.SB_WHITELIST.getPath());
 
     private final String friendlyName;
     private final String preferencesName;

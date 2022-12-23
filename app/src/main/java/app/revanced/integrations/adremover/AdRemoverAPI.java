@@ -1,6 +1,5 @@
 package app.revanced.integrations.adremover;
 
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -8,16 +7,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toolbar;
 
-import app.revanced.integrations.patches.HideShortsButtonPatch;
-import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.LogHelper;
-
 public class AdRemoverAPI {
 
     /**
      * Removes Reels and Home ads
      *
-     * @param view
      */
     //ToDo: refactor this
     public static void HideViewWithLayout1dp(View view) {
@@ -36,8 +30,6 @@ public class AdRemoverAPI {
         } else if (view instanceof ViewGroup) {
             ViewGroup.LayoutParams layoutParams5 = new ViewGroup.LayoutParams(1, 1);
             view.setLayoutParams(layoutParams5);
-        } else {
-            LogHelper.debug(AdRemoverAPI.class, "HideViewWithLayout1dp - Id: " + view.getId() + " Type: " + view.getClass().getName());
         }
     }
 

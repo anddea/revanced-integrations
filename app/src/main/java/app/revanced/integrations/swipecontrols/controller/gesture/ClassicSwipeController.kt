@@ -1,6 +1,7 @@
 package app.revanced.integrations.swipecontrols.controller.gesture
 
 import android.view.MotionEvent
+import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserver
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserverImpl
 import app.revanced.integrations.swipecontrols.SwipeControlsHostActivity
@@ -48,7 +49,7 @@ class ClassicSwipeController(
         }
 
         // ignore gestures when player controls are visible
-        return arePlayerControlsVisible
+        return arePlayerControlsVisible && !SettingsEnum.ENABLE_ALWAYS_SWIPE.getBoolean()
     }
 
     override fun onDown(motionEvent: MotionEvent): Boolean {
@@ -70,7 +71,7 @@ class ClassicSwipeController(
         return false
     }
 
-    override fun onDoubleTapEvent(motionEvent: MotionEvent?): Boolean {
+    override fun onDoubleTapEvent(motionEvent: MotionEvent): Boolean {
         MotionEvent.obtain(motionEvent).let {
             controller.dispatchDownstreamTouchEvent(it)
             it.recycle()
@@ -79,7 +80,7 @@ class ClassicSwipeController(
         return super.onDoubleTapEvent(motionEvent)
     }
 
-    override fun onLongPress(motionEvent: MotionEvent?) {
+    override fun onLongPress(motionEvent: MotionEvent) {
         MotionEvent.obtain(motionEvent).let {
             controller.dispatchDownstreamTouchEvent(it)
             it.recycle()

@@ -1,11 +1,11 @@
 package app.revanced.integrations.sponsorblock.player.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +32,6 @@ public class SkipSponsorButton extends FrameLayout {
     private LinearLayout skipSponsorBtnContainer;
     private final Paint background;
     private final Paint border;
-    private boolean highContrast = true;
 
     public SkipSponsorButton(Context context) {
         super(context);
@@ -90,7 +89,6 @@ public class SkipSponsorButton extends FrameLayout {
         this.skipSponsorBtnContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogHelper.debug(SkipSponsorButton.class, "Skip button clicked");
                 PlayerController.onSkipSponsorClicked();
             }
         });
@@ -107,7 +105,8 @@ public class SkipSponsorButton extends FrameLayout {
         float floatWidth = (float) (left + width);
         float floatHeight = (float) (top + height);
         canvas.drawRect(floatLeft, floatTop, floatWidth, floatHeight, this.background);
-        if (!this.highContrast) {
+        boolean highContrast = true;
+        if (!highContrast) {
             canvas.drawLines(new float[]{floatWidth, floatTop, floatLeft, floatTop, floatLeft, floatTop, floatLeft, floatHeight, floatLeft, floatHeight, floatWidth, floatHeight}, this.border);
         }
 
@@ -116,9 +115,10 @@ public class SkipSponsorButton extends FrameLayout {
 
 
     public static int getColor(Context context, int arg3) {
-        return Build.VERSION.SDK_INT < 23 ? context.getResources().getColor(arg3) : context.getColor(arg3);
+        return context.getColor(arg3);
     }
 
+    @SuppressLint("DiscouragedApi")
     private int getIdentifier(Context context, String name, String defType) {
         return context.getResources().getIdentifier(name, defType, context.getPackageName());
     }

@@ -1,26 +1,25 @@
 package app.revanced.integrations.sponsorblock;
 
-import android.content.Context;
+import static app.revanced.integrations.utils.ResourceUtils.anim;
+import static app.revanced.integrations.utils.ResourceUtils.findView;
+import static app.revanced.integrations.utils.ResourceUtils.integer;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.lang.ref.WeakReference;
-import java.util.Set;
-
-import static app.revanced.integrations.sponsorblock.PlayerController.getCurrentVideoLength;
-import static app.revanced.integrations.sponsorblock.PlayerController.getLastKnownVideoTime;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class ShieldButton {
-    static RelativeLayout _youtubeControlsLayout;
-    static WeakReference<ImageView> _shieldBtn = new WeakReference<>(null);
+    @SuppressLint("StaticFieldLeak")
+    static RelativeLayout youtubeControlsLayout;
+    static WeakReference<ImageView> buttonview = new WeakReference<>(null);
     static int fadeDurationFast;
     static int fadeDurationScheduled;
     static Animation fadeIn;
@@ -29,26 +28,21 @@ public class ShieldButton {
 
     public static void initialize(Object viewStub) {
         try {
-            LogHelper.debug(ShieldButton.class, "initializing shield button");
+            youtubeControlsLayout = (RelativeLayout) viewStub;
 
-            _youtubeControlsLayout = (RelativeLayout) viewStub;
+            ImageView imageView = findView(ShieldButton.class, youtubeControlsLayout, "sponsorblock_button");
 
-            ImageView imageView = (ImageView) _youtubeControlsLayout
-                    .findViewById(getIdentifier("sponsorblock_button", "id"));
-
-            if (imageView == null) {
-                LogHelper.debug(ShieldButton.class, "Couldn't find imageView with \"sponsorblock_button\"");
-            }
             if (imageView == null) return;
-            imageView.setOnClickListener(SponsorBlockUtils.sponsorBlockBtnListener);
-            _shieldBtn = new WeakReference<>(imageView);
+            imageView.setOnClickListener(SponsorBlockUtils.shieldButtonListener);
+            buttonview = new WeakReference<>(imageView);
 
-            // Animations
-            fadeDurationFast = getInteger("fade_duration_fast");
-            fadeDurationScheduled = getInteger("fade_duration_scheduled");
-            fadeIn = getAnimation("fade_in");
+            fadeDurationFast = integer("fade_duration_fast");
+            fadeDurationScheduled = integer("fade_duration_scheduled");
+
+            fadeIn = anim("fade_in");
             fadeIn.setDuration(fadeDurationFast);
-            fadeOut = getAnimation("fade_out");
+
+            fadeOut = anim("fade_out");
             fadeOut.setDuration(fadeDurationScheduled);
             isShowing = true;
             changeVisibilityImmediate(false);
@@ -70,48 +64,26 @@ public class ShieldButton {
     }
 
     public static void changeVisibility(boolean visible, boolean immediate) {
-        if (isShowing == visible) return;
+        ImageView imageView = buttonview.get();
+        if (isShowing == visible || youtubeControlsLayout == null || imageView == null) return;
+
         isShowing = visible;
-
-        ImageView iView = _shieldBtn.get();
-        if (_youtubeControlsLayout == null || iView == null) return;
-
         if (visible && shouldBeShown()) {
-            if (getLastKnownVideoTime() >= getCurrentVideoLength()) {
-                return;
-            }
-            LogHelper.debug(ShieldButton.class, "Fading in");
-
-            iView.setVisibility(View.VISIBLE);
+            if (PlayerController.lastKnownVideoTime >= PlayerController.lastKnownVideoLength) return;
+            imageView.setVisibility(View.VISIBLE);
             if (!immediate)
-                iView.startAnimation(fadeIn);
+                imageView.startAnimation(fadeIn);
             return;
         }
 
-        if (iView.getVisibility() == View.VISIBLE) {
-            LogHelper.debug(ShieldButton.class, "Fading out");
+        if (imageView.getVisibility() == View.VISIBLE) {
             if (!immediate)
-                iView.startAnimation(fadeOut);
-            iView.setVisibility(shouldBeShown() ? View.INVISIBLE : View.GONE);
+                imageView.startAnimation(fadeOut);
+            imageView.setVisibility(shouldBeShown() ? View.INVISIBLE : View.GONE);
         }
     }
 
     static boolean shouldBeShown() {
         return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_NEW_SEGMENT_ENABLED.getBoolean();
     }
-
-    //region Helpers
-    private static int getIdentifier(String name, String defType) {
-        Context context = ReVancedUtils.getContext();
-        return context.getResources().getIdentifier(name, defType, context.getPackageName());
-    }
-
-    private static int getInteger(String name) {
-        return ReVancedUtils.getContext().getResources().getInteger(getIdentifier(name, "integer"));
-    }
-
-    private static Animation getAnimation(String name) {
-        return AnimationUtils.loadAnimation(ReVancedUtils.getContext(), getIdentifier(name, "anim"));
-    }
-    //endregion
 }

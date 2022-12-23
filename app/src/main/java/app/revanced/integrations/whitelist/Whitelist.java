@@ -1,13 +1,9 @@
 package app.revanced.integrations.whitelist;
 
-import static app.revanced.integrations.videoplayer.NewVideoInformation.channelName;
-import static app.revanced.integrations.sponsorblock.player.ui.SlimButtonContainer.adBlockButton;
-import static app.revanced.integrations.sponsorblock.player.ui.SlimButtonContainer.sbWhitelistButton;
-import static app.revanced.integrations.sponsorblock.StringRef.str;
+import static app.revanced.integrations.utils.StringRef.str;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -15,13 +11,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.patches.video.VideoInformation;
+import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
 import app.revanced.integrations.sponsorblock.player.ChannelModel;
-import app.revanced.integrations.videoplayer.NewVideoInformation;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
@@ -33,28 +27,16 @@ public class Whitelist {
     private Whitelist() {
     }
 
-    // injected calls
-
-    public static boolean shouldShowAds() {
+    public static boolean isChannelADSWhitelisted() {
         return isWhitelisted(WhitelistType.ADS);
     }
 
-    public static void setChannelName(String channelName) {
-        LogHelper.debug(Whitelist.class, "channel name set to " + channelName);
-        NewVideoInformation.channelName = channelName;
-
-        if (enabledMap.containsKey(WhitelistType.ADS) && enabledMap.get(WhitelistType.ADS) && adBlockButton != null) {
-            adBlockButton.changeEnabled(shouldShowAds());
-        }
-        if (enabledMap.containsKey(WhitelistType.SPONSORBLOCK) && enabledMap.get(WhitelistType.SPONSORBLOCK) && sbWhitelistButton != null) {
-            sbWhitelistButton.changeEnabled(isChannelSBWhitelisted());
-        }
-    }
-
-    // the rest
-
     public static boolean isChannelSBWhitelisted() {
         return isWhitelisted(WhitelistType.SPONSORBLOCK);
+    }
+
+    public static boolean isChannelSPEEDWhitelisted() {
+        return isWhitelisted(WhitelistType.SPEED);
     }
 
     private static Map<WhitelistType, ArrayList<ChannelModel>> parseWhitelist(Context context) {
@@ -68,18 +50,11 @@ public class Whitelist {
             SharedPreferences preferences = SharedPrefHelper.getPreferences(context, whitelistType.getPreferencesName());
             String serializedChannels = preferences.getString("channels", null);
             if (serializedChannels == null) {
-                LogHelper.debug(Whitelist.class, String.format("channels string was null for %s whitelisting", whitelistType));
                 whitelistMap.put(whitelistType, new ArrayList<>());
                 continue;
             }
             try {
                 ArrayList<ChannelModel> deserializedChannels = (ArrayList<ChannelModel>) ObjectSerializer.deserialize(serializedChannels);
-                if (SettingsEnum.DEBUG.getBoolean()) {
-                    LogHelper.debug(Whitelist.class, serializedChannels);
-                    for (ChannelModel channel : deserializedChannels) {
-                        LogHelper.debug(Whitelist.class, String.format("Whitelisted channel %s (%s) for type %s", channel.getAuthor(), channel.getChannelId(), whitelistType));
-                    }
-                }
                 whitelistMap.put(whitelistType, deserializedChannels);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -100,21 +75,11 @@ public class Whitelist {
     }
 
     private static boolean isWhitelisted(WhitelistType whitelistType) {
-        boolean isEnabled = false;
-        if (enabledMap.containsKey(whitelistType) && enabledMap.get(whitelistType) != null) {
-            isEnabled = enabledMap.get(whitelistType);
-        }
-        if (!isEnabled) {
+        if (VideoInformation.getChannelName() == null) {
             return false;
         }
-        if (channelName == null || channelName.trim().isEmpty()) {
-            LogHelper.debug(Whitelist.class, String.format("Can't check whitelist status for %s because channel name was missing", whitelistType));
-            return false;
-        }
-        List<ChannelModel> whitelistedChannels = whitelistMap.get(whitelistType);
-        for (ChannelModel channel : whitelistedChannels) {
-            if (channel.getAuthor().equals(channelName)) {
-                LogHelper.debug(Whitelist.class, String.format("Whitelist for channel %s for type %s", channelName, whitelistType));
+        for (ChannelModel channel : getWhitelistedChannels(whitelistType)) {
+            if (channel.getAuthor().equals(VideoInformation.getChannelName())) {
                 return true;
             }
         }
@@ -122,21 +87,17 @@ public class Whitelist {
     }
 
     public static boolean addToWhitelist(WhitelistType whitelistType, Context context, ChannelModel channel) {
-        ArrayList<ChannelModel> whitelisted = whitelistMap.get(whitelistType);
+        ArrayList<ChannelModel> whitelisted = getWhitelistedChannels(whitelistType);
         for (ChannelModel whitelistedChannel : whitelisted) {
             String channelId = channel.getChannelId();
-            if (whitelistedChannel.getChannelId().equals(channelId)) {
-                LogHelper.debug(Whitelist.class, String.format("Tried whitelisting an existing channel again. Old info (%1$s | %2$s) - New info (%3$s | %4$s)",
-                        whitelistedChannel.getAuthor(), channelId, channelName, channelId));
-                return true;
-            }
+            if (whitelistedChannel.getChannelId().equals(channelId)) return true;
         }
         whitelisted.add(channel);
         return updateWhitelist(whitelistType, whitelisted, context);
     }
 
-    public static void removeFromWhitelist(WhitelistType whitelistType, Context context, String channelName) {
-        ArrayList<ChannelModel> channels = whitelistMap.get(whitelistType);
+    public static void removeFromWhitelist(WhitelistType whitelistType, String channelName, Context context) {
+        ArrayList<ChannelModel> channels = getWhitelistedChannels(whitelistType);
         Iterator<ChannelModel> iterator = channels.iterator();
         while (iterator.hasNext()) {
             ChannelModel channel = iterator.next();
@@ -145,16 +106,17 @@ public class Whitelist {
                 break;
             }
         }
-        boolean success = updateWhitelist(whitelistType, channels, context);
+        boolean success = updateWhitelist(whitelistType, channels, ReVancedUtils.getContext());
         String friendlyName = whitelistType.getFriendlyName();
         if (success) {
             Toast.makeText(context, str("revanced_whitelisting_removed", channelName, friendlyName), Toast.LENGTH_SHORT).show();
+            ReVancedSettingsFragment.rebootDialogStatic(context, str("revanced_whitelisting_reboot"));
         } else {
             Toast.makeText(context, str("revanced_whitelisting_remove_failed", channelName, friendlyName), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private static boolean updateWhitelist(WhitelistType whitelistType, ArrayList<ChannelModel> channels, Context context) {
+    public static boolean updateWhitelist(WhitelistType whitelistType, ArrayList<ChannelModel> channels, Context context) {
         if (context == null) {
             return false;
         }
@@ -173,5 +135,9 @@ public class Whitelist {
 
     public static void setEnabled(WhitelistType whitelistType, boolean enabled) {
         enabledMap.put(whitelistType, enabled);
+    }
+
+    public static ArrayList<ChannelModel> getWhitelistedChannels(WhitelistType whitelistType) {
+        return whitelistMap.get(whitelistType);
     }
 }

@@ -33,7 +33,7 @@ enum class PlayerType {
         }
 
         /**
-         * the current player type, as reported by [app.revanced.integrations.patches.PlayerTypeHookPatch.YouTubePlayerOverlaysLayout_updatePlayerTypeHookEX]
+         * the current player type, as reported by [app.revanced.integrations.patches.utils.PlayerTypeHookPatch.YouTubePlayerOverlaysLayout_updatePlayerTypeHookEX]
          */
         @JvmStatic
         var current

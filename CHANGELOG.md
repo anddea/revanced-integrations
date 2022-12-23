@@ -1,3 +1,185 @@
+# [0.86.0](https://github.com/revanced/revanced-integrations/compare/v0.85.1...v0.86.0) (2022-12-21)
+
+
+### Features
+
+* **youtube/return-youtube-dislike:** debug connection statistics, toast on error, high priority background threads ([#236](https://github.com/revanced/revanced-integrations/issues/236)) ([693ef08](https://github.com/revanced/revanced-integrations/commit/693ef08c6c2ebb2a4dde9194583ac77ae3af9fc6))
+
+## [0.85.1](https://github.com/revanced/revanced-integrations/compare/v0.85.0...v0.85.1) (2022-12-21)
+
+
+### Bug Fixes
+
+* revert semantically incorrect simplification of ?AdRemoverAPI.HideViewWithLayout1dp? ([#244](https://github.com/revanced/revanced-integrations/issues/244)) ([71e81a6](https://github.com/revanced/revanced-integrations/commit/71e81a6473b94c5a2c82a9aad340799ff174bdf7))
+
+# [0.85.0](https://github.com/revanced/revanced-integrations/compare/v0.84.2...v0.85.0) (2022-12-21)
+
+
+### Features
+
+* **youtube/general-ads:** hide grid of shorts ([d125d20](https://github.com/revanced/revanced-integrations/commit/d125d20974774fbe2b4a61b6ddad66f76d161e42))
+
+## [0.84.2](https://github.com/revanced/revanced-integrations/compare/v0.84.1...v0.84.2) (2022-12-20)
+
+
+### Bug Fixes
+
+* migrate old to new settings correctly ([#241](https://github.com/revanced/revanced-integrations/issues/241)) ([98ce2df](https://github.com/revanced/revanced-integrations/commit/98ce2df47dded785986dee3c64becf96956f5eb6))
+
+## [0.84.1](https://github.com/revanced/revanced-integrations/compare/v0.84.0...v0.84.1) (2022-12-18)
+
+
+### Performance Improvements
+
+* **youtube/general-ads-patch:** reduce amount of ignored components ([#237](https://github.com/revanced/revanced-integrations/issues/237)) ([bf368e8](https://github.com/revanced/revanced-integrations/commit/bf368e8dd49a91ba1d7a1df66344f77d8b788072))
+
+# [0.84.0](https://github.com/revanced/revanced-integrations/compare/v0.83.1...v0.84.0) (2022-12-08)
+
+
+### Features
+
+* **youtube/general-ads:** block new ad in home feed ([934b981](https://github.com/revanced/revanced-integrations/commit/934b981605515128c9d38f09768392f8d1c7bd98))
+
+## [0.83.1](https://github.com/revanced/revanced-integrations/compare/v0.83.0...v0.83.1) (2022-12-06)
+
+
+### Bug Fixes
+
+* inconsistencies in preference switches ([#235](https://github.com/revanced/revanced-integrations/issues/235)) ([d64a0f9](https://github.com/revanced/revanced-integrations/commit/d64a0f95995e6fbd96127941cf16133c5661dfe4))
+
+# [0.83.0](https://github.com/revanced/revanced-integrations/compare/v0.82.0...v0.83.0) (2022-12-05)
+
+
+### Features
+
+* **twitch:** `block-embedded-ads` patch ([#231](https://github.com/revanced/revanced-integrations/issues/231)) ([a098594](https://github.com/revanced/revanced-integrations/commit/a09859470688c88afe1e0ee1688068656feda521))
+
+# [0.82.0](https://github.com/revanced/revanced-integrations/compare/v0.81.0...v0.82.0) (2022-12-05)
+
+
+### Features
+
+* **youtube/debugging:** print stack traces ([a9d2487](https://github.com/revanced/revanced-integrations/commit/a9d24872a89f9039956993d8290713dcde3f0ead))
+* **youtube/return-youtube-dislike:** do not debug log when updating the text ([080e22b](https://github.com/revanced/revanced-integrations/commit/080e22b1bf18f9c09e7687aa694d6601318bd99b))
+
+# [0.81.0](https://github.com/revanced/revanced-integrations/compare/v0.80.0...v0.81.0) (2022-12-03)
+
+
+### Features
+
+* **youtube/return-youtube-dislike:** show dislike as a percentage ([#234](https://github.com/revanced/revanced-integrations/issues/234)) ([7840bc4](https://github.com/revanced/revanced-integrations/commit/7840bc48ba5309eebadeb0f708570bac9f7166e0))
+
+# [0.80.0](https://github.com/revanced/revanced-integrations/compare/v0.79.1...v0.80.0) (2022-11-30)
+
+
+### Features
+
+* **twitch:** remove `block-embedded-ads` patch ([#230](https://github.com/revanced/revanced-integrations/issues/230)) ([2f32786](https://github.com/revanced/revanced-integrations/commit/2f327866616d9449963aefb9067b35138a4f4844))
+
+## [0.79.1](https://github.com/revanced/revanced-integrations/compare/v0.79.0...v0.79.1) (2022-11-30)
+
+
+### Bug Fixes
+
+* **youtube/return-youtube-dislike:** feedback when dislikes hidden ([#224](https://github.com/revanced/revanced-integrations/issues/224)) ([37869dc](https://github.com/revanced/revanced-integrations/commit/37869dc5b8b0b0cae97c6a3caf73dfb419af8f79))
+
+# [0.79.0](https://github.com/revanced/revanced-integrations/compare/v0.78.1...v0.79.0) (2022-11-30)
+
+
+### Features
+
+* **twitch:** `block-embedded-ads` patch support ([#227](https://github.com/revanced/revanced-integrations/issues/227)) ([00ea006](https://github.com/revanced/revanced-integrations/commit/00ea006b8c2e395ba56e8e5b90c467542849be46))
+
+## [0.78.1](https://github.com/revanced/revanced-integrations/compare/v0.78.0...v0.78.1) (2022-11-29)
+
+
+### Bug Fixes
+
+* **twitch/settings:** add missing classes ([#226](https://github.com/revanced/revanced-integrations/issues/226)) ([35aa4f9](https://github.com/revanced/revanced-integrations/commit/35aa4f92c6fc36d5421d41fb005e2298e1e8ed70))
+
+# [0.78.0](https://github.com/revanced/revanced-integrations/compare/v0.77.1...v0.78.0) (2022-11-25)
+
+
+### Features
+
+* **tiktok:** `sim-spoof` patch ([#219](https://github.com/revanced/revanced-integrations/issues/219)) ([cea3a5e](https://github.com/revanced/revanced-integrations/commit/cea3a5edc74e96efd79d4a4f9b363694d85216a6))
+
+## [0.77.1](https://github.com/revanced/revanced-integrations/compare/v0.77.0...v0.77.1) (2022-11-24)
+
+
+### Bug Fixes
+
+* **youtube/return-youtube-dislike:** don't block the UI thread ([#221](https://github.com/revanced/revanced-integrations/issues/221)) ([b2eab33](https://github.com/revanced/revanced-integrations/commit/b2eab33e02241c62122da3063c12dc17cae2611e))
+
+# [0.77.0](https://github.com/revanced/revanced-integrations/compare/v0.76.0...v0.77.0) (2022-11-24)
+
+
+### Bug Fixes
+
+* invalid syntax error ([d4a23ed](https://github.com/revanced/revanced-integrations/commit/d4a23ed5c931993e9c642d0948e9551f848f480c))
+
+
+### Features
+
+* **youtube/general-ads:** hide movie ad from search ([767201c](https://github.com/revanced/revanced-integrations/commit/767201ce05f01db692828b453d2b31487f88e015))
+
+# [0.76.0](https://github.com/revanced/revanced-integrations/compare/v0.75.0...v0.76.0) (2022-11-22)
+
+
+### Bug Fixes
+
+* **youtube/general-ads:** hide reels shelf ([1f48749](https://github.com/revanced/revanced-integrations/commit/1f48749958675926dd71b08e079497daed2b332b))
+* **youtube/general-ads:** make restarting mandatory when toggling shorts ([25978ae](https://github.com/revanced/revanced-integrations/commit/25978ae4a4982782bc18830a1c160b2ac1dfb7e8))
+
+
+### Features
+
+* **youtube/debugging:** do not require restarting on toggle ([ee1f895](https://github.com/revanced/revanced-integrations/commit/ee1f895e877e515898118ff440066645de0a6a76))
+
+# [0.75.0](https://github.com/revanced/revanced-integrations/compare/v0.74.1...v0.75.0) (2022-11-21)
+
+
+### Features
+
+* **twitch:** integrations code for patches ([#216](https://github.com/revanced/revanced-integrations/issues/216)) ([d4c3b74](https://github.com/revanced/revanced-integrations/commit/d4c3b74a9a49c7595cf63e3ccedc03586bc2de8d))
+
+## [0.74.1](https://github.com/revanced/revanced-integrations/compare/v0.74.0...v0.74.1) (2022-11-20)
+
+
+### Bug Fixes
+
+* **youtube/general-ads:** hide bytecode home ad view ([c3e88c7](https://github.com/revanced/revanced-integrations/commit/c3e88c79e9e7de0700c4e0ade349e47173002567))
+
+# [0.74.0](https://github.com/revanced/revanced-integrations/compare/v0.73.0...v0.74.0) (2022-11-20)
+
+
+### Features
+
+* **youtube:** `disable-zoom-haptics` patch ([#217](https://github.com/revanced/revanced-integrations/issues/217)) ([fe74f6d](https://github.com/revanced/revanced-integrations/commit/fe74f6d8a6740a4d4544344474756c8ac717748f))
+
+# [0.73.0](https://github.com/revanced/revanced-integrations/compare/v0.72.0...v0.73.0) (2022-11-20)
+
+
+### Features
+
+* **youtube/general-ads:** block the separator by its identifier ([6ceff7c](https://github.com/revanced/revanced-integrations/commit/6ceff7c9b36570d115db7df4fdc20c76d5935dc3))
+
+# [0.72.0](https://github.com/revanced/revanced-integrations/compare/v0.71.0...v0.72.0) (2022-11-19)
+
+
+### Bug Fixes
+
+* check if filter string is empty ([6604030](https://github.com/revanced/revanced-integrations/commit/66040302a9370db2d511aeaa9cb3c9f4c7ad122b))
+* **youtube/general-ads:** hide ads with buttons ([2c8b234](https://github.com/revanced/revanced-integrations/commit/2c8b23426f88111646cd0513517feff7a65a7c13))
+
+
+### Features
+
+* block rule of type `CustomBlockRule` ([571cf12](https://github.com/revanced/revanced-integrations/commit/571cf12dcad405994b41f5fc41fec96fdc71c9b9))
+* **youtube/general-ads:** custom component filter ([72a3cd0](https://github.com/revanced/revanced-integrations/commit/72a3cd0fac095e7bfe0c3e18ab908ece8780b0db))
+* **youtube/general-ads:** do not require to reload on general ads switch ([6272e4b](https://github.com/revanced/revanced-integrations/commit/6272e4b46727c547261f8cc31c3dacb57424d5f7))
+* **youtube/general-ads:** hide gray separators ([cf892de](https://github.com/revanced/revanced-integrations/commit/cf892de4bb9758543e26a3554146047f8351dfb4))
+
 # [0.71.0](https://github.com/revanced/revanced-integrations/compare/v0.70.0...v0.71.0) (2022-11-15)
 
 
