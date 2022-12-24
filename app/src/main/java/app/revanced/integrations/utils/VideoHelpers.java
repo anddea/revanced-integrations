@@ -11,23 +11,22 @@ import java.time.Duration;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class VideoHelpers {
 
-    public static void copyVideoUrlToClipboard() {
-        generateVideoUrl(false);
+    public static void copyVideoUrlToClipboard(Context context) {
+        generateVideoUrl(context, false);
     }
 
-    public static void copyVideoUrlWithTimeStampToClipboard() {
-        generateVideoUrl(true);
+    public static void copyVideoUrlWithTimeStampToClipboard(Context context) {
+        generateVideoUrl(context, true);
     }
 
-    public static void copyTimeStampToClipboard() {
-        generateTimeStamp();
+    public static void copyTimeStampToClipboard(Context context) {
+        generateTimeStamp(context);
     }
 
-    private static void generateVideoUrl(boolean appendTimeStamp) {
+    private static void generateVideoUrl(Context context, boolean appendTimeStamp) {
         try {
             String videoId = VideoInformation.getCurrentVideoId();
             if (videoId == null || videoId.isEmpty()) return;
@@ -38,15 +37,15 @@ public class VideoHelpers {
                 videoUrl += String.format("?t=%s", (videoTime / 1000));
             }
 
-            setClipboard(ReVancedUtils.getContext(), videoUrl);
+            setClipboard(context, videoUrl);
 
-            Toast.makeText(ReVancedUtils.getContext(), str("share_copy_url_success"), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, str("share_copy_url_success"), Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
         }
     }
 
-    private static void generateTimeStamp() {
+    private static void generateTimeStamp(Context context) {
         try {
             long videoTime = PlayerController.getLastKnownVideoTime() < 0L ? VideoInformation.getCurrentVideoTime() : PlayerController.lastKnownVideoTime;
 
@@ -58,9 +57,9 @@ public class VideoHelpers {
 
             @SuppressLint("DefaultLocale") String timeStamp = h > 0 ? String.format("%02d:%02d:%02d", h, m, s) : String.format("%02d:%02d", m, s);
 
-            setClipboard(ReVancedUtils.getContext(), timeStamp);
+            setClipboard(context, timeStamp);
 
-            Toast.makeText(ReVancedUtils.getContext(), str("revanced_copytimestamp_success") + ": " + timeStamp, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, str("revanced_copytimestamp_success") + ": " + timeStamp, Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
         }

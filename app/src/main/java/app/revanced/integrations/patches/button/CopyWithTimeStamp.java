@@ -36,10 +36,10 @@ public class CopyWithTimeStamp {
             if (imageView == null) return;
 
             imageView.setOnClickListener(view -> {
-                VideoHelpers.copyVideoUrlWithTimeStampToClipboard();
+                VideoHelpers.copyVideoUrlWithTimeStampToClipboard(view.getContext());
             });
             imageView.setOnLongClickListener(view -> {
-                VideoHelpers.copyTimeStampToClipboard();
+                VideoHelpers.copyTimeStampToClipboard(view.getContext());
                 return true;
             });
             buttonview = new WeakReference<>(imageView);

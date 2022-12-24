@@ -36,7 +36,7 @@ public class Copy {
             if (imageView == null) return;
 
             imageView.setOnClickListener(view -> {
-                VideoHelpers.copyVideoUrlToClipboard();
+                VideoHelpers.copyVideoUrlToClipboard(view.getContext());
             });
             buttonview = new WeakReference<>(imageView);
 
