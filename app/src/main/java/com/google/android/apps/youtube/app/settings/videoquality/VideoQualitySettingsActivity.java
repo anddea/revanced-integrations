@@ -37,19 +37,19 @@ public class VideoQualitySettingsActivity extends Activity {
             getFragmentManager()
             .beginTransaction()
             .replace(identifier("revanced_settings_fragments", ResourceType.ID), new SponsorBlockSettingsFragment())
-            .commitNow();
+            .commit();
         } else if (dataString.equalsIgnoreCase("ryd_settings")) {
             trySetTitle(identifier("revanced_ryd_settings_title", ResourceType.STRING));
             getFragmentManager()
             .beginTransaction()
             .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReturnYouTubeDislikeSettingsFragment())
-            .commitNow();
+            .commit();
         } else {
             trySetTitle(identifier("revanced_settings", ResourceType.STRING));
             getFragmentManager()
             .beginTransaction()
             .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())
-            .commitNow();
+            .commit();
         }
         context = getApplicationContext();
     }
