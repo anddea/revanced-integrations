@@ -1,7 +1,6 @@
 package app.revanced.integrations.sponsorblock.objects;
 
 import androidx.annotation.NonNull;
-import java.text.MessageFormat;
 
 import app.revanced.integrations.sponsorblock.SponsorBlockSettings;
 

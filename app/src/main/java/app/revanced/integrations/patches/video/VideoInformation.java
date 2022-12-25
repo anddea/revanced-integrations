@@ -65,7 +65,7 @@ public class VideoInformation {
         Controller = new WeakReference<>(object);
         lastKnownVideoTime = -1L;
         lastKnownVideoLength = 1L;
-        PlayerController.initialize(object);
+        PlayerController.initialize();
 
         try {
             seekMethod = object.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);

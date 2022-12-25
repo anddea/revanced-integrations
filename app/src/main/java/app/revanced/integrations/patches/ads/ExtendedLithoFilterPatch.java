@@ -56,7 +56,7 @@ public class ExtendedLithoFilterPatch {
         }
 
         if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean()) {
-            genericBufferList.add("mix-watch".getBytes());	
+            genericBufferList.add("mix-watch".getBytes());    
             genericBufferList.add("&list=".getBytes());
             genericBufferList.add("rellist".getBytes());
         }

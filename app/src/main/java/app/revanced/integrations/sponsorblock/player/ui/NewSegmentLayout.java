@@ -17,11 +17,9 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.NewSegmentHelperLayout;
 import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
-import app.revanced.integrations.utils.LogHelper;
 
 public class NewSegmentLayout extends FrameLayout {
 
-    private LinearLayout newSegmentContainer;
     public int defaultBottomMargin;
     public int ctaBottomMargin;
     public ImageButton rewindButton;
@@ -59,8 +57,6 @@ public class NewSegmentLayout extends FrameLayout {
         TypedValue rippleEffect = new TypedValue();
         getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, rippleEffect, true);
         rippleEffectId = rippleEffect.resourceId;
-
-        this.newSegmentContainer = this.findViewById(getIdentifier(context, "new_segment_container", "id"));
 
         this.rewindButton = this.findViewById(getIdentifier(context, "new_segment_rewind", "id"));
         if (this.rewindButton != null) {

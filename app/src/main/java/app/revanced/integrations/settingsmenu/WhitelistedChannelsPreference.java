@@ -1,6 +1,5 @@
 package app.revanced.integrations.settingsmenu;
 
-import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.app.AlertDialog;
@@ -13,15 +12,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import app.revanced.integrations.sponsorblock.player.ChannelModel;
+import app.revanced.integrations.utils.ThemeHelper;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.whitelist.WhitelistType;
-import app.revanced.integrations.utils.ResourceType;
-import app.revanced.integrations.utils.ThemeHelper;
 
 public class WhitelistedChannelsPreference extends DialogPreference {
 

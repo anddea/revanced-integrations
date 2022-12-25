@@ -3,9 +3,6 @@ package app.revanced.integrations.settings;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
@@ -169,7 +166,7 @@ public enum SettingsEnum {
 
     //SponsorBlock Settings
     SB_ENABLED("sb-enabled", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_MIRROR_ENABLED("sb-mirror-enabled", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_MIRROR_ENABLED("sb-mirror-enabled", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_SHOW_TOAST_WHEN_SKIP("show-toast", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_COUNT_SKIPS("count-skips", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_UUID("uuid", null, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
@@ -277,16 +274,6 @@ public enum SettingsEnum {
                 LogHelper.printException(SettingsEnum.class, "Error during load()!", th);
             }
         }
-    }
-
-    public static List<SettingsEnum> getAdRemovalSettings() {
-        List<SettingsEnum> list = new ArrayList<>();
-        for (SettingsEnum var : SettingsEnum.values()) {
-            if (var.toString().startsWith("ADREMOVER")) {
-                list.add(var);
-            }
-        }
-        return list;
     }
 
     public void setValue(Object newValue) {

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
-import app.revanced.integrations.utils.ReVancedMusicUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class MusicSettings {

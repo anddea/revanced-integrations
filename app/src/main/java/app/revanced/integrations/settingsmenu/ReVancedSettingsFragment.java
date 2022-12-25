@@ -1,6 +1,7 @@
 package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.StringRef.str;
+import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -32,6 +33,7 @@ import app.revanced.integrations.patches.video.VideoQualityPatch;
 import app.revanced.integrations.patches.video.VideoSpeedPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ResourceType;
 import app.revanced.integrations.utils.ReVancedHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
@@ -42,7 +44,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private List<PreferenceScreen> screens;
 
     private boolean Registered = false;
-    private boolean settingsInitialized = false;
 
     private PreferenceScreen overlayPreferenceScreen;
     private PreferenceScreen extendedPreferenceScreen;
@@ -50,7 +51,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private PreferenceScreen whitelistingPreferenceScreen;
 
     private final CharSequence[] videoSpeedEntries = {str("quality_auto"), "0.25x", "0.5x", "0.75x", str("shorts_speed_control_normal_label"), "1.25x", "1.5x", "1.75x", "2x"};
-    private final CharSequence[] videoSpeedentryValues = {"-2", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
+    private final CharSequence[] videoSpeedentryValues = {"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
     public static final String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe_SponsorBlock", "Seal"};
     public static final String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe", "com.junkfood.seal"};
     public static final String[] DownloaderURLList = {"https://github.com/razar-dev/PowerTube/releases/latest", "https://github.com/TeamNewPipe/NewPipe/releases/latest", "https://github.com/polymorphicshade/NewPipe/releases/latest", "https://github.com/JunkFood02/Seal/releases/latest"};
@@ -138,10 +139,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             }
 
-            if (ReVancedUtils.getContext() != null && settingsInitialized && setting.shouldRebootOnChange() && (Objects.equals(setting.shouldWarningOnChange(), ""))) {
-                rebootDialog(getActivity());
-            } else if (ReVancedUtils.getContext() != null && settingsInitialized && !(Objects.equals(setting.shouldWarningOnChange(), ""))) {
-                rebootDialogWarning(getActivity(), setting, setting.shouldWarningOnChange());
+            if (ReVancedUtils.getContext() == null) return;
+
+            if (setting.shouldRebootOnChange() && (Objects.equals(setting.shouldWarningOnChange(), ""))) {
+                rebootDialog();
+            } else if (!(Objects.equals(setting.shouldWarningOnChange(), ""))) {
+                rebootDialogWarning(setting, setting.shouldWarningOnChange());
             }
         }
     };
@@ -155,10 +158,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         super.onCreate(bundle);
         getPreferenceManager().setSharedPreferencesName(SharedPrefHelper.SharedPrefNames.REVANCED.getName());
         try {
-            int identifier = getResources().getIdentifier("revanced_prefs", "xml", getActivity().getPackageName());
+            int identifier = identifier("revanced_prefs", ResourceType.XML);
             addPreferencesFromResource(identifier);
             SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
-            this.settingsInitialized = sharedPreferences.getBoolean("revanced_initialized", false);
             sharedPreferences.registerOnSharedPreferenceChangeListener(this.listener);
             this.Registered = true;
 
@@ -180,15 +182,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             for (int i = 0; i < DownloaderNameList.length ; i++) {
                 int index = i;
-                Preference downloader = (Preference) findPreferenceOnScreen(DownloaderNameList[index]);
+                Preference downloader = findPreferenceOnScreen(DownloaderNameList[index]);
                 downloader.setOnPreferenceClickListener(preference -> {
                     setDownloaderPreferenceDialog(index);
                     return false;
                 });
             }
-
-            sharedPreferences.edit().putBoolean("revanced_initialized", true);
-            this.settingsInitialized = true;
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error during onCreate()", th);
         }
@@ -280,17 +279,20 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     public void LayoutOverrideLinks() {
         try {
-            SwitchPreference tabletLayout = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_TABLET_LAYOUT.getPath());
-            SwitchPreference phoneLayout = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_PHONE_LAYOUT.getPath());
+            SettingsEnum tabletLayout = SettingsEnum.ENABLE_TABLET_LAYOUT;
+            SettingsEnum phoneLayout = SettingsEnum.ENABLE_PHONE_LAYOUT;
+
+            SwitchPreference tabletLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(tabletLayout.getPath());
+            SwitchPreference phoneLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(phoneLayout.getPath());
             if (ReVancedHelper.isTablet()) {
-                tabletLayout.setEnabled(false);
-                SettingsEnum.ENABLE_TABLET_LAYOUT.saveValue(false);
-                this.extendedPreferenceScreen.removePreference(tabletLayout);
+                tabletLayoutSwitch.setEnabled(false);
+                tabletLayout.saveValue(false);
+                this.extendedPreferenceScreen.removePreference(tabletLayoutSwitch);
                 return;
             }
-            phoneLayout.setEnabled(false);
-            SettingsEnum.ENABLE_PHONE_LAYOUT.saveValue(false);
-            this.extendedPreferenceScreen.removePreference(phoneLayout);
+            phoneLayoutSwitch.setEnabled(false);
+            phoneLayout.saveValue(false);
+            this.extendedPreferenceScreen.removePreference(phoneLayoutSwitch);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
         }
@@ -298,25 +300,37 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     public void TabletLayoutLinks() {
         try {
-            SwitchPreference mixPlaylists = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.HIDE_MIX_PLAYLISTS.getPath());
-            SwitchPreference fullScreenButton = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getPath());
+            SettingsEnum mixPlaylists = SettingsEnum.HIDE_MIX_PLAYLISTS;
+            SettingsEnum fullScreenButton = SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER;
 
-            boolean istablet = ReVancedHelper.isTablet() && !SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
-            boolean istabletlayout = istablet || SettingsEnum.ENABLE_TABLET_LAYOUT.getBoolean();
+            SettingsEnum tabletLayout = SettingsEnum.ENABLE_TABLET_LAYOUT;
+            SettingsEnum phoneLayout = SettingsEnum.ENABLE_PHONE_LAYOUT;
+
+            SwitchPreference mixPlaylistsSwitch = (SwitchPreference) findPreferenceOnScreen(mixPlaylists.getPath());
+            SwitchPreference fullScreenButtonSwitch = (SwitchPreference) findPreferenceOnScreen(fullScreenButton.getPath());
+
+            boolean istablet = ReVancedHelper.isTablet() && !phoneLayout.getBoolean();
+            boolean istabletlayout = istablet || tabletLayout.getBoolean();
+
             if (istabletlayout) {
-                if (istablet) this.layoutPreferenceScreen.removePreference(mixPlaylists);
-                else this.layoutPreferenceScreen.addPreference(mixPlaylists);
-                mixPlaylists.setEnabled(!istablet);
-                SettingsEnum.HIDE_MIX_PLAYLISTS.saveValue(istablet);
-                fullScreenButton.setEnabled(false);
-                SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.saveValue(false);
-                this.layoutPreferenceScreen.removePreference(fullScreenButton);
+                if (istablet) this.layoutPreferenceScreen.removePreference(mixPlaylistsSwitch);
+                else this.layoutPreferenceScreen.addPreference(mixPlaylistsSwitch);
+
+                mixPlaylistsSwitch.setEnabled(!istablet);
+                mixPlaylists.saveValue(istablet);
+
+                fullScreenButtonSwitch.setEnabled(false);
+                fullScreenButton.saveValue(false);
+
+                this.layoutPreferenceScreen.removePreference(fullScreenButtonSwitch);
                 return;
             }
-            mixPlaylists.setEnabled(true);
-            fullScreenButton.setEnabled(true);
-            this.layoutPreferenceScreen.addPreference(mixPlaylists);
-            this.layoutPreferenceScreen.addPreference(fullScreenButton);
+
+            mixPlaylistsSwitch.setEnabled(true);
+            fullScreenButtonSwitch.setEnabled(true);
+
+            this.layoutPreferenceScreen.addPreference(mixPlaylistsSwitch);
+            this.layoutPreferenceScreen.addPreference(fullScreenButtonSwitch);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting TabletLayoutLinks" + th);
         }
@@ -324,11 +338,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private void setVideoSpeed() {
         VideoSpeedPatch.refreshSpeed();
+        SettingsEnum speedSetting = SettingsEnum.DEFAULT_VIDEO_SPEED;
+        SettingsEnum customSpeedSetting = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED;
 
-        ListPreference speedListPreference = (ListPreference) findPreferenceOnScreen(SettingsEnum.DEFAULT_VIDEO_SPEED.getPath());
-        var value = Float.toString(SettingsEnum.DEFAULT_VIDEO_SPEED.getFloat());
+        ListPreference speedListPreference = (ListPreference) findPreferenceOnScreen(speedSetting.getPath());
+        var value = Float.toString(speedSetting.getFloat());
 
-        if (SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean()) {
+        if (customSpeedSetting.getBoolean()) {
             CharSequence[] entries = speedListPreference.getEntries();
             int entryIndex = speedListPreference.findIndexOfValue(value);
             speedListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
@@ -351,7 +367,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     private void setPatchesInfomation() {
-        Preference reportPreference = new Preference(getActivity());
+        Preference reportPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
         reportPreference.setTitle(str("revanced_extended_issue_center_title"));
         reportPreference.setSummary(str("revanced_extended_issue_center_summary"));
         reportPreference.setOnPreferenceClickListener(pref -> {
@@ -362,14 +378,16 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         });
         this.extendedPreferenceScreen.addPreference(reportPreference);
 
-        Preference integration = (Preference) findPreferenceOnScreen("revanced-integrations");
+        Preference integration = findPreferenceOnScreen("revanced-integrations");
         integration.setSummary(BuildConfig.VERSION_NAME);
     }
 
     private void setDownloaderPreferenceDialog(int index) {
-        EditTextPreference downloaderPreference = (EditTextPreference) findPreferenceOnScreen(SettingsEnum.DOWNLOADER_PACKAGE_NAME.getPath());
+        SettingsEnum downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME;
 
-        Activity activity = getActivity();
+        EditTextPreference downloaderPreference = (EditTextPreference) findPreferenceOnScreen(downloaderPackageName.getPath());
+
+        Activity activity = ReVancedSettingsFragment.this.getActivity();
         String downloader = DownloaderNameList[index].replaceAll("_", " x ");
         String msg = "\n" + str("accessibility_share_target") + "\n==" + "\n" + downloader +  "\n\n" + str("revanced_downloader_package_name_title") + "\n==" + "\n" + DownloaderPackageNameList[index] + "\n             ";
         AlertDialog.Builder builder;
@@ -380,7 +398,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         builder.setNegativeButton(str("playback_control_close"), null);
         builder.setPositiveButton(str("save_metadata_menu"),
                 (dialog, id) -> {
-                    SettingsEnum.DOWNLOADER_PACKAGE_NAME.saveValue(DownloaderPackageNameList[index]);
+                    downloaderPackageName.saveValue(DownloaderPackageNameList[index]);
                     downloaderPreference.setSummary(DownloaderPackageNameList[index]);
                     dialog.dismiss();
                 });
@@ -388,9 +406,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(v -> {
+        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
             Uri uri = Uri.parse(DownloaderURLList[index]);
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            var intent = new Intent(Intent.ACTION_VIEW, uri);
             activity.startActivity(intent);
         });
     }
@@ -403,7 +421,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
        Runtime.getRuntime().exit(0);
     }
 
-    public void rebootDialog(Activity activity) {
+    void rebootDialog() {
+        Activity activity = ReVancedSettingsFragment.this.getActivity();
+
         new AlertDialog.Builder(activity)
                 .setMessage(str("pref_refresh_config"))
                 .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> {reboot(activity);})
@@ -411,20 +431,24 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 .show();
     }
 
-    public void rebootDialogWarning(Activity activity, SettingsEnum setting, String msg) {
-        if (!setting.getBoolean()) return;
+    void rebootDialogWarning(SettingsEnum setting, String msg) {
+        if (setting.getBoolean()) {
+            Activity activity = ReVancedSettingsFragment.this.getActivity();
 
-        new AlertDialog.Builder(activity)
-                .setMessage(str(msg) + "\n\n" + str("revanced_reboot_warning_general"))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> {reboot(activity);})
-                .setNegativeButton(str("offline_undo_snackbar_button_text"), (dialog, id) -> {
-                    SwitchPreference switchPref = (SwitchPreference) findPreferenceOnScreen(setting.getPath());
-                    switchPref.setChecked(false);
-                    setting.setValue(false);
-                    dialog.dismiss();
-                })
-				.setCancelable(false)
-                .show();
+            new AlertDialog.Builder(activity)
+                    .setMessage(str(msg) + "\n\n" + str("revanced_reboot_warning_general"))
+                    .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> {reboot(activity);})
+                    .setNegativeButton(str("offline_undo_snackbar_button_text"), (dialog, id) -> {
+                        SwitchPreference switchPref = (SwitchPreference) findPreferenceOnScreen(setting.getPath());
+                        switchPref.setChecked(false);
+                        setting.setValue(false);
+                        dialog.dismiss();
+                    })
+                    .setCancelable(false)
+                    .show();
+        } else {
+            rebootDialog();
+        }
     }
 
     public static void rebootDialogStatic(Context context, String msg) {

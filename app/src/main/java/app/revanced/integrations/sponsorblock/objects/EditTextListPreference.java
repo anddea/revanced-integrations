@@ -12,7 +12,6 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,18 +21,6 @@ public class EditTextListPreference extends ListPreference {
 
     private EditText mEditText;
     private int mClickedDialogEntryIndex;
-
-    public EditTextListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    public EditTextListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    public EditTextListPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
 
     public EditTextListPreference(Context context) {
         super(context);

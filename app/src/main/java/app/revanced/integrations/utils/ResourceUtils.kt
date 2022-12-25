@@ -51,6 +51,7 @@ enum class ResourceType(internal val value: String) {
     ANIM("anim"),
     ATTR("attr"),
     COLOR("color"),
+    DIMEN("dimen"),
     DRAWABLE("drawable"),
     FONT("font"),
     ID("id"),

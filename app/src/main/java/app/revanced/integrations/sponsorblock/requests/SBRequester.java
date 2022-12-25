@@ -78,7 +78,7 @@ public class SBRequester {
             dismiss = true;
             connection.disconnect();
         } catch (Exception ex) {
-			if (!dismiss) setMirror();
+            if (!dismiss) setMirror();
             ex.printStackTrace();
         }
 
@@ -224,8 +224,8 @@ public class SBRequester {
                 Toast.makeText(ReVancedUtils.getContext(), str("sb_connection_failed"), Toast.LENGTH_SHORT).show();
                 Toast.makeText(ReVancedUtils.getContext(), str("sb_switching_to_mirror"), Toast.LENGTH_SHORT).show();
             });
-			SettingsEnum.SB_API_URL.saveValue(SettingsEnum.SB_API_MIRROR_URL.getString());
-			runOnMainThread(() -> Toast.makeText(ReVancedUtils.getContext(), str("sb_switching_success"), Toast.LENGTH_SHORT).show());
+            SettingsEnum.SB_API_URL.saveValue(SettingsEnum.SB_API_MIRROR_URL.getString());
+            runOnMainThread(() -> Toast.makeText(ReVancedUtils.getContext(), str("sb_switching_success"), Toast.LENGTH_SHORT).show());
         }
     }
 

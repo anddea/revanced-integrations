@@ -3,7 +3,6 @@ package com.google.android.apps.youtube.app.settings.videoquality;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 
 import android.view.View;
@@ -11,19 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment;
-import app.revanced.integrations.settingsmenu.ReturnYouTubeDislikeSettingsFragment;
 import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
-
+import app.revanced.integrations.settingsmenu.ReturnYouTubeDislikeSettingsFragment;
+import app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ResourceType;
 import app.revanced.integrations.utils.ThemeHelper;
 
 // Hook a dummy Activity to make the Back button work
 public class VideoQualitySettingsActivity extends Activity {
-    private static Context context;
 
-    @Override // android.app.Activity
+    @Override
     protected void onCreate(Bundle bundle) {
         setTheme(ThemeHelper.getSettingTheme());
 
@@ -51,7 +48,11 @@ public class VideoQualitySettingsActivity extends Activity {
             .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())
             .commit();
         }
-        context = getApplicationContext();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     public static ImageButton getImageButton(ViewGroup viewGroup) {
@@ -86,23 +87,10 @@ public class VideoQualitySettingsActivity extends Activity {
         }
     }
 
-    private void trySetTitle(String str) {
-        try {
-            getTextView(findViewById(identifier("toolbar", ResourceType.ID))).setText(str);
-        } catch (Exception e) {
-            LogHelper.printException(VideoQualitySettingsActivity.class, "Couldn't set Toolbar title", e);
-        }
-    }
-
     private void initImageButton() {
         try {
             ImageButton imageButton = getImageButton(findViewById(identifier("toolbar", ResourceType.ID)));
-            imageButton.setOnClickListener(new View.OnClickListener() {
-                @Override // android.view.View.OnClickListener
-                public void onClick(View view) {
-                    VideoQualitySettingsActivity.this.onBackPressed();
-                }
-            });
+            imageButton.setOnClickListener(view -> VideoQualitySettingsActivity.this.onBackPressed());
             imageButton.setImageDrawable(getResources().getDrawable(ThemeHelper.getArrow()));
         } catch (Exception e) {
             LogHelper.printException(VideoQualitySettingsActivity.class, "Couldn't set Toolbar click handler", e);

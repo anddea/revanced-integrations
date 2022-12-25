@@ -2,18 +2,14 @@ package app.revanced.integrations.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Toast;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import java.util.Locale;
 
 import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 
@@ -22,7 +18,7 @@ public class ReVancedUtils {
     public static Context context;
 
     public static Context getContext() {
-		return context;
+        return context;
     }
 
     private ReVancedUtils() {

@@ -71,7 +71,7 @@ public class PlayerController {
     /**
      * Called when creating some kind of youtube internal player controlled, every time when new video starts to play
      */
-    public static void initialize(Object _o) {
+    public static void initialize() {
         lastKnownVideoTime = 0;
         SkipSegmentView.hide();
         NewSegmentHelperLayout.hide();
@@ -182,12 +182,7 @@ public class PlayerController {
     }
 
     public static void setSponsorBarAbsoluteLeft(final Rect rect) {
-        setSponsorBarAbsoluteLeft(rect.left);
-    }
-
-    public static void setSponsorBarAbsoluteLeft(final float left) {
-
-        sponsorBarLeft = left;
+        sponsorBarLeft = rect.left;
     }
 
     public static void setSponsorBarRect(final Object self) {
@@ -196,8 +191,8 @@ public class PlayerController {
             field.setAccessible(true);
             Rect rect = (Rect) field.get(self);
             if (rect != null) {
-                setSponsorBarAbsoluteLeft(rect.left);
-                setSponsorBarAbsoluteRight(rect.right);
+                setSponsorBarAbsoluteLeft(rect);
+                setSponsorBarAbsoluteRight(rect);
             }
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
@@ -205,20 +200,11 @@ public class PlayerController {
     }
 
     public static void setSponsorBarAbsoluteRight(final Rect rect) {
-        setSponsorBarAbsoluteRight(rect.right);
-    }
-
-    public static void setSponsorBarAbsoluteRight(final float right) {
-
-        sponsorBarRight = right;
+        sponsorBarRight = rect.right;
     }
 
     public static void setSponsorBarThickness(final int thickness) {
-        setSponsorBarThickness((float) thickness);
-    }
-
-    public static void setSponsorBarThickness(final float thickness) {
-        sponsorBarThickness = thickness;
+        sponsorBarThickness = (float) thickness;
     }
 
     public static void onSkipSponsorClicked() {
@@ -234,15 +220,6 @@ public class PlayerController {
             NewSegmentHelperLayout.context = viewGroup.getContext();
         }, 500L);
     }
-
-    public static void addSkipSponsorView14(final View view) {
-        playerActivity = new WeakReference<>((Activity) view.getContext());
-        ReVancedUtils.runDelayed(() -> {
-            final ViewGroup viewGroup = (ViewGroup) view.getParent();
-            NewSegmentHelperLayout.context = viewGroup.getContext();
-        }, 500L);
-    }
-
 
     /**
      * Called when it's time to draw time bar
@@ -263,11 +240,6 @@ public class PlayerController {
             float right = segment.end * tmp1 + absoluteLeft;
             canvas.drawRect(left, top, right, bottom, segment.category.getPaint());
         }
-    }
-
-    //    private final static Pattern videoIdRegex = Pattern.compile(".*\\.be\\/([A-Za-z0-9_\\-]{0,50}).*");
-    public static String substringVideoIdFromLink(String link) {
-        return link.substring(link.lastIndexOf('/') + 1);
     }
 
     public static void skipRelativeMilliseconds(int millisRelative) {
