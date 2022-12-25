@@ -6,6 +6,7 @@ import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.videoHasS
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -20,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import app.revanced.integrations.requests.Requester;
@@ -39,6 +41,7 @@ public class SBRequester {
     private SBRequester() {
     }
 
+    @SuppressLint("SuspiciousIndentation")
     public static synchronized SponsorSegment[] getSegments(String videoId) {
         List<SponsorSegment> segments = new ArrayList<>();
         boolean dismiss = false;
@@ -78,7 +81,7 @@ public class SBRequester {
             dismiss = true;
             connection.disconnect();
         } catch (Exception ex) {
-            if (!dismiss) setMirror();
+            if ((!Objects.equals(SettingsEnum.SB_API_URL.getString(), SettingsEnum.SB_API_MIRROR_URL.getString())) && !dismiss) setMirror();
             ex.printStackTrace();
         }
 

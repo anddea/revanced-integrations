@@ -32,7 +32,6 @@ public class AutoRepeat {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
             ImageView imageView = findView(AutoRepeat.class, constraintLayout, "autoreplay_button");
-            if (imageView == null) return;
             imageView.setSelected(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean());
             imageView.setOnClickListener(view -> {
                 AutoRepeat.changeSelected(!view.isSelected(), false);
@@ -77,10 +76,6 @@ public class AutoRepeat {
 
         imageView.setSelected(selected);
         if (!onlyView) SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.saveValue(selected);
-    }
-
-    public static void refreshVisibility() {
-        isButtonEnabled = setValue();
     }
 
     private static boolean setValue() {

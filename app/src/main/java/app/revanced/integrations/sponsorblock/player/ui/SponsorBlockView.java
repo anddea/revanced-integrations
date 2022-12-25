@@ -127,22 +127,8 @@ public class SponsorBlockView {
     }
 
     private static void bringLayoutToFront() {
-        checkLayout();
         inlineSponsorOverlay.bringToFront();
         inlineSponsorOverlay.requestLayout();
         inlineSponsorOverlay.invalidate();
-    }
-
-    private static void checkLayout() {
-        if (inlineSponsorOverlay.getHeight() == 0) {
-            // FIXME: nextGenWatchLayout is never being set by the patches.
-            // Decompile YT Vanced and modify the swipe-controls patch to set nextGenWatchLayout.
-            // ViewGroup watchLayout = SwipeHelper.nextGenWatchLayout;
-            ViewGroup watchLayout = null;
-            //noinspection ConstantConditions
-            if (watchLayout == null) return;
-
-            initialize(findView(SponsorBlockView.class, watchLayout, "player_overlays"));
-        }
     }
 }

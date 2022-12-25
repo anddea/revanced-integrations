@@ -15,11 +15,10 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
-import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.patches.utils.PatchStatus;
+import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.whitelist.WhitelistType;
 import app.revanced.integrations.whitelist.requests.WhitelistRequester;
@@ -58,7 +57,6 @@ public class Whitelists {
             isButtonEnabled = setValue();
 
             ImageView imageView = findView(Whitelists.class, constraintLayout, "whitelist_button");
-            if (imageView == null) return;
             imageView.setOnClickListener(view -> {
                 Whitelists.OpenDialog(view.getContext());
             });

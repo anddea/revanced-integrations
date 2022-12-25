@@ -39,9 +39,7 @@ abstract class BaseGestureController(
 
     override fun submitTouchEvent(motionEvent: MotionEvent): Boolean {
         // ignore if swipe is disabled
-        if (!controller.config.enableSwipeControls) {
-            return false
-        }
+        if (!controller.config.enableSwipeControls) return false
 
         // create a copy of the event so we can modify it
         // without causing any issues downstream

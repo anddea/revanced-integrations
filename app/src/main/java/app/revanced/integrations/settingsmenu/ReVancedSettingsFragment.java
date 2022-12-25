@@ -136,7 +136,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 } else if (setting.equals(SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE)) {
                     setVideoQuality(false);
                 }
-
             }
 
             if (ReVancedUtils.getContext() == null) return;

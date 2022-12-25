@@ -16,20 +16,20 @@ public class AdRemoverAPI {
     //ToDo: refactor this
     public static void HideViewWithLayout1dp(View view) {
         if (view instanceof LinearLayout) {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(1, 1);
-            view.setLayoutParams(layoutParams);
+            LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(0, 0);
+            view.setLayoutParams(linearLayoutParams);
         } else if (view instanceof FrameLayout) {
-            FrameLayout.LayoutParams layoutParams2 = new FrameLayout.LayoutParams(1, 1);
-            view.setLayoutParams(layoutParams2);
+            FrameLayout.LayoutParams frameLayoutParms = new FrameLayout.LayoutParams(0, 0);
+            view.setLayoutParams(frameLayoutParms);
         } else if (view instanceof RelativeLayout) {
-            RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(1, 1);
-            view.setLayoutParams(layoutParams3);
+            RelativeLayout.LayoutParams relativeLayoutParms = new RelativeLayout.LayoutParams(0, 0);
+            view.setLayoutParams(relativeLayoutParms);
         } else if (view instanceof Toolbar) {
-            Toolbar.LayoutParams layoutParams4 = new Toolbar.LayoutParams(1, 1);
-            view.setLayoutParams(layoutParams4);
+            Toolbar.LayoutParams toolbarParms = new Toolbar.LayoutParams(0, 0);
+            view.setLayoutParams(toolbarParms);
         } else if (view instanceof ViewGroup) {
-            ViewGroup.LayoutParams layoutParams5 = new ViewGroup.LayoutParams(1, 1);
-            view.setLayoutParams(layoutParams5);
+            ViewGroup.LayoutParams viewGroupParms = new ViewGroup.LayoutParams(0, 0);
+            view.setLayoutParams(viewGroupParms);
         }
     }
 

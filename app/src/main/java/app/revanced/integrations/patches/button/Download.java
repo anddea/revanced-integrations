@@ -18,7 +18,6 @@ import java.lang.ref.WeakReference;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.StringRef;
 
 public class Download {
@@ -39,7 +38,6 @@ public class Download {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
             ImageView imageView = findView(Download.class, constraintLayout, "download_button");
-            if (imageView == null) return;
 
             imageView.setOnClickListener(view -> {
 
@@ -50,7 +48,7 @@ public class Download {
                 try {
                     assert context != null;
                     packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
-                } catch (PackageManager.NameNotFoundException error) {
+                } catch (PackageManager.NameNotFoundException ignored) {
                 }
 
                 // If the package is not installed, show the toast

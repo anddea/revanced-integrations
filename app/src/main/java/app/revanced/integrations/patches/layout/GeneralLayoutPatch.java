@@ -25,7 +25,7 @@ public class GeneralLayoutPatch {
     }
 
     public static void hideShortsButton(View view) {
-        if (lastPivotTab != null && lastPivotTab.name() == "TAB_SHORTS") {
+        if (lastPivotTab != null && lastPivotTab.name().equals("TAB_SHORTS")) {
             boolean show = SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean();
             view.setVisibility(show ? View.GONE : View.VISIBLE);
         }
@@ -58,7 +58,7 @@ public class GeneralLayoutPatch {
     }
 
     public static boolean enableTabletMiniPlayer(boolean original) {
-        return SettingsEnum.ENABLE_TABLET_MINIPLAYER.getBoolean() ? true : original;
+        return SettingsEnum.ENABLE_TABLET_MINIPLAYER.getBoolean() || original;
     }
 
     public static boolean hideAutoCaptions() {

@@ -14,7 +14,6 @@ import java.lang.ref.WeakReference;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.VideoHelpers;
 
 public class CopyWithTimeStamp {
@@ -33,7 +32,6 @@ public class CopyWithTimeStamp {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
             ImageView imageView = findView(CopyWithTimeStamp.class, constraintLayout, "copy_with_timestamp_button");
-            if (imageView == null) return;
 
             imageView.setOnClickListener(view -> {
                 VideoHelpers.copyVideoUrlWithTimeStampToClipboard(view.getContext());

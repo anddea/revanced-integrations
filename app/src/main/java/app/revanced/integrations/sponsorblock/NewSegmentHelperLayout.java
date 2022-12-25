@@ -1,11 +1,13 @@
 package app.revanced.integrations.sponsorblock;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import static app.revanced.integrations.sponsorblock.player.ui.SponsorBlockView.hideNewSegmentLayout;
 import static app.revanced.integrations.sponsorblock.player.ui.SponsorBlockView.showNewSegmentLayout;
 
 public class NewSegmentHelperLayout {
+    @SuppressLint("StaticFieldLeak")
     public static Context context;
     private static boolean isShown = false;
 

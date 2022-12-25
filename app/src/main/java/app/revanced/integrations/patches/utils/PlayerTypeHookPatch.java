@@ -2,11 +2,9 @@ package app.revanced.integrations.patches.utils;
 
 import androidx.annotation.Nullable;
 
-import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.shared.PlayerType;
-import app.revanced.integrations.patches.utils.DoubleBackToExitPatch;
-import app.revanced.integrations.sponsorblock.player.ui.SponsorBlockView;
 import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
+import app.revanced.integrations.sponsorblock.player.ui.SponsorBlockView;
 
 /**
  * Hook receiver class for 'player-type-hook' patch

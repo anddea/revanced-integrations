@@ -1,7 +1,6 @@
 package app.revanced.integrations.patches.ads;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.LogHelper;
 
 final class CommentsPatch extends Filter {
 
@@ -22,8 +21,6 @@ final class CommentsPatch extends Filter {
 
     @Override
     boolean filter(String path, String _identifier) {
-        if (!pathRegister.contains(path)) return false;
-
-        return true;
+        return pathRegister.contains(path);
     }
 }

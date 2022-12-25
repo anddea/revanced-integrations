@@ -358,9 +358,6 @@ public abstract class SponsorBlockUtils {
     @SuppressLint("DefaultLocale")
     public static void onPreviewClicked(Context context) {
         if (newSponsorSegmentStartMillis >= 0 && newSponsorSegmentStartMillis < newSponsorSegmentEndMillis) {
-//            Toast t = Toast.makeText(context, "Preview", Toast.LENGTH_SHORT);
-//            t.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, t.getXOffset(), t.getYOffset());
-//            t.show();
             PlayerController.skipToMillisecond(newSponsorSegmentStartMillis - 3000);
             final SponsorSegment[] original = PlayerController.sponsorSegmentsOfCurrentVideo;
             final SponsorSegment[] segments = original == null ? new SponsorSegment[1] : Arrays.copyOf(original, original.length + 1);
@@ -515,9 +512,7 @@ public abstract class SponsorBlockUtils {
                 String categoryKey = categorySelectionObject.getString("name");
                 SponsorBlockSettings.SegmentInfo category = SponsorBlockSettings.SegmentInfo.byCategoryKey(categoryKey);
 
-                if (category == null) {
-                    continue;
-                }
+                if (category == null) continue;
 
                 int desktopKey = categorySelectionObject.getInt("option");
                 SponsorBlockSettings.SegmentBehaviour behaviour = SponsorBlockSettings.SegmentBehaviour.byDesktopKey(desktopKey);

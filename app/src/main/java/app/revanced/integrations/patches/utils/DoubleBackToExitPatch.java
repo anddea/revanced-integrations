@@ -4,7 +4,6 @@ import com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class DoubleBackToExitPatch {
     private static int pressedCount = 0;

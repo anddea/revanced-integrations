@@ -12,15 +12,9 @@ import app.revanced.integrations.utils.ReVancedUtils;
 class BlockRule {
     final static class BlockResult {
         private final boolean blocked;
-        private final SettingsEnum setting;
 
-        public BlockResult(final SettingsEnum setting, final boolean blocked) {
-            this.setting = setting;
+        public BlockResult(final boolean blocked) {
             this.blocked = blocked;
-        }
-
-        public SettingsEnum getSetting() {
-            return setting;
         }
 
         public boolean isBlocked() {
@@ -42,17 +36,12 @@ class BlockRule {
         this.blocks = blocks;
     }
 
-    public BlockRule(final SettingsEnum setting, final boolean invert, final String... blocks) {
-        this.setting = setting;
-        this.blocks = blocks;
-    }
-
     public boolean isEnabled() {
         return setting.getBoolean();
     }
 
     public BlockResult check(final String string) {
-        return new BlockResult(setting, string != null && ReVancedUtils.containsAny(string, blocks));
+        return new BlockResult(string != null && ReVancedUtils.containsAny(string, blocks));
     }
 }
 

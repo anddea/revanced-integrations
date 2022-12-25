@@ -33,7 +33,6 @@ public class Copy {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
             ImageView imageView = findView(Copy.class, constraintLayout, "copy_button");
-            if (imageView == null) return;
 
             imageView.setOnClickListener(view -> {
                 VideoHelpers.copyVideoUrlToClipboard(view.getContext());

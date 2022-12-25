@@ -256,11 +256,9 @@ public class PlayerController {
         allowNextSkipRequestTime = now + 100;
 
 
-        final long finalMillisecond = millisecond;
-
         try {
-            lastKnownVideoTime = finalMillisecond;
-            VideoInformation.seekTo(finalMillisecond);
+            lastKnownVideoTime = millisecond;
+            VideoInformation.seekTo(millisecond);
         } catch (Exception e) {
             LogHelper.printException(PlayerController.class, "Cannot skip to millisecond", e);
         }
@@ -295,9 +293,6 @@ public class PlayerController {
     }
 
     private static void skipSegment(SponsorSegment segment, boolean wasClicked) {
-//        if (lastSkippedSegment == segment) return;
-//        lastSkippedSegment = segment;
-
         if (SettingsEnum.SB_SHOW_TOAST_WHEN_SKIP.getBoolean()) SkipSegmentView.notifySkipped(segment);
 
         boolean didSucceed = skipToMillisecond(segment.end + 2);

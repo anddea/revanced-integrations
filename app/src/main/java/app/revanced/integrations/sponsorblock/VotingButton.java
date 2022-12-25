@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import java.lang.ref.WeakReference;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.utils.LogHelper;
 
 public class VotingButton {
@@ -32,7 +31,6 @@ public class VotingButton {
 
             ImageView imageView = findView(VotingButton.class, youtubeControlsLayout, "voting_button");
 
-            if (imageView == null) return;
             imageView.setOnClickListener(SponsorBlockUtils.voteButtonListener);
             buttonview = new WeakReference<>(imageView);
 
