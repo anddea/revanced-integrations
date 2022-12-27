@@ -118,6 +118,7 @@ public enum SettingsEnum {
     HIDE_YT_MUSIC_MENU("revanced_hide_menu_listen_with_youtube_music", false, ReturnType.BOOLEAN),
 
     // Layout settings (Seekbar)
+    ENABLE_OLD_SEEKBAR_COLOR("revanced_enable_old_seekbar_color", true, ReturnType.BOOLEAN, true),
     ENABLE_SEEKBAR_TAPPING("revanced_enable_seekbar_tapping", true, ReturnType.BOOLEAN),
     HIDE_TIME_AND_SEEKBAR("revanced_hide_time_and_seekbar", false, ReturnType.BOOLEAN),
 
