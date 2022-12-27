@@ -158,7 +158,6 @@ public class ExtendedLithoFilterPatch {
             if (SettingsEnum.HIDE_SHORTS_SHELF.getBoolean()) {
                 generalBlockList.add("inline_shorts");
                 generalBlockList.add("reels_player_overlay");
-                generalBlockList.add("shelf_header");
                 generalBlockList.add("shorts_grid");
                 generalBlockList.add("shorts_shelf");
             }
