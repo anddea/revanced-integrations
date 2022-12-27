@@ -1,3 +1,17 @@
+# [0.87.0](https://github.com/revanced/revanced-integrations/compare/v0.86.1...v0.87.0) (2022-12-26)
+
+
+### Features
+
+* **youtube/general-ads-patch:** hide guidelines for subscriber ([#249](https://github.com/revanced/revanced-integrations/issues/249)) ([f4e8afe](https://github.com/revanced/revanced-integrations/commit/f4e8afe7ba7c3b516f2a3821918152a55fdd563d))
+
+## [0.86.1](https://github.com/revanced/revanced-integrations/compare/v0.86.0...v0.86.1) (2022-12-24)
+
+
+### Bug Fixes
+
+* **youtube/theme:** correct background color for the shorts comment box ([#239](https://github.com/revanced/revanced-integrations/issues/239)) ([9ab8a64](https://github.com/revanced/revanced-integrations/commit/9ab8a646ed07d709c46fe7b5dd3238bc23301b8b))
+
 # [0.86.0](https://github.com/revanced/revanced-integrations/compare/v0.85.1...v0.86.0) (2022-12-21)
 
 
@@ -10,7 +24,7 @@
 
 ### Bug Fixes
 
-* revert semantically incorrect simplification of ?AdRemoverAPI.HideViewWithLayout1dp? ([#244](https://github.com/revanced/revanced-integrations/issues/244)) ([71e81a6](https://github.com/revanced/revanced-integrations/commit/71e81a6473b94c5a2c82a9aad340799ff174bdf7))
+* revert semantically incorrect simplification of ˋAdRemoverAPI.HideViewWithLayout1dpˋ ([#244](https://github.com/revanced/revanced-integrations/issues/244)) ([71e81a6](https://github.com/revanced/revanced-integrations/commit/71e81a6473b94c5a2c82a9aad340799ff174bdf7))
 
 # [0.85.0](https://github.com/revanced/revanced-integrations/compare/v0.84.2...v0.85.0) (2022-12-21)
 
