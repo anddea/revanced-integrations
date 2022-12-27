@@ -104,7 +104,7 @@ public enum SettingsEnum {
     HIDE_PREVIEW_COMMENT("revanced_hide_preview_comment", false, ReturnType.BOOLEAN),
 
     // Layout settings (Flyout Panel)
-    ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_oldstyle_quality_layout", true, ReturnType.BOOLEAN),
+    ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_old_quality_layout", true, ReturnType.BOOLEAN),
     HIDE_CAPTIONS_MENU("revanced_hide_menu_captions", false, ReturnType.BOOLEAN),
     HIDE_LOOP_MENU("revanced_hide_menu_loop_video", false, ReturnType.BOOLEAN),
     HIDE_AMBIENT_MENU("revanced_hide_menu_ambient_mode", false, ReturnType.BOOLEAN),
