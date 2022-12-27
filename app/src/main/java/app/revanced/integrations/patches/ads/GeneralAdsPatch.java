@@ -24,6 +24,7 @@ public final class GeneralAdsPatch extends Filter {
     public GeneralAdsPatch() {
         var communityPosts = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_POSTS, "post_base_wrapper");
         var communityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_GUIDELINES, "community_guidelines");
+        var subscribersCommunityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_SUBSCRIBERS_COMMUNITY_GUIDELINES, "sponsorships_comments_upsell");
         var compactBanner = new BlockRule(SettingsEnum.ADREMOVER_COMPACT_BANNER, "compact_banner");
         var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY, "infeed_survey");
         var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL, "medical_panel", "emergency_onebox");
@@ -38,8 +39,7 @@ public final class GeneralAdsPatch extends Filter {
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
         var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR,
                 "cell_divider",
-                "member_recognition_shelf",
-                "sponsorships_comments_upsell"
+                "member_recognition_shelf"
         );
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
                 "video_display_full_buttoned_layout",
@@ -88,7 +88,8 @@ public final class GeneralAdsPatch extends Filter {
                 infoPanel,
                 channelGuidelines,
                 officialCard,
-                selfSponsor
+                selfSponsor,
+                subscribersCommunityGuidelines
         );
 
         var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS,

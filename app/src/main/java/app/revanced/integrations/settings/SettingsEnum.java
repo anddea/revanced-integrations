@@ -20,6 +20,7 @@ public enum SettingsEnum {
     ADREMOVER_FEED_SURVEY("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
     ADREMOVER_IMAGE_SHELF("revanced_adremover_image_shelf", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_GUIDELINES("revanced_adremover_community_guidelines", true, ReturnType.BOOLEAN),
+    ADREMOVER_SUBSCRIBERS_COMMUNITY_GUIDELINES("revanced_adremover_subscribers_community_guidelines", true, ReturnType.BOOLEAN),
     ADREMOVER_EMERGENCY_BOX("revanced_adremover_emergency_box", true, ReturnType.BOOLEAN),
     ADREMOVER_INFO_PANEL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_MEDICAL_PANEL("revanced_adremover_medical_panel", true, ReturnType.BOOLEAN),
