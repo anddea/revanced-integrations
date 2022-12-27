@@ -27,7 +27,6 @@ public class PlayerTypeHookPatch {
         final PlayerType newType = PlayerType.safeParseFromString(type.toString());
         if (newType != null) {
             PlayerType.setCurrent(newType);
-            DoubleBackToExitPatch.playerTypeChanged(newType);
             SponsorBlockView.playerTypeChanged(newType);
             SponsorBlockUtils.playerTypeChanged(newType);
         }

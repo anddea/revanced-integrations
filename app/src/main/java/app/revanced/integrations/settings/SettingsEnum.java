@@ -156,7 +156,6 @@ public enum SettingsEnum {
     ENABLE_OLD_LAYOUT("revanced_enable_old_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_oldlayout"),
     ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
-    DOUBLE_BACK_TO_EXIT_TIMEOUT("revanced_double_back_to_exit_timeout", 1000L, ReturnType.LONG),
 
     //RYD Settings
     RYD_USER_ID("ryd_userId", null, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.STRING),
