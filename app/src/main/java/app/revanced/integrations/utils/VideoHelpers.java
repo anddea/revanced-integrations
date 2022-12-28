@@ -9,7 +9,6 @@ import android.widget.Toast;
 import java.time.Duration;
 
 import app.revanced.integrations.patches.video.VideoInformation;
-import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.utils.LogHelper;
 
 public class VideoHelpers {
@@ -33,7 +32,7 @@ public class VideoHelpers {
 
             String videoUrl = String.format("https://youtu.be/%s", videoId);
             if (appendTimeStamp) {
-                long videoTime = PlayerController.getLastKnownVideoTime() < 0L ? VideoInformation.getCurrentVideoTime() : PlayerController.lastKnownVideoTime;
+                long videoTime = VideoInformation.getCurrentVideoTime();
                 videoUrl += String.format("?t=%s", (videoTime / 1000));
             }
 
@@ -47,7 +46,7 @@ public class VideoHelpers {
 
     private static void generateTimeStamp(Context context) {
         try {
-            long videoTime = PlayerController.getLastKnownVideoTime() < 0L ? VideoInformation.getCurrentVideoTime() : PlayerController.lastKnownVideoTime;
+            long videoTime = VideoInformation.getCurrentVideoTime();
 
             Duration duration = Duration.ofMillis(videoTime);
 
