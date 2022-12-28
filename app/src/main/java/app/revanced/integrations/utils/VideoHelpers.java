@@ -9,7 +9,6 @@ import android.widget.Toast;
 import java.time.Duration;
 
 import app.revanced.integrations.patches.video.VideoInformation;
-import app.revanced.integrations.utils.LogHelper;
 
 public class VideoHelpers {
 

@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import java.util.Locale;
 
 public class ReVancedHelper {
-    private static final String[] RTLLanguageList = {"ar", "dv", "fa", "ha", "he", "iw", "ji", "ps", "ur", "yi"};
     private static boolean RTL = false;
     private static boolean isFounded = false;
 
@@ -21,14 +20,9 @@ public class ReVancedHelper {
     public static void setRTL() {
         if (isFounded) return;
         try {
-            Locale locale = ReVancedUtils.getContext().getResources().getConfiguration().locale;
-            final String language = locale.getLanguage();
-            for (String s : RTLLanguageList) {
-                if (s.equals(language)) {
-                    RTL = true;
-                    break;
-                }
-            }
+            final int directionality = Character.getDirectionality(Locale.getDefault().getDisplayName().charAt(0));
+            RTL = directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
+                    directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;
             isFounded = true;
         } catch (Exception ex) {
             LogHelper.printException(ReVancedUtils.class, "Failed to get locale", ex);
@@ -44,11 +38,7 @@ public class ReVancedHelper {
     }
 
     public static String setRTLString(String likeString, String dislikeString) {
-        String newString = likeString + " | " + dislikeString;
-        if (RTL)
-            newString = dislikeString + " | " + likeString;
-
-        return newString;
+        return RTL ? String.format("%s | %s", dislikeString, likeString) : String.format("%s | %s", likeString, dislikeString);
     }
 
     public static String getVersionName() {
