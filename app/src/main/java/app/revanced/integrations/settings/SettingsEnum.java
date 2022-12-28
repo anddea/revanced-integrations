@@ -38,7 +38,7 @@ public enum SettingsEnum {
     ADREMOVER_VIEW_PRODUCTS("revanced_adremover_view_products", true, ReturnType.BOOLEAN),
     ADREMOVER_TIMED_REACTIONS("revanced_adremover_timed_reactions", false, ReturnType.BOOLEAN),
     ADREMOVER_USER_FILTER("revanced_adremover_user_filter", false, ReturnType.BOOLEAN),
-    ADREMOVER_CUSTOM_FILTER("revanced_adremover_custom_strings", "", ReturnType.STRING),
+    ADREMOVER_CUSTOM_FILTER("revanced_adremover_custom_strings", "", ReturnType.STRING, true),
 
     // Swipe controls
     ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", false, ReturnType.BOOLEAN),
