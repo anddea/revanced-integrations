@@ -37,6 +37,7 @@ public final class GeneralAdsPatch extends Filter {
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var officialCard = new BlockRule(SettingsEnum.ADREMOVER_OFFICIAL_CARDS, "official_card");
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
+        var joinMembership = new BlockRule(SettingsEnum.ADREMOVER_CHANNELBAR_JOIN_BUTTON, "compact_sponsor_button");
         var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR,
                 "cell_divider",
                 "member_recognition_shelf"
@@ -89,6 +90,7 @@ public final class GeneralAdsPatch extends Filter {
                 channelGuidelines,
                 officialCard,
                 selfSponsor,
+                joinMembership,
                 subscribersCommunityGuidelines
         );
 
