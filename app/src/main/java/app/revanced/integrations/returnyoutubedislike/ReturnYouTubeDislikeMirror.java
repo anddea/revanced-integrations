@@ -1,5 +1,7 @@
 package app.revanced.integrations.returnyoutubedislike;
 
+import static app.revanced.integrations.utils.StringRef.str;
+
 import android.annotation.SuppressLint;
 import android.icu.text.CompactDecimalFormat;
 import android.icu.text.DecimalFormat;
@@ -81,6 +83,7 @@ public class ReturnYouTubeDislikeMirror {
         if (isSegmentedButton) {
             ReVancedHelper.setRTL();
             String oldString = ReVancedHelper.getOldString(oldSpannableString.toString());
+            String hiddenMessageString = str("revanced_ryd_video_likes_hidden_by_video_owner");
 
             String likesString = formatCount(likeCount);
             if (!oldString.contains(".")) {
@@ -89,7 +92,10 @@ public class ReturnYouTubeDislikeMirror {
                 } catch (Exception ignored) {}
             }
 
-            newString = ReVancedHelper.setRTLString(likesString, newString);
+            if (oldString.contains(hiddenMessageString))
+                newString = hiddenMessageString;
+            else
+                newString = ReVancedHelper.setRTLString(likesString, newString);
         }
 
         SpannableString newSpannableString = new SpannableString(newString);

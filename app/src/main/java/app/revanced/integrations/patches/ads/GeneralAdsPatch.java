@@ -12,8 +12,7 @@ public final class GeneralAdsPatch extends Filter {
             "comment_thread", // skip blocking anything in the comments
             "home_video_with_context",
             "related_video_with_context",
-            "library_recent_shelf",
-            "playlist_add_to_option_wrapper" // do not block on "add to playlist" flyout menu
+            "library_recent_shelf"
     };
 
     private final BlockRule custom = new CustomBlockRule(
@@ -35,17 +34,17 @@ public final class GeneralAdsPatch extends Filter {
         var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS, "horizontal_video_shelf");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
+        var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
         var officialCard = new BlockRule(SettingsEnum.ADREMOVER_OFFICIAL_CARDS, "official_card");
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
         var joinMembership = new BlockRule(SettingsEnum.ADREMOVER_CHANNELBAR_JOIN_BUTTON, "compact_sponsor_button");
         var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR,
-                "cell_divider",
-                "member_recognition_shelf"
+                "cell_divider"
         );
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
                 "video_display_full_buttoned_layout",
                 "full_width_square_image_layout",
-                "_ad",
+                "_ad_with",
                 "landscape_image_wide_button_layout"
         );
         var generalAds = new BlockRule(
@@ -54,7 +53,6 @@ public final class GeneralAdsPatch extends Filter {
                 "active_view_display_container",
                 "|ad_",
                 "|ads_",
-                "_ad_with",
                 "ads_video_with_context",
                 "legal_disclosure_cell",
                 "primetime_promo",
@@ -88,6 +86,7 @@ public final class GeneralAdsPatch extends Filter {
                 merchandise,
                 infoPanel,
                 channelGuidelines,
+                channelMemberShelf,
                 officialCard,
                 selfSponsor,
                 joinMembership,

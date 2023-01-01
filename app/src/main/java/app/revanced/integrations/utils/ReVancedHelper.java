@@ -1,5 +1,7 @@
 package app.revanced.integrations.utils;
 
+import static app.revanced.integrations.utils.StringRef.str;
+
 import android.content.pm.PackageManager;
 
 import java.util.Locale;
@@ -31,14 +33,18 @@ public class ReVancedHelper {
     }
 
     public static String getOldString(String oldstring) {
-        if (oldstring.contains("|"))
-            oldstring = RTL ? oldstring.split(" \\| ")[1] : oldstring.split(" \\| ")[0];
+        String hiddenMessageString = str("revanced_ryd_video_likes_hidden_by_video_owner");
+        if (!Character.isDigit(oldstring.charAt(0)))
+            return hiddenMessageString;
+
+        if (oldstring.contains("?"))
+            oldstring = RTL ? oldstring.split(" \\? ")[1] : oldstring.split(" \\? ")[0];
 
         return oldstring;
     }
 
     public static String setRTLString(String likeString, String dislikeString) {
-        return RTL ? String.format("%s | %s", dislikeString, likeString) : String.format("%s | %s", likeString, dislikeString);
+        return RTL ? String.format("%s ? %s", dislikeString, likeString) : String.format("%s ? %s", likeString, dislikeString);
     }
 
     public static String getVersionName() {
