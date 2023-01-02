@@ -12,24 +12,21 @@ android {
     namespace = "app.revanced.integrations"
 
     defaultConfig {
-        val properties = Properties()
-        if (rootProject.file("local.properties").exists()) {
-            properties.load(FileInputStream(rootProject.file("local.properties")))
-        }
-        properties.load(FileInputStream(rootProject.file("gradle.properties")))
-
         applicationId = "app.revanced.integrations"
         minSdk = 26
         targetSdk = 33
-        versionCode = 1
-        versionName = properties.getProperty("version", "")
         multiDexEnabled = false
+        versionName = project.version as String
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
