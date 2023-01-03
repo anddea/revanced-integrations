@@ -73,7 +73,7 @@ public class ReturnYouTubeDislikeApi {
     /**
      * @return True, if api rate limit is in effect.
      */
-    private static boolean checkIfRateLimitInEffect(String apiEndPointName) {
+    private static boolean checkIfRateLimitInEffect() {
         if (lastTimeRateLimitWasHit == 0) {
             return false;
         }
@@ -110,7 +110,7 @@ public class ReturnYouTubeDislikeApi {
         ReVancedUtils.verifyOffMainThread();
         Objects.requireNonNull(videoId);
 
-        if (checkIfRateLimitInEffect("fetchVotes")) return null;
+        if (checkIfRateLimitInEffect()) return null;
 
         try {
             HttpURLConnection connection = getRYDConnectionFromRoute(ReturnYouTubeDislikeRoutes.GET_DISLIKES, videoId);
@@ -158,7 +158,7 @@ public class ReturnYouTubeDislikeApi {
     public static String registerAsNewUser() {
         ReVancedUtils.verifyOffMainThread();
         try {
-            if (checkIfRateLimitInEffect("registerAsNewUser")) {
+            if (checkIfRateLimitInEffect()) {
                 return null;
             }
             String userId = randomString();
@@ -195,7 +195,7 @@ public class ReturnYouTubeDislikeApi {
         Objects.requireNonNull(userId);
         Objects.requireNonNull(solution);
         try {
-            if (checkIfRateLimitInEffect("confirmRegistration")) return null;
+            if (checkIfRateLimitInEffect()) return null;
 
             HttpURLConnection connection = getRYDConnectionFromRoute(ReturnYouTubeDislikeRoutes.CONFIRM_REGISTRATION, userId);
             applyCommonPostRequestSettings(connection);
@@ -224,15 +224,15 @@ public class ReturnYouTubeDislikeApi {
         return null;
     }
 
-    public static boolean sendVote(String videoId, String userId, ReturnYouTubeDislike.Vote vote) {
+    public static void sendVote(String videoId, String userId, ReturnYouTubeDislike.Vote vote) {
         ReVancedUtils.verifyOffMainThread();
         Objects.requireNonNull(videoId);
         Objects.requireNonNull(userId);
         Objects.requireNonNull(vote);
 
         try {
-            if (checkIfRateLimitInEffect("sendVote")) {
-                return false;
+            if (checkIfRateLimitInEffect()) {
+                return;
             }
 
             HttpURLConnection connection = getRYDConnectionFromRoute(ReturnYouTubeDislikeRoutes.SEND_VOTE);
@@ -247,7 +247,7 @@ public class ReturnYouTubeDislikeApi {
             final int responseCode = connection.getResponseCode();
             if (checkIfRateLimitWasHit(responseCode)) {
                 connection.disconnect(); // disconnect, as no more connections will be made for a little while
-                return false;
+                return;
             }
             if (responseCode == SUCCESS_HTTP_STATUS_CODE) {
                 JSONObject json = Requester.parseJSONObject(connection);
@@ -255,7 +255,8 @@ public class ReturnYouTubeDislikeApi {
                 int difficulty = json.getInt("difficulty");
 
                 String solution = solvePuzzle(challenge, difficulty);
-                return confirmVote(videoId, userId, solution);
+                confirmVote(videoId, userId, solution);
+                return;
             }
             connection.disconnect(); // something went wrong, might as well disconnect
         } catch (Exception ex) {
@@ -263,18 +264,17 @@ public class ReturnYouTubeDislikeApi {
                     + " user: " + userId + " vote: " + vote, ex);
         }
         showToast("revanced_ryd_failure_send_vote_failed");
-        return false;
     }
 
-    private static boolean confirmVote(String videoId, String userId, String solution) {
+    private static void confirmVote(String videoId, String userId, String solution) {
         ReVancedUtils.verifyOffMainThread();
         Objects.requireNonNull(videoId);
         Objects.requireNonNull(userId);
         Objects.requireNonNull(solution);
 
         try {
-            if (checkIfRateLimitInEffect("confirmVote")) {
-                return false;
+            if (checkIfRateLimitInEffect()) {
+                return;
             }
             HttpURLConnection connection = getRYDConnectionFromRoute(ReturnYouTubeDislikeRoutes.CONFIRM_VOTE);
             applyCommonPostRequestSettings(connection);
@@ -287,12 +287,12 @@ public class ReturnYouTubeDislikeApi {
             final int responseCode = connection.getResponseCode();
             if (checkIfRateLimitWasHit(responseCode)) {
                 connection.disconnect(); // disconnect, as no more connections will be made for a little while
-                return false;
+                return;
             }
 
             if (responseCode == SUCCESS_HTTP_STATUS_CODE) {
                 String result = Requester.parseJson(connection);
-                if (result.equalsIgnoreCase("true")) return true;
+                if (result.equalsIgnoreCase("true")) return;
             }
             connection.disconnect(); // something went wrong, might as well disconnect
         } catch (Exception ex) {
@@ -300,7 +300,6 @@ public class ReturnYouTubeDislikeApi {
                     + " user: " + userId + " solution: " + solution, ex);
         }
         showToast("revanced_ryd_failure_confirm_vote_failed");
-        return false;
     }
 
     private static void showToast(String toastTextStringKey) {

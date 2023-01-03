@@ -5,13 +5,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.text.Bidi;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 
 public class ReVancedUtils {
     @SuppressLint("StaticFieldLeak")
@@ -46,14 +46,23 @@ public class ReVancedUtils {
             });
 
     public static <T> Future<T> submitOnBackgroundThread(Callable<T> call) {
-        Future<T> future = backgroundThreadPool.submit(call);
-        return future;
+        return backgroundThreadPool.submit(call);
     }
 
     public static boolean containsAny(final String value, final String... targets) {
         for (String string : targets)
             if (!string.isEmpty() && value.contains(string)) return true;
         return false;
+    }
+
+    @SuppressLint("ConstantLocale")
+    private static final boolean isRightToLeftTextLayout =
+            new Bidi(Locale.getDefault().getDisplayLanguage(), Bidi.DIRECTION_DEFAULT_RIGHT_TO_LEFT).isRightToLeft();
+    /**
+     * If the device language uses right to left text layout (hebrew, arabic, etc)
+     */
+    public static boolean isRightToLeftTextLayout() {
+        return isRightToLeftTextLayout;
     }
 
     /**
