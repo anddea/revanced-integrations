@@ -49,7 +49,7 @@ class ClassicSwipeController(
         }
 
         // ignore gestures when player controls are visible
-        return arePlayerControlsVisible && !SettingsEnum.ENABLE_ALWAYS_SWIPE.getBoolean()
+        return arePlayerControlsVisible
     }
 
     override fun onDown(motionEvent: MotionEvent): Boolean {
