@@ -186,7 +186,7 @@ public enum SettingsEnum {
     SB_IS_VIP("sb-is-vip", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_LAST_VIP_CHECK("sb-last-vip-check", 0L, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.LONG),
     SB_API_URL("sb-api-url", "https://sponsor.ajay.app/api/", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
-    SB_API_MIRROR_URL("sb-api-mirror-url", "https://sponsorblock.kavin.rocks/api/", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
+    SB_API_MIRROR_URL("sb-api-mirror-url", "https://sponsorblock.hankmccord.dev/api/", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
     SB_FIRSTRUN("sb-firstrun", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN);
 
     private final String path;
