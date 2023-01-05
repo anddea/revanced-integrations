@@ -26,6 +26,10 @@ public class MusicSettings {
         return getPrefBoolean("revanced_enable_color_match_player", true);
     }
 
+    public static boolean enableZenMode() {
+        return getPrefBoolean("revanced_enable_zen_mode", false);
+    }
+
     // Listening
     public static boolean enableOpusCodec() {
         return getPrefBoolean("revanced_enable_opus_codec", true);
