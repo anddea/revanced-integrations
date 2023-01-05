@@ -4,6 +4,9 @@ import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislik
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.formatDislikeCount;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.formatDislikePercentage;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.newSpanUsingStylingOfAnotherSpan;
+import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedLeftSeparatorFontRatio;
+import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedLeftSeparatorHorizontalScaleRatio;
+import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedLeftSeparatorVerticalShiftRatio;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedVerticalShiftRatio;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.setSegmentedAdjustmentValues;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.stringContainsNumber;
@@ -142,11 +145,15 @@ public class ReturnYouTubeDislikeMirror {
 
                 // shift everything up, to compensate for the vertical movement caused by the font change below
                 // each section needs it's own Relative span, otherwise alignment is wrong
-                addSpanStyling(leftSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
+                addSpanStyling(leftSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedLeftSeparatorVerticalShiftRatio));
+
                 addSpanStyling(likesSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
                 addSpanStyling(middleSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
                 addSpanStyling(dislikeSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
 
+                // important: must add size scaling after vertical offset (otherwise alignment gets off)
+                addSpanStyling(leftSeparatorSpan, new RelativeSizeSpan(segmentedLeftSeparatorFontRatio));
+                addSpanStyling(leftSeparatorSpan, new ScaleXSpan(segmentedLeftSeparatorHorizontalScaleRatio));
                 // middle separator does not need resizing
 
                 // put everything together
