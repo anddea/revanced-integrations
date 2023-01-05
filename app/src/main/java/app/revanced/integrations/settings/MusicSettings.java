@@ -10,36 +10,47 @@ import app.revanced.integrations.utils.SharedPrefHelper;
 public class MusicSettings {
     @SuppressLint("StaticFieldLeak")
     public static Context context;
-    public static SharedPreferences sharedPreferences;
+    public static SharedPrefHelper.SharedPrefNames prefName = SharedPrefHelper.SharedPrefNames.YOUTUBE;
 
-    public static boolean getBlackNavbar() {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_black_navbar", true);
-    }
-    public static int getCastButtonOverrideV2(int original) {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_music_cast_button", true) ? View.GONE : original;
+    // ADS
+    public static boolean hideMusicAds() {
+        return !getPrefBoolean("revanced_hide_music_ads", true);
     }
 
-    public static boolean getCodecsUnlock() {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_music_codecs_unlock", true);
+    // Design
+    public static boolean enableBlackNavbar() {
+        return getPrefBoolean("revanced_enable_black_navbar", true);
     }
 
-    public static int getCompactHeader() {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_compact_header", true) ? 8 : 0;
+    public static boolean enableColorMatchPlayer() {
+        return getPrefBoolean("revanced_enable_color_match_player", true);
     }
 
-    public static boolean getEnforceMinimizedPlayer() {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_enforce_minimized_player", true);
+    // Listening
+    public static boolean enableOpusCodec() {
+        return getPrefBoolean("revanced_enable_opus_codec", true);
     }
 
-    public static boolean getMiniPlayerColor() {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_mini_player_color", true);
+    public static boolean enableForceMinimizedPlayer() {
+        return getPrefBoolean("revanced_enable_force_minimized_player", true);
     }
 
-    public static boolean getShowAds() {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_music_video_ads", false);
+    // Navigation
+    public static int hideCastButton(int original) {
+        return getPrefBoolean("revanced_hide_cast_button", true) ? View.GONE : original;
     }
 
-    public static boolean getTabletMode(boolean original) {
-        return SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "revanced_tablet_mode", true) || original;
+    public static int hideCompactHeader() {
+        return getPrefBoolean("revanced_hide_compact_header", true) ? 8 : 0;
+    }
+
+    public static boolean enableTabletMode(boolean original) {
+        return getPrefBoolean("revanced_enable_tablet_mode", true) || original;
+    }
+
+
+    // Utils
+    public static boolean getPrefBoolean(String key, boolean defaultValue) {
+        return SharedPrefHelper.getBoolean(context, prefName, key, defaultValue);
     }
 }
