@@ -39,6 +39,10 @@ public class MusicSettings {
         return getPrefBoolean("revanced_enable_force_minimized_player", true);
     }
 
+    public static boolean enableForceShuffle() {
+        return getPrefBoolean("revanced_enable_force_shuffle", true);
+    }
+
     // Navigation
     public static int hideCastButton(int original) {
         return getPrefBoolean("revanced_hide_cast_button", true) ? View.GONE : original;
