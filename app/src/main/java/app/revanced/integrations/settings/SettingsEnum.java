@@ -168,6 +168,7 @@ public enum SettingsEnum {
     RYD_ENABLED("ryd_enabled", true, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
     RYD_MIRROR_ENABLED("ryd_mirror_enabled", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
     RYD_SHOW_DISLIKE_PERCENTAGE("ryd_show_dislike_percentage", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
+    RYD_SHOW_DISLIKE_SEPARATOR("ryd_show_dislike_separator", true, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
 
     //SponsorBlock Settings
     SB_ENABLED("sb-enabled", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),

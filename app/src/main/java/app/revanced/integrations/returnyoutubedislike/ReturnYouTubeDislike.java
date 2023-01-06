@@ -52,6 +52,8 @@ public class ReturnYouTubeDislike {
     // Must be volatile, since this is read/write from different threads
     private static volatile boolean isEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
 
+    private static volatile boolean isSeparatorShown = SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean();
+
     /**
      * Used to guard {@link #currentVideoId} and {@link #voteFetchFuture},
      * as multiple threads access this class.
@@ -96,6 +98,10 @@ public class ReturnYouTubeDislike {
 
     public static void onEnabledChange(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public static void onSeparatorChange(boolean enabled) {
+        isSeparatorShown = enabled;
     }
 
     private static String getCurrentVideoId() {
@@ -267,6 +273,10 @@ public class ReturnYouTubeDislike {
                 replacementSpannable = newSpanUsingStylingOfAnotherSpan(oldSpannable, hiddenMessageString);
             } else {
                 Spannable likesSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, oldLikesString);
+                if (!isSeparatorShown){
+                    hideSeparator(textRef, voteData);
+                    return;
+                }
 
                 // left and middle separator
                 String middleSegmentedSeparatorString = "  •  ";
@@ -330,6 +340,40 @@ public class ReturnYouTubeDislike {
         }
 
         textRef.set(replacementSpannable);
+    }
+
+    private static void hideSeparator(AtomicReference<Object> textRef, RYDVoteData voteData) {
+        SpannableString oldSpannableString = (SpannableString) textRef.get();
+
+        String oldString = ReVancedUtils.getOldString(oldSpannableString.toString());
+
+        String likeString = formatDislikeCount(voteData.likeCount);
+
+        String dislikeString = SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
+                ? formatDislikePercentage(voteData.dislikePercentage)
+                : formatDislikeCount(voteData.dislikeCount);
+
+        SpannableString newSpannableString = setSpannableString(oldSpannableString, oldString, likeString, dislikeString);
+
+        textRef.set(newSpannableString);
+    }
+
+    static SpannableString setSpannableString(SpannableString oldSpannableString, String oldString, String likeString, String dislikeString) {
+        if (!oldString.contains(".")) {
+            try {
+                likeString = formatDislikeCount(Long.parseLong(oldString));
+            } catch (Exception ignored) {}
+        }
+
+        String newString = ReVancedUtils.setRTLString(likeString, dislikeString);
+
+        SpannableString newSpannableString = new SpannableString(newString);
+        // Copy style (foreground color, etc) to new string
+        Object[] spans = oldSpannableString.getSpans(0, oldSpannableString.length(), Object.class);
+        for (Object span : spans) {
+            newSpannableString.setSpan(span, 0, newString.length(), oldSpannableString.getSpanFlags(span));
+        }
+        return newSpannableString;
     }
 
     private static boolean segmentedValuesSet = false;

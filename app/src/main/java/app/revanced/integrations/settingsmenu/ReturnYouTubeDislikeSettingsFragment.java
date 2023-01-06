@@ -14,6 +14,7 @@ import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
+import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislikeMirror;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
@@ -34,10 +35,16 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
      */
     private SwitchPreference percentagePreference;
 
+    /**
+     * If left separator is shown
+     */
+    private SwitchPreference separatorPreference;
+
     private void updateUIState() {
         final boolean rydIsEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
         final boolean rydMirrorIsEnabled = SettingsEnum.RYD_MIRROR_ENABLED.getBoolean();
         final boolean dislikePercentageEnabled = SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean();
+        final boolean separatorIsShown = SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean();
 
         enabledPreference.setSummary(rydIsEnabled
                 ? str("revanced_ryd_enable_summary_on")
@@ -52,6 +59,11 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
                 ? str("revanced_ryd_dislike_percentage_summary_on")
                 : str("revanced_ryd_dislike_percentage_summary_off"));
         percentagePreference.setEnabled(rydIsEnabled);
+
+        separatorPreference.setSummary(separatorIsShown
+                ? str("revanced_ryd_dislike_separator_summary_on")
+                : str("revanced_ryd_dislike_separator_summary_off"));
+        separatorPreference.setEnabled(rydIsEnabled);
     }
 
     @Override
@@ -118,12 +130,28 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         percentagePreference.setChecked(SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean());
         percentagePreference.setTitle(str("revanced_ryd_dislike_percentage_title"));
         percentagePreference.setOnPreferenceChangeListener((pref, newValue) -> {
-            SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.saveValue((Boolean)newValue);
+            SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.saveValue(newValue);
 
             updateUIState();
             return true;
         });
         preferenceScreen.addPreference(percentagePreference);
+
+        separatorPreference = new SwitchPreference(context);
+        separatorPreference.setKey(SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getPath());
+        separatorPreference.setDefaultValue(SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getDefaultValue());
+        separatorPreference.setChecked(SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean());
+        separatorPreference.setTitle(str("revanced_ryd_dislike_separator_title"));
+        separatorPreference.setOnPreferenceChangeListener((pref, newValue) -> {
+            final boolean separatorIsShown = (Boolean) newValue;
+            SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.saveValue(separatorIsShown);
+            ReturnYouTubeDislike.onSeparatorChange(separatorIsShown);
+            ReturnYouTubeDislikeMirror.onSeparatorChange(separatorIsShown);
+
+            updateUIState();
+            return true;
+        });
+        preferenceScreen.addPreference(separatorPreference);
 
         updateUIState();
 

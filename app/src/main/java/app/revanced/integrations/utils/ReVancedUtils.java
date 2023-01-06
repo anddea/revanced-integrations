@@ -65,6 +65,20 @@ public class ReVancedUtils {
         return isRightToLeftTextLayout;
     }
 
+    public static String getOldString(String oldstring) {
+        int i = isRightToLeftTextLayout ? 1 : 0;
+
+        if (oldstring.contains("•"))
+            oldstring = oldstring.split(" \\• ")[i];
+
+        return oldstring;
+    }
+
+    public static String setRTLString(String likeString, String dislikeString) {
+        return isRightToLeftTextLayout ? String.format("%s • %s", dislikeString, likeString)
+                : String.format("%s • %s", likeString, dislikeString);
+    }
+
     /**
      * Automatically logs any exceptions the runnable throws
      */

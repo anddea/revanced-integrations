@@ -9,6 +9,7 @@ import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislik
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedLeftSeparatorVerticalShiftRatio;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedVerticalShiftRatio;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.setSegmentedAdjustmentValues;
+import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.setSpannableString;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.stringContainsNumber;
 import static app.revanced.integrations.utils.StringRef.str;
 
@@ -36,6 +37,12 @@ public class ReturnYouTubeDislikeMirror {
     public static Float dislikePercentage;
 
     private static Thread _dislikeFetchThread = null;
+
+    private static volatile boolean isSeparatorShown = SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean();
+
+    public static void onSeparatorChange(boolean enabled) {
+        isSeparatorShown = enabled;
+    }
 
     public static void newVideoLoaded(String videoId) {
         if (videoId == null || videoId.equals(currentVideoId)) return;
@@ -105,6 +112,10 @@ public class ReturnYouTubeDislikeMirror {
                 replacementSpannable = newSpanUsingStylingOfAnotherSpan(oldSpannable, hiddenMessageString);
             } else {
                 Spannable likesSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, oldLikesString);
+                if (!isSeparatorShown){
+                    hideSeparator(textRef);
+                    return;
+                }
 
                 // left and middle separator
                 String middleSegmentedSeparatorString = "  •  ";
@@ -167,6 +178,22 @@ public class ReturnYouTubeDislikeMirror {
         }
 
         textRef.set(replacementSpannable);
+    }
+
+    private static void hideSeparator(AtomicReference<Object> textRef) {
+        SpannableString oldSpannableString = (SpannableString) textRef.get();
+
+        String oldString = ReVancedUtils.getOldString(oldSpannableString.toString());
+
+        String likeString = formatDislikeCount(likeCount);
+
+        String dislikeString = SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
+                ? formatDislikePercentage(dislikePercentage)
+                : formatDislikeCount(dislikeCount);
+
+        SpannableString newSpannableString = setSpannableString(oldSpannableString, oldString, likeString, dislikeString);
+
+        textRef.set(newSpannableString);
     }
 
     private static Spannable newSpannableWithDislikes(Spannable sourceStyling) {
