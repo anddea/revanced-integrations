@@ -25,7 +25,7 @@ public enum SettingsEnum {
     ADREMOVER_INFO_PANEL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_MEDICAL_PANEL("revanced_adremover_medical_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_PAID_CONTENT("revanced_adremover_paid_content", true, ReturnType.BOOLEAN, true),
-    ADREMOVER_SUGGESTIONS("revanced_adremover_suggestions", true, ReturnType.BOOLEAN),
+    ADREMOVER_SUGGESTIONS("revanced_adremover_suggestions", false, ReturnType.BOOLEAN),
     ADREMOVER_LATEST_POSTS("revanced_adremover_latest_posts", true, ReturnType.BOOLEAN),
     ADREMOVER_CHANNEL_GUIDELINES("revanced_adremover_channel_guidelines", true, ReturnType.BOOLEAN),
     ADREMOVER_CHANNEL_MEMBER_SHELF("revanced_adremover_channel_member_shelf", true, ReturnType.BOOLEAN),
