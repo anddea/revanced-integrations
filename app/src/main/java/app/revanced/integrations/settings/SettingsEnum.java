@@ -291,7 +291,7 @@ public enum SettingsEnum {
         Context context = ReVancedUtils.getContext();
         if (context != null) {
             if (returnType == ReturnType.BOOLEAN) {
-                SharedPrefHelper.saveBoolean(context, sharedPref, path, (Boolean) newValue);
+                SharedPrefHelper.saveBoolean(context, sharedPref, path, (boolean) newValue);
             } else {
                 SharedPrefHelper.saveString(context, sharedPref, path, newValue + "");
             }
@@ -310,7 +310,7 @@ public enum SettingsEnum {
     }
 
     public boolean getBoolean() {
-        return (Boolean) value;
+        return (boolean) value;
     }
 
     public Long getLong() {

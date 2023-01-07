@@ -21,7 +21,7 @@ public class SharedPrefHelper {
         return (sharedPreferences.getString(key, _default));
     }
 
-    public static Boolean getBoolean(Context context, SharedPrefNames prefName, String key, Boolean _default) {
+    public static boolean getBoolean(Context context, SharedPrefNames prefName, String key, Boolean _default) {
         SharedPreferences sharedPreferences = getPreferences(context, prefName);
         return (sharedPreferences.getBoolean(key, _default));
     }
