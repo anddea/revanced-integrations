@@ -137,11 +137,12 @@ public enum SettingsEnum {
     CUSTOM_VIDEO_BUFFER_REBUFFER("revanced_custom_video_buffer_rebuffer", 5000, ReturnType.INTEGER),
 
     //Video Settings
-    DEFAULT_VIDEO_SPEED("revanced_default_video_speed", -2.0f, ReturnType.FLOAT),
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", -2, ReturnType.INTEGER),
     DEFAULT_VIDEO_QUALITY_MOBILE("revanced_default_video_quality_mobile", -2, ReturnType.INTEGER),
-    ENABLE_CUSTOM_VIDEO_SPEED("revanced_enable_custom_video_speed", false, ReturnType.BOOLEAN, true),
+    DEFAULT_VIDEO_SPEED("revanced_default_video_speed", -2.0f, ReturnType.FLOAT),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", false, ReturnType.BOOLEAN),
+    ENABLE_SAVE_VIDEO_SPEED("revanced_enable_save_video_speed", false, ReturnType.BOOLEAN),
+    ENABLE_CUSTOM_VIDEO_SPEED("revanced_enable_custom_video_speed", false, ReturnType.BOOLEAN, true),
 
     //Overlaybutton Settings
     OVERLAY_BUTTON_WHITELIST("revanced_overlay_button_whitelist", false, ReturnType.BOOLEAN),
