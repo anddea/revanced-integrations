@@ -1,7 +1,7 @@
 package app.revanced.integrations.settingsmenu;
 
-import static app.revanced.integrations.utils.StringRef.str;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
+import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,12 +30,11 @@ import app.revanced.integrations.patches.button.Download;
 import app.revanced.integrations.patches.button.Whitelists;
 import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.patches.video.VideoQualityPatch;
-import app.revanced.integrations.patches.video.VideoSpeedPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ResourceType;
 import app.revanced.integrations.utils.ReVancedHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.integrations.utils.ResourceType;
 import app.revanced.integrations.utils.SharedPrefHelper;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.whitelist.WhitelistType;
@@ -336,7 +335,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     private void setVideoSpeed() {
-        VideoSpeedPatch.refreshSpeed();
         SettingsEnum speedSetting = SettingsEnum.DEFAULT_VIDEO_SPEED;
         SettingsEnum customSpeedSetting = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED;
 
