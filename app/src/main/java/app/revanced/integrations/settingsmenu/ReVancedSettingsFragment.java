@@ -274,20 +274,14 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     public void LayoutOverrideLinks() {
         try {
-            SettingsEnum tabletLayout = SettingsEnum.ENABLE_TABLET_LAYOUT;
-            SettingsEnum phoneLayout = SettingsEnum.ENABLE_PHONE_LAYOUT;
+            SwitchPreference tabletLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_TABLET_LAYOUT.getPath());
+            SwitchPreference phoneLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_PHONE_LAYOUT.getPath());
 
-            SwitchPreference tabletLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(tabletLayout.getPath());
-            SwitchPreference phoneLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(phoneLayout.getPath());
             if (ReVancedHelper.isTablet()) {
                 tabletLayoutSwitch.setEnabled(false);
-                tabletLayout.saveValue(false);
-                this.extendedPreferenceScreen.removePreference(tabletLayoutSwitch);
                 return;
             }
             phoneLayoutSwitch.setEnabled(false);
-            phoneLayout.saveValue(false);
-            this.extendedPreferenceScreen.removePreference(phoneLayoutSwitch);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
         }
