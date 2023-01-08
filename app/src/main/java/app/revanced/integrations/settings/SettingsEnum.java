@@ -242,7 +242,7 @@ public enum SettingsEnum {
     }
 
     private static void load() {
-        Context context = ReVancedUtils.getContext();
+        Context context = ReVancedUtils.getContext().getApplicationContext();
         if (context == null) {
             Log.e("revanced: SettingsEnum", "Context returned null! Setings NOT initialized");
         } else {
@@ -289,7 +289,7 @@ public enum SettingsEnum {
     }
 
     public void saveValue(Object newValue) {
-        Context context = ReVancedUtils.getContext();
+        Context context = ReVancedUtils.getContext().getApplicationContext();
         if (context != null) {
             if (returnType == ReturnType.BOOLEAN) {
                 SharedPrefHelper.saveBoolean(context, sharedPref, path, (boolean) newValue);
