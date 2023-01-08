@@ -46,7 +46,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private PreferenceScreen overlayPreferenceScreen;
     private PreferenceScreen extendedPreferenceScreen;
-    private PreferenceScreen layoutPreferenceScreen;
     private PreferenceScreen whitelistingPreferenceScreen;
 
     private final CharSequence[] videoSpeedEntries = {str("quality_auto"), "0.25x", "0.5x", "0.75x", str("shorts_speed_control_normal_label"), "1.25x", "1.5x", "1.75x", "2x"};
@@ -162,7 +161,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             sharedPreferences.registerOnSharedPreferenceChangeListener(this.listener);
             this.Registered = true;
 
-            this.layoutPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("layout");
             this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton");
             this.extendedPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("extended");
             this.whitelistingPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("whitelisting");
@@ -170,7 +168,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             AutoRepeatLinks();
             AddWhitelistSettings();
             LayoutOverrideLinks();
-            TabletLayoutLinks();
 
             setVideoSpeed();
             setVideoQuality(true);
@@ -295,45 +292,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
         }
     }
-
-    public void TabletLayoutLinks() {
-        try {
-            SettingsEnum mixPlaylists = SettingsEnum.HIDE_MIX_PLAYLISTS;
-            SettingsEnum fullScreenButton = SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER;
-
-            SettingsEnum tabletLayout = SettingsEnum.ENABLE_TABLET_LAYOUT;
-            SettingsEnum phoneLayout = SettingsEnum.ENABLE_PHONE_LAYOUT;
-
-            SwitchPreference mixPlaylistsSwitch = (SwitchPreference) findPreferenceOnScreen(mixPlaylists.getPath());
-            SwitchPreference fullScreenButtonSwitch = (SwitchPreference) findPreferenceOnScreen(fullScreenButton.getPath());
-
-            boolean istablet = ReVancedHelper.isTablet() && !phoneLayout.getBoolean();
-            boolean istabletlayout = istablet || tabletLayout.getBoolean();
-
-            if (istabletlayout) {
-                if (istablet) this.layoutPreferenceScreen.removePreference(mixPlaylistsSwitch);
-                else this.layoutPreferenceScreen.addPreference(mixPlaylistsSwitch);
-
-                mixPlaylistsSwitch.setEnabled(!istablet);
-                mixPlaylists.saveValue(istablet);
-
-                fullScreenButtonSwitch.setEnabled(false);
-                fullScreenButton.saveValue(false);
-
-                this.layoutPreferenceScreen.removePreference(fullScreenButtonSwitch);
-                return;
-            }
-
-            mixPlaylistsSwitch.setEnabled(true);
-            fullScreenButtonSwitch.setEnabled(true);
-
-            this.layoutPreferenceScreen.addPreference(mixPlaylistsSwitch);
-            this.layoutPreferenceScreen.addPreference(fullScreenButtonSwitch);
-        } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting TabletLayoutLinks" + th);
-        }
-    }
-
     private void setVideoSpeed() {
         SettingsEnum speedSetting = SettingsEnum.DEFAULT_VIDEO_SPEED;
         SettingsEnum customSpeedSetting = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED;
