@@ -375,7 +375,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
         new AlertDialog.Builder(activity)
                 .setMessage(str("pref_refresh_config"))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> {reboot(activity);})
+                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
                 .setNegativeButton(str("sign_in_cancel"), null)
                 .show();
     }
@@ -386,7 +386,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             new AlertDialog.Builder(activity)
                     .setMessage(str(msg) + "\n\n" + str("revanced_reboot_warning_general"))
-                    .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> {reboot(activity);})
+                    .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
                     .setNegativeButton(str("offline_undo_snackbar_button_text"), (dialog, id) -> {
                         SwitchPreference switchPref = (SwitchPreference) findPreferenceOnScreen(setting.getPath());
                         switchPref.setChecked(false);
@@ -404,7 +404,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         Activity activity = (Activity) context;
         new AlertDialog.Builder(activity)
                 .setMessage(str(msg))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> {reboot(activity);})
+                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
                 .setNegativeButton(str("sign_in_cancel"), null)
                 .show();
     }
