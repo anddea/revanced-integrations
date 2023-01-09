@@ -31,6 +31,7 @@ public final class GeneralAdsPatch extends Filter {
         var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE, "product_carousel");
         var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "publisher_transparency_panel", "single_item_information_panel", "compact_infocard");
+        var suggestions = new BlockRule(SettingsEnum.ADREMOVER_SUGGESTIONS, "horizontal_video_shelf");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
@@ -56,6 +57,7 @@ public final class GeneralAdsPatch extends Filter {
                 "legal_disclosure_cell",
                 "primetime_promo",
                 "brand_video_shelf",
+                "hero_promo_image",
                 "statement_banner",
                 "square_image_layout",
                 "watch_metadata_app_promo"
@@ -75,6 +77,7 @@ public final class GeneralAdsPatch extends Filter {
                 communityPosts,
                 paidContent,
                 imageShelf,
+                suggestions,
                 latestPosts,
                 movieAds,
                 communityGuidelines,
