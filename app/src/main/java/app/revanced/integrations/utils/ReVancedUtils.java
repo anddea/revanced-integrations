@@ -55,28 +55,16 @@ public class ReVancedUtils {
         return false;
     }
 
-    @SuppressLint("ConstantLocale")
-    private static final boolean isRightToLeftTextLayout =
-            new Bidi(Locale.getDefault().getDisplayLanguage(), Bidi.DIRECTION_DEFAULT_RIGHT_TO_LEFT).isRightToLeft();
+    private static Boolean isRightToLeftTextLayout;
     /**
      * If the device language uses right to left text layout (hebrew, arabic, etc)
      */
     public static boolean isRightToLeftTextLayout() {
+        if (isRightToLeftTextLayout == null) {
+            String displayLanguage = Locale.getDefault().getDisplayLanguage();
+            isRightToLeftTextLayout = new Bidi(displayLanguage, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT).isRightToLeft();
+        }
         return isRightToLeftTextLayout;
-    }
-
-    public static String getOldString(String oldstring) {
-        int i = isRightToLeftTextLayout ? 1 : 0;
-
-        if (oldstring.contains("•"))
-            oldstring = oldstring.split(" \\• ")[i];
-
-        return oldstring;
-    }
-
-    public static String setRTLString(String likeString, String dislikeString) {
-        return isRightToLeftTextLayout ? String.format("%s • %s", dislikeString, likeString)
-                : String.format("%s • %s", likeString, dislikeString);
     }
 
     /**

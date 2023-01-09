@@ -52,8 +52,6 @@ public class ReturnYouTubeDislike {
     // Must be volatile, since this is read/write from different threads
     private static volatile boolean isEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
 
-    private static volatile boolean isSeparatorShown = SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean();
-
     /**
      * Used to guard {@link #currentVideoId} and {@link #voteFetchFuture},
      * as multiple threads access this class.
@@ -98,10 +96,6 @@ public class ReturnYouTubeDislike {
 
     public static void onEnabledChange(boolean enabled) {
         isEnabled = enabled;
-    }
-
-    public static void onSeparatorChange(boolean enabled) {
-        isSeparatorShown = enabled;
     }
 
     private static String getCurrentVideoId() {
@@ -243,9 +237,11 @@ public class ReturnYouTubeDislike {
             }
             replacementSpannable = newSpannableWithDislikes(oldSpannable, voteData);
         } else {
-            String leftSegmentedSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F|  " : "|  ";
+            final boolean useCompactLayout = SettingsEnum.RYD_USE_COMPACT_LAYOUT.getBoolean();
+            // if compact layout, use a "half space" character
+            String middleSegmentedSeparatorString = useCompactLayout ? "\u2009 • \u2009" : "  •  ";
 
-            if (oldLikesString.contains(leftSegmentedSeparatorString)) {
+            if (oldLikesString.contains(middleSegmentedSeparatorString)) {
                 return; // dislikes was previously added
             }
 
@@ -267,25 +263,16 @@ public class ReturnYouTubeDislike {
                 //
 
                 String hiddenMessageString = str("revanced_ryd_video_likes_hidden_by_video_owner");
-                if (hiddenMessageString.equals(oldLikesString)) {
-                    return;
-                }
+                if (hiddenMessageString.equals(oldLikesString)) return;
                 replacementSpannable = newSpanUsingStylingOfAnotherSpan(oldSpannable, hiddenMessageString);
             } else {
                 Spannable likesSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, oldLikesString);
-                if (!isSeparatorShown){
-                    hideSeparator(textRef, voteData);
-                    return;
-                }
 
-                // left and middle separator
-                String middleSegmentedSeparatorString = "  •  ";
-                Spannable leftSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, leftSegmentedSeparatorString);
+                // middle separator
                 Spannable middleSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, middleSegmentedSeparatorString);
                 final int separatorColor = ThemeHelper.getDayNightTheme()
-                        ? 0x37A0A0A0  // transparent dark gray
+                        ? 0x29AAAAAA  // transparent dark gray
                         : 0xFFD9D9D9; // light gray
-                addSpanStyling(leftSeparatorSpan, new ForegroundColorSpan(separatorColor));
                 addSpanStyling(middleSeparatorSpan, new ForegroundColorSpan(separatorColor));
                 CharacterStyle noAntiAliasingStyle = new CharacterStyle() {
                     @Override
@@ -293,45 +280,49 @@ public class ReturnYouTubeDislike {
                         tp.setAntiAlias(false); // draw without anti-aliasing, to give a sharper edge
                     }
                 };
-                addSpanStyling(leftSeparatorSpan, noAntiAliasingStyle);
                 addSpanStyling(middleSeparatorSpan, noAntiAliasingStyle);
 
                 Spannable dislikeSpan = newSpannableWithDislikes(oldSpannable, voteData);
 
-                // Increase the size of the left separator, so it better matches the stock separator on the right.
-                // But when using a larger font, the entire span (including the like/dislike text) becomes shifted downward.
-                // To correct this, use additional spans to move the alignment back upward by a relative amount.
-                setSegmentedAdjustmentValues();
-                class RelativeVerticalOffsetSpan extends CharacterStyle {
-                    final float relativeVerticalShiftRatio;
+                SpannableStringBuilder builder = new SpannableStringBuilder();
 
-                    RelativeVerticalOffsetSpan(float relativeVerticalShiftRatio) {
-                        this.relativeVerticalShiftRatio = relativeVerticalShiftRatio;
-                    }
+                if (!useCompactLayout) {
+                    String leftSegmentedSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F|  " : "|  ";
+                    Spannable leftSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, leftSegmentedSeparatorString);
+                    addSpanStyling(leftSeparatorSpan, new ForegroundColorSpan(separatorColor));
+                    addSpanStyling(leftSeparatorSpan, noAntiAliasingStyle);
 
-                    @Override
-                    public void updateDrawState(TextPaint tp) {
-                        tp.baselineShift -= (int) (relativeVerticalShiftRatio * tp.getFontMetrics().top);
+                    // Use a left separator with a larger font and visually match the stock right separator.
+                    // But with a larger font, the entire span (including the like/dislike text) becomes shifted downward.
+                    // To correct this, use additional spans to move the alignment back upward by a relative amount.
+                    setSegmentedAdjustmentValues();
+                    class RelativeVerticalOffsetSpan extends CharacterStyle {
+                        final float relativeVerticalShiftRatio;
+
+                        RelativeVerticalOffsetSpan(float relativeVerticalShiftRatio) {
+                            this.relativeVerticalShiftRatio = relativeVerticalShiftRatio;
+                        }
+
+                        @Override
+                        public void updateDrawState(TextPaint tp) {
+                            tp.baselineShift -= (int) (relativeVerticalShiftRatio * tp.getFontMetrics().top);
+                        }
                     }
+                    // each section needs it's own Relative span, otherwise alignment is wrong
+                    addSpanStyling(leftSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedLeftSeparatorVerticalShiftRatio));
+
+                    addSpanStyling(likesSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
+                    addSpanStyling(middleSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
+                    addSpanStyling(dislikeSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
+
+                    // important: must add size scaling after vertical offset (otherwise alignment gets off)
+                    addSpanStyling(leftSeparatorSpan, new RelativeSizeSpan(segmentedLeftSeparatorFontRatio));
+                    addSpanStyling(leftSeparatorSpan, new ScaleXSpan(segmentedLeftSeparatorHorizontalScaleRatio));
+                    // middle separator does not need resizing
+
+                    builder.append(leftSeparatorSpan);
                 }
 
-                // shift everything up, to compensate for the vertical movement caused by the font change below
-                // each section needs it's own Relative span, otherwise alignment is wrong
-                addSpanStyling(leftSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedLeftSeparatorVerticalShiftRatio));
-
-                addSpanStyling(likesSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
-                addSpanStyling(middleSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
-                addSpanStyling(dislikeSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
-
-                // important: must add size scaling after vertical offset (otherwise alignment gets off)
-                addSpanStyling(leftSeparatorSpan, new RelativeSizeSpan(segmentedLeftSeparatorFontRatio));
-                addSpanStyling(leftSeparatorSpan, new ScaleXSpan(segmentedLeftSeparatorHorizontalScaleRatio));
-
-                // middle separator does not need resizing
-
-                // put everything together
-                SpannableStringBuilder builder = new SpannableStringBuilder();
-                builder.append(leftSeparatorSpan);
                 builder.append(likesSpan);
                 builder.append(middleSeparatorSpan);
                 builder.append(dislikeSpan);
@@ -340,40 +331,6 @@ public class ReturnYouTubeDislike {
         }
 
         textRef.set(replacementSpannable);
-    }
-
-    private static void hideSeparator(AtomicReference<Object> textRef, RYDVoteData voteData) {
-        SpannableString oldSpannableString = (SpannableString) textRef.get();
-
-        String oldString = ReVancedUtils.getOldString(oldSpannableString.toString());
-
-        String likeString = formatDislikeCount(voteData.likeCount);
-
-        String dislikeString = SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
-                ? formatDislikePercentage(voteData.dislikePercentage)
-                : formatDislikeCount(voteData.dislikeCount);
-
-        SpannableString newSpannableString = setSpannableString(oldSpannableString, oldString, likeString, dislikeString);
-
-        textRef.set(newSpannableString);
-    }
-
-    static SpannableString setSpannableString(SpannableString oldSpannableString, String oldString, String likeString, String dislikeString) {
-        if (!oldString.contains(".")) {
-            try {
-                likeString = formatDislikeCount(Long.parseLong(oldString));
-            } catch (Exception ignored) {}
-        }
-
-        String newString = ReVancedUtils.setRTLString(likeString, dislikeString);
-
-        SpannableString newSpannableString = new SpannableString(newString);
-        // Copy style (foreground color, etc) to new string
-        Object[] spans = oldSpannableString.getSpans(0, oldSpannableString.length(), Object.class);
-        for (Object span : spans) {
-            newSpannableString.setSpan(span, 0, newString.length(), oldSpannableString.getSpanFlags(span));
-        }
-        return newSpannableString;
     }
 
     private static boolean segmentedValuesSet = false;
@@ -391,9 +348,9 @@ public class ReturnYouTubeDislike {
         String deviceManufacturer = Build.MANUFACTURER;
 
         //
-        // IMPORTANT: configurations must be with the default system font size setting.
+        // Important: configurations must be with the device default system font, and default font size.
         //
-        // In generally, a single configuration will give perfect layout for all devices of the same manufacturer
+        // In general, a single configuration will give perfect layout for all devices of the same manufacturer.
         switch (deviceManufacturer) {
             default: // use Google layout by default
             case "Google":

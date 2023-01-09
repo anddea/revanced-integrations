@@ -9,7 +9,6 @@ import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislik
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedLeftSeparatorVerticalShiftRatio;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.segmentedVerticalShiftRatio;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.setSegmentedAdjustmentValues;
-import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.setSpannableString;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.stringContainsNumber;
 import static app.revanced.integrations.utils.StringRef.str;
 
@@ -37,12 +36,6 @@ public class ReturnYouTubeDislikeMirror {
     public static Float dislikePercentage;
 
     private static Thread _dislikeFetchThread = null;
-
-    private static volatile boolean isSeparatorShown = SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean();
-
-    public static void onSeparatorChange(boolean enabled) {
-        isSeparatorShown = enabled;
-    }
 
     public static void newVideoLoaded(String videoId) {
         if (videoId == null || videoId.equals(currentVideoId)) return;
@@ -89,6 +82,11 @@ public class ReturnYouTubeDislikeMirror {
         String oldLikesString = oldSpannable.toString();
         Spannable replacementSpannable;
 
+        // note: some locales use right to left layout (arabic, hebrew, etc),
+        // and care must be taken to retain the existing RTL encoding character on the likes string
+        // otherwise text will incorrectly show as left to right
+        // if making changes to this code, change device settings to a RTL language and verify layout is correct
+
         if (!isSegmentedButton) {
             // simple replacement of 'dislike' with a number/percentage
             if (stringContainsNumber(oldLikesString)) {
@@ -97,34 +95,42 @@ public class ReturnYouTubeDislikeMirror {
             }
             replacementSpannable = newSpannableWithDislikes(oldSpannable);
         } else {
-            String leftSegmentedSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F|  " : "|  ";
+            final boolean useCompactLayout = SettingsEnum.RYD_USE_COMPACT_LAYOUT.getBoolean();
+            // if compact layout, use a "half space" character
+            String middleSegmentedSeparatorString = useCompactLayout ? "\u2009 • \u2009" : "  •  ";
 
-            if (oldLikesString.contains(leftSegmentedSeparatorString)) {
+            if (oldLikesString.contains(middleSegmentedSeparatorString)) {
                 return; // dislikes was previously added
             }
 
+            // YouTube creators can hide the like count on a video,
+            // and the like count appears as a device language specific string that says 'Like'
+            // check if the string contains any numbers
             if (!stringContainsNumber(oldLikesString)) {
+                // likes are hidden.
+                // RYD does not provide usable data for these types of videos,
+                // and the API returns bogus data (zero likes and zero dislikes)
+                //
+                // example video: https://www.youtube.com/watch?v=UnrU5vxCHxw
+                // RYD data: https://returnyoutubedislikeapi.com/votes?videoId=UnrU5vxCHxw
+                //
+                // discussion about this: https://github.com/Anarios/return-youtube-dislike/discussions/530
+
+                //
+                // Change the "Likes" string to show that likes and dislikes are hidden
+                //
 
                 String hiddenMessageString = str("revanced_ryd_video_likes_hidden_by_video_owner");
-                if (hiddenMessageString.equals(oldLikesString)) {
-                    return;
-                }
+                if (hiddenMessageString.equals(oldLikesString)) return;
                 replacementSpannable = newSpanUsingStylingOfAnotherSpan(oldSpannable, hiddenMessageString);
             } else {
                 Spannable likesSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, oldLikesString);
-                if (!isSeparatorShown){
-                    hideSeparator(textRef);
-                    return;
-                }
 
-                // left and middle separator
-                String middleSegmentedSeparatorString = "  •  ";
-                Spannable leftSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, leftSegmentedSeparatorString);
+                // middle separator
                 Spannable middleSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, middleSegmentedSeparatorString);
                 final int separatorColor = ThemeHelper.getDayNightTheme()
-                        ? 0x37A0A0A0  // transparent dark gray
+                        ? 0x29AAAAAA  // transparent dark gray
                         : 0xFFD9D9D9; // light gray
-                addSpanStyling(leftSeparatorSpan, new ForegroundColorSpan(separatorColor));
                 addSpanStyling(middleSeparatorSpan, new ForegroundColorSpan(separatorColor));
                 CharacterStyle noAntiAliasingStyle = new CharacterStyle() {
                     @Override
@@ -132,44 +138,49 @@ public class ReturnYouTubeDislikeMirror {
                         tp.setAntiAlias(false); // draw without anti-aliasing, to give a sharper edge
                     }
                 };
-                addSpanStyling(leftSeparatorSpan, noAntiAliasingStyle);
                 addSpanStyling(middleSeparatorSpan, noAntiAliasingStyle);
 
                 Spannable dislikeSpan = newSpannableWithDislikes(oldSpannable);
 
-                // Increase the size of the left separator, so it better matches the stock separator on the right.
-                // But when using a larger font, the entire span (including the like/dislike text) becomes shifted downward.
-                // To correct this, use additional spans to move the alignment back upward by a relative amount.
-                setSegmentedAdjustmentValues();
-                class RelativeVerticalOffsetSpan extends CharacterStyle {
-                    final float relativeVerticalShiftRatio;
+                SpannableStringBuilder builder = new SpannableStringBuilder();
 
-                    RelativeVerticalOffsetSpan(float relativeVerticalShiftRatio) {
-                        this.relativeVerticalShiftRatio = relativeVerticalShiftRatio;
-                    }
+                if (!useCompactLayout) {
+                    String leftSegmentedSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F|  " : "|  ";
+                    Spannable leftSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, leftSegmentedSeparatorString);
+                    addSpanStyling(leftSeparatorSpan, new ForegroundColorSpan(separatorColor));
+                    addSpanStyling(leftSeparatorSpan, noAntiAliasingStyle);
 
-                    @Override
-                    public void updateDrawState(TextPaint tp) {
-                        tp.baselineShift -= (int) (relativeVerticalShiftRatio * tp.getFontMetrics().top);
+                    // Use a left separator with a larger font and visually match the stock right separator.
+                    // But with a larger font, the entire span (including the like/dislike text) becomes shifted downward.
+                    // To correct this, use additional spans to move the alignment back upward by a relative amount.
+                    setSegmentedAdjustmentValues();
+                    class RelativeVerticalOffsetSpan extends CharacterStyle {
+                        final float relativeVerticalShiftRatio;
+
+                        RelativeVerticalOffsetSpan(float relativeVerticalShiftRatio) {
+                            this.relativeVerticalShiftRatio = relativeVerticalShiftRatio;
+                        }
+
+                        @Override
+                        public void updateDrawState(TextPaint tp) {
+                            tp.baselineShift -= (int) (relativeVerticalShiftRatio * tp.getFontMetrics().top);
+                        }
                     }
+                    // each section needs it's own Relative span, otherwise alignment is wrong
+                    addSpanStyling(leftSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedLeftSeparatorVerticalShiftRatio));
+
+                    addSpanStyling(likesSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
+                    addSpanStyling(middleSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
+                    addSpanStyling(dislikeSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
+
+                    // important: must add size scaling after vertical offset (otherwise alignment gets off)
+                    addSpanStyling(leftSeparatorSpan, new RelativeSizeSpan(segmentedLeftSeparatorFontRatio));
+                    addSpanStyling(leftSeparatorSpan, new ScaleXSpan(segmentedLeftSeparatorHorizontalScaleRatio));
+                    // middle separator does not need resizing
+
+                    builder.append(leftSeparatorSpan);
                 }
 
-                // shift everything up, to compensate for the vertical movement caused by the font change below
-                // each section needs it's own Relative span, otherwise alignment is wrong
-                addSpanStyling(leftSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedLeftSeparatorVerticalShiftRatio));
-
-                addSpanStyling(likesSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
-                addSpanStyling(middleSeparatorSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
-                addSpanStyling(dislikeSpan, new RelativeVerticalOffsetSpan(segmentedVerticalShiftRatio));
-
-                // important: must add size scaling after vertical offset (otherwise alignment gets off)
-                addSpanStyling(leftSeparatorSpan, new RelativeSizeSpan(segmentedLeftSeparatorFontRatio));
-                addSpanStyling(leftSeparatorSpan, new ScaleXSpan(segmentedLeftSeparatorHorizontalScaleRatio));
-                // middle separator does not need resizing
-
-                // put everything together
-                SpannableStringBuilder builder = new SpannableStringBuilder();
-                builder.append(leftSeparatorSpan);
                 builder.append(likesSpan);
                 builder.append(middleSeparatorSpan);
                 builder.append(dislikeSpan);
@@ -178,22 +189,6 @@ public class ReturnYouTubeDislikeMirror {
         }
 
         textRef.set(replacementSpannable);
-    }
-
-    private static void hideSeparator(AtomicReference<Object> textRef) {
-        SpannableString oldSpannableString = (SpannableString) textRef.get();
-
-        String oldString = ReVancedUtils.getOldString(oldSpannableString.toString());
-
-        String likeString = formatDislikeCount(likeCount);
-
-        String dislikeString = SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
-                ? formatDislikePercentage(dislikePercentage)
-                : formatDislikeCount(dislikeCount);
-
-        SpannableString newSpannableString = setSpannableString(oldSpannableString, oldString, likeString, dislikeString);
-
-        textRef.set(newSpannableString);
     }
 
     private static Spannable newSpannableWithDislikes(Spannable sourceStyling) {

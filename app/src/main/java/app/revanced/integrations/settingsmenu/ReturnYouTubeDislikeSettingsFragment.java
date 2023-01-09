@@ -14,7 +14,6 @@ import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
-import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislikeMirror;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
@@ -36,34 +35,31 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
     private SwitchPreference percentagePreference;
 
     /**
-     * If left separator is shown
+     * If segmented like/dislike button uses smaller compact layout
      */
-    private SwitchPreference separatorPreference;
+    private SwitchPreference compactLayoutPreference;
 
     private void updateUIState() {
         final boolean rydIsEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
-        final boolean rydMirrorIsEnabled = SettingsEnum.RYD_MIRROR_ENABLED.getBoolean();
-        final boolean dislikePercentageEnabled = SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean();
-        final boolean separatorIsShown = SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean();
 
         enabledPreference.setSummary(rydIsEnabled
                 ? str("revanced_ryd_enable_summary_on")
                 : str("revanced_ryd_enable_summary_off"));
 
-        mirrorPreference.setSummary(rydMirrorIsEnabled
+        mirrorPreference.setSummary(SettingsEnum.RYD_MIRROR_ENABLED.getBoolean()
                 ? str("revanced_ryd_mirror_enable_summary_on")
                 : str("revanced_ryd_mirror_enable_summary_off"));
         mirrorPreference.setEnabled(rydIsEnabled);
 
-        percentagePreference.setSummary(dislikePercentageEnabled
+        percentagePreference.setSummary(SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
                 ? str("revanced_ryd_dislike_percentage_summary_on")
                 : str("revanced_ryd_dislike_percentage_summary_off"));
         percentagePreference.setEnabled(rydIsEnabled);
 
-        separatorPreference.setSummary(separatorIsShown
-                ? str("revanced_ryd_dislike_separator_summary_on")
-                : str("revanced_ryd_dislike_separator_summary_off"));
-        separatorPreference.setEnabled(rydIsEnabled);
+        compactLayoutPreference.setSummary(SettingsEnum.RYD_USE_COMPACT_LAYOUT.getBoolean()
+                ? str("revanced_ryd_compact_layout_summary_on")
+                : str("revanced_ryd_compact_layout_summary_off"));
+        compactLayoutPreference.setEnabled(rydIsEnabled);
     }
 
     @Override
@@ -137,21 +133,18 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         });
         preferenceScreen.addPreference(percentagePreference);
 
-        separatorPreference = new SwitchPreference(context);
-        separatorPreference.setKey(SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getPath());
-        separatorPreference.setDefaultValue(SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getDefaultValue());
-        separatorPreference.setChecked(SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.getBoolean());
-        separatorPreference.setTitle(str("revanced_ryd_dislike_separator_title"));
-        separatorPreference.setOnPreferenceChangeListener((pref, newValue) -> {
-            final boolean separatorIsShown = (Boolean) newValue;
-            SettingsEnum.RYD_SHOW_DISLIKE_SEPARATOR.saveValue(separatorIsShown);
-            ReturnYouTubeDislike.onSeparatorChange(separatorIsShown);
-            ReturnYouTubeDislikeMirror.onSeparatorChange(separatorIsShown);
+        compactLayoutPreference = new SwitchPreference(context);
+        compactLayoutPreference.setKey(SettingsEnum.RYD_USE_COMPACT_LAYOUT.getPath());
+        compactLayoutPreference.setDefaultValue(SettingsEnum.RYD_USE_COMPACT_LAYOUT.getDefaultValue());
+        compactLayoutPreference.setChecked(SettingsEnum.RYD_USE_COMPACT_LAYOUT.getBoolean());
+        compactLayoutPreference.setTitle(str("revanced_ryd_compact_layout_title"));
+        compactLayoutPreference.setOnPreferenceChangeListener((pref, newValue) -> {
+            SettingsEnum.RYD_USE_COMPACT_LAYOUT.saveValue(newValue);
 
             updateUIState();
             return true;
         });
-        preferenceScreen.addPreference(separatorPreference);
+        preferenceScreen.addPreference(compactLayoutPreference);
 
         updateUIState();
 
