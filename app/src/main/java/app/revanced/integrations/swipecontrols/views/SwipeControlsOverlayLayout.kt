@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import app.revanced.integrations.patches.misc.HDRAutoBrightnessPatch
 import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.swipecontrols.SwipeControlsConfigurationProvider
 import app.revanced.integrations.swipecontrols.misc.SwipeControlsOverlay
@@ -126,9 +125,7 @@ class SwipeControlsOverlayLayout(
     }
 
     override fun onBrightnessChanged(brightness: Double) {
-        if (HDRAutoBrightnessPatch.getHDRVideo()) {
-            showFeedbackView("HDR", autoBrightnessIcon)
-        } else if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
+        if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
             if (brightness >= 0) {
                 showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
             } else {

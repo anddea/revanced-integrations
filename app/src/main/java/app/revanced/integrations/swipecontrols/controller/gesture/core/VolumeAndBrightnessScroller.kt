@@ -2,7 +2,6 @@ package app.revanced.integrations.swipecontrols.controller.gesture.core
 
 import android.content.Context
 import android.util.TypedValue
-import app.revanced.integrations.patches.misc.HDRAutoBrightnessPatch
 import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.swipecontrols.controller.AudioVolumeController
 import app.revanced.integrations.swipecontrols.controller.ScreenBrightnessController
@@ -79,9 +78,7 @@ class VolumeAndBrightnessScrollerImpl(
             )
         ) { _, _, direction ->
             screenController?.run {
-                if (HDRAutoBrightnessPatch.getHDRVideo()) {
-                    restoreDefaultBrightness()
-                } else if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
+                if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
                     if (screenBrightness >= 0 || direction > 0) {
                         screenBrightness += direction
                     } else {
