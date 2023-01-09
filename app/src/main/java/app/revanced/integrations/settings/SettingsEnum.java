@@ -54,7 +54,7 @@ public enum SettingsEnum {
     SWIPE_MAGNITUDE_THRESHOLD("revanced_swipe_magnitude_threshold", 0f, ReturnType.FLOAT),
 
     //Experimental Flags
-    ENABLE_ALWAYS_SWIPE("revanced_enable_always_swipe", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_swipe"),
+    ENABLE_SWIPE_BRIGHTNESS_HDR("revanced_enable_swipe_brightness_in_hdr", false, ReturnType.BOOLEAN, true),
 
     // Layout settings (General)
     HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
