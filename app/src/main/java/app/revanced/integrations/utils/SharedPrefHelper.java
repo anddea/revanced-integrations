@@ -7,23 +7,31 @@ import androidx.annotation.NonNull;
 
 public class SharedPrefHelper {
     public static void saveString(Context context, SharedPrefNames prefName, String key, String value) {
-        SharedPreferences sharedPreferences = getPreferences(context, prefName);
-        sharedPreferences.edit().putString(key, value).apply();
+        getPreferences(context, prefName).edit().putString(key, value).apply();
     }
 
-    public static void saveBoolean(Context context, SharedPrefNames prefName, String key, Boolean value) {
-        SharedPreferences sharedPreferences = getPreferences(context, prefName);
-        sharedPreferences.edit().putBoolean(key, value).apply();
+    public static void saveBoolean(Context context, SharedPrefNames prefName, String key, boolean value) {
+        getPreferences(context, prefName).edit().putBoolean(key, value).apply();
+    }
+
+    public static void saveFloat(Context context, SharedPrefNames prefName, String key, float value) {
+        getPreferences(context, prefName).edit().putFloat(key, value).apply();
+    }
+
+    public static void saveInt(Context context, SharedPrefNames prefName, String key, int value) {
+        getPreferences(context, prefName).edit().putInt(key, value).apply();
+    }
+
+    public static void saveLong(Context context, SharedPrefNames prefName, String key, long value) {
+        getPreferences(context, prefName).edit().putLong(key, value).apply();
     }
 
     public static String getString(Context context, SharedPrefNames prefName, String key, String _default) {
-        SharedPreferences sharedPreferences = getPreferences(context, prefName);
-        return (sharedPreferences.getString(key, _default));
+        return getPreferences(context, prefName).getString(key, _default);
     }
 
-    public static boolean getBoolean(Context context, SharedPrefNames prefName, String key, Boolean _default) {
-        SharedPreferences sharedPreferences = getPreferences(context, prefName);
-        return (sharedPreferences.getBoolean(key, _default));
+    public static boolean getBoolean(Context context, SharedPrefNames prefName, String key, boolean _default) {
+        return getPreferences(context, prefName).getBoolean(key, _default);
     }
 
     public static Long getLong(Context context, SharedPrefNames prefName, String key, Long _default) {

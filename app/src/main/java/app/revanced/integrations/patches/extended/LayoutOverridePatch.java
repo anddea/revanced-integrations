@@ -1,9 +1,12 @@
 package app.revanced.integrations.patches.extended;
 
-import app.revanced.integrations.settings.SettingsEnum;
+import static app.revanced.integrations.utils.ReVancedUtils.context;
+
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class LayoutOverridePatch {
+    public static SharedPrefHelper.SharedPrefNames prefName = SharedPrefHelper.SharedPrefNames.REVANCED;
 
     /*
     * Context is overridden when trying to play a YouTube video from the Google Play Store,
@@ -11,13 +14,14 @@ public class LayoutOverridePatch {
     */
     public static int getLayoutOverride(int original) {
         try {
-            boolean tabletLayoutEnabled = SettingsEnum.ENABLE_TABLET_LAYOUT.getBoolean();
-            boolean phoneLayoutEnabled = SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
+            boolean isTabletLayoutEnabled = SharedPrefHelper.getBoolean(context, prefName, "revanced_enable_tablet_layout", false);
+            boolean isPhoneLayoutEnabled = SharedPrefHelper.getBoolean(context, prefName, "revanced_enable_phone_layout", false);
 
-            return tabletLayoutEnabled ? 720 : (phoneLayoutEnabled ? 480 : original);
+            return isTabletLayoutEnabled ? 720 : (isPhoneLayoutEnabled ? 480 : original);
         } catch (Exception ex){
             LogHelper.printException(LayoutOverridePatch.class, "Failed to getBoolean", ex);
+            return original;
         }
-        return original;
+
     }
 }
