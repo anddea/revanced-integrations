@@ -11,8 +11,8 @@ import app.revanced.integrations.whitelist.Whitelist;
 
 public class VideoSpeedPatch {
 
-    private static Boolean newVideo = false;
-    private static Boolean userChangedSpeed = false;
+    private static boolean newVideo = false;
+    private static boolean userChangedSpeed = false;
     private static String currentVideoId;
 
     public static void userChangedSpeed(float speed) {

@@ -19,8 +19,8 @@ import app.revanced.integrations.utils.ReVancedUtils;
 public class VideoQualityPatch {
 
     public static int selectedQuality1 = -2;
-    private static Boolean newVideo = false;
-    private static Boolean userChangedQuality = false;
+    private static boolean newVideo = false;
+    private static boolean userChangedQuality = false;
     private static int defaultQualityWiFi;
     private static int defaultQualityMobile;
 

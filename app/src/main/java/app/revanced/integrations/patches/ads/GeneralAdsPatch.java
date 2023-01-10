@@ -125,7 +125,7 @@ public final class GeneralAdsPatch extends Filter {
         DEFINED(true, "Blocked"),
         CUSTOM(true, "Custom");
 
-        final Boolean filter;
+        final boolean filter;
         final String message;
 
         BlockResult(boolean filter, String message) {

@@ -198,28 +198,39 @@ public enum SettingsEnum {
     private final boolean rebootApp;
     private final String rebootApp_Warning;
 
-    private volatile Object value;
+    private Object value = null;
 
     SettingsEnum(String path, Object defaultValue, ReturnType returnType) {
-        this(path, defaultValue, SharedPrefHelper.SharedPrefNames.REVANCED, returnType, false, "");
-    }
-
-    SettingsEnum(String path, Object defaultValue, ReturnType returnType, boolean rebootApp) {
-        this(path, defaultValue, SharedPrefHelper.SharedPrefNames.REVANCED, returnType, rebootApp, "");
-    }
-
-    SettingsEnum(String path, Object defaultValue, ReturnType returnType, boolean rebootApp, String rebootApp_Warning) {
-        this(path, defaultValue, SharedPrefHelper.SharedPrefNames.REVANCED, returnType, rebootApp, rebootApp_Warning);
+        this.path = path;
+        this.defaultValue = defaultValue;
+        this.sharedPref = SharedPrefHelper.SharedPrefNames.REVANCED;
+        this.returnType = returnType;
+        this.rebootApp = false;
+        this.rebootApp_Warning = "";
     }
 
     SettingsEnum(String path, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName, ReturnType returnType) {
-        this(path, defaultValue, prefName, returnType, false, "");
-    }
-
-    SettingsEnum(String path, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName, ReturnType returnType, boolean rebootApp, String rebootApp_Warning) {
         this.path = path;
         this.defaultValue = defaultValue;
         this.sharedPref = prefName;
+        this.returnType = returnType;
+        this.rebootApp = false;
+        this.rebootApp_Warning = "";
+    }
+
+    SettingsEnum(String path, Object defaultValue, ReturnType returnType, boolean rebootApp) {
+        this.path = path;
+        this.defaultValue = defaultValue;
+        this.sharedPref = SharedPrefHelper.SharedPrefNames.REVANCED;
+        this.returnType = returnType;
+        this.rebootApp = rebootApp;
+        this.rebootApp_Warning = "";
+    }
+
+    SettingsEnum(String path, Object defaultValue, ReturnType returnType, boolean rebootApp, String rebootApp_Warning) {
+        this.path = path;
+        this.defaultValue = defaultValue;
+        this.sharedPref = SharedPrefHelper.SharedPrefNames.REVANCED;
         this.returnType = returnType;
         this.rebootApp = rebootApp;
         this.rebootApp_Warning = rebootApp_Warning;
@@ -234,29 +245,40 @@ public enum SettingsEnum {
         if (context == null) {
             Log.e("revanced: SettingsEnum", "Context returned null! Setings NOT initialized");
         } else {
-            for (SettingsEnum setting : values()) {
-                var path = setting.getPath();
-                var defaultValue = setting.getDefaultValue();
-                switch (setting.getReturnType()) {
-                    case FLOAT:
-                        defaultValue = SharedPrefHelper.getFloat(context, setting.sharedPref, path, (float) defaultValue);
-                        break;
-                    case LONG:
-                        defaultValue = SharedPrefHelper.getLong(context, setting.sharedPref, path, (long) defaultValue);
-                        break;
-                    case BOOLEAN:
-                        defaultValue = SharedPrefHelper.getBoolean(context, setting.sharedPref, path, (boolean) defaultValue);
-                        break;
-                    case INTEGER:
-                        defaultValue = SharedPrefHelper.getInt(context, setting.sharedPref, path, (int) defaultValue);
-                        break;
-                    case STRING:
-                        defaultValue = SharedPrefHelper.getString(context, setting.sharedPref, path, (String) defaultValue);
-                        break;
-                    default:
-                        break;
+            try {
+                for (SettingsEnum setting : values()) {
+                    Object value = setting.getDefaultValue();
+
+                    //LogHelper is not initialized here
+                    Log.d("revanced: SettingsEnum", "Loading Setting: " + setting.name());
+
+                    switch (setting.getReturnType()) {
+                        case FLOAT:
+                            value = SharedPrefHelper.getFloat(context, setting.sharedPref, setting.getPath(), (float) setting.getDefaultValue());
+                            break;
+                        case LONG:
+                            value = SharedPrefHelper.getLong(context, setting.sharedPref, setting.getPath(), (long) setting.getDefaultValue());
+                            break;
+                        case BOOLEAN:
+                            value = SharedPrefHelper.getBoolean(context, setting.sharedPref, setting.getPath(), (boolean) setting.getDefaultValue());
+                            break;
+                        case INTEGER:
+                            value = SharedPrefHelper.getInt(context, setting.sharedPref, setting.getPath(), (int) setting.getDefaultValue());
+                            break;
+                        case STRING:
+                            value = SharedPrefHelper.getString(context, setting.sharedPref, setting.getPath(), (String) setting.getDefaultValue());
+                            break;
+                        default:
+                            LogHelper.printException(SettingsEnum.class, "Setting does not have a valid Type. Name is: " + setting.name());
+                            break;
+                    }
+                    setting.setValue(value);
+
+                    //LogHelper is not initialized here
+                    Log.d("revanced: SettingsEnum", "Loaded Setting: " + setting.name() + " Value: " + value);
                 }
-                setting.setValue(defaultValue);
+            } catch (Throwable th) {
+                LogHelper.printException(SettingsEnum.class, "Error during load()!", th);
             }
         }
     }
@@ -267,30 +289,16 @@ public enum SettingsEnum {
 
     public void saveValue(Object newValue) {
         Context context = ReVancedUtils.getContext();
-
-        if (context == null) return;
-
-        switch (getReturnType()) {
-            case FLOAT:
-                SharedPrefHelper.saveFloat(context, sharedPref, path, (float) defaultValue);
-                break;
-            case LONG:
-                SharedPrefHelper.saveLong(context, sharedPref, path, (long) defaultValue);
-                break;
-            case BOOLEAN:
-                SharedPrefHelper.saveBoolean(context, sharedPref, path, (boolean) newValue);
-                break;
-            case INTEGER:
-                SharedPrefHelper.saveInt(context, sharedPref, path, (int) defaultValue);
-                break;
-            case STRING:
-                SharedPrefHelper.saveString(context, sharedPref, path, (String) defaultValue);
-                break;
-            default:
-                break;
+        if (context != null) {
+            if (returnType == ReturnType.BOOLEAN) {
+                SharedPrefHelper.saveBoolean(context, sharedPref, path, (Boolean) newValue);
+            } else {
+                SharedPrefHelper.saveString(context, sharedPref, path, newValue + "");
+            }
+            value = newValue;
+        } else {
+            LogHelper.printException(SettingsEnum.class, "Context on SaveValue is null!");
         }
-
-        value = newValue;
     }
 
     public int getInt() {
