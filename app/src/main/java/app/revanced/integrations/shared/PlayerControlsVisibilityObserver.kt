@@ -20,13 +20,13 @@ class PlayerControlsVisibilityObserverImpl(
      * id of the direct parent of controls_layout, R.id.youtube_controls_overlay
      */
     private val controlsLayoutParentId =
-        identifier("youtube_controls_overlay", ResourceType.ID, activity)
+        identifier("controls_button_group_layout", ResourceType.ID, activity)
 
     /**
      * id of R.id.controls_layout
      */
     private val controlsLayoutId =
-        identifier("controls_layout", ResourceType.ID, activity)
+        identifier("player_control_play_pause_replay_button_touch_area", ResourceType.ID, activity)
 
     /**
      * reference to the controls layout view
