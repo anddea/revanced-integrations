@@ -11,7 +11,7 @@ import app.revanced.integrations.requests.Route;
 
 class ReturnYouTubeDislikeRoutes {
     static final String RYD_API_URL = "https://returnyoutubedislikeapi.com/";
-    static final String RYD_API_MIRROR_URL = "https://true-ryd.cane.workers.dev/";
+    static final String RYD_API_MIRROR_URL = "https://true-ryd.api.mlnr.dev/";
 
     static final Route SEND_VOTE = new Route(POST, "interact/vote");
     static final Route CONFIRM_VOTE = new Route(POST, "interact/confirmVote");
