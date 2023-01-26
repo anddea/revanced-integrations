@@ -85,6 +85,10 @@ public class GeneralLayoutPatch {
         return SettingsEnum.HIDE_EMAIL_ADDRESS.getBoolean() ? 8 : originalValue;
     }
 
+    public static boolean hideSnackbar() {
+        return SettingsEnum.HIDE_SNACKBAR.getBoolean();
+    }
+
     public static int enablePremiumHeader(int originalValue) {
         if (SettingsEnum.ENABLE_PREMIUM_HEADER.getBoolean()) {
             originalValue = identifier(PREMIUM_HEADER_NAME, ResourceType.ATTR);
