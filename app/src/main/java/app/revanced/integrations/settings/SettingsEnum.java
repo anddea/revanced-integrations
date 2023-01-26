@@ -159,7 +159,6 @@ public enum SettingsEnum {
     SB_WHITELIST("revanced_whitelisting_sponsorblock", false, ReturnType.BOOLEAN),
 
     //Experimental Flags
-    FIX_VIDEO_PLAYBACK("revanced_fix_video_playback", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_playback"),
     ENABLE_OLD_LAYOUT("revanced_enable_old_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_oldlayout"),
     ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),

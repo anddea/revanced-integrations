@@ -13,7 +13,6 @@ public class VideoInformation {
     public static String channelName;
     public static long lastKnownVideoTime = -1L;
     public static long lastKnownVideoLength = 1L;
-    public static boolean isSeeked = false;
 
     private static WeakReference<Object> Controller;
     private static Method seekMethod;
@@ -27,21 +26,11 @@ public class VideoInformation {
             return;
         }
 
-        if (videoId.equals(currentVideoId) || isSeeked) return;
-        else {
+        if (videoId.equals(currentVideoId)) return;
+        else
             currentVideoId = videoId;
-        }
-
-        if (SettingsEnum.FIX_VIDEO_PLAYBACK.getBoolean()) fixPlayback();
     }
 
-    public static void fixPlayback() {
-        if (lastKnownVideoTime > 0 && !isSeeked) {
-            seekTo(Integer.MAX_VALUE);
-            seekTo(lastKnownVideoTime);
-            isSeeked = true;
-        }
-    }
 
     public static void setCurrentVideoTime(final long time) {
         lastKnownVideoTime = time;
@@ -77,10 +66,6 @@ public class VideoInformation {
     public static boolean videoEnded() {
         if (SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean()) {
             seekTo(0);
-            return true;
-        } else if (isSeeked) {
-            currentVideoId = null;
-            isSeeked = false;
             return true;
         }
         return false;
