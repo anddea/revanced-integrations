@@ -167,7 +167,6 @@ public enum SettingsEnum {
     //RYD Settings
     RYD_USER_ID("ryd_userId", null, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.STRING),
     RYD_ENABLED("ryd_enabled", true, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
-    RYD_MIRROR_ENABLED("ryd_mirror_enabled", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
     RYD_SHOW_DISLIKE_PERCENTAGE("ryd_show_dislike_percentage", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
     RYD_USE_COMPACT_LAYOUT("ryd_use_compact_layout", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
 

@@ -25,11 +25,6 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
     private SwitchPreference enabledPreference;
 
     /**
-     * If Mirror API is enabled
-     */
-    private SwitchPreference mirrorPreference;
-
-    /**
      * If dislikes are shown as percentage
      */
     private SwitchPreference percentagePreference;
@@ -45,11 +40,6 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         enabledPreference.setSummary(rydIsEnabled
                 ? str("revanced_ryd_enable_summary_on")
                 : str("revanced_ryd_enable_summary_off"));
-
-        mirrorPreference.setSummary(SettingsEnum.RYD_MIRROR_ENABLED.getBoolean()
-                ? str("revanced_ryd_mirror_enable_summary_on")
-                : str("revanced_ryd_mirror_enable_summary_off"));
-        mirrorPreference.setEnabled(rydIsEnabled);
 
         percentagePreference.setSummary(SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
                 ? str("revanced_ryd_dislike_percentage_summary_on")
@@ -85,40 +75,6 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
             return true;
         });
         preferenceScreen.addPreference(enabledPreference);
-
-        mirrorPreference = new SwitchPreference(context);
-        mirrorPreference.setKey(SettingsEnum.RYD_MIRROR_ENABLED.getPath());
-        mirrorPreference.setDefaultValue(SettingsEnum.RYD_MIRROR_ENABLED.getDefaultValue());
-        mirrorPreference.setChecked(SettingsEnum.RYD_MIRROR_ENABLED.getBoolean());
-        mirrorPreference.setTitle(str("revanced_ryd_mirror_enable_title"));
-        mirrorPreference.setOnPreferenceChangeListener((pref, newValue) -> {
-            final boolean rydMirrorIsEnabled = (Boolean) newValue;
-            if (rydMirrorIsEnabled) {
-                new AlertDialog.Builder(pref.getContext())
-                        .setTitle(str("revanced_ryd_mirror_guidelines_popup_title"))
-                        .setMessage(str("revanced_ryd_mirror_guidelines_popup_summary"))
-                        .setNegativeButton(str("cancel"),
-                                (dialog, id) -> {
-                                    mirrorPreference.setChecked(false);
-                                    SettingsEnum.RYD_MIRROR_ENABLED.saveValue(false);
-                                    updateUIState();
-                                    dialog.dismiss();
-                                })
-                        .setPositiveButton(str("apply"),
-                                (dialog, id) -> {
-                                    SettingsEnum.RYD_MIRROR_ENABLED.saveValue(true);
-                                    updateUIState();
-                                    dialog.dismiss();
-                                })
-                        .setCancelable(false)
-                        .show();
-            } else {
-                SettingsEnum.RYD_MIRROR_ENABLED.saveValue(false);
-                updateUIState();
-            }
-            return true;
-        });
-        preferenceScreen.addPreference(mirrorPreference);
 
         percentagePreference = new SwitchPreference(context);
         percentagePreference.setKey(SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getPath());
@@ -167,16 +123,5 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
             return false;
         });
         preferenceScreen.addPreference(aboutWebsitePreference);
-
-        Preference aboutMirrorPreference = new Preference(context);
-        aboutMirrorPreference.setTitle(str("revanced_ryd_mirror_attribution_title"));
-        aboutMirrorPreference.setSummary(str("revanced_ryd_mirror_attribution_summary"));
-        aboutMirrorPreference.setOnPreferenceClickListener(pref -> {
-            var intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://github.com/caneleex/true-ryd-worker"));
-            pref.getContext().startActivity(intent);
-            return false;
-        });
-        preferenceScreen.addPreference(aboutMirrorPreference);
     }
 }
