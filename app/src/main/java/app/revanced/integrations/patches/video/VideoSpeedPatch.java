@@ -16,10 +16,6 @@ public class VideoSpeedPatch {
     private static String currentVideoId;
 
     public static void userChangedSpeed(float speed) {
-        if (SettingsEnum.ENABLE_SAVE_VIDEO_SPEED.getBoolean()) {
-            SettingsEnum.DEFAULT_VIDEO_SPEED.saveValue(speed);
-            Toast.makeText(ReVancedUtils.getContext(), str("revanced_save_video_speed") + speed + "x", Toast.LENGTH_SHORT).show();
-        }
         userChangedSpeed = true;
     }
 

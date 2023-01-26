@@ -141,7 +141,6 @@ public enum SettingsEnum {
     DEFAULT_VIDEO_QUALITY_MOBILE("revanced_default_video_quality_mobile", -2, ReturnType.INTEGER),
     DEFAULT_VIDEO_SPEED("revanced_default_video_speed", -2.0f, ReturnType.FLOAT),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", false, ReturnType.BOOLEAN),
-    ENABLE_SAVE_VIDEO_SPEED("revanced_enable_save_video_speed", false, ReturnType.BOOLEAN),
     ENABLE_CUSTOM_VIDEO_SPEED("revanced_enable_custom_video_speed", false, ReturnType.BOOLEAN, true),
 
     //Overlaybutton Settings
