@@ -1,8 +1,7 @@
 package app.revanced.integrations.utils
 
 import android.content.res.Resources
-import android.os.Handler
-import android.os.Looper
+import android.view.View
 import app.revanced.integrations.utils.ResourceUtils.identifier
 
 object ThemeHelper {
@@ -14,6 +13,15 @@ object ThemeHelper {
     private const val ARROW_WHITE_ICON = "yt_outline_arrow_left_white_24"
     private const val TRASH_BLACK_ICON = "yt_outline_trash_can_black_24"
     private const val TRASH_WHITE_ICON = "yt_outline_trash_can_white_24"
+
+    private const val LIVE_CHAT_BUTTON = "live_chat_overlay_button"
+
+    private const val NEXT_BUTTON = "player_control_next_button"
+    private const val NEXT_BUTTON_AREA = "player_control_next_button_touch_area"
+
+    private const val PREVIOUS_BUTTON = "player_control_previous_button"
+    private const val PREVIOUS_BUTTON_AREA = "player_control_previous_button_touch_area"
+
     private var isDarkTheme = 0
 
     @JvmStatic
@@ -66,6 +74,23 @@ object ThemeHelper {
             val themeName = if (dayNightTheme) TRASH_WHITE_ICON else TRASH_BLACK_ICON
             return identifier(themeName, ResourceType.DRAWABLE);
         }
+
+    @JvmStatic
+    fun isLiveChat(view: View): Boolean {
+        return view.id == identifier(LIVE_CHAT_BUTTON, ResourceType.ID)
+    }
+
+    @JvmStatic
+    fun isNextButton(view: View): Boolean {
+        return view.id == identifier(NEXT_BUTTON, ResourceType.ID)
+                || view.id == identifier(NEXT_BUTTON_AREA, ResourceType.ID)
+    }
+
+    @JvmStatic
+    fun isPrevButton(view: View): Boolean {
+        return view.id == identifier(PREVIOUS_BUTTON, ResourceType.ID)
+                || view.id == identifier(PREVIOUS_BUTTON_AREA, ResourceType.ID)
+    }
 
     @JvmStatic
     fun matchTheme(themeValue: Int, themeName: String?): Boolean {

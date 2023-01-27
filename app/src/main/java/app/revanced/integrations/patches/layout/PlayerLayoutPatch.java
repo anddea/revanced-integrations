@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.ThemeHelper;
 
 public class PlayerLayoutPatch {
 
@@ -41,5 +42,12 @@ public class PlayerLayoutPatch {
 
     public static boolean hidePlayerOverlayFilter() {
         return SettingsEnum.HIDE_PALYER_OVERLAY_FILTER.getBoolean();
+    }
+
+    public static int hidePlayerButton(View view, int originalValue) {
+        boolean hidden = (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean() && ThemeHelper.isLiveChat(view))
+                || (SettingsEnum.HIDE_NEXT_BUTTON.getBoolean() && ThemeHelper.isNextButton(view))
+                || (SettingsEnum.HIDE_PREV_BUTTON.getBoolean() && ThemeHelper.isPrevButton(view));
+        return hidden ? 8 : originalValue;
     }
 }
