@@ -14,6 +14,10 @@ public class SharedPrefHelper {
         getPreferences(context, prefName).edit().putBoolean(key, value).apply();
     }
 
+    public static void saveFloat(Context context, SharedPrefNames prefName, String key, float value) {
+        getPreferences(context, prefName).edit().putFloat(key, value).apply();
+    }
+
     public static String getString(Context context, SharedPrefNames prefName, String key, String _default) {
         return getPreferences(context, prefName).getString(key, _default);
     }

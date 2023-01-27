@@ -2,6 +2,7 @@ package app.revanced.integrations.swipecontrols.controller
 
 import android.app.Activity
 import android.view.WindowManager
+import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.swipecontrols.misc.clamp
 
 /**
@@ -37,19 +38,14 @@ class ScreenBrightnessController(
      * save the current screen brightness, to be brought back using [restore]
      */
     fun save() {
-        if (savedScreenBrightness == null) {
-            savedScreenBrightness = rawScreenBrightness
-        }
+        SettingsEnum.SAVED_SWIPE_BRIGHTNESS.saveValue(rawScreenBrightness)
     }
 
     /**
      * restore the screen brightness saved using [save]
      */
     fun restore() {
-        savedScreenBrightness?.let {
-            rawScreenBrightness = it
-        }
-        savedScreenBrightness = null
+        rawScreenBrightness = SettingsEnum.SAVED_SWIPE_BRIGHTNESS.float
     }
 
     /**

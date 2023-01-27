@@ -78,15 +78,19 @@ class VolumeAndBrightnessScrollerImpl(
             )
         ) { _, _, direction ->
             screenController?.run {
-                if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
+                if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.boolean) {
                     if (screenBrightness >= 0 || direction > 0) {
+                        restore()
                         screenBrightness += direction
+                        save()
                     } else {
                         restoreDefaultBrightness()
                     }
                 } else {
                     if (screenBrightness > 0 || direction > 0) {
+                        restore()
                         screenBrightness += direction
+                        save()
                     } else {
                         restoreDefaultBrightness()
                     }

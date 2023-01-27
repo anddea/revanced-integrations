@@ -125,7 +125,7 @@ class SwipeControlsOverlayLayout(
     }
 
     override fun onBrightnessChanged(brightness: Double) {
-        if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.getBoolean()) {
+        if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.boolean) {
             if (brightness >= 0) {
                 showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
             } else {

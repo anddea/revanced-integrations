@@ -53,6 +53,8 @@ public enum SettingsEnum {
     SWIPE_OVERLAY_BACKGROUND_ALPHA("revanced_swipe_overlay_background_alpha", 127, ReturnType.INTEGER),
     SWIPE_MAGNITUDE_THRESHOLD("revanced_swipe_magnitude_threshold", 0f, ReturnType.FLOAT),
 
+    SAVED_SWIPE_BRIGHTNESS("revanced_saved_swipe_brightness", -1.0f, ReturnType.FLOAT),
+
     //Experimental Flags
     ENABLE_SWIPE_BRIGHTNESS_HDR("revanced_enable_swipe_brightness_in_hdr", false, ReturnType.BOOLEAN, true),
 
@@ -291,6 +293,8 @@ public enum SettingsEnum {
         if (context != null) {
             if (returnType == ReturnType.BOOLEAN) {
                 SharedPrefHelper.saveBoolean(context, sharedPref, path, (Boolean) newValue);
+            } else if (returnType == ReturnType.FLOAT) {
+                SharedPrefHelper.saveFloat(context, sharedPref, path, (Float) newValue);
             } else {
                 SharedPrefHelper.saveString(context, sharedPref, path, newValue + "");
             }
