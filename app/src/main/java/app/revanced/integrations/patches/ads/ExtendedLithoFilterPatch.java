@@ -112,6 +112,9 @@ public class ExtendedLithoFilterPatch {
         if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() && value.contains("slimline_survey"))
             return true;
 
+        if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() && value.contains("horizontal_video_shelf") && !value.contains("heightConstraint=null"))
+            return true;
+
         if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean()) {
             generalBlockList.add("ContainerType|ContainerType|like_button");
         }
