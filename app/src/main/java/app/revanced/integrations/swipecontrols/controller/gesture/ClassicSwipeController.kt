@@ -28,12 +28,10 @@ class ClassicSwipeController(
         get() = currentSwipe == SwipeDetector.SwipeDirection.VERTICAL
 
     override fun isInSwipeZone(motionEvent: MotionEvent): Boolean {
-        val inVolumeZone = if (controller.config.enableVolumeControls)
-            (motionEvent.toPoint() in controller.zones.volume) else false
-        val inBrightnessZone = if (controller.config.enableBrightnessControl)
-            (motionEvent.toPoint() in controller.zones.brightness) else false
+        val inVolumeZone = motionEvent.toPoint() in controller.zones.volume
+        val inBrightnessZone = motionEvent.toPoint() in controller.zones.brightness
 
-        return inVolumeZone || inBrightnessZone || !SettingsEnum.ENABLE_SWIPE_BRIGHTNESS.boolean || !SettingsEnum.ENABLE_SWIPE_VOLUME.boolean
+        return inVolumeZone || inBrightnessZone
     }
 
     override fun shouldDropMotion(motionEvent: MotionEvent): Boolean {
