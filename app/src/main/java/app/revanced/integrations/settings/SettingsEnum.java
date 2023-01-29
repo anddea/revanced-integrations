@@ -166,12 +166,13 @@ public enum SettingsEnum {
     ENABLE_OLD_LAYOUT("revanced_enable_old_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_oldlayout"),
     ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
+    ENABLE_VP9_CODEC("revanced_enable_vp9_codec", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_vp9"),
 
     //RYD Settings
     RYD_USER_ID("ryd_userId", null, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.STRING),
     RYD_ENABLED("ryd_enabled", true, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
     RYD_SHOW_DISLIKE_PERCENTAGE("ryd_show_dislike_percentage", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
-    RYD_USE_COMPACT_LAYOUT("ryd_use_compact_layout", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
+    RYD_USE_COMPACT_LAYOUT("ryd_use_compact_layout", true, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
 
     //SponsorBlock Settings
     SB_ENABLED("sb-enabled", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
@@ -200,7 +201,7 @@ public enum SettingsEnum {
     private final boolean rebootApp;
     private final String rebootApp_Warning;
 
-    private Object value = null;
+    private volatile Object value;
 
     SettingsEnum(String path, Object defaultValue, ReturnType returnType) {
         this.path = path;
@@ -294,13 +295,13 @@ public enum SettingsEnum {
         Context context = ReVancedUtils.getContext();
         if (context != null) {
             if (returnType == ReturnType.BOOLEAN) {
-                SharedPrefHelper.saveBoolean(context, sharedPref, path, (Boolean) newValue);
+                SharedPrefHelper.saveBoolean(context, sharedPref, path, (boolean) newValue);
             } else if (returnType == ReturnType.FLOAT) {
                 SharedPrefHelper.saveFloat(context, sharedPref, path, (Float) newValue);
             } else {
                 SharedPrefHelper.saveString(context, sharedPref, path, newValue + "");
             }
-            value = newValue;
+            this.value = newValue;
         } else {
             LogHelper.printException(SettingsEnum.class, "Context on SaveValue is null!");
         }
@@ -315,7 +316,8 @@ public enum SettingsEnum {
     }
 
     public boolean getBoolean() {
-        return (boolean) value;
+        if (value == null) return (boolean) defaultValue;
+        else return (boolean) value;
     }
 
     public Long getLong() {

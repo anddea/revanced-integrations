@@ -3,7 +3,6 @@ package app.revanced.integrations.sponsorblock;
 import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.timeWithoutSegments;
 import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.videoHasSegments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -24,7 +23,6 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.whitelist.Whitelist;
 
-@SuppressLint({"LongLogTag"})
 public class PlayerController {
 
     private static final Timer sponsorTimer = new Timer("sponsor-skip-timer");

@@ -28,6 +28,7 @@ public class ExtendedLithoFilterPatch {
         List<byte[]> menuItemBlockList = new ArrayList<>();
         List<byte[]> genericBufferList = new ArrayList<>();
         List<String> generalBlockList = new ArrayList<>();
+        int count = 0;
 
         if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_share".getBytes());
@@ -51,7 +52,7 @@ public class ExtendedLithoFilterPatch {
         if (value.contains("CellType|ScrollableContainerType|ContainerType|ContainerType|video_action_button")) {
             for (byte[] b: actionButtonsBlockList) {
                 int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 2000) return true;
+                if (bufferIndex > 0 && bufferIndex < 2000) count++;
             }
         }
 
@@ -63,7 +64,7 @@ public class ExtendedLithoFilterPatch {
 
         if (containsAnyString(value)) {
             for (byte[] b: genericBufferList) {
-                if (indexOf(buffer.array(), b) > 0) return true;
+                if (indexOf(buffer.array(), b) > 0) count++;
             }
         }
 
@@ -105,15 +106,9 @@ public class ExtendedLithoFilterPatch {
         if (value.contains("overflow_menu_item")) {
             for (byte[] b: menuItemBlockList) {
                 int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 2000) return true;
+                if (bufferIndex > 0 && bufferIndex < 2000) count++;
             }
         }
-
-        if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() && value.contains("slimline_survey"))
-            return true;
-
-        if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() && value.contains("horizontal_video_shelf") && !value.contains("heightConstraint=null"))
-            return true;
 
         if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean()) {
             generalBlockList.add("ContainerType|ContainerType|like_button");
@@ -131,6 +126,14 @@ public class ExtendedLithoFilterPatch {
         if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean()) {
             generalBlockList.add("save_to_playlist_button");
         }
+
+        if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
+                value.contains("slimline_survey")) count++;
+
+        if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
+                value.contains("horizontal_video_shelf") &&
+                !value.contains("activeStateScrollSelectionController=com")
+        ) count++;
 
         if (PatchStatus.GeneralAds()) {
             if (SettingsEnum.ADREMOVER_VIEW_PRODUCTS.getBoolean()) {
@@ -170,7 +173,7 @@ public class ExtendedLithoFilterPatch {
             }
         }
 
-        return generalBlockList.stream().anyMatch(value::contains);
+        return generalBlockList.stream().anyMatch(value::contains) || count > 0;
     }
 
     private static boolean containsAnyString(String value) {

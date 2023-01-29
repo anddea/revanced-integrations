@@ -87,6 +87,9 @@ public class ReturnYouTubeDislikeApi {
     private static boolean checkIfRateLimitWasHit(int httpResponseCode) {
         if (httpResponseCode == RATE_LIMIT_HTTP_STATUS_CODE) {
             lastTimeRateLimitWasHit = System.currentTimeMillis();
+            ReVancedUtils.runOnMainThread(() -> { // must show toasts on main thread
+                Toast.makeText(ReVancedUtils.getContext(), str("revanced_ryd_failure_client_rate_limit_requested"), Toast.LENGTH_LONG).show();
+            });
             return true;
         }
         return false;
@@ -95,11 +98,6 @@ public class ReturnYouTubeDislikeApi {
     private static void updateStatistics(boolean connectionError, boolean rateLimitHit) {
         if (connectionError && rateLimitHit)
             throw new IllegalArgumentException("both connection error and rate limit parameter were true");
-
-        if (connectionError)
-            showToast("revanced_ryd_failure_connection_timeout");
-        else if (rateLimitHit)
-            showToast("revanced_ryd_failure_client_rate_limit_requested");
     }
 
     /**
@@ -185,7 +183,6 @@ public class ReturnYouTubeDislikeApi {
         } catch (Exception ex) {
             LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to register user", ex);
         }
-        showToast("revanced_ryd_failure_register_user");
         return null;
     }
 
@@ -219,8 +216,6 @@ public class ReturnYouTubeDislikeApi {
             LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm registration for user: " + userId
                     + "solution: " + solution, ex);
         }
-        showToast("revanced_ryd_failure_confirm_user");
-
         return null;
     }
 
@@ -263,7 +258,6 @@ public class ReturnYouTubeDislikeApi {
             LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to send vote for video: " + videoId
                     + " user: " + userId + " vote: " + vote, ex);
         }
-        showToast("revanced_ryd_failure_send_vote_failed");
     }
 
     private static void confirmVote(String videoId, String userId, String solution) {
@@ -299,13 +293,6 @@ public class ReturnYouTubeDislikeApi {
             LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm vote for video: " + videoId
                     + " user: " + userId + " solution: " + solution, ex);
         }
-        showToast("revanced_ryd_failure_confirm_vote_failed");
-    }
-
-    private static void showToast(String toastTextStringKey) {
-        ReVancedUtils.runOnMainThread(() -> { // must show toasts on main thread
-            Toast.makeText(ReVancedUtils.getContext(), str(toastTextStringKey), Toast.LENGTH_LONG).show();
-        });
     }
 
     private static void applyCommonPostRequestSettings(HttpURLConnection connection) throws ProtocolException {

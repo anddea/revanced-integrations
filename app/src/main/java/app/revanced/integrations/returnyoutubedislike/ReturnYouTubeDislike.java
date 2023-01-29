@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import app.revanced.integrations.returnyoutubedislike.requests.RYDVoteData;
 import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
@@ -95,7 +96,15 @@ public class ReturnYouTubeDislike {
     private static NumberFormat dislikePercentageFormatter;
 
     public static void onEnabledChange(boolean enabled) {
-        isEnabled = enabled;
+        synchronized (videoIdLockObject) {
+            isEnabled = enabled;
+            if (!enabled) {
+                // must clear old values, to protect against using stale data
+                // if the user re-enables RYD while watching a video
+                currentVideoId = null;
+                voteFetchFuture = null;
+            }
+        }
     }
 
     private static String getCurrentVideoId() {
@@ -116,6 +125,8 @@ public class ReturnYouTubeDislike {
         if (!isEnabled) return;
         try {
             Objects.requireNonNull(videoId);
+
+            if (PlayerType.getCurrent() == PlayerType.NONE) return;
 
             synchronized (videoIdLockObject) {
                 currentVideoId = videoId;
@@ -154,6 +165,7 @@ public class ReturnYouTubeDislike {
             RYDVoteData votingData;
             try {
                 Future<RYDVoteData> fetchFuture = getVoteFetchFuture();
+                if (fetchFuture == null) return;
                 votingData = fetchFuture.get(MILLISECONDS_TO_BLOCK_UI_WHILE_WAITING_FOR_FETCH_VOTES_TO_COMPLETE, TimeUnit.MILLISECONDS);
             } catch (TimeoutException e) {
                 return;
@@ -170,6 +182,8 @@ public class ReturnYouTubeDislike {
         if (!isEnabled) return;
         try {
             Objects.requireNonNull(vote);
+            if (PlayerType.getCurrent() == PlayerType.NONE) return;
+
             Context context = Objects.requireNonNull(ReVancedUtils.getContext());
             if (SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "user_signed_out", true)) {
                 return;
@@ -177,6 +191,7 @@ public class ReturnYouTubeDislike {
 
             // Must make a local copy of videoId, since it may change between now and when the vote thread runs
             String videoIdToVoteFor = getCurrentVideoId();
+            if (videoIdToVoteFor == null) return;
 
             voteSerialExecutor.execute(() -> {
                 // must wrap in try/catch to properly log exceptions
@@ -411,7 +426,6 @@ public class ReturnYouTubeDislike {
     }
 
     static String formatDislikeCount(long dislikeCount) {
-        String formatted;
         synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
             if (dislikeCountFormatter == null) {
                 // Note: Java number formatters will use the locale specific number characters.
@@ -421,15 +435,11 @@ public class ReturnYouTubeDislike {
                 Locale locale = ReVancedUtils.getContext().getResources().getConfiguration().locale;
                 dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
             }
-            formatted = dislikeCountFormatter.format(dislikeCount);
+            return dislikeCountFormatter.format(dislikeCount);
         }
-        return formatted;
-
-        // never will be reached, as the oldest supported YouTube app requires Android N or greater
     }
 
     static String formatDislikePercentage(float dislikePercentage) {
-        String formatted;
         synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
             if (dislikePercentageFormatter == null) {
                 Locale locale = ReVancedUtils.getContext().getResources().getConfiguration().locale;
@@ -440,9 +450,8 @@ public class ReturnYouTubeDislike {
             } else {
                 dislikePercentageFormatter.setMaximumFractionDigits(1); // show up to 1 digit precision
             }
-            formatted = dislikePercentageFormatter.format(dislikePercentage);
+            return dislikePercentageFormatter.format(dislikePercentage);
         }
-        return formatted;
     }
 
 

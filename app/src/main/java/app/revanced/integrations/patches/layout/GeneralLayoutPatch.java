@@ -21,13 +21,13 @@ public class GeneralLayoutPatch {
 
     public static void hideCreateButton(View view) {
         boolean enabled = SettingsEnum.HIDE_CREATE_BUTTON.getBoolean();
-        view.setVisibility(enabled ? View.GONE : View.VISIBLE);
+        if (enabled) view.setVisibility(View.GONE);
     }
 
     public static void hideShortsButton(View view) {
         if (lastPivotTab != null && lastPivotTab.name().equals("TAB_SHORTS")) {
-            boolean show = SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean();
-            view.setVisibility(show ? View.GONE : View.VISIBLE);
+            boolean enabled = SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean();
+            if (enabled) view.setVisibility(View.GONE);
         }
     }
 
