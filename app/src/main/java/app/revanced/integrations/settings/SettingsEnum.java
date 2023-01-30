@@ -137,9 +137,6 @@ public enum SettingsEnum {
     ENABLE_EXTERNAL_BROWSER("revanced_enable_external_browser", true, ReturnType.BOOLEAN, true),
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", true, ReturnType.BOOLEAN),
     ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
-    CUSTOM_VIDEO_BUFFER_MAXIMUM("revanced_custom_video_buffer_maximum", 120000, ReturnType.INTEGER),
-    CUSTOM_VIDEO_BUFFER_PLAYBACK_START("revanced_custom_video_buffer_playback_start", 2500, ReturnType.INTEGER),
-    CUSTOM_VIDEO_BUFFER_REBUFFER("revanced_custom_video_buffer_rebuffer", 5000, ReturnType.INTEGER),
 
     //Video Settings
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", -2, ReturnType.INTEGER),
