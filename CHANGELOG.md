@@ -1,3 +1,112 @@
+## [0.94.1](https://github.com/revanced/revanced-integrations/compare/v0.94.0...v0.94.1) (2023-01-29)
+
+
+### Bug Fixes
+
+* **youtube/sponsorblock:** fix saving and loading settings ([#304](https://github.com/revanced/revanced-integrations/issues/304)) ([49aedae](https://github.com/revanced/revanced-integrations/commit/49aedae3fcbb4ec1cfe6b9291c95ccac6935d1d0))
+* **youtube:** resolve duplicate preference keys ([#307](https://github.com/revanced/revanced-integrations/issues/307)) ([27d1392](https://github.com/revanced/revanced-integrations/commit/27d1392a73ba634e4d05c0c22849bb933a8f04b3))
+
+## [0.94.1-dev.1](https://github.com/revanced/revanced-integrations/compare/v0.94.0...v0.94.1-dev.1) (2023-01-28)
+
+
+### Bug Fixes
+
+* **youtube/sponsorblock:** fix saving and loading settings ([#304](https://github.com/revanced/revanced-integrations/issues/304)) ([49aedae](https://github.com/revanced/revanced-integrations/commit/49aedae3fcbb4ec1cfe6b9291c95ccac6935d1d0))
+* **youtube:** resolve duplicate preference keys ([#307](https://github.com/revanced/revanced-integrations/issues/307)) ([27d1392](https://github.com/revanced/revanced-integrations/commit/27d1392a73ba634e4d05c0c22849bb933a8f04b3))
+
+# [0.94.0](https://github.com/revanced/revanced-integrations/compare/v0.93.1...v0.94.0) (2023-01-28)
+
+
+### Bug Fixes
+
+* **youtube/return-youtube-dislike:** do not fetch voting stats when watching shorts ([#302](https://github.com/revanced/revanced-integrations/issues/302)) ([7551f01](https://github.com/revanced/revanced-integrations/commit/7551f0104c463714749acc6abedbea5cd7afb52f))
+* **youtube/return-youtube-dislike:** gracefully exit if Vanced MicroG is missing or not running ([#303](https://github.com/revanced/revanced-integrations/issues/303)) ([03764bc](https://github.com/revanced/revanced-integrations/commit/03764bcc651c6b723a999a58ed9cc9d253075905))
+* **youtube:** save new instead of default value ([#298](https://github.com/revanced/revanced-integrations/issues/298)) ([559bbf9](https://github.com/revanced/revanced-integrations/commit/559bbf9778f20ac0f5ce3af677230a1ec28a55ff))
+
+
+### Features
+
+* **youtube/general-ads:** remove hiding video shelf ([04147c1](https://github.com/revanced/revanced-integrations/commit/04147c17c98bccea27e0293a71ffccc97f5a155d))
+* **youtube/microg-support:** check if Vanced MicroG is running in the background ([#301](https://github.com/revanced/revanced-integrations/issues/301)) ([6e31b78](https://github.com/revanced/revanced-integrations/commit/6e31b7889a2488b3d61042111437a6ed4eec019c))
+* **youtube:** `open-links-externally` patch ([4cbe833](https://github.com/revanced/revanced-integrations/commit/4cbe8338b3f4ab49139168d7a3d0c9ebebf68952))
+* **youtube:** show toasts along exceptions ([#293](https://github.com/revanced/revanced-integrations/issues/293)) ([dbf1f3f](https://github.com/revanced/revanced-integrations/commit/dbf1f3f0ce0500752e5d6c4ce49d7d2b27cc6dc4))
+
+# [0.94.0-dev.6](https://github.com/revanced/revanced-integrations/compare/v0.94.0-dev.5...v0.94.0-dev.6) (2023-01-28)
+
+
+### Features
+
+* **youtube:** show toasts along exceptions ([#293](https://github.com/revanced/revanced-integrations/issues/293)) ([dbf1f3f](https://github.com/revanced/revanced-integrations/commit/dbf1f3f0ce0500752e5d6c4ce49d7d2b27cc6dc4))
+
+# [0.94.0-dev.5](https://github.com/revanced/revanced-integrations/compare/v0.94.0-dev.4...v0.94.0-dev.5) (2023-01-28)
+
+
+### Bug Fixes
+
+* **youtube/return-youtube-dislike:** do not fetch voting stats when watching shorts ([#302](https://github.com/revanced/revanced-integrations/issues/302)) ([7551f01](https://github.com/revanced/revanced-integrations/commit/7551f0104c463714749acc6abedbea5cd7afb52f))
+
+# [0.94.0-dev.4](https://github.com/revanced/revanced-integrations/compare/v0.94.0-dev.3...v0.94.0-dev.4) (2023-01-28)
+
+
+### Features
+
+* **youtube/general-ads:** remove hiding video shelf ([04147c1](https://github.com/revanced/revanced-integrations/commit/04147c17c98bccea27e0293a71ffccc97f5a155d))
+
+# [0.94.0-dev.3](https://github.com/revanced/revanced-integrations/compare/v0.94.0-dev.2...v0.94.0-dev.3) (2023-01-22)
+
+
+### Bug Fixes
+
+* **youtube/return-youtube-dislike:** gracefully exit if Vanced MicroG is missing or not running ([#303](https://github.com/revanced/revanced-integrations/issues/303)) ([03764bc](https://github.com/revanced/revanced-integrations/commit/03764bcc651c6b723a999a58ed9cc9d253075905))
+
+# [0.94.0-dev.2](https://github.com/revanced/revanced-integrations/compare/v0.94.0-dev.1...v0.94.0-dev.2) (2023-01-22)
+
+
+### Features
+
+* **youtube/microg-support:** check if Vanced MicroG is running in the background ([#301](https://github.com/revanced/revanced-integrations/issues/301)) ([6e31b78](https://github.com/revanced/revanced-integrations/commit/6e31b7889a2488b3d61042111437a6ed4eec019c))
+
+# [0.94.0-dev.1](https://github.com/revanced/revanced-integrations/compare/v0.93.2-dev.1...v0.94.0-dev.1) (2023-01-22)
+
+
+### Features
+
+* **youtube:** `open-links-externally` patch ([4cbe833](https://github.com/revanced/revanced-integrations/commit/4cbe8338b3f4ab49139168d7a3d0c9ebebf68952))
+
+## [0.93.2-dev.1](https://github.com/revanced/revanced-integrations/compare/v0.93.1...v0.93.2-dev.1) (2023-01-21)
+
+
+### Bug Fixes
+
+* **youtube:** save new instead of default value ([#298](https://github.com/revanced/revanced-integrations/issues/298)) ([559bbf9](https://github.com/revanced/revanced-integrations/commit/559bbf9778f20ac0f5ce3af677230a1ec28a55ff))
+
+## [0.93.1](https://github.com/revanced/revanced-integrations/compare/v0.93.0...v0.93.1) (2023-01-17)
+
+
+### Bug Fixes
+
+* **youtube/microg-support:** open download link if Vanced MicroG is missing ([#290](https://github.com/revanced/revanced-integrations/issues/290)) ([0af87e2](https://github.com/revanced/revanced-integrations/commit/0af87e29085fb5b55cd80ccb61f6e58f72fc5271))
+
+# [0.93.0](https://github.com/revanced/revanced-integrations/compare/v0.92.2...v0.93.0) (2023-01-14)
+
+
+### Features
+
+* `remove-screenshot-restriction` patch ([#285](https://github.com/revanced/revanced-integrations/issues/285)) ([c3eff91](https://github.com/revanced/revanced-integrations/commit/c3eff913ddb076dc86efd0398e34d04336a655ec))
+* **youtube/return-youtube-dislike:** better matching color for separators ([#281](https://github.com/revanced/revanced-integrations/issues/281)) ([2a16da1](https://github.com/revanced/revanced-integrations/commit/2a16da15d9a8d37ca65973671f0b4edff0078b47))
+* **youtube/return-youtube-dislike:** style for minimum width ([#284](https://github.com/revanced/revanced-integrations/issues/284)) ([a80fab7](https://github.com/revanced/revanced-integrations/commit/a80fab7070be203aa8aaf4c8422ea8e998843e67))
+* **youtube:** `spoof-app-version` patch ([#282](https://github.com/revanced/revanced-integrations/issues/282)) ([fd818a3](https://github.com/revanced/revanced-integrations/commit/fd818a35f5252fc0a37e12b528e020cdfac0ab53))
+
+# [0.93.0-dev.1](https://github.com/revanced/revanced-integrations/compare/v0.92.2...v0.93.0-dev.1) (2023-01-10)
+
+
+### Features
+
+* `remove-screenshot-restriction` patch ([#285](https://github.com/revanced/revanced-integrations/issues/285)) ([c3eff91](https://github.com/revanced/revanced-integrations/commit/c3eff913ddb076dc86efd0398e34d04336a655ec))
+* **youtube/return-youtube-dislike:** better matching color for separators ([#281](https://github.com/revanced/revanced-integrations/issues/281)) ([2a16da1](https://github.com/revanced/revanced-integrations/commit/2a16da15d9a8d37ca65973671f0b4edff0078b47))
+* **youtube/return-youtube-dislike:** style for minimum width ([#284](https://github.com/revanced/revanced-integrations/issues/284)) ([a80fab7](https://github.com/revanced/revanced-integrations/commit/a80fab7070be203aa8aaf4c8422ea8e998843e67))
+* **youtube:** `spoof-app-version` patch ([#282](https://github.com/revanced/revanced-integrations/issues/282)) ([fd818a3](https://github.com/revanced/revanced-integrations/commit/fd818a35f5252fc0a37e12b528e020cdfac0ab53))
+
 ## [0.92.2](https://github.com/revanced/revanced-integrations/compare/v0.92.1...v0.92.2) (2023-01-07)
 
 

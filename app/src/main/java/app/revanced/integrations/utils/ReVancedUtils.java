@@ -10,8 +10,11 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import app.revanced.integrations.utils.LogHelper;
 
 public class ReVancedUtils {
     @SuppressLint("StaticFieldLeak")
@@ -33,20 +36,29 @@ public class ReVancedUtils {
      * General purpose pool for network calls and other background tasks.
      * All tasks run at max thread priority.
      */
+
     private static final ThreadPoolExecutor backgroundThreadPool = new ThreadPoolExecutor(
-            1, // minimum 1 thread always ready to be used
+            2, // minimum 2 threads always ready to be used
             10, // For any threads over the minimum, keep them alive 10 seconds after they go idle
             SHARED_THREAD_POOL_MAXIMUM_BACKGROUND_THREADS,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(),
-            r -> {
-                Thread t = new Thread(r);
-                t.setPriority(Thread.MAX_PRIORITY); // run at max priority
-                return t;
+            new LinkedBlockingQueue<Runnable>(),
+            new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r);
+                    t.setPriority(Thread.MAX_PRIORITY); // run at max priority
+                    return t;
+                }
             });
 
+    public static void runOnBackgroundThread(Runnable task) {
+        backgroundThreadPool.execute(task);
+    }
+
     public static <T> Future<T> submitOnBackgroundThread(Callable<T> call) {
-        return backgroundThreadPool.submit(call);
+        Future<T> future = backgroundThreadPool.submit(call);
+        return future;
     }
 
     public static boolean containsAny(final String value, final String... targets) {
@@ -71,39 +83,44 @@ public class ReVancedUtils {
      * Automatically logs any exceptions the runnable throws
      */
     public static void runOnMainThread(Runnable runnable) {
-        Runnable exceptLoggingRunnable = () -> {
-            try {
-                runnable.run();
-            } catch (Exception ex) {
-                LogHelper.printException(ReVancedUtils.class, "Exception on main thread from runnable: " + runnable.toString(), ex);
-            }
-        };
-        new Handler(Looper.getMainLooper()).post(exceptLoggingRunnable);
+        runOnMainThreadDelayed(runnable, 0);
     }
 
-    public static void runDelayed(Runnable runnable, Long delay) {
-        Runnable exceptLoggingRunnable = () -> {
+    /**
+     * Automatically logs any exceptions the runnable throws
+     */
+    public static void runOnMainThreadDelayed(Runnable runnable, long delayMillis) {
+        Runnable loggingRunnable = () -> {
             try {
                 runnable.run();
             } catch (Exception ex) {
-                LogHelper.printException(ReVancedUtils.class, "Exception on main thread from runnable: " + runnable.toString(), ex);
+                LogHelper.printException(ReVancedUtils.class, runnable.getClass() + ": " + ex.getMessage(), ex);
             }
         };
-        new Handler(Looper.getMainLooper()).postDelayed(exceptLoggingRunnable, delay);
+        new Handler(Looper.getMainLooper()).postDelayed(loggingRunnable, delayMillis);
     }
 
     /**
      * @return if the calling thread is on the main thread
      */
-    public static boolean currentIsOnMainThread() {
+    public static boolean currentlyIsOnMainThread() {
         return Looper.getMainLooper().isCurrentThread();
     }
 
     /**
-     * @throws IllegalStateException if the calling thread _is_ on the main thread
+     * @throws IllegalStateException if the calling thread is _off_ the main thread
+     */
+    public static void verifyOnMainThread() throws IllegalStateException {
+        if (!currentlyIsOnMainThread()) {
+            throw new IllegalStateException("Must call _on_ the main thread");
+        }
+    }
+
+    /**
+     * @throws IllegalStateException if the calling thread is _on_ the main thread
      */
     public static void verifyOffMainThread() throws IllegalStateException {
-        if (currentIsOnMainThread()) {
+        if (currentlyIsOnMainThread()) {
             throw new IllegalStateException("Must call _off_ the main thread");
         }
     }

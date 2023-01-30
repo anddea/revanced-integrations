@@ -187,8 +187,8 @@ public enum SettingsEnum {
     SB_SHOW_TIME_WITHOUT_SEGMENTS("sb-length-without-segments", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_IS_VIP("sb-is-vip", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_LAST_VIP_CHECK("sb-last-vip-check", 0L, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.LONG),
-    SB_API_URL("sb-api-url", "https://sponsor.ajay.app/api/", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
-    SB_API_MIRROR_URL("sb-api-mirror-url", "https://sponsorblock.hankmccord.dev/api/", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
+    SB_API_URL("sb-api-host-url", "https://sponsor.ajay.app", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
+    SB_API_MIRROR_URL("sb-api-host-mirror-url", "https://sponsorblock.hankmccord.dev", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
     SB_FIRSTRUN("sb-firstrun", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN);
 
     private final String path;
@@ -305,7 +305,7 @@ public enum SettingsEnum {
     }
 
     public int getInt() {
-        return (int) value;
+        return (Integer) value;
     }
 
     public String getString() {
@@ -317,11 +317,11 @@ public enum SettingsEnum {
         else return (boolean) value;
     }
 
-    public Long getLong() {
+    public long getLong() {
         return (Long) value;
     }
 
-    public Float getFloat() {
+    public float getFloat() {
         return (Float) value;
     }
 

@@ -150,11 +150,12 @@ public class PlayerController {
             SettingsEnum.SB_SKIPPED_SEGMENTS.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS.getInt() + 1);
             SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.saveValue(newSkippedTime);
         }
-        if (SettingsEnum.SB_COUNT_SKIPS.getBoolean() &&
-                segment.category != SponsorBlockSettings.SegmentInfo.UNSUBMITTED &&
-                millis - segment.start < 2000) {
-            // Only skips from the start should count as a view
-            new Thread(() -> SBRequester.sendViewCountRequest(segment)).start();
+        if (SettingsEnum.SB_COUNT_SKIPS.getBoolean()
+                && segment.category != SponsorBlockSettings.SegmentInfo.UNSUBMITTED
+                && millis - segment.start < 2000) { // Only skips from the start should count as a view
+            ReVancedUtils.runOnBackgroundThread(() -> {
+                SBRequester.sendViewCountRequest(segment);
+            });
         }
     }
 
@@ -213,7 +214,7 @@ public class PlayerController {
     public static void addSkipSponsorView15(final View view) {
         playerActivity = new WeakReference<>((Activity) view.getContext());
 
-        ReVancedUtils.runDelayed(() -> {
+        ReVancedUtils.runOnMainThreadDelayed(() -> {
             final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) view).getChildAt(2);
             NewSegmentHelperLayout.context = viewGroup.getContext();
         }, 500L);

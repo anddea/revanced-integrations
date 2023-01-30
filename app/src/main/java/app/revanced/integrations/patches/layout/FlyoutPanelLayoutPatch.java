@@ -12,6 +12,6 @@ public class FlyoutPanelLayoutPatch {
         if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) return;
 
         listView.setVisibility(View.GONE);
-        ReVancedUtils.runDelayed(() -> listView.performItemClick(null, 4, 0), 0L);
+        ReVancedUtils.runOnMainThread(() -> listView.performItemClick(null, 4, 0));
     }
 }
