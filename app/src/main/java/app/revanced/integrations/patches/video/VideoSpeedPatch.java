@@ -1,12 +1,6 @@
 package app.revanced.integrations.patches.video;
 
-import static app.revanced.integrations.utils.StringRef.str;
-
-import android.widget.Toast;
-
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.ReVancedUtils;
-import app.revanced.integrations.utils.SharedPrefHelper;
 import app.revanced.integrations.whitelist.Whitelist;
 
 public class VideoSpeedPatch {
@@ -22,7 +16,8 @@ public class VideoSpeedPatch {
     public static float getSpeedValue() {
         if (!newVideo || userChangedSpeed) return -1.0f;
 
-        float defaultSpeed = SharedPrefHelper.getFloat(ReVancedUtils.getContext(), SharedPrefHelper.SharedPrefNames.REVANCED, "revanced_default_video_speed", -2.0f);
+        float defaultSpeed = SettingsEnum.DEFAULT_VIDEO_SPEED.getFloat();
+
         newVideo = false;
         if (Whitelist.isChannelSPEEDWhitelisted()) defaultSpeed = 1.0f;
 
