@@ -171,6 +171,10 @@ public class ExtendedLithoFilterPatch {
             if (SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON.getBoolean()) {
                 generalBlockList.add("suggested_action");
             }
+
+            if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean()) {
+                generalBlockList.add("ContainerType|ContainerType|subscribe_button");
+            }
         }
 
         return generalBlockList.stream().anyMatch(value::contains) || count > 0;
