@@ -63,7 +63,6 @@ public enum SettingsEnum {
     HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
     HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", true, ReturnType.BOOLEAN, true),
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", true, ReturnType.BOOLEAN),
-    DISABLE_SHORTS_PLAYER_PIP("revanced_disable_shorts_player_pip", false, ReturnType.BOOLEAN, true),
     HIDE_STARTUP_SHORTS_PLAYER("revanced_hide_startup_shorts_player", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_COMMENTS_BUTTON("revanced_hide_shorts_player_comments_button", false, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_REMIX_BUTTON("revanced_hide_shorts_player_remix_button", false, ReturnType.BOOLEAN),
@@ -165,6 +164,7 @@ public enum SettingsEnum {
     ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
     ENABLE_VP9_CODEC("revanced_enable_vp9_codec", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_vp9"),
+    DISABLE_SHORTS_PLAYER_PIP("revanced_disable_shorts_player_pip", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_pip"),
 
     //RYD Settings
     RYD_USER_ID("ryd_userId", null, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.STRING),

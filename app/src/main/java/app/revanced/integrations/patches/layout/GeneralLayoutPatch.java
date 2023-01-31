@@ -6,7 +6,6 @@ import android.view.View;
 
 import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ResourceType;
 
 public class GeneralLayoutPatch {
@@ -52,10 +51,6 @@ public class GeneralLayoutPatch {
         if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean()) {
             AdRemoverAPI.HideViewWithLayout1dp(view);
         }
-    }
-
-    public static boolean disableShortsPlayerPiP() {
-        return SettingsEnum.DISABLE_SHORTS_PLAYER_PIP.getBoolean() && PlayerType.getCurrent() == PlayerType.NONE;
     }
 
     public static boolean enableWideSearchbar() {
