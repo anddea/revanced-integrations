@@ -70,6 +70,7 @@ class VolumeAndBrightnessScrollerImpl(
     //endregion
 
     //region brightness
+    // TODO: needs a cleanup
     private val brightnessScroller =
         ScrollDistanceHelper(
             brightnessDistance.applyDimension(
@@ -80,17 +81,25 @@ class VolumeAndBrightnessScrollerImpl(
             screenController?.run {
                 if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.boolean) {
                     if (screenBrightness >= 0 || direction > 0) {
-                        restore()
-                        screenBrightness += direction
-                        save()
+                        if (SettingsEnum.ENABLE_SAVE_BRIGHTNESS.boolean) {
+                            restore()
+                            screenBrightness += direction
+                            save()
+                        } else {
+                            screenBrightness += direction
+                        }
                     } else {
                         restoreDefaultBrightness()
                     }
                 } else {
                     if (screenBrightness > 0 || direction > 0) {
-                        restore()
-                        screenBrightness += direction
-                        save()
+                        if (SettingsEnum.ENABLE_SAVE_BRIGHTNESS.boolean) {
+                            restore()
+                            screenBrightness += direction
+                            save()
+                        } else {
+                            screenBrightness += direction
+                        }
                     } else {
                         restoreDefaultBrightness()
                     }

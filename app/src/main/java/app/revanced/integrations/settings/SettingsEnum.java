@@ -53,10 +53,10 @@ public enum SettingsEnum {
     SWIPE_OVERLAY_BACKGROUND_ALPHA("revanced_swipe_overlay_background_alpha", 127, ReturnType.INTEGER),
     SWIPE_MAGNITUDE_THRESHOLD("revanced_swipe_magnitude_threshold", 0f, ReturnType.FLOAT),
 
-    SAVED_SWIPE_BRIGHTNESS("revanced_saved_swipe_brightness", -1.0f, ReturnType.FLOAT),
-
     //Experimental Flags
     ENABLE_SWIPE_BRIGHTNESS_HDR("revanced_enable_swipe_brightness_in_hdr", false, ReturnType.BOOLEAN, true),
+    ENABLE_SAVE_BRIGHTNESS("revanced_enable_save_brightness", false, ReturnType.BOOLEAN, true),
+    SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", 50f, ReturnType.FLOAT),
 
     // Layout settings (General)
     HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
