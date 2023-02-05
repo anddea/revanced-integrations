@@ -30,7 +30,7 @@ public final class GeneralAdsPatch extends Filter {
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTENT, "paid_content_overlay");
         var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE, "product_carousel");
         var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
-        var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "publisher_transparency_panel", "single_item_information_panel", "compact_infocard");
+        var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "publisher_transparency_panel", "single_item_information_panel");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
