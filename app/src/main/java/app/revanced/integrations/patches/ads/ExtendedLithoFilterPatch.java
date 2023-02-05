@@ -172,8 +172,10 @@ public class ExtendedLithoFilterPatch {
                 generalBlockList.add("suggested_action");
             }
 
-            if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean()) {
-                generalBlockList.add("ContainerType|ContainerType|subscribe_button");
+            if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() &&
+                    value.contains("reel_channel_bar")
+            ) {
+                generalBlockList.add("subscribe_button");
             }
         }
 
