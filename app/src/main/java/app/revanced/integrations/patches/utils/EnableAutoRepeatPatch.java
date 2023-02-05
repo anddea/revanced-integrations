@@ -4,7 +4,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 public class EnableAutoRepeatPatch {
 
-    public static boolean enableAutoRepeat() {
-        return SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean();
+    public static boolean enableAutoRepeat(boolean original) {
+        return !SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean() && original;
     }
 }
