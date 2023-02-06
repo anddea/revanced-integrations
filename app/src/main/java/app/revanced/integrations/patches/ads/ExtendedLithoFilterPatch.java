@@ -15,8 +15,6 @@ public class ExtendedLithoFilterPatch {
         "search_video_with_context"
     );
     private static final List<String> whiteList = List.of(
-        "|comment.",
-        "comment_thread",
         "library_recent_shelf"
     );
     private static final int excludedBlockingListSize = excludedBlockingList.size() - 1;
@@ -127,15 +125,16 @@ public class ExtendedLithoFilterPatch {
             generalBlockList.add("save_to_playlist_button");
         }
 
-        if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
+        if (PatchStatus.GeneralAds()) {
+
+            if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
                 value.contains("slimline_survey")) count++;
 
-        if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
+            if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
                 value.contains("horizontal_video_shelf") &&
                 !value.contains("activeStateScrollSelectionController=com")
-        ) count++;
+            ) count++;
 
-        if (PatchStatus.GeneralAds()) {
             if (SettingsEnum.ADREMOVER_VIEW_PRODUCTS.getBoolean()) {
                 generalBlockList.add("product_item");
                 generalBlockList.add("products_in_video");
