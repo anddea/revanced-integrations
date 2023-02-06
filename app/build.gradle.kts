@@ -28,6 +28,13 @@ android {
                 "proguard-rules.pro"
             )
         }
+        applicationVariants.all {
+            outputs.all {
+                this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+
+                outputFileName = "${rootProject.name}-$versionName.apk"
+            }
+        }
     }
     compileOptions {
         sourceCompatibility(JavaVersion.VERSION_11)
@@ -42,3 +49,5 @@ dependencies {
     compileOnly(project(mapOf("path" to ":dummy")))
     compileOnly("androidx.annotation:annotation:1.5.0")
 }
+
+tasks.register("publish") { dependsOn("build") }
