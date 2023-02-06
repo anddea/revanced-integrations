@@ -14,6 +14,7 @@ public enum SettingsEnum {
     ADREMOVER_GENERAL_ADS("revanced_adremover_general_ads", true, ReturnType.BOOLEAN),
     ADREMOVER_BUTTON_ADS("revanced_adremover_button_ads", true, ReturnType.BOOLEAN),
     ADREMOVER_MERCHANDISE("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
+    ADREMOVER_BROWSE_STORE_BUTTON("revanced_adremover_browse_store_button", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_POSTS("revanced_adremover_community_posts", false, ReturnType.BOOLEAN),
     ADREMOVER_COMPACT_BANNER("revanced_adremover_compact_banner", true, ReturnType.BOOLEAN),
     ADREMOVER_MOVIE_SHELF("revanced_adremover_movie_shelf", false, ReturnType.BOOLEAN),

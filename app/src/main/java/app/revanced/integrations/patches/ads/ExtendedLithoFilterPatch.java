@@ -25,6 +25,7 @@ public class ExtendedLithoFilterPatch {
         List<byte[]> actionButtonsBlockList = new ArrayList<>();
         List<byte[]> menuItemBlockList = new ArrayList<>();
         List<byte[]> genericBufferList = new ArrayList<>();
+        List<byte[]> bufferBlockList = new ArrayList<>();
         List<String> generalBlockList = new ArrayList<>();
         int count = 0;
 
@@ -126,6 +127,15 @@ public class ExtendedLithoFilterPatch {
         }
 
         if (PatchStatus.GeneralAds()) {
+            if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean()) {
+                bufferBlockList.add("header_store_button".getBytes());
+                if (value.contains("|button")) {
+                    for (byte[] b: bufferBlockList) {
+                        int bufferIndex = indexOf(buffer.array(), b);
+                        if (bufferIndex > 0) count++;
+                    }
+                }
+            }
 
             if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
                 value.contains("slimline_survey")) count++;
