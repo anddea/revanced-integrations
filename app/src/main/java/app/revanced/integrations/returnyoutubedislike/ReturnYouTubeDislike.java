@@ -8,6 +8,7 @@ import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
@@ -30,7 +31,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import app.revanced.integrations.returnyoutubedislike.requests.RYDVoteData;
 import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
@@ -126,8 +126,6 @@ public class ReturnYouTubeDislike {
         try {
             Objects.requireNonNull(videoId);
 
-            if (PlayerType.getCurrent() == PlayerType.NONE) return;
-
             synchronized (videoIdLockObject) {
                 currentVideoId = videoId;
                 // no need to wrap the call in a try/catch,
@@ -178,11 +176,34 @@ public class ReturnYouTubeDislike {
         }
     }
 
+    public static Spanned onShortsComponentCreated(Spanned textRef) {
+        if (!isEnabled) return textRef;
+
+        try {
+
+            // Have to block the current thread until fetching is done
+            // There's no known way to edit the text after creation yet
+            RYDVoteData votingData;
+            try {
+                Future<RYDVoteData> fetchFuture = getVoteFetchFuture();
+                if (fetchFuture == null) return textRef;
+                votingData = fetchFuture.get(MILLISECONDS_TO_BLOCK_UI_WHILE_WAITING_FOR_FETCH_VOTES_TO_COMPLETE, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException e) {
+                return textRef;
+            }
+            if (votingData == null) return textRef;
+
+            return updateShortsDislike(textRef, votingData);
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislike.class, "Error while trying to set shorts dislikes text", ex);
+            return textRef;
+        }
+    }
+
     public static void sendVote(Vote vote) {
         if (!isEnabled) return;
         try {
             Objects.requireNonNull(vote);
-            if (PlayerType.getCurrent() == PlayerType.NONE) return;
 
             Context context = Objects.requireNonNull(ReVancedUtils.getContext());
             if (SharedPrefHelper.getBoolean(context, SharedPrefHelper.SharedPrefNames.YOUTUBE, "user_signed_out", true)) {
@@ -348,6 +369,10 @@ public class ReturnYouTubeDislike {
         textRef.set(replacementSpannable);
     }
 
+    private static Spanned updateShortsDislike(Spanned textRef, RYDVoteData voteData) {
+        return newSpannedWithDislikes(textRef, voteData);
+    }
+
     private static boolean segmentedValuesSet = false;
     static float segmentedVerticalShiftRatio;
     static float segmentedLeftSeparatorVerticalShiftRatio;
@@ -423,6 +448,23 @@ public class ReturnYouTubeDislike {
             destination.setSpan(span, 0, destination.length(), sourceStyle.getSpanFlags(span));
         }
         return destination;
+    }
+
+    private static Spanned newSpannedWithDislikes(Spanned sourceStyling, RYDVoteData voteData) {
+
+        return newSpannedUsingStylingOfAnotherSpan(sourceStyling,
+                SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
+                        ? formatDislikePercentage(voteData.dislikePercentage)
+                        : formatDislikeCount(voteData.dislikeCount));
+    }
+
+    static Spanned newSpannedUsingStylingOfAnotherSpan(Spanned sourceStyle, String newSpanText) {
+        SpannableString destination = new SpannableString(newSpanText);
+        Object[] spans = sourceStyle.getSpans(0, sourceStyle.length(), Object.class);
+        for (Object span : spans) {
+            destination.setSpan(span, 0, destination.length(), sourceStyle.getSpanFlags(span));
+        }
+        return (Spanned) destination;
     }
 
     static String formatDislikeCount(long dislikeCount) {

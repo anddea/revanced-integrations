@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.utils;
 
 import java.util.concurrent.atomic.AtomicReference;
+import android.text.Spanned;
 
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -22,6 +23,13 @@ public class ReturnYouTubeDislikePatch {
      */
     public static void onComponentCreated(Object conversionContext, AtomicReference<Object> textRef) {
         ReturnYouTubeDislike.onComponentCreated(conversionContext, textRef);
+    }
+
+    /**
+     * Called when a Spanned text component is created
+     */
+    public static Spanned onShortsComponentCreated(Spanned dislike) {
+        return ReturnYouTubeDislike.onShortsComponentCreated(dislike);
     }
 
     /**
