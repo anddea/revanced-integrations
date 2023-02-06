@@ -149,4 +149,8 @@ public final class GeneralAdsPatch extends Filter {
         if (!SettingsEnum.ADREMOVER_ALBUM_CARDS.getBoolean()) return;
         AdRemoverAPI.HideViewWithLayout1dp(view);
     }
+
+    public static boolean hidePaidContentBanner() {
+        return SettingsEnum.ADREMOVER_PAID_CONTENT.getBoolean();
+    }
 }
