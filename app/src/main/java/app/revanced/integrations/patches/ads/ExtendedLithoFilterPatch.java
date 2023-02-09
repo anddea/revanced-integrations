@@ -186,6 +186,12 @@ public class ExtendedLithoFilterPatch {
             ) {
                 generalBlockList.add("subscribe_button");
             }
+
+            if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_JOIN_BUTTON.getBoolean() &&
+                    value.contains("reel_channel_bar")
+            ) {
+                generalBlockList.add("sponsor_button");
+            }
         }
 
         return generalBlockList.stream().anyMatch(value::contains) || count > 0;
