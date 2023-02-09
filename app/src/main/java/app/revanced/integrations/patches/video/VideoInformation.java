@@ -9,8 +9,8 @@ import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class VideoInformation {
-    public static String currentVideoId;
-    public static String channelName;
+    private static String currentVideoId;
+    private static String channelName;
     public static long lastKnownVideoTime = -1L;
     public static long lastKnownVideoLength = 1L;
 
@@ -26,9 +26,7 @@ public class VideoInformation {
             return;
         }
 
-        if (videoId.equals(currentVideoId)) return;
-        else
-            currentVideoId = videoId;
+        if (!videoId.equals(currentVideoId)) currentVideoId = videoId;
     }
 
 
