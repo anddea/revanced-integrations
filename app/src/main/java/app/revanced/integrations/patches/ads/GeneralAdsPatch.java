@@ -150,6 +150,10 @@ public final class GeneralAdsPatch extends Filter {
         AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 
+    public static boolean hideInfoPanel() {
+        return SettingsEnum.ADREMOVER_INFO_PANEL.getBoolean();
+    }
+
     public static boolean hidePaidContentBanner() {
         return SettingsEnum.ADREMOVER_PAID_CONTENT.getBoolean();
     }
