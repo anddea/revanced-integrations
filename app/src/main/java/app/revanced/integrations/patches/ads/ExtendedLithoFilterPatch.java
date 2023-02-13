@@ -145,28 +145,6 @@ public class ExtendedLithoFilterPatch {
                 !value.contains("activeStateScrollSelectionController=com")
             ) count++;
 
-            if (SettingsEnum.ADREMOVER_VIEW_PRODUCTS.getBoolean()) {
-                generalBlockList.add("product_item");
-                generalBlockList.add("products_in_video");
-            }
-
-            if (SettingsEnum.ADREMOVER_TIMED_REACTIONS.getBoolean()) {
-                generalBlockList.add("emoji_control_panel");
-                generalBlockList.add("timed_reaction_player_animation");
-                generalBlockList.add("timed_reaction_live_player_overlay");
-            }
-
-            if (SettingsEnum.ADREMOVER_CHAPTER_TEASER.getBoolean()) {
-                generalBlockList.add("expandable_metadata");
-            }
-
-            if (SettingsEnum.ADREMOVER_WEB_SEARCH_PANEL.getBoolean()) {
-                generalBlockList.add("web_link_panel");
-            }
-
-            if (SettingsEnum.ADREMOVER_GRAY_SEPARATOR.getBoolean()) {
-                generalBlockList.add("endorsement_header_footer");
-            }
         }
 
         if (PatchStatus.ShortsComponent()) {

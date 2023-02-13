@@ -19,28 +19,31 @@ public final class GeneralAdsPatch extends Filter {
     );
 
     public GeneralAdsPatch() {
-        var communityPosts = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_POSTS, "post_base_wrapper");
-        var communityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_GUIDELINES, "community_guidelines");
-        var subscribersCommunityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_SUBSCRIBERS_COMMUNITY_GUIDELINES, "sponsorships_comments_upsell");
-        var compactBanner = new BlockRule(SettingsEnum.ADREMOVER_COMPACT_BANNER, "compact_banner");
-        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY, "infeed_survey");
-        var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL, "medical_panel", "emergency_onebox");
-        var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTENT, "paid_content_overlay");
-        var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE, "product_carousel");
-        var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
-        var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "publisher_transparency_panel", "single_item_information_panel");
-        var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
+        var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS, "carousel_ad");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
-        var officialCard = new BlockRule(SettingsEnum.ADREMOVER_OFFICIAL_CARDS, "official_card");
-        var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
+        var chapterTeaser = new BlockRule(SettingsEnum.ADREMOVER_CHAPTER_TEASER, "expandable_metadata");
+        var communityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_GUIDELINES, "community_guidelines");
+        var communityPosts = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_POSTS, "post_base_wrapper");
+        var compactBanner = new BlockRule(SettingsEnum.ADREMOVER_COMPACT_BANNER, "compact_banner");
+        var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR, "cell_divider");
+        var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
+        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY, "infeed_survey");
+        var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "publisher_transparency_panel", "single_item_information_panel");
         var joinMembership = new BlockRule(SettingsEnum.ADREMOVER_CHANNELBAR_JOIN_BUTTON, "compact_sponsor_button");
-        var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR,
-                "cell_divider"
-        );
+        var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
+        var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL, "medical_panel", "emergency_onebox");
+        var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE, "product_carousel");
+        var officialCard = new BlockRule(SettingsEnum.ADREMOVER_OFFICIAL_CARDS, "official_card");
+        var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTENT, "paid_content_overlay");
+        var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
+        var subscribersCommunityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_SUBSCRIBERS_COMMUNITY_GUIDELINES, "sponsorships_comments_upsell");
+        var timedReactions = new BlockRule(SettingsEnum.ADREMOVER_TIMED_REACTIONS, "emoji_control_panel", "timed_reaction_player_animation", "timed_reaction_live_player_overlay");
+        var viewProducts = new BlockRule(SettingsEnum.ADREMOVER_VIEW_PRODUCTS, "product_item", "products_in_video");
+        var webSearchPanel = new BlockRule(SettingsEnum.ADREMOVER_WEB_SEARCH_PANEL, "web_link_panel");
+
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
                 "video_display_full_buttoned_layout",
-                "full_width_square_image_layout",
                 "_ad_with",
                 "landscape_image_wide_button_layout"
         );
@@ -69,29 +72,29 @@ public final class GeneralAdsPatch extends Filter {
         );
 
         this.pathRegister.registerAll(
-                generalAds,
                 buttonedAd,
-                communityPosts,
-                paidContent,
-                imageShelf,
-                latestPosts,
-                movieAds,
-                communityGuidelines,
-                compactBanner,
-                inFeedSurvey,
-                medicalPanel,
-                merchandise,
-                infoPanel,
                 channelGuidelines,
                 channelMemberShelf,
-                officialCard,
-                selfSponsor,
+                chapterTeaser,
+                communityGuidelines,
+                communityPosts,
+                compactBanner,
+                generalAds,
+                imageShelf,
+                inFeedSurvey,
+                infoPanel,
                 joinMembership,
-                subscribersCommunityGuidelines
-        );
-
-        var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS,
-                "carousel_ad"
+                latestPosts,
+                medicalPanel,
+                merchandise,
+                movieAds,
+                officialCard,
+                paidContent,
+                selfSponsor,
+                subscribersCommunityGuidelines,
+                timedReactions,
+                viewProducts,
+                webSearchPanel
         );
 
         this.identifierRegister.registerAll(
