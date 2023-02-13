@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
+import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class MusicSettings {
@@ -48,8 +49,8 @@ public class MusicSettings {
         return getPrefBoolean("revanced_hide_cast_button", true) ? View.GONE : original;
     }
 
-    public static int hideCompactHeader() {
-        return getPrefBoolean("revanced_hide_compact_header", true) ? 8 : 0;
+    public static void hideCompactHeader(View view) {
+        if (getPrefBoolean("revanced_hide_compact_header", true)) AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 
     public static boolean enableTabletMode(boolean original) {
