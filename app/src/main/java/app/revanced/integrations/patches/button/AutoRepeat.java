@@ -33,9 +33,7 @@ public class AutoRepeat {
             isButtonEnabled = setValue();
             ImageView imageView = findView(AutoRepeat.class, constraintLayout, "autoreplay_button");
             imageView.setSelected(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean());
-            imageView.setOnClickListener(view -> {
-                AutoRepeat.changeSelected(!view.isSelected(), false);
-            });
+            imageView.setOnClickListener(view -> AutoRepeat.changeSelected(!view.isSelected(), false));
             buttonview = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");

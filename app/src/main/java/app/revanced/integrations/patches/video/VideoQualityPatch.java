@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
@@ -25,32 +26,29 @@ public class VideoQualityPatch {
     private static int defaultQualityMobile;
 
     public static void changeDefaultQuality(int defaultQuality) {
-        if (!SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean()) {
-            userChangedQuality = false;
-            return;
-        }
+        if (SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean()) {
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
 
-        Context context = ReVancedUtils.getContext();
-
-        if (isConnectedWifi(context)) {
-            try {
-                SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI.saveValue(defaultQuality);
-            } catch (Exception ex) {
-                LogHelper.printException(VideoQualityPatch.class, "Failed to change default WI-FI quality" + ex);
-                Toast.makeText(context, str("revanced_save_video_quality_wifi_error"), Toast.LENGTH_SHORT).show();
+            if (isConnectedWifi(context)) {
+                try {
+                    SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI.saveValue(defaultQuality);
+                } catch (Exception ex) {
+                    LogHelper.printException(VideoQualityPatch.class, "Failed to change default WI-FI quality" + ex);
+                    Toast.makeText(context, str("revanced_save_video_quality_wifi_error"), Toast.LENGTH_SHORT).show();
+                }
+                Toast.makeText(context, str("revanced_save_video_quality_wifi") + "" + defaultQuality + "p", Toast.LENGTH_SHORT).show();
+            } else if (isConnectedMobile(context)) {
+                try {
+                    SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE.saveValue(defaultQuality);
+                } catch (Exception ex) {
+                    Toast.makeText(context, str("revanced_save_video_quality_mobile_error"), Toast.LENGTH_SHORT).show();
+                }
+                Toast.makeText(context, str("revanced_save_video_quality_mobile") + "" + defaultQuality + "p", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, str("revanced_save_video_quality_internet_error"), Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(context, str("revanced_save_video_quality_wifi") + "" + defaultQuality + "p", Toast.LENGTH_SHORT).show();
-        } else if (isConnectedMobile(context)) {
-            try {
-                SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE.saveValue(defaultQuality);
-            } catch (Exception ex) {
-                Toast.makeText(context, str("revanced_save_video_quality_mobile_error"), Toast.LENGTH_SHORT).show();
-            }
-            Toast.makeText(context, str("revanced_save_video_quality_mobile") + "" + defaultQuality + "p", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, str("revanced_save_video_quality_internet_error"), Toast.LENGTH_SHORT).show();
+            refreshQuality();
         }
-        refreshQuality();
         userChangedQuality = false;
     }
 
@@ -58,9 +56,8 @@ public class VideoQualityPatch {
         int defaultQuality;
         refreshQuality();
 
-        if (!(newVideo || userChangedQuality) || qInterface == null) {
-            return quality;
-        }
+        if (!(newVideo || userChangedQuality) || qInterface == null) return quality;
+
         Class<?> intType = Integer.TYPE;
         ArrayList<Integer> iStreamQualities = new ArrayList<>();
         try {
@@ -89,18 +86,15 @@ public class VideoQualityPatch {
             }
         }
         newVideo = false;
-        Context context = ReVancedUtils.getContext();
-        if (context == null) {
-            LogHelper.printException(VideoQualityPatch.class, "Context is null or settings not initialized, returning quality: " + quality);
-            return quality;
-        }
-        if (isConnectedWifi(context)) {
+        var context = Objects.requireNonNull(ReVancedUtils.getContext());
+
+        if (isConnectedWifi(context))
             defaultQuality = defaultQualityWiFi;
-        } else if (isConnectedMobile(context)) {
+        else if (isConnectedMobile(context))
             defaultQuality = defaultQualityMobile;
-        } else {
+        else
             return quality;
-        }
+
         if (defaultQuality == -2) return quality;
         for (int ignored : iStreamQualities) {
             index++;
@@ -111,9 +105,8 @@ public class VideoQualityPatch {
                 quality = streamQuality3;
             }
         }
-        if (quality == -2) {
-            return quality;
-        }
+        if (quality == -2) return quality;
+
         int qualityIndex = iStreamQualities.indexOf(quality);
         try {
             Class<?> cl = qInterface.getClass();

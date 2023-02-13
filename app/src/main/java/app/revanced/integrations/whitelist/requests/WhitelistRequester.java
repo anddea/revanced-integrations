@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.requests.Requester;
@@ -31,7 +32,7 @@ public class WhitelistRequester {
 
     public static void addChannelToWhitelist(WhitelistType whitelistType) {
         try {
-            Context context = ReVancedUtils.getContext();
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
 
             HttpURLConnection connection = getConnectionFromRoute(YT_API_KEY);
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -70,7 +71,8 @@ public class WhitelistRequester {
         } catch (Exception ex) {
             LogHelper.printException(WhitelistRequester.class, "Failed to fetch channelId", ex);
             runOnMainThread(() -> {
-                Toast.makeText(ReVancedUtils.getContext(), str("revanced_whitelisting_fetch_failed"), Toast.LENGTH_SHORT).show();
+                var context = Objects.requireNonNull(ReVancedUtils.getContext());
+                Toast.makeText(context, str("revanced_whitelisting_fetch_failed"), Toast.LENGTH_SHORT).show();
             });
         }
     }

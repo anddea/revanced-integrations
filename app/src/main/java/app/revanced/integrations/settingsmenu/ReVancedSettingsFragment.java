@@ -227,7 +227,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     public void AddWhitelistSettings() {
         try {
-            Context context = getContext();
+            Activity activity = ReVancedSettingsFragment.this.getActivity();
             boolean isIncludedSB = PatchStatus.Sponsorblock();
             boolean isIncludedSPEED = PatchStatus.VideoSpeed();
             boolean isIncludedADS = PatchStatus.VideoAds();
@@ -237,7 +237,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 if (isIncludedSB) {
                     Whitelist.setEnabled(WhitelistType.SPONSORBLOCK, SettingsEnum.SB_WHITELIST.getBoolean());
 
-                    WhitelistedChannelsPreference WhitelistSB = new WhitelistedChannelsPreference(context);
+                    WhitelistedChannelsPreference WhitelistSB = new WhitelistedChannelsPreference(activity);
                     WhitelistSB.setTitle(str("revanced_whitelisting_sponsorblock"));
                     WhitelistSB.setWhitelistType(WhitelistType.SPONSORBLOCK);
                     this.whitelistingPreferenceScreen.addPreference(WhitelistSB);
@@ -247,7 +247,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 if (isIncludedSPEED) {
                     Whitelist.setEnabled(WhitelistType.SPEED, SettingsEnum.SPEED_WHITELIST.getBoolean());
 
-                    WhitelistedChannelsPreference WhitelistSPEED = new WhitelistedChannelsPreference(context);
+                    WhitelistedChannelsPreference WhitelistSPEED = new WhitelistedChannelsPreference(activity);
                     WhitelistSPEED.setTitle(str("revanced_whitelisting_speed"));
                     WhitelistSPEED.setWhitelistType(WhitelistType.SPEED);
                     this.whitelistingPreferenceScreen.addPreference(WhitelistSPEED);
@@ -257,7 +257,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 if (isIncludedADS) {
                     Whitelist.setEnabled(WhitelistType.ADS, SettingsEnum.ADS_WHITELIST.getBoolean());
 
-                    WhitelistedChannelsPreference WhitelistADS = new WhitelistedChannelsPreference(context);
+                    WhitelistedChannelsPreference WhitelistADS = new WhitelistedChannelsPreference(activity);
                     WhitelistADS.setTitle(str("revanced_whitelisting_ads"));
                     WhitelistADS.setWhitelistType(WhitelistType.ADS);
                     this.whitelistingPreferenceScreen.addPreference(WhitelistADS);

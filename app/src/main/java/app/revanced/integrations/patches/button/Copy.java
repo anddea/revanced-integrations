@@ -14,7 +14,6 @@ import java.lang.ref.WeakReference;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.VideoHelpers;
 
 public class Copy {
@@ -34,9 +33,7 @@ public class Copy {
             isButtonEnabled = setValue();
             ImageView imageView = findView(Copy.class, constraintLayout, "copy_button");
 
-            imageView.setOnClickListener(view -> {
-                VideoHelpers.copyVideoUrlToClipboard(view.getContext());
-            });
+            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), false));
             buttonview = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");

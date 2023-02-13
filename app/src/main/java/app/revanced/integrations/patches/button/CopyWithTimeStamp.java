@@ -33,11 +33,9 @@ public class CopyWithTimeStamp {
             isButtonEnabled = setValue();
             ImageView imageView = findView(CopyWithTimeStamp.class, constraintLayout, "copy_with_timestamp_button");
 
-            imageView.setOnClickListener(view -> {
-                VideoHelpers.copyVideoUrlWithTimeStampToClipboard(view.getContext());
-            });
+            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), true));
             imageView.setOnLongClickListener(view -> {
-                VideoHelpers.copyTimeStampToClipboard(view.getContext());
+                VideoHelpers.copyTimeStamp(view.getContext());
                 return true;
             });
             buttonview = new WeakReference<>(imageView);

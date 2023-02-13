@@ -57,9 +57,7 @@ public class Whitelists {
             isButtonEnabled = setValue();
 
             ImageView imageView = findView(Whitelists.class, constraintLayout, "whitelist_button");
-            imageView.setOnClickListener(view -> {
-                Whitelists.OpenDialog(view.getContext());
-            });
+            imageView.setOnClickListener(view -> Whitelists.OpenDialog(view.getContext()));
             buttonview = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");

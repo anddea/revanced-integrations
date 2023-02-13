@@ -12,38 +12,22 @@ import app.revanced.integrations.patches.video.VideoInformation;
 
 public class VideoHelpers {
 
-    public static void copyVideoUrlToClipboard(Context context) {
-        generateVideoUrl(context, false);
-    }
-
-    public static void copyVideoUrlWithTimeStampToClipboard(Context context) {
-        generateVideoUrl(context, true);
-    }
-
-    public static void copyTimeStampToClipboard(Context context) {
-        generateTimeStamp(context);
-    }
-
-    private static void generateVideoUrl(Context context, boolean appendTimeStamp) {
+    public static void copyUrl(Context context, Boolean withTimestamp) {
         try {
-            String videoId = VideoInformation.getCurrentVideoId();
-            if (videoId == null || videoId.isEmpty()) return;
-
-            String videoUrl = String.format("https://youtu.be/%s", videoId);
-            if (appendTimeStamp) {
-                long videoTime = VideoInformation.getCurrentVideoTime();
-                videoUrl += String.format("?t=%s", (videoTime / 1000));
+            String url = String.format("https://youtu.be/%s", VideoInformation.getCurrentVideoId());
+            if (withTimestamp) {
+                long seconds = VideoInformation.getCurrentVideoTime() / 1000;
+                url += String.format("?t=%s", seconds);
             }
 
-            setClipboard(context, videoUrl);
-
+            setClipboard(context, url);
             Toast.makeText(context, str("share_copy_url_success"), Toast.LENGTH_SHORT).show();
-        } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
+        } catch (Exception e) {
+            LogHelper.printException(VideoHelpers.class, "Failed to generate video url", e);
         }
     }
 
-    private static void generateTimeStamp(Context context) {
+    public static void copyTimeStamp(Context context) {
         try {
             long videoTime = VideoInformation.getCurrentVideoTime();
 
