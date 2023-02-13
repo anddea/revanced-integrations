@@ -33,7 +33,7 @@ enum class PlayerType {
         }
 
         /**
-         * the current player type, as reported by [app.revanced.integrations.patches.utils.PlayerTypeHookPatch.YouTubePlayerOverlaysLayout_updatePlayerTypeHookEX]
+         * the current player type, as reported by [app.revanced.integrations.patches.PlayerTypeHookPatch.YouTubePlayerOverlaysLayout_updatePlayerTypeHookEX]
          */
         @JvmStatic
         var current
@@ -48,5 +48,12 @@ enum class PlayerType {
          * player type change listener
          */
         val onChange = Event<PlayerType>()
+    }
+
+    /**
+     * Weather Shorts are being played.
+     */
+    fun isNoneOrHidden(): Boolean {
+        return this == NONE || this == HIDDEN
     }
 }

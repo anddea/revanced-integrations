@@ -11,8 +11,9 @@ import java.util.Objects;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class MicroGPatch {
-    private static final String MICROG_PACKAGE_NAME = "com.mgoogle.android.gms";
-    private static final Uri VANCED_MICROG_PROVIDER = Uri.parse("content://com.mgoogle.android.gsf.gservices/prefix");
+    private static final String MICROG_VENDOR = "com.mgoogle";
+    private static final String MICROG_PACKAGE_NAME = MICROG_VENDOR + ".android.gms";
+    private static final Uri VANCED_MICROG_PROVIDER = Uri.parse("content://" + MICROG_VENDOR + ".android.gsf.gservices/prefix");
 
     public static void checkAvailability() {
         var context = Objects.requireNonNull(ReVancedUtils.getContext());
