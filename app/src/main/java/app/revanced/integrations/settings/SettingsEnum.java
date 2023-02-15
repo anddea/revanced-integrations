@@ -43,8 +43,8 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_COMMENTS_BUTTON("revanced_hide_shorts_player_comments_button", false, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_REMIX_BUTTON("revanced_hide_shorts_player_remix_button", false, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", true, ReturnType.BOOLEAN),
-    HIDE_SHORTS_PLAYER_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", true, ReturnType.BOOLEAN),
-    HIDE_SHORTS_PLAYER_PLAYER_JOIN_BUTTON("revanced_hide_shorts_player_join_button", true, ReturnType.BOOLEAN),
+    HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", true, ReturnType.BOOLEAN),
+    HIDE_SHORTS_PLAYER_JOIN_BUTTON("revanced_hide_shorts_player_join_button", true, ReturnType.BOOLEAN),
     ENABLE_WIDE_SEARCHBAR("revanced_enable_wide_searchbar", false, ReturnType.BOOLEAN, true),
     ENABLE_TABLET_MINIPLAYER("revanced_enable_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
     HIDE_AUTO_CAPTIONS("revanced_hide_auto_captions", false, ReturnType.BOOLEAN, true),
@@ -91,8 +91,8 @@ public enum SettingsEnum {
     HIDE_INFO_CARDS("revanced_hide_info_cards", true, ReturnType.BOOLEAN, true),
     HIDE_CHANNEL_WATERMARK("revanced_hide_channel_watermark", true, ReturnType.BOOLEAN),
     HIDE_SUGGESTED_ACTION("revanced_hide_suggested_actions", true, ReturnType.BOOLEAN, true),
-    HIDE_PALYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", false, ReturnType.BOOLEAN, true),
     ADREMOVER_VIEW_PRODUCTS("revanced_adremover_view_products", true, ReturnType.BOOLEAN),
+    HIDE_PLAYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", false, ReturnType.BOOLEAN, true),
 
     // Layout settings (Fullscreen)
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", true, ReturnType.BOOLEAN, true),

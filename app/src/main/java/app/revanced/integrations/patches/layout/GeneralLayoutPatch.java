@@ -48,7 +48,7 @@ public class GeneralLayoutPatch {
     }
 
     public static void hideShortsPlayerSubscriptionsButton(View view) {
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean()) {
+        if (SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean()) {
             AdRemoverAPI.HideViewWithLayout1dp(view);
         }
     }

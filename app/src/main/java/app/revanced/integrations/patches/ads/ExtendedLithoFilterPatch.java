@@ -159,13 +159,13 @@ public class ExtendedLithoFilterPatch {
                 generalBlockList.add("suggested_action");
             }
 
-            if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() &&
+            if (SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() &&
                     value.contains("reel_channel_bar")
             ) {
                 generalBlockList.add("subscribe_button");
             }
 
-            if (SettingsEnum.HIDE_SHORTS_PLAYER_PLAYER_JOIN_BUTTON.getBoolean() &&
+            if (SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON.getBoolean() &&
                     value.contains("reel_channel_bar")
             ) {
                 generalBlockList.add("sponsor_button");

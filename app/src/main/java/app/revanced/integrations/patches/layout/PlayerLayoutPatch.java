@@ -41,7 +41,7 @@ public class PlayerLayoutPatch {
     }
 
     public static boolean hidePlayerOverlayFilter() {
-        return SettingsEnum.HIDE_PALYER_OVERLAY_FILTER.getBoolean();
+        return SettingsEnum.HIDE_PLAYER_OVERLAY_FILTER.getBoolean();
     }
 
     public static int hidePlayerButton(View view, int originalValue) {
