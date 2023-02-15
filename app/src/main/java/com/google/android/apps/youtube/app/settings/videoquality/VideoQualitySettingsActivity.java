@@ -13,6 +13,7 @@ import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
 import app.revanced.integrations.settingsmenu.ReturnYouTubeDislikeSettingsFragment;
 import app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment;
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ResourceHelper;
 import app.revanced.integrations.utils.ResourceType;
 import app.revanced.integrations.utils.ThemeHelper;
 
@@ -90,7 +91,7 @@ public class VideoQualitySettingsActivity extends Activity {
         try {
             ImageButton imageButton = getImageButton(findViewById(identifier("toolbar", ResourceType.ID)));
             imageButton.setOnClickListener(view -> VideoQualitySettingsActivity.this.onBackPressed());
-            imageButton.setImageDrawable(getResources().getDrawable(ThemeHelper.getArrow()));
+            imageButton.setImageDrawable(getResources().getDrawable(ResourceHelper.getArrow()));
         } catch (Exception e) {
             LogHelper.printException(VideoQualitySettingsActivity.class, "Couldn't set Toolbar click handler", e);
         }

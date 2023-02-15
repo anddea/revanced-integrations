@@ -16,7 +16,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import app.revanced.integrations.sponsorblock.player.ChannelModel;
-import app.revanced.integrations.utils.ThemeHelper;
+import app.revanced.integrations.utils.ResourceHelper;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.whitelist.WhitelistType;
 
@@ -83,7 +83,7 @@ public class WhitelistedChannelsPreference extends DialogPreference {
                               View.OnClickListener onDeleteClickListener) {
         int horizontalPadding = 80;
 
-        Drawable deleteIcon = context.getResources().getDrawable(ThemeHelper.getTrash());
+        Drawable deleteIcon = context.getResources().getDrawable(ResourceHelper.getTrash());
 
         LinearLayout.LayoutParams entryContainerParams = new LinearLayout.LayoutParams(
                 new LinearLayout.LayoutParams(

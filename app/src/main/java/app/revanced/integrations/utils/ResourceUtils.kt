@@ -6,7 +6,7 @@ import android.content.Context
 import android.view.View
 import android.view.animation.AnimationUtils
 import app.revanced.integrations.utils.ReVancedUtils.getContext
-import app.revanced.integrations.utils.ThemeHelper.resources
+import app.revanced.integrations.utils.ResourceHelper.resources
 
 @SuppressLint("DiscouragedApi")
 object ResourceUtils {
@@ -49,6 +49,7 @@ object ResourceUtils {
 @Suppress("unused")
 enum class ResourceType(internal val value: String) {
     ANIM("anim"),
+    ARRAY("array"),
     ATTR("attr"),
     COLOR("color"),
     DIMEN("dimen"),
