@@ -30,7 +30,7 @@ public class VideoQualitySettingsActivity extends Activity {
         String dataString = getIntent().getDataString();
 
         if (dataString.equalsIgnoreCase("sponsorblock_settings")) {
-            trySetTitle(identifier("sb_settings", ResourceType.STRING));
+            trySetTitle(identifier("revanced_sponsorblock_settings_title", ResourceType.STRING));
             getFragmentManager()
             .beginTransaction()
             .replace(identifier("revanced_settings_fragments", ResourceType.ID), new SponsorBlockSettingsFragment())
@@ -42,7 +42,7 @@ public class VideoQualitySettingsActivity extends Activity {
             .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReturnYouTubeDislikeSettingsFragment())
             .commit();
         } else {
-            trySetTitle(identifier("revanced_settings", ResourceType.STRING));
+            trySetTitle(identifier("revanced_extended_settings_title", ResourceType.STRING));
             getFragmentManager()
             .beginTransaction()
             .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())

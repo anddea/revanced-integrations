@@ -2,9 +2,12 @@ package app.revanced.integrations.patches.button;
 
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
+import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
+import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.constraint.ConstraintLayout;
@@ -14,11 +17,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.StringRef;
+import app.revanced.integrations.utils.ResourceType;
 
 public class Download {
     static WeakReference<ImageView> buttonview = new WeakReference<>(null);
@@ -30,8 +34,6 @@ public class Download {
     static Animation fadeOut;
     public static boolean isButtonEnabled;
     static boolean isShowing;
-    public static final String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe x SponsorBlock", "Seal", "SnapTube"};
-    public static final String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe", "com.junkfood.seal", "com.snaptube.premium"};
 
     public static void initialize(Object obj) {
         try {
@@ -42,7 +44,8 @@ public class Download {
             imageView.setOnClickListener(view -> {
 
                 final var context = view.getContext();
-                String downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString() == null ? "ussr.razar.youtube_dl" : SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString();
+                var downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString();
+                if (downloaderPackageName == null) downloaderPackageName = "ussr.razar.youtube_dl";
 
                 boolean packageEnabled = false;
                 try {
@@ -53,7 +56,8 @@ public class Download {
 
                 // If the package is not installed, show the toast
                 if (!packageEnabled) {
-                    Toast.makeText(context, getDownloaderName(downloaderPackageName) + " " + StringRef.str("revanced_downloader_not_installed"), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"), Toast.LENGTH_LONG).show();
+
                     return;
                 }
 
@@ -91,13 +95,17 @@ public class Download {
         }
     }
 
-    public static String getDownloaderName(String DownloaderPackageName) {
+    private static String getDownloaderName(Context context, String DownloaderPackageName) {
         try {
-            for (int i = 0; i < DownloaderNameList.length ; i++) {
-                if (DownloaderPackageNameList[i].equals(DownloaderPackageName)){
-                    return DownloaderNameList[i];
-                }
-            }
+            final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
+            final var DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_downloader_package_name";
+
+            String[] labelArray = context.getResources().getStringArray(identifier(DOWNLOADER_LABEL_PREFERENCE_KEY, ResourceType.ARRAY));
+            String[] packageNameArray = context.getResources().getStringArray(identifier(DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY, ResourceType.ARRAY));
+
+            int findIndex = Arrays.binarySearch(packageNameArray, DownloaderPackageName);
+
+            return findIndex >= 0 ? labelArray[findIndex] : DownloaderPackageName;
         } catch (Exception e) {
             LogHelper.printException(Download.class, "Unable to set DownloaderName", e);
         }

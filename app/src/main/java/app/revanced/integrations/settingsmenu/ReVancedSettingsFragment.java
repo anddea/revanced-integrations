@@ -1,6 +1,8 @@
 package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
+import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
+import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
@@ -45,14 +47,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private boolean Registered = false;
 
     private PreferenceScreen overlayPreferenceScreen;
-    private PreferenceScreen extendedPreferenceScreen;
+
+    private PreferenceScreen downloaderPreferenceScreen;
+
+    private PreferenceScreen miscPreferenceScreen;
     private PreferenceScreen whitelistingPreferenceScreen;
 
-    private final CharSequence[] videoSpeedEntries = {str("quality_auto"), "0.25x", "0.5x", "0.75x", str("shorts_speed_control_normal_label"), "1.25x", "1.5x", "1.75x", "2x"};
-    private final CharSequence[] videoSpeedentryValues = {"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
-    public static final String[] DownloaderNameList = {"PowerTube", "NewPipe", "NewPipe_SponsorBlock", "Seal"};
-    public static final String[] DownloaderPackageNameList = {"ussr.razar.youtube_dl", "org.schabi.newpipe", "org.polymorphicshade.newpipe", "com.junkfood.seal"};
-    public static final String[] DownloaderURLList = {"https://github.com/razar-dev/PowerTube/releases/latest", "https://github.com/TeamNewPipe/NewPipe/releases/latest", "https://github.com/polymorphicshade/NewPipe/releases/latest", "https://github.com/JunkFood02/Seal/releases/latest"};
 
     @SuppressLint("SuspiciousIndentation")
     SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
@@ -103,30 +103,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 setting.setValue(value);
 
                 if (setting.equals(SettingsEnum.DOWNLOADER_PACKAGE_NAME)) {
-                    if (SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString() != null)
-                    editPref.setSummary(SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString());
+                    if (SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString() != null) editPref.setSummary(SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString());
                 }
 
             } else if (pref instanceof ListPreference) {
-                ListPreference listPref = (ListPreference) pref;
-                String defaultValue = sharedPreferences.getString(setting.getPath(), setting.getDefaultValue() + "");
-                CharSequence[] entries = listPref.getEntries();
-                int entryIndex = listPref.findIndexOfValue(defaultValue);
-                listPref.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
-                Object value = null;
-                switch (setting.getReturnType()) {
-                    case FLOAT:
-                        value = Float.parseFloat(defaultValue);
-                        break;
-                    case INTEGER:
-                        value = Integer.parseInt(defaultValue);
-                        break;
-                    default:
-                        LogHelper.printException(ReVancedSettingsFragment.class, "Setting has no valid return type! " + setting.getReturnType());
-                        break;
-                }
-                setting.setValue(value);
-
                 if (setting.equals(SettingsEnum.DEFAULT_VIDEO_SPEED)) {
                     setVideoSpeed();
                 } else if (setting.equals(SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI)) {
@@ -153,7 +133,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     @Override // android.preference.PreferenceFragment, android.app.Fragment
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        getPreferenceManager().setSharedPreferencesName(SharedPrefHelper.SharedPrefNames.REVANCED.getName());
+        getPreferenceManager().setSharedPreferencesName(REVANCED.getName());
         try {
             int identifier = identifier("revanced_prefs", ResourceType.XML);
             addPreferencesFromResource(identifier);
@@ -162,7 +142,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.Registered = true;
 
             this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton");
-            this.extendedPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("extended");
+            this.downloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("downloader");
+            this.miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
             this.whitelistingPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("whitelisting");
 
             AutoRepeatLinks();
@@ -172,17 +153,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             setVideoSpeed();
             setVideoQuality(true);
             setVideoQuality(false);
-
-            setPatchesInfomation();
-
-            for (int i = 0; i < DownloaderNameList.length ; i++) {
-                int index = i;
-                Preference downloader = findPreferenceOnScreen(DownloaderNameList[index]);
-                downloader.setOnPreferenceClickListener(preference -> {
-                    setDownloaderPreferenceDialog(index);
-                    return false;
-                });
-            }
+            setPatchesInformation();
+            setDownloaderPreference();
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error during onCreate()", th);
         }
@@ -287,79 +259,127 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
     private void setVideoSpeed() {
-        SettingsEnum speedSetting = SettingsEnum.DEFAULT_VIDEO_SPEED;
-        SettingsEnum customSpeedSetting = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED;
+        try {
+            final var CUSTOM_SPEED_ENTRY_ARRAY_KEY = "revanced_custom_video_speed_entry";
+            final var CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_custom_video_speed_entry_value";
+            final var DEFAULT_SPEED_ENTRY_ARRAY_KEY = "revanced_default_video_speed_entry";
+            final var DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_default_video_speed_entry_value";
 
-        ListPreference speedListPreference = (ListPreference) findPreferenceOnScreen(speedSetting.getPath());
-        var value = Float.toString(speedSetting.getFloat());
+            SettingsEnum speedSetting = SettingsEnum.DEFAULT_VIDEO_SPEED;
 
-        if (customSpeedSetting.getBoolean()) {
-            CharSequence[] entries = speedListPreference.getEntries();
+            boolean isCustomSpeedEnabled = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
+            var entriesKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_ARRAY_KEY : DEFAULT_SPEED_ENTRY_ARRAY_KEY;
+            var entriesValueKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY : DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY;
+
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
+            var value = SharedPrefHelper.getString(context, REVANCED, speedSetting.getPath(), "-2.0");
+            saveString(context, REVANCED, speedSetting.getPath(), value);
+
+            String[] speedEntries = context.getResources().getStringArray(identifier(entriesKey, ResourceType.ARRAY));
+            String[] speedEntriesValues = context.getResources().getStringArray(identifier(entriesValueKey, ResourceType.ARRAY));
+
+            ListPreference speedListPreference = (ListPreference) findPreferenceOnScreen(speedSetting.getPath());
+            speedListPreference.setEntries(speedEntries);
+            speedListPreference.setEntryValues(speedEntriesValues);
             int entryIndex = speedListPreference.findIndexOfValue(value);
-            speedListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
-        } else {
-            speedListPreference.setEntries(this.videoSpeedEntries);
-            speedListPreference.setEntryValues(this.videoSpeedentryValues);
-            speedListPreference.setSummary(this.videoSpeedEntries[speedListPreference.findIndexOfValue(value)]);
+            speedListPreference.setSummary(entryIndex < 0 ? null : speedEntries[entryIndex]);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoSpeed" + th);
         }
     }
 
     private void setVideoQuality(boolean isQualityWiFi) {
-        VideoQualityPatch.refreshQuality();
-        SettingsEnum qualitySetting = isQualityWiFi ? SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI : SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
+        try {
+            SettingsEnum qualitySetting = isQualityWiFi ? SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI : SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
 
-        ListPreference qualityListPreference = (ListPreference) findPreferenceOnScreen(qualitySetting.getPath());
-        var value = Integer.toString(qualitySetting.getInt());
-        CharSequence[] entries = qualityListPreference.getEntries();
-        int entryIndex = qualityListPreference.findIndexOfValue(value);
-        qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
+            var value = SharedPrefHelper.getString(context, REVANCED, qualitySetting.getPath(), "-2");
+            qualitySetting.saveValue(Integer.parseInt(value));
+
+            ListPreference qualityListPreference = (ListPreference) findPreferenceOnScreen(qualitySetting.getPath());
+            CharSequence[] entries = qualityListPreference.getEntries();
+            int entryIndex = qualityListPreference.findIndexOfValue(value);
+            qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
+
+            VideoQualityPatch.refreshQuality();
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
+        }
     }
 
-    private void setPatchesInfomation() {
-        Preference reportPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
-        reportPreference.setTitle(str("revanced_extended_issue_center_title"));
-        reportPreference.setSummary(str("revanced_extended_issue_center_summary"));
-        reportPreference.setOnPreferenceClickListener(pref -> {
-            var intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://github.com/inotia00/ReVanced_Extended"));
-            pref.getContext().startActivity(intent);
-            return false;
-        });
-        this.extendedPreferenceScreen.addPreference(reportPreference);
+    private void setPatchesInformation() {
+        try {
+            Preference reportPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
+            reportPreference.setTitle(str("revanced_extended_issue_center_title"));
+            reportPreference.setSummary(str("revanced_extended_issue_center_summary"));
+            reportPreference.setOnPreferenceClickListener(pref -> {
+                var intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://github.com/inotia00/ReVanced_Extended"));
+                pref.getContext().startActivity(intent);
+                return false;
+            });
+            this.miscPreferenceScreen.addPreference(reportPreference);
 
-        Preference integration = findPreferenceOnScreen("revanced-integrations");
-        integration.setSummary(BuildConfig.VERSION_NAME);
+            Preference integration = findPreferenceOnScreen("revanced-integrations");
+            integration.setSummary(BuildConfig.VERSION_NAME);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setPatchesInformation" + th);
+        }
     }
 
-    private void setDownloaderPreferenceDialog(int index) {
-        SettingsEnum downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME;
+    private void setDownloaderPreference() {
+        try {
+            final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
+            final var DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_downloader_package_name";
+            final var DOWNLOADER_WEBSITE_PREFERENCE_KEY = "revanced_downloader_website";
 
-        EditTextPreference downloaderPreference = (EditTextPreference) findPreferenceOnScreen(downloaderPackageName.getPath());
+            Activity activity = ReVancedSettingsFragment.this.getActivity();
 
-        Activity activity = ReVancedSettingsFragment.this.getActivity();
-        String downloader = DownloaderNameList[index].replaceAll("_", " x ");
-        String msg = "\n" + str("accessibility_share_target") + "\n==" + "\n" + downloader +  "\n\n" + str("revanced_downloader_package_name_title") + "\n==" + "\n" + DownloaderPackageNameList[index] + "\n             ";
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(activity);
+            String[] labelArray = activity.getResources().getStringArray(identifier(DOWNLOADER_LABEL_PREFERENCE_KEY, ResourceType.ARRAY));
+            String[] packageNameArray = activity.getResources().getStringArray(identifier(DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY, ResourceType.ARRAY));
+            String[] websiteArray = activity.getResources().getStringArray(identifier(DOWNLOADER_WEBSITE_PREFERENCE_KEY, ResourceType.ARRAY));
 
-        builder.setTitle(downloader);
-        builder.setMessage(msg);
-        builder.setNegativeButton(str("playback_control_close"), null);
-        builder.setPositiveButton(str("save_metadata_menu"),
-                (dialog, id) -> {
-                    downloaderPackageName.saveValue(DownloaderPackageNameList[index]);
-                    downloaderPreference.setSummary(DownloaderPackageNameList[index]);
-                    dialog.dismiss();
+            SettingsEnum downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME;
+
+            for (int index = 0; index < labelArray.length ; index++) {
+                int finalIndex = index;
+                Preference downloaderPreference = new Preference(activity);
+                downloaderPreference.setTitle(labelArray[index]);
+                downloaderPreference.setSummary(packageNameArray[index]);
+                downloaderPreference.setOnPreferenceClickListener(preference -> {
+                    String msg = "\n" +
+                            str("accessibility_share_target") +"\n==" + "\n" +
+                            packageNameArray[finalIndex] +  "\n\n" +
+                            str("revanced_downloader_package_name_title") + "\n==" + "\n" +
+                            packageNameArray[finalIndex] + "\n             ";
+
+                    AlertDialog.Builder builder;
+                    builder = new AlertDialog.Builder(activity);
+
+                    builder.setTitle(labelArray[finalIndex]);
+                    builder.setMessage(msg);
+                    builder.setNegativeButton(str("playback_control_close"), null);
+                    builder.setPositiveButton(str("save_metadata_menu"),
+                            (dialog, id) -> {
+                                downloaderPackageName.saveValue(packageNameArray[finalIndex]);
+                                dialog.dismiss();
+                            });
+                    builder.setNeutralButton(str("common_google_play_services_install_button"), null);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
+                        Uri uri = Uri.parse(websiteArray[finalIndex]);
+                        var intent = new Intent(Intent.ACTION_VIEW, uri);
+                        activity.startActivity(intent);
+                    });
+                    return false;
                 });
-        builder.setNeutralButton(str("common_google_play_services_install_button"), null);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
-            Uri uri = Uri.parse(DownloaderURLList[index]);
-            var intent = new Intent(Intent.ACTION_VIEW, uri);
-            activity.startActivity(intent);
-        });
+                this.downloaderPreferenceScreen.addPreference(downloaderPreference);
+            }
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setDownloaderPreference" + th);
+        }
     }
 
     public static void reboot(Activity activity) {
