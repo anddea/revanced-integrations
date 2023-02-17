@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.extended;
+package app.revanced.integrations.patches.misc;
 
 import static app.revanced.integrations.utils.ReVancedUtils.context;
 

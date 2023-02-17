@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.extended;
+package app.revanced.integrations.patches.misc;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
