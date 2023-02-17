@@ -128,7 +128,7 @@ public enum SettingsEnum {
     HIDE_LISTENING_CONTROLS_MENU("revanced_hide_menu_listening_controls", false, ReturnType.BOOLEAN),
     HIDE_AUDIO_TRACK_MENU("revanced_hide_menu_audio_track", false, ReturnType.BOOLEAN),
     HIDE_WATCH_IN_VR_MENU("revanced_hide_menu_watch_in_vr", false, ReturnType.BOOLEAN),
-    HIDE_NERDS_MENU("hide_menu_stats_for_nerds", false, ReturnType.BOOLEAN),
+    HIDE_NERDS_MENU("revanced_hide_menu_stats_for_nerds", false, ReturnType.BOOLEAN),
     HIDE_YT_MUSIC_MENU("revanced_hide_menu_listen_with_youtube_music", false, ReturnType.BOOLEAN),
 
     // Layout settings (Seekbar)
