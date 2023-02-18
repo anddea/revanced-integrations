@@ -4,7 +4,6 @@ import static android.text.Html.fromHtml;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment.FORMATTER;
-import static app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment.SAVED_TEMPLATE;
 import static app.revanced.integrations.sponsorblock.PlayerController.getCurrentVideoId;
 import static app.revanced.integrations.sponsorblock.PlayerController.getCurrentVideoLength;
 import static app.revanced.integrations.sponsorblock.PlayerController.getLastKnownVideoTime;
@@ -24,7 +23,6 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.text.Html;
 import android.text.TextUtils;
-
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,6 +33,7 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -55,17 +54,14 @@ import app.revanced.integrations.utils.SharedPrefHelper;
 @SuppressLint("DefaultLocale")
 public abstract class SponsorBlockUtils {
     public static final String DATE_FORMAT = "HH:mm:ss.SSS";
+
     @SuppressLint("SimpleDateFormat")
     public static final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
     public static boolean videoHasSegments = false;
     public static String timeWithoutSegments = "";
     private static final String LOCKED_COLOR = "#FFC83D";
-    public static final View.OnClickListener shieldButtonListener = v -> {
-        NewSegmentHelperLayout.toggle();
-    };
-    public static final View.OnClickListener voteButtonListener = v -> {
-        SponsorBlockUtils.onVotingClicked(v.getContext());
-    };
+    public static final View.OnClickListener shieldButtonListener = v -> NewSegmentHelperLayout.toggle();
+    public static final View.OnClickListener voteButtonListener = v -> SponsorBlockUtils.onVotingClicked(v.getContext());
     private static long newSponsorSegmentDialogShownMillis;
     private static long newSponsorSegmentStartMillis = -1;
     private static long newSponsorSegmentEndMillis = -1;
@@ -430,7 +426,6 @@ public abstract class SponsorBlockUtils {
         category.removePreference(loadingPreference);
 
         Context context = category.getContext();
-        String minutesStr = str("minutes");
 
         {
             EditTextPreference preference = new EditTextPreference(context);
@@ -460,9 +455,14 @@ public abstract class SponsorBlockUtils {
             String formatted = FORMATTER.format(stats.getViewCount());
 
             double saved = stats.getMinutesSaved();
-            int hoursSaved = (int) (saved / 60);
-            double minutesSaved = saved % 60;
-            String formattedSaved = String.format(SAVED_TEMPLATE, hoursSaved, minutesSaved, minutesStr);
+            long castedMillis = Math.round(saved * 60000);
+            Duration duration = Duration.ofMillis(castedMillis);
+
+            long hoursSaved = duration.toHours();
+            long minutesSaved = duration.toMinutes() % 60;
+            long secondsSaved = duration.getSeconds() % 60;
+
+            String formattedSaved = formatTimeString(hoursSaved, minutesSaved, secondsSaved);
 
             preference.setTitle(fromHtml(str("stats_saved", formatted)));
             preference.setSummary(fromHtml(str("stats_saved_sum", formattedSaved)));
@@ -479,14 +479,43 @@ public abstract class SponsorBlockUtils {
             category.addPreference(preference);
             String formatted = FORMATTER.format(SettingsEnum.SB_SKIPPED_SEGMENTS.getInt());
 
-            long hoursSaved = SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.getLong() / 3600000;
-            double minutesSaved = (SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.getLong() / 60000d) % 60;
-            String formattedSaved = String.format(SAVED_TEMPLATE, hoursSaved, minutesSaved, minutesStr);
+            long skipped_segments_time = SettingsEnum.SB_SKIPPED_SEGMENTS_TIME.getLong();
+            Duration duration = Duration.ofMillis(skipped_segments_time);
+
+            long hoursSaved = duration.toHours();
+            long minutesSaved = duration.toMinutes() % 60;
+            long secondsSaved = duration.getSeconds() % 60;
+
+            String formattedSaved = formatTimeString(hoursSaved, minutesSaved, secondsSaved);
 
             preference.setTitle(fromHtml(str("stats_self_saved", formatted)));
             preference.setSummary(fromHtml(str("stats_self_saved_sum", formattedSaved)));
             preference.setSelectable(false);
         }
+    }
+
+    public static String formatTimeString(long hoursSaved, long minutesSaved, long secondsSaved) {
+        final var TIME_FORMAT_WITH_HOUR = "%d%s %2d%s %2d%s";
+        final var TIME_FORMAT_WITHOUT_HOUR = "%2d%s %2d%s";
+        final var TIME_FORMAT_WITHOUT_MINUTE = "%2d%s";
+
+        final var hoursStr = str("hours");
+        final var minutesStr = str("minutes");
+        final var secondsStr = str("seconds");
+
+        String formattedSaved;
+
+        if (hoursSaved == 0) {
+            if (minutesSaved == 0) {
+                formattedSaved = String.format(TIME_FORMAT_WITHOUT_MINUTE, secondsSaved, secondsStr);
+            } else {
+                formattedSaved = String.format(TIME_FORMAT_WITHOUT_HOUR, minutesSaved, minutesStr, secondsSaved, secondsStr);
+            }
+        } else {
+            formattedSaved = String.format(TIME_FORMAT_WITH_HOUR, hoursSaved, hoursStr, minutesSaved, minutesStr, secondsSaved, secondsStr);
+        }
+
+        return formattedSaved;
     }
 
     public static void importSettings(String json, Context context) {

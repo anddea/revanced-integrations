@@ -37,7 +37,6 @@ import app.revanced.integrations.whitelist.WhitelistType;
 
 public class SponsorBlockSettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final DecimalFormat FORMATTER = new DecimalFormat("#,###,###");
-    public static final String SAVED_TEMPLATE = "%dh %.1f %s";
     private static final APIURLChangeListener API_URL_CHANGE_LISTENER = new APIURLChangeListener();
     private static final APIMIRRORURLChangeListener API_MIRROR_URL_CHANGE_LISTENER = new APIMIRRORURLChangeListener();
     private final ArrayList<Preference> preferencesToDisableWhenSBDisabled = new ArrayList<>();
