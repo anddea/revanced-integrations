@@ -96,6 +96,7 @@ public enum SettingsEnum {
 
     // Layout settings (Fullscreen)
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", true, ReturnType.BOOLEAN, true),
+    HIDE_FULLSCREEN_BUTTON_CONTAINER("revanced_hide_fullscreen_button_container", false, ReturnType.BOOLEAN, true),
     HIDE_ENDSCREEN_OVERLAY("revanced_hide_endscreen_overlay", false, ReturnType.BOOLEAN, true),
     HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", false, ReturnType.BOOLEAN, true),
     DISABLE_HAPTIC_FEEDBACK_SEEK("revanced_disable_haptic_feedback_seek", false, ReturnType.BOOLEAN),

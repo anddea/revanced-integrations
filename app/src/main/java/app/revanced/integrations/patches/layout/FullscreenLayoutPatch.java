@@ -7,6 +7,12 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 public class FullscreenLayoutPatch {
 
+    public static void hideFullscreenButtonContainer(View view) {
+        if (SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getBoolean() ||
+                SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean())
+            AdRemoverAPI.HideViewWithLayout1dp(view);
+    }
+
     public static boolean hideFullscreenPanel() {
         return SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean();
     }
