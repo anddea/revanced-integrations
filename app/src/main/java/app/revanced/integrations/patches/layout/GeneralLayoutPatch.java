@@ -89,6 +89,10 @@ public class GeneralLayoutPatch {
         return SettingsEnum.HIDE_SNACKBAR.getBoolean();
     }
 
+    public static boolean hideFloatingMicrophone(boolean original) {
+        return SettingsEnum.HIDE_FLOATING_MICROPHONE.getBoolean() || original;
+    }
+
     public static int enablePremiumHeader(int originalValue) {
         if (SettingsEnum.ENABLE_PREMIUM_HEADER.getBoolean()) {
             originalValue = identifier(PREMIUM_HEADER_NAME, ResourceType.ATTR);
