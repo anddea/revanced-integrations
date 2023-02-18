@@ -1,5 +1,6 @@
 package app.revanced.integrations.settingsmenu;
 
+import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
 import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -20,8 +22,19 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import app.revanced.integrations.BuildConfig;
@@ -47,6 +60,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private boolean Registered = false;
 
+    private PreferenceScreen backupPreferenceScreen;
     private PreferenceScreen downloaderPreferenceScreen;
     private PreferenceScreen miscPreferenceScreen;
     private PreferenceScreen overlayPreferenceScreen;
@@ -142,6 +156,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             sharedPreferences.registerOnSharedPreferenceChangeListener(this.listener);
             this.Registered = true;
 
+            this.backupPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("backup");
             this.downloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("downloader");
             this.miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
             this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton");
@@ -189,6 +204,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private void initializeReVancedSettings() {
         setPatchesInformation();
+        setBackupRestorePreference();
     }
 
     private void initializeOverlayButton() {
@@ -461,6 +477,157 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             }
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setDownloaderPreference" + th);
+        }
+    }
+
+    /**
+     * Add Preference to Import/Export settings submenu
+     */
+    private void setBackupRestorePreference() {
+        try {
+            Preference importPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
+            importPreference.setTitle(str("revanced_import_settings_title"));
+            importPreference.setSummary(str("revanced_import_settings_summary"));
+            importPreference.setOnPreferenceClickListener(pref -> {
+                importActivity();
+                return false;
+            });
+            this.backupPreferenceScreen.addPreference(importPreference);
+
+            Preference exportPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
+            exportPreference.setTitle(str("revanced_export_settings_title"));
+            exportPreference.setSummary(str("revanced_export_settings_summary"));
+            exportPreference.setOnPreferenceClickListener(pref -> {
+                exportActivity();
+                return false;
+            });
+            this.backupPreferenceScreen.addPreference(exportPreference);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setBackupRestorePreference" + th);
+        }
+    }
+
+    private final int READ_REQUEST_CODE = 42;
+    private final int WRITE_REQUEST_CODE = 43;
+
+    /**
+     * Invoke the SAF(Storage Access Framework) to import settings
+     */
+    private void exportActivity(){
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        var appName = ReVancedHelper.getAppName();
+        var versionName = ReVancedHelper.getVersionName();
+        var formatDate = dateFormat.format(new Date(System.currentTimeMillis()));
+        var fileName = String.format("%s_v%s_%s.json", appName, versionName, formatDate);
+
+        var intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+        intent.putExtra(Intent.EXTRA_TITLE,fileName);
+        startActivityForResult(intent, WRITE_REQUEST_CODE);
+    }
+
+    /**
+     * Invoke the SAF(Storage Access Framework) to export settings
+     */
+    private void importActivity(){
+        var intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+        startActivityForResult(intent, READ_REQUEST_CODE);
+    }
+
+    /**
+     * Activity should be done within the lifecycle of PreferenceFragment
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            exportJson(data.getData());
+        } else if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            importJson(data.getData());
+        }
+    }
+
+    /**
+     * TODO: Implemented as a more ideal serialize method
+     */
+    private void exportJson(Uri uri) {
+        Context context = this.getContext();
+        SharedPreferences prefs = context.getSharedPreferences(REVANCED.getName(), Context.MODE_PRIVATE);
+
+        try {
+            @SuppressLint("Recycle")
+            FileWriter fileWriter = new FileWriter(
+                    context.getApplicationContext()
+                            .getContentResolver()
+                            .openFileDescriptor(uri, "w")
+                            .getFileDescriptor()
+            );
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            JSONObject settingsJson = new JSONObject();
+
+            var prefsMap = prefs.getAll();
+            for (Map.Entry entry : prefsMap.entrySet()) {
+                settingsJson.put(entry.getKey().toString(), entry.getValue());
+            }
+            printWriter.write(settingsJson.toString());
+            printWriter.close();
+            fileWriter.close();
+
+            Toast.makeText(context, str("settings_export_successful"), Toast.LENGTH_SHORT).show();
+        } catch (IOException | JSONException e) {
+            Toast.makeText(context, str("settings_export_failed"), Toast.LENGTH_SHORT).show();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * TODO: Implemented as a more ideal serialize method
+     */
+    private void importJson(Uri uri) {
+        Context context = this.getContext();
+        SharedPreferences prefs = context.getSharedPreferences(REVANCED.getName(), Context.MODE_PRIVATE);
+        String json;
+
+        try {
+            @SuppressLint("Recycle")
+            FileReader fileReader = new FileReader(
+                    context.getApplicationContext()
+                            .getContentResolver()
+                            .openFileDescriptor(uri, "r")
+                            .getFileDescriptor()
+            );
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            SharedPreferences.Editor editor = SharedPrefHelper.getPreferences(context, SharedPrefHelper.SharedPrefNames.REVANCED).edit();
+
+            while ((json = bufferedReader.readLine()) != null) {
+                JSONObject settingsJson = new JSONObject(json);
+
+                var prefsMap = prefs.getAll();
+                for (Map.Entry entry : prefsMap.entrySet()) {
+                    String key = entry.getKey().toString();
+                    Object value = entry.getValue();
+
+                    if (value instanceof Boolean)
+                        editor.putBoolean(key, settingsJson.optBoolean(key, (Boolean) entry.getValue()));
+                    else
+                        editor.putString(key, settingsJson.optString(key, (String) entry.getValue()));
+                }
+            }
+            editor.apply();
+            bufferedReader.close();
+            fileReader.close();
+
+            Toast.makeText(context, str("settings_import_successful"), Toast.LENGTH_SHORT).show();
+            runOnMainThreadDelayed(() -> reboot(ReVancedSettingsFragment.this.getActivity()), 1000L);
+        } catch (IOException | JSONException e) {
+            Toast.makeText(context, str("settings_import_failed"), Toast.LENGTH_SHORT).show();
+            throw new RuntimeException(e);
         }
     }
 
