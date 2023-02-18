@@ -20,6 +20,8 @@ object ResourceHelper {
     private const val NEXT_BUTTON = "player_control_next_button"
     private const val NEXT_BUTTON_AREA = "player_control_next_button_touch_area"
 
+    private const val PLAY_PAUSE_BUTTON = "player_control_play_pause_replay_button"
+
     private const val PREVIOUS_BUTTON = "player_control_previous_button"
     private const val PREVIOUS_BUTTON_AREA = "player_control_previous_button_touch_area"
 
@@ -50,6 +52,16 @@ object ResourceHelper {
         return SettingsEnum.HIDE_NEXT_BUTTON.boolean
                 && (view.id == identifier(NEXT_BUTTON, ResourceType.ID)
                 || view.id == identifier(NEXT_BUTTON_AREA, ResourceType.ID))
+    }
+
+    @JvmStatic
+    fun hidePlayerButtonBackground(view: View) {
+        if (SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND.boolean
+            && (view.id == identifier(PREVIOUS_BUTTON, ResourceType.ID)
+                    || view.id == identifier(PLAY_PAUSE_BUTTON, ResourceType.ID)
+                    || view.id == identifier(NEXT_BUTTON, ResourceType.ID))) {
+            view.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
     }
 
     @JvmStatic
