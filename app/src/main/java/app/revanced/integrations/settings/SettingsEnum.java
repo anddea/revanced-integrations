@@ -88,7 +88,7 @@ public enum SettingsEnum {
     HIDE_LIVE_CHATS_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
     HIDE_NEXT_BUTTON("revanced_hide_next_button", false, ReturnType.BOOLEAN),
     HIDE_PREV_BUTTON("revanced_hide_prev_button", false, ReturnType.BOOLEAN),
-    HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", false, ReturnType.BOOLEAN),
+    HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", false, ReturnType.BOOLEAN, true),
     HIDE_ENDSCREEN_CARDS("revanced_hide_endscreen_cards", true, ReturnType.BOOLEAN, true),
     HIDE_INFO_CARDS("revanced_hide_info_cards", true, ReturnType.BOOLEAN, true),
     HIDE_CHANNEL_WATERMARK("revanced_hide_channel_watermark", true, ReturnType.BOOLEAN),
