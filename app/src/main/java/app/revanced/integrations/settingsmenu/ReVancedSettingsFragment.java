@@ -47,11 +47,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private boolean Registered = false;
 
-    private PreferenceScreen overlayPreferenceScreen;
-
     private PreferenceScreen downloaderPreferenceScreen;
-
     private PreferenceScreen miscPreferenceScreen;
+    private PreferenceScreen overlayPreferenceScreen;
     private PreferenceScreen whitelistingPreferenceScreen;
 
 
@@ -144,20 +142,21 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             sharedPreferences.registerOnSharedPreferenceChangeListener(this.listener);
             this.Registered = true;
 
-            this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton");
             this.downloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("downloader");
             this.miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
+            this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton");
             this.whitelistingPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("whitelisting");
 
-            AutoRepeatLinks();
-            AddWhitelistSettings();
+            initializeReVancedSettings();
+            initializeOverlayButton();
+
             LayoutOverrideLinks();
+            TabletLayoutLinks();
+            FullScreenPanelPreferenceLinks();
 
             setVideoSpeed();
             setVideoQuality(true);
             setVideoQuality(false);
-            setPatchesInformation();
-            setDownloaderPreference();
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error during onCreate()", th);
         }
@@ -188,18 +187,178 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         return pref;
     }
 
+    private void initializeReVancedSettings() {
+        setPatchesInformation();
+    }
+
+    private void initializeOverlayButton() {
+        AutoRepeatLinks();
+        AddWhitelistSettings();
+        setDownloaderPreference();
+    }
+
+    /**
+     * Set interaction for AutoRepeat Preference
+     */
     public void AutoRepeatLinks() {
         try {
             boolean isAutoRepeatEnabled = SettingsEnum.OVERLAY_BUTTON_AUTO_REPEAT.getBoolean();
-            SwitchPreference alwaysAutoRepeat = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getPath());
+            SwitchPreference autoRepeatPreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getPath()));
 
-            alwaysAutoRepeat.setEnabled(!isAutoRepeatEnabled);
+            autoRepeatPreference.setEnabled(!isAutoRepeatEnabled);
             AutoRepeat.isButtonEnabled = isAutoRepeatEnabled;
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting AutoRepeatLinks" + th);
         }
     }
 
+    /**
+     * Enable/Disable Layout Override Preference
+     */
+    public void LayoutOverrideLinks() {
+        try {
+            boolean isTablet = ReVancedHelper.isTablet();
+            SwitchPreference tabletPreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_TABLET_LAYOUT.getPath()));
+            SwitchPreference phonePreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_PHONE_LAYOUT.getPath()));
+
+            tabletPreference.setEnabled(!isTablet);
+            phonePreference.setEnabled(isTablet);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
+        }
+    }
+
+    /**
+     * Enable/Disable Preferences not working in tablet layout
+     */
+    public void TabletLayoutLinks() {
+        final String[] unavailablePreference = {
+                SettingsEnum.ADREMOVER_COMMUNITY_POSTS.getPath(),
+                SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
+                SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getPath(),
+                SettingsEnum.HIDE_FULLSCREEN_PANELS.getPath(),
+                SettingsEnum.HIDE_MIX_PLAYLISTS.getPath()
+        };
+
+        try {
+            boolean isTabletDevice = ReVancedHelper.isTablet() &&
+                    !SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
+            boolean isEnabledTabletLayout = SettingsEnum.ENABLE_TABLET_LAYOUT.getBoolean();
+
+            boolean isTablet = isTabletDevice || isEnabledTabletLayout;
+
+            for (String s : unavailablePreference) {
+                SwitchPreference switchPreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(s));
+                switchPreference.setEnabled(!isTablet);
+            }
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting TabletLayoutLinks" + th);
+        }
+    }
+
+    /**
+     * Enable/Disable Preference related to Hide Fullscreen Panel
+     */
+    public void FullScreenPanelPreferenceLinks() {
+        final String[] unavailablePreference = {
+                SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
+                SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getPath()
+        };
+
+        try {
+            boolean isEnabled = SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean();
+
+            for (String s : unavailablePreference) {
+                SwitchPreference switchPreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(s));
+                switchPreference.setEnabled(!isEnabled);
+            }
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting FullScreenPanelPreferenceLinks" + th);
+        }
+    }
+
+    /**
+     * Set interaction for default video speed ListPreference
+     */
+    private void setVideoSpeed() {
+        try {
+            final var CUSTOM_SPEED_ENTRY_ARRAY_KEY = "revanced_custom_video_speed_entry";
+            final var CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_custom_video_speed_entry_value";
+            final var DEFAULT_SPEED_ENTRY_ARRAY_KEY = "revanced_default_video_speed_entry";
+            final var DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_default_video_speed_entry_value";
+
+            SettingsEnum speedSetting = SettingsEnum.DEFAULT_VIDEO_SPEED;
+
+            boolean isCustomSpeedEnabled = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
+            var entriesKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_ARRAY_KEY : DEFAULT_SPEED_ENTRY_ARRAY_KEY;
+            var entriesValueKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY : DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY;
+
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
+            var value = SharedPrefHelper.getString(context, REVANCED, speedSetting.getPath(), "-2.0");
+            saveString(context, REVANCED, speedSetting.getPath(), value);
+
+            String[] speedEntries = context.getResources().getStringArray(identifier(entriesKey, ResourceType.ARRAY));
+            String[] speedEntriesValues = context.getResources().getStringArray(identifier(entriesValueKey, ResourceType.ARRAY));
+
+            ListPreference speedListPreference = (ListPreference) findPreferenceOnScreen(speedSetting.getPath());
+            speedListPreference.setEntries(speedEntries);
+            speedListPreference.setEntryValues(speedEntriesValues);
+            int entryIndex = speedListPreference.findIndexOfValue(value);
+            speedListPreference.setSummary(entryIndex < 0 ? null : speedEntries[entryIndex]);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoSpeed" + th);
+        }
+    }
+
+    /**
+     * Set interaction for default video quality ListPreference
+     */
+    private void setVideoQuality(boolean isQualityWiFi) {
+        try {
+            SettingsEnum qualitySetting = isQualityWiFi ? SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI : SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
+
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
+            var value = SharedPrefHelper.getString(context, REVANCED, qualitySetting.getPath(), "-2");
+            qualitySetting.saveValue(Integer.parseInt(value));
+
+            ListPreference qualityListPreference = (ListPreference) findPreferenceOnScreen(qualitySetting.getPath());
+            CharSequence[] entries = qualityListPreference.getEntries();
+            int entryIndex = qualityListPreference.findIndexOfValue(value);
+            qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
+
+            VideoQualityPatch.refreshQuality();
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
+        }
+    }
+
+    /**
+     * Add Preference for github support
+     * Also setSummary integrations version (BuildConfig.VERSION_NAME)
+     */
+    private void setPatchesInformation() {
+        try {
+            Preference reportPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
+            reportPreference.setTitle(str("revanced_extended_issue_center_title"));
+            reportPreference.setSummary(str("revanced_extended_issue_center_summary"));
+            reportPreference.setOnPreferenceClickListener(pref -> {
+                var intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://github.com/inotia00/ReVanced_Extended"));
+                pref.getContext().startActivity(intent);
+                return false;
+            });
+            this.miscPreferenceScreen.addPreference(reportPreference);
+
+            Preference integration = findPreferenceOnScreen("revanced-integrations");
+            integration.setSummary(BuildConfig.VERSION_NAME);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setPatchesInformation" + th);
+        }
+    }
+
+    /**
+     * Add Preference to Whitelist settings submenu
+     */
     public void AddWhitelistSettings() {
         try {
             Activity activity = ReVancedSettingsFragment.this.getActivity();
@@ -247,89 +406,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
 
-    public void LayoutOverrideLinks() {
-        try {
-            SwitchPreference tabletLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_TABLET_LAYOUT.getPath());
-            SwitchPreference phoneLayoutSwitch = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.ENABLE_PHONE_LAYOUT.getPath());
-
-            if (ReVancedHelper.isTablet()) {
-                tabletLayoutSwitch.setEnabled(false);
-                return;
-            }
-            phoneLayoutSwitch.setEnabled(false);
-        } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
-        }
-    }
-    private void setVideoSpeed() {
-        try {
-            final var CUSTOM_SPEED_ENTRY_ARRAY_KEY = "revanced_custom_video_speed_entry";
-            final var CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_custom_video_speed_entry_value";
-            final var DEFAULT_SPEED_ENTRY_ARRAY_KEY = "revanced_default_video_speed_entry";
-            final var DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_default_video_speed_entry_value";
-
-            SettingsEnum speedSetting = SettingsEnum.DEFAULT_VIDEO_SPEED;
-
-            boolean isCustomSpeedEnabled = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
-            var entriesKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_ARRAY_KEY : DEFAULT_SPEED_ENTRY_ARRAY_KEY;
-            var entriesValueKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY : DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY;
-
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            var value = SharedPrefHelper.getString(context, REVANCED, speedSetting.getPath(), "-2.0");
-            saveString(context, REVANCED, speedSetting.getPath(), value);
-
-            String[] speedEntries = context.getResources().getStringArray(identifier(entriesKey, ResourceType.ARRAY));
-            String[] speedEntriesValues = context.getResources().getStringArray(identifier(entriesValueKey, ResourceType.ARRAY));
-
-            ListPreference speedListPreference = (ListPreference) findPreferenceOnScreen(speedSetting.getPath());
-            speedListPreference.setEntries(speedEntries);
-            speedListPreference.setEntryValues(speedEntriesValues);
-            int entryIndex = speedListPreference.findIndexOfValue(value);
-            speedListPreference.setSummary(entryIndex < 0 ? null : speedEntries[entryIndex]);
-        } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoSpeed" + th);
-        }
-    }
-
-    private void setVideoQuality(boolean isQualityWiFi) {
-        try {
-            SettingsEnum qualitySetting = isQualityWiFi ? SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI : SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
-
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            var value = SharedPrefHelper.getString(context, REVANCED, qualitySetting.getPath(), "-2");
-            qualitySetting.saveValue(Integer.parseInt(value));
-
-            ListPreference qualityListPreference = (ListPreference) findPreferenceOnScreen(qualitySetting.getPath());
-            CharSequence[] entries = qualityListPreference.getEntries();
-            int entryIndex = qualityListPreference.findIndexOfValue(value);
-            qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
-
-            VideoQualityPatch.refreshQuality();
-        } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
-        }
-    }
-
-    private void setPatchesInformation() {
-        try {
-            Preference reportPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
-            reportPreference.setTitle(str("revanced_extended_issue_center_title"));
-            reportPreference.setSummary(str("revanced_extended_issue_center_summary"));
-            reportPreference.setOnPreferenceClickListener(pref -> {
-                var intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://github.com/inotia00/ReVanced_Extended"));
-                pref.getContext().startActivity(intent);
-                return false;
-            });
-            this.miscPreferenceScreen.addPreference(reportPreference);
-
-            Preference integration = findPreferenceOnScreen("revanced-integrations");
-            integration.setSummary(BuildConfig.VERSION_NAME);
-        } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setPatchesInformation" + th);
-        }
-    }
-
+    /**
+     * Add Preference to Downloader settings submenu
+     */
     private void setDownloaderPreference() {
         try {
             final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
