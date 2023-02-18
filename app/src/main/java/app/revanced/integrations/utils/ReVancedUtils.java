@@ -10,11 +10,8 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import app.revanced.integrations.utils.LogHelper;
 
 public class ReVancedUtils {
     @SuppressLint("StaticFieldLeak")
@@ -42,14 +39,11 @@ public class ReVancedUtils {
             10, // For any threads over the minimum, keep them alive 10 seconds after they go idle
             SHARED_THREAD_POOL_MAXIMUM_BACKGROUND_THREADS,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>(),
-            new ThreadFactory() {
-                @Override
-                public Thread newThread(Runnable r) {
-                    Thread t = new Thread(r);
-                    t.setPriority(Thread.MAX_PRIORITY); // run at max priority
-                    return t;
-                }
+            new LinkedBlockingQueue<>(),
+            r -> {
+                Thread t = new Thread(r);
+                t.setPriority(Thread.MAX_PRIORITY); // run at max priority
+                return t;
             });
 
     public static void runOnBackgroundThread(Runnable task) {
@@ -57,8 +51,7 @@ public class ReVancedUtils {
     }
 
     public static <T> Future<T> submitOnBackgroundThread(Callable<T> call) {
-        Future<T> future = backgroundThreadPool.submit(call);
-        return future;
+        return backgroundThreadPool.submit(call);
     }
 
     public static boolean containsAny(final String value, final String... targets) {
