@@ -302,8 +302,6 @@ public enum SettingsEnum {
         if (context != null) {
             if (returnType == ReturnType.BOOLEAN) {
                 SharedPrefHelper.saveBoolean(context, sharedPref, path, (boolean) newValue);
-            } else if (returnType == ReturnType.FLOAT) {
-                SharedPrefHelper.saveFloat(context, sharedPref, path, (Float) newValue);
             } else {
                 SharedPrefHelper.saveString(context, sharedPref, path, newValue + "");
             }
