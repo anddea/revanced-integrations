@@ -511,7 +511,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private final int WRITE_REQUEST_CODE = 43;
 
     /**
-     * Invoke the SAF(Storage Access Framework) to import settings
+     * Invoke the SAF(Storage Access Framework) to export settings
      */
     private void exportActivity(){
         @SuppressLint("SimpleDateFormat")
@@ -530,7 +530,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     /**
-     * Invoke the SAF(Storage Access Framework) to export settings
+     * Invoke the SAF(Storage Access Framework) to import settings
      */
     private void importActivity(){
         var intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
