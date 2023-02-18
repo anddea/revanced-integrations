@@ -29,6 +29,7 @@ import app.revanced.integrations.patches.button.AutoRepeat;
 import app.revanced.integrations.patches.button.Copy;
 import app.revanced.integrations.patches.button.CopyWithTimeStamp;
 import app.revanced.integrations.patches.button.Download;
+import app.revanced.integrations.patches.button.Speed;
 import app.revanced.integrations.patches.button.Whitelists;
 import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.patches.video.VideoQualityPatch;
@@ -64,7 +65,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SwitchPreference switchPref = (SwitchPreference) pref;
                 setting.setValue(switchPref.isChecked());
 
-                if (setting.equals(SettingsEnum.OVERLAY_BUTTON_WHITELIST)) {
+                if (setting.equals(SettingsEnum.OVERLAY_BUTTON_SPEED)) {
+                    Speed.refreshVisibility();
+                } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_WHITELIST)) {
                     Whitelists.refreshVisibility();
                 } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_COPY)) {
                     Copy.refreshVisibility();

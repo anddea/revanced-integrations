@@ -1,14 +1,26 @@
 package app.revanced.integrations.utils;
 
+import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
+import static app.revanced.integrations.patches.video.VideoSpeedPatch.userChangedSpeed;
+import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 import app.revanced.integrations.patches.video.VideoInformation;
+import app.revanced.integrations.settings.SettingsEnum;
 
 public class VideoHelpers {
 
@@ -45,6 +57,43 @@ public class VideoHelpers {
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
         }
+    }
+
+    public static void videoSpeedDialogListener(Context context) {
+        final var CUSTOM_SPEED_ENTRY_ARRAY_KEY = "revanced_custom_video_speed_entry";
+        final var CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_custom_video_speed_entry_value";
+        final var DEFAULT_SPEED_ENTRY_ARRAY_KEY = "revanced_default_video_speed_entry";
+        final var DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_default_video_speed_entry_value";
+
+        boolean isCustomSpeedEnabled = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
+        String entriesKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_ARRAY_KEY : DEFAULT_SPEED_ENTRY_ARRAY_KEY;
+        String entriesValueKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY : DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY;
+
+        String[] speedEntries = getListArray(context, entriesKey);
+        String[] speedEntriesValues = getListArray(context, entriesValueKey);
+
+        AlertDialog speedDialog = new AlertDialog.Builder(context)
+                .setTitle(str("revanced_whitelisting_speed_button"))
+                .setItems(speedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(speedEntriesValues[index] + "f")))
+                .show();
+
+        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        WindowManager.LayoutParams params = speedDialog.getWindow().getAttributes();
+        params.width = (int)(size.x * 0.5);
+        speedDialog.getWindow().setAttributes(params);
+        speedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    public static String[] getListArray(Context context, String key) {
+        return Arrays.stream(context.getResources().getStringArray(identifier(key, ResourceType.ARRAY))).skip(1).toArray(String[]::new);
+    }
+
+    private static void overrideSpeedBridge(final float speed) {
+        overrideSpeed(speed);
+        userChangedSpeed(speed);
     }
 
     private static void setClipboard(Context context, String text) {
