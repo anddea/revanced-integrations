@@ -495,9 +495,9 @@ public abstract class SponsorBlockUtils {
     }
 
     public static String formatTimeString(long hoursSaved, long minutesSaved, long secondsSaved) {
-        final var TIME_FORMAT_WITH_HOUR = "%d%s %2d%s %2d%s";
-        final var TIME_FORMAT_WITHOUT_HOUR = "%2d%s %2d%s";
-        final var TIME_FORMAT_WITHOUT_MINUTE = "%2d%s";
+        final var TIME_FORMAT_WITH_HOUR = "%d %s %2d %s %2d %s";
+        final var TIME_FORMAT_WITHOUT_HOUR = "%2d %s %2d %s";
+        final var TIME_FORMAT_WITHOUT_MINUTE = "%2d %s";
 
         final var hoursStr = str("hours");
         final var minutesStr = str("minutes");
