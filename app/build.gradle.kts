@@ -19,13 +19,13 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
         applicationVariants.all {
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
             outputs.all {
                 this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
 
