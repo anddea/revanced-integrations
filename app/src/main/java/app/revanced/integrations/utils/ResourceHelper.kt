@@ -66,7 +66,7 @@ object ResourceHelper {
 
     @JvmStatic
     fun hidePrevButton(view: View): Boolean {
-        return SettingsEnum.HIDE_NEXT_BUTTON.boolean
+        return SettingsEnum.HIDE_PREV_BUTTON.boolean
                 && (view.id == identifier(PREVIOUS_BUTTON, ResourceType.ID)
                 || view.id == identifier(PREVIOUS_BUTTON_AREA, ResourceType.ID))
     }
