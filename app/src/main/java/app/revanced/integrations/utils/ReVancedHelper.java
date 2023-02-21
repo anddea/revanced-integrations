@@ -5,6 +5,7 @@ import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.Y
 import static app.revanced.integrations.utils.SharedPrefHelper.getString;
 import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -20,16 +21,14 @@ public class ReVancedHelper {
     } // utility class
 
     public static boolean isTablet() {
-        var context = ReVancedUtils.getContext();
-        assert context != null;
+        var context = Objects.requireNonNull(ReVancedUtils.getContext());
         return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
     }
 
     public static String getAppName() {
         String appName = "ReVanced_Extended";
         try {
-            var context = ReVancedUtils.getContext();
-            assert context != null;
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
             PackageManager packageManager = context.getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
             appName = packageInfo.applicationInfo.loadLabel(packageManager) + "";
@@ -41,28 +40,24 @@ public class ReVancedHelper {
 
     public static String getVersionName() {
         try {
-            var context = ReVancedUtils.getContext();
-            assert context != null;
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return "17.49.37";
+        return "18.04.43";
     }
 
-    public static void setBuildVersion() {
-        var context = Objects.requireNonNull(ReVancedUtils.getContext());
+    public static void setBuildVersion(Context context) {
         var savedVersion = getString(context, YOUTUBE, PREFERENCE_KEY, null);
         var currentVersion = BuildConfig.VERSION_NAME;
 
-        if (savedVersion == null) resetPreference(currentVersion);
-        else if (!savedVersion.equals(currentVersion))
-            saveString(context, YOUTUBE, PREFERENCE_KEY, currentVersion);
+        if (savedVersion == null) resetPreference(context, currentVersion);
+        else saveString(context, YOUTUBE, PREFERENCE_KEY, currentVersion);
     }
 
-    public static void resetPreference(String currentVersion) {
+    public static void resetPreference(Context context, String currentVersion) {
         try {
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
             SharedPreferences.Editor prefEdit = SharedPrefHelper.getPreferences(context, REVANCED).edit();
             prefEdit.clear();
             prefEdit.apply();

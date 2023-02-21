@@ -2,22 +2,17 @@ package app.revanced.integrations.patches.utils;
 
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.widget.Toast;
-
-import java.util.Objects;
-
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class MicroGPatch {
     private static final String MICROG_VENDOR = "com.mgoogle";
     private static final String MICROG_PACKAGE_NAME = MICROG_VENDOR + ".android.gms";
     private static final Uri VANCED_MICROG_PROVIDER = Uri.parse("content://" + MICROG_VENDOR + ".android.gsf.gservices/prefix");
 
-    public static void checkAvailability() {
-        var context = Objects.requireNonNull(ReVancedUtils.getContext());
-
+    public static void checkAvailability(Context context) {
         try {
             context.getPackageManager().getPackageInfo(MICROG_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
         } catch (PackageManager.NameNotFoundException exception) {
