@@ -2,10 +2,11 @@ package app.revanced.integrations.patches.misc;
 
 import android.net.Uri;
 
-import app.revanced.integrations.settings.SettingsEnum;
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import app.revanced.integrations.settings.SettingsEnum;
 
 public class OpenLinksDirectlyPatch {
 

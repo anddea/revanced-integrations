@@ -9,9 +9,9 @@ public class LayoutOverridePatch {
     public static SharedPrefHelper.SharedPrefNames prefName = SharedPrefHelper.SharedPrefNames.REVANCED;
 
     /*
-    * Context is overridden when trying to play a YouTube video from the Google Play Store,
-    * Which is speculated to affect LayoutOverridePatch
-    */
+     * Context is overridden when trying to play a YouTube video from the Google Play Store,
+     * Which is speculated to affect LayoutOverridePatch
+     */
     public static int getLayoutOverride(int original) {
         try {
             boolean isTabletLayoutEnabled = SharedPrefHelper.getBoolean(context, prefName, "revanced_enable_tablet_layout", false);
