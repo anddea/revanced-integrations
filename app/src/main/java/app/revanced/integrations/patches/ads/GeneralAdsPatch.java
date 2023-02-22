@@ -22,7 +22,6 @@ public final class GeneralAdsPatch extends Filter {
         var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS, "carousel_ad");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner");
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
-        var chapterTeaser = new BlockRule(SettingsEnum.ADREMOVER_CHAPTER_TEASER, "expandable_metadata");
         var communityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_GUIDELINES, "community_guidelines");
         var communityPosts = new BlockRule(SettingsEnum.ADREMOVER_COMMUNITY_POSTS, "post_base_wrapper");
         var compactBanner = new BlockRule(SettingsEnum.ADREMOVER_COMPACT_BANNER, "compact_banner");
@@ -39,7 +38,6 @@ public final class GeneralAdsPatch extends Filter {
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
         var subscribersCommunityGuidelines = new BlockRule(SettingsEnum.ADREMOVER_SUBSCRIBERS_COMMUNITY_GUIDELINES, "sponsorships_comments_upsell");
         var timedReactions = new BlockRule(SettingsEnum.ADREMOVER_TIMED_REACTIONS, "emoji_control_panel", "timed_reaction_player_animation", "timed_reaction_live_player_overlay");
-        var viewProducts = new BlockRule(SettingsEnum.ADREMOVER_VIEW_PRODUCTS, "product_item", "products_in_video");
         var webSearchPanel = new BlockRule(SettingsEnum.ADREMOVER_WEB_SEARCH_PANEL, "web_link_panel");
 
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
@@ -75,7 +73,6 @@ public final class GeneralAdsPatch extends Filter {
                 buttonedAd,
                 channelGuidelines,
                 channelMemberShelf,
-                chapterTeaser,
                 communityGuidelines,
                 communityPosts,
                 compactBanner,
@@ -93,7 +90,6 @@ public final class GeneralAdsPatch extends Filter {
                 selfSponsor,
                 subscribersCommunityGuidelines,
                 timedReactions,
-                viewProducts,
                 webSearchPanel
         );
 

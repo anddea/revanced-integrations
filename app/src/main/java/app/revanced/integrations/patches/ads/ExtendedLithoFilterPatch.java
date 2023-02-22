@@ -29,26 +29,45 @@ public class ExtendedLithoFilterPatch {
         List<String> generalBlockList = new ArrayList<>();
         int count = 0;
 
-        if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
-            actionButtonsBlockList.add("yt_outline_share".getBytes());
+        if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean()) {
+            actionButtonsBlockList.add("id.video.like.button".getBytes());
+            generalBlockList.add("segmented_like_dislike_button");
+        }
+        if (SettingsEnum.HIDE_DISLIKE_BUTTON.getBoolean()) {
+            actionButtonsBlockList.add("id.video.dislike.button".getBytes());
         }
         if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_message_bubble_overlap".getBytes());
+            actionButtonsBlockList.add("live-chat-item-section".getBytes());
+        }
+        if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
+            actionButtonsBlockList.add("yt_outline_share".getBytes());
+            actionButtonsBlockList.add("id.video.share.button".getBytes());
         }
         if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_flag".getBytes());
         }
         if (SettingsEnum.HIDE_CREATE_SHORT_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_youtube_shorts_plus".getBytes());
+            actionButtonsBlockList.add("shorts-creation-on-vod-watch".getBytes());
         }
         if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_dollar_sign_heart".getBytes());
+            actionButtonsBlockList.add("watch-supervod-button".getBytes());
+        }
+        if (SettingsEnum.HIDE_DOWNLOAD_BUTTON.getBoolean()) {
+            generalBlockList.add("download_button");
         }
         if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
             actionButtonsBlockList.add("yt_outline_scissors".getBytes());
+            actionButtonsBlockList.add("create-clip-button".getBytes());
+        }
+        if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean()) {
+            actionButtonsBlockList.add("id.video.add_to.button".getBytes());
+            generalBlockList.add("save_to_playlist_button");
         }
 
-        if (value.contains("CellType|ScrollableContainerType|ContainerType|ContainerType|video_action_button")) {
+        if (value.contains("|video_action_button")) {
             for (byte[] b: actionButtonsBlockList) {
                 int bufferIndex = indexOf(buffer.array(), b);
                 if (bufferIndex > 0 && bufferIndex < 2000) count++;
@@ -59,6 +78,11 @@ public class ExtendedLithoFilterPatch {
             genericBufferList.add("mix-watch".getBytes());
             genericBufferList.add("&list=".getBytes());
             genericBufferList.add("rellist".getBytes());
+        }
+
+        if (SettingsEnum.ADREMOVER_GENERAL_ADS.getBoolean()) {
+            genericBufferList.add("Premium".getBytes());
+            genericBufferList.add("/promos/".getBytes());
         }
 
         if (containsAnyString(value)) {
@@ -109,23 +133,6 @@ public class ExtendedLithoFilterPatch {
             }
         }
 
-        if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean()) {
-            generalBlockList.add("ContainerType|ContainerType|like_button");
-        }
-
-        if (SettingsEnum.HIDE_DISLIKE_BUTTON.getBoolean()) {
-            generalBlockList.add("ContainerType|ContainerType|dislike_button");
-            generalBlockList.add("ContainerType|ContainerType|segmented_like_dislike_button");
-        }
-
-        if (SettingsEnum.HIDE_DOWNLOAD_BUTTON.getBoolean()) {
-            generalBlockList.add("download_button");
-        }
-
-        if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean()) {
-            generalBlockList.add("save_to_playlist_button");
-        }
-
         if (PatchStatus.GeneralAds()) {
             if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean()) {
                 bufferBlockList.add("header_store_button".getBytes());
@@ -145,6 +152,13 @@ public class ExtendedLithoFilterPatch {
                 !value.contains("activeStateScrollSelectionController=com")
             ) count++;
 
+            if (SettingsEnum.ADREMOVER_VIEW_PRODUCTS.getBoolean()) {
+                generalBlockList.add("product_item");
+                generalBlockList.add("products_in_video");
+            }
+
+            if (SettingsEnum.ADREMOVER_CHAPTER_TEASER.getBoolean() &&
+                    value.contains("expandable_metadata")) count++;
         }
 
         if (PatchStatus.ShortsComponent()) {
