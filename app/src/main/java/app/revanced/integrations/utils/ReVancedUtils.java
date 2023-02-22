@@ -2,6 +2,7 @@ package app.revanced.integrations.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -31,7 +32,6 @@ public class ReVancedUtils {
      * General purpose pool for network calls and other background tasks.
      * All tasks run at max thread priority.
      */
-
     private static final ThreadPoolExecutor backgroundThreadPool = new ThreadPoolExecutor(
             2, // 2 threads always ready to go
             Integer.MAX_VALUE,
@@ -116,5 +116,19 @@ public class ReVancedUtils {
         if (currentlyIsOnMainThread()) {
             throw new IllegalStateException("Must call _off_ the main thread");
         }
+    }
+
+    /**
+     * Useful to check if user is watching offline downloaded videos.
+     *
+     * @return if connected to a network
+     */
+    @SuppressLint("MissingPermission") // permissions already included in YouTube
+    public static boolean isNetworkConnected() {
+        if (context == null) {
+            return false;
+        }
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 }

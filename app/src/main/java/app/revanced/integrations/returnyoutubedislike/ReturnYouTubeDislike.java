@@ -145,7 +145,9 @@ public class ReturnYouTubeDislike {
 
     public static void newVideoLoaded(@NonNull String videoId) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
+            if (!SettingsEnum.RYD_ENABLED.getBoolean() ||
+                    !ReVancedUtils.isNetworkConnected())
+                return;
             Objects.requireNonNull(videoId);
 
             if (PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL) {
@@ -184,7 +186,8 @@ public class ReturnYouTubeDislike {
 
             String conversionContextString = conversionContext.toString();
             final boolean isSegmentedButton;
-            if (conversionContextString.contains("|segmented_like_dislike_button.eml|")) {
+            if (conversionContextString.contains("|segmented_like_dislike_button.eml|") &&
+                    conversionContextString.contains("|TextType|")) {
                 isSegmentedButton = true;
             } else if (conversionContextString.contains("|dislike_button.eml|")) {
                 isSegmentedButton = false;
