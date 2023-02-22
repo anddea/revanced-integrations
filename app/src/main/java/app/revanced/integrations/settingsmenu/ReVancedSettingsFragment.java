@@ -66,7 +66,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private PreferenceScreen overlayPreferenceScreen;
     private PreferenceScreen whitelistingPreferenceScreen;
 
-
     @SuppressLint("SuspiciousIndentation")
     SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
         for (SettingsEnum setting : SettingsEnum.values()) {
@@ -128,6 +127,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     setVideoQuality(true);
                 } else if (setting.equals(SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE)) {
                     setVideoQuality(false);
+                } else if (setting.equals(SettingsEnum.DOUBLE_BACK_TIMEOUT)) {
+                    setDoubleBackTimeout();
+                    rebootDialog();
                 }
             }
 
@@ -172,6 +174,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             setVideoSpeed();
             setVideoQuality(true);
             setVideoQuality(false);
+            setDoubleBackTimeout();
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error during onCreate()", th);
         }
@@ -345,6 +348,32 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             VideoQualityPatch.refreshQuality();
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
+        }
+    }
+
+    /**
+     * Set interaction for double back timeout ListPreference
+     */
+    private void setDoubleBackTimeout() {
+        try {
+            CharSequence[] entryValues = {"0", "1", "2", "3"};
+            CharSequence[] Entries = new CharSequence[entryValues.length];
+
+            for (int i = 0; i < entryValues.length; i++) {
+                Entries[i] = entryValues[i] + str("seconds");
+            }
+
+            SettingsEnum doubleBackSetting = SettingsEnum.DOUBLE_BACK_TIMEOUT;
+
+            var context = Objects.requireNonNull(ReVancedUtils.getContext());
+            var value = SharedPrefHelper.getString(context, REVANCED, doubleBackSetting.getPath(), "2");
+            doubleBackSetting.saveValue(Integer.parseInt(value));
+
+            ListPreference timeoutListPreference = (ListPreference) findPreferenceOnScreen(doubleBackSetting.getPath());
+            timeoutListPreference.setEntries(Entries);
+            timeoutListPreference.setEntryValues(entryValues);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setDoubleBackTimeout" + th);
         }
     }
 

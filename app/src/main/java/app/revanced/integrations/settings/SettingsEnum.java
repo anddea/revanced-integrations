@@ -169,6 +169,7 @@ public enum SettingsEnum {
     ENABLE_EXTERNAL_BROWSER("revanced_enable_external_browser", true, ReturnType.BOOLEAN, true),
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", true, ReturnType.BOOLEAN),
     ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
+    DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", 2, ReturnType.INTEGER),
 
     //Experimental Flags
     ENABLE_OLD_LAYOUT("revanced_enable_old_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_oldlayout"),
