@@ -1,7 +1,6 @@
 package app.revanced.integrations.patches.utils;
 
 import static app.revanced.integrations.utils.ReVancedHelper.setBuildVersion;
-import static app.revanced.integrations.utils.ReVancedHelper.versionSpoof;
 
 import android.content.Context;
 
@@ -20,7 +19,6 @@ public class FirstRun {
 
     public static void initializationRVX(Context context) {
         setBuildVersion(context);
-        versionSpoof(context);
     }
 
 }
