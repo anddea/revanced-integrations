@@ -148,8 +148,7 @@ public class ReturnYouTubeDislike {
             if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
             Objects.requireNonNull(videoId);
 
-            PlayerType currentPlayerType = PlayerType.getCurrent();
-            if (currentPlayerType == PlayerType.INLINE_MINIMAL) {
+            if (PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL) {
                 setCurrentVideoId(null);
                 return;
             }

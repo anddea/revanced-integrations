@@ -1,6 +1,7 @@
 package app.revanced.integrations.sponsorblock.player.ui;
 
-import android.annotation.SuppressLint;
+import static app.revanced.integrations.utils.ResourceUtils.identifier;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -15,87 +16,64 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.NewSegmentHelperLayout;
 import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
+import app.revanced.integrations.utils.ResourceType;
 
 public class NewSegmentLayout extends FrameLayout {
-
-    public int defaultBottomMargin;
-    public int ctaBottomMargin;
-    public ImageButton rewindButton;
-    public ImageButton forwardButton;
-    public ImageButton adjustButton;
-    public ImageButton compareButton;
-    public ImageButton editButton;
-    public ImageButton publishButton;
-    private int rippleEffectId;
+    private final int rippleEffectId;
+    final int defaultBottomMargin;
+    final int ctaBottomMargin;
 
     public NewSegmentLayout(Context context) {
-        super(context);
-        this.initialize(context);
+        this(context, null);
     }
 
     public NewSegmentLayout(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-        this.initialize(context);
+        this(context, attributeSet, 0);
     }
 
     public NewSegmentLayout(Context context, AttributeSet attributeSet, int defStyleAttr) {
         super(context, attributeSet, defStyleAttr);
-        this.initialize(context);
-    }
 
-    private void initialize(Context context) {
-        LayoutInflater.from(context).inflate(getIdentifier(context, "new_segment", "layout"), this, true);
+        LayoutInflater.from(context).inflate(identifier("new_segment", ResourceType.LAYOUT, context), this, true);
         Resources resources = context.getResources();
 
         TypedValue rippleEffect = new TypedValue();
         getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, rippleEffect, true);
         rippleEffectId = rippleEffect.resourceId;
 
-        this.rewindButton = this.findViewById(getIdentifier(context, "new_segment_rewind", "id"));
-        if (this.rewindButton != null) {
-            setClickEffect(this.rewindButton);
-            this.rewindButton.setOnClickListener(v -> {
-                PlayerController.skipRelativeMilliseconds(-SettingsEnum.SB_ADJUST_NEW_SEGMENT_STEP.getInt());
-            });
+        ImageButton rewindButton = findViewById(identifier("new_segment_rewind", ResourceType.ID, context));
+        if (rewindButton != null) {
+            setClickEffect(rewindButton);
+            rewindButton.setOnClickListener(v -> PlayerController.skipRelativeMilliseconds(-SettingsEnum.SB_ADJUST_NEW_SEGMENT_STEP.getInt()));
         }
-        this.forwardButton = this.findViewById(getIdentifier(context, "new_segment_forward", "id"));
-        if (this.forwardButton != null) {
-            setClickEffect(this.forwardButton);
-            this.forwardButton.setOnClickListener(v -> {
-                PlayerController.skipRelativeMilliseconds(SettingsEnum.SB_ADJUST_NEW_SEGMENT_STEP.getInt());
-            });
+        ImageButton forwardButton = findViewById(identifier("new_segment_forward", ResourceType.ID, context));
+        if (forwardButton != null) {
+            setClickEffect(forwardButton);
+            forwardButton.setOnClickListener(v -> PlayerController.skipRelativeMilliseconds(SettingsEnum.SB_ADJUST_NEW_SEGMENT_STEP.getInt()));
         }
-        this.adjustButton = this.findViewById(getIdentifier(context, "new_segment_adjust", "id"));
-        if (this.adjustButton != null) {
-            setClickEffect(this.adjustButton);
-            this.adjustButton.setOnClickListener(v -> {
-                SponsorBlockUtils.onMarkLocationClicked(NewSegmentHelperLayout.context);
-            });
+        ImageButton adjustButton = findViewById(identifier("new_segment_adjust", ResourceType.ID, context));
+        if (adjustButton != null) {
+            setClickEffect(adjustButton);
+            adjustButton.setOnClickListener(v -> SponsorBlockUtils.onMarkLocationClicked(NewSegmentHelperLayout.context));
         }
-        this.compareButton = this.findViewById(getIdentifier(context, "new_segment_compare", "id"));
-        if (this.compareButton != null) {
-            setClickEffect(this.compareButton);
-            this.compareButton.setOnClickListener(v -> {
-                SponsorBlockUtils.onPreviewClicked(NewSegmentHelperLayout.context);
-            });
+        ImageButton compareButton = findViewById(identifier("new_segment_compare", ResourceType.ID, context));
+        if (compareButton != null) {
+            setClickEffect(compareButton);
+            compareButton.setOnClickListener(v -> SponsorBlockUtils.onPreviewClicked(NewSegmentHelperLayout.context));
         }
-        this.editButton = this.findViewById(getIdentifier(context, "new_segment_edit", "id"));
-        if (this.editButton != null) {
-            setClickEffect(this.editButton);
-            this.editButton.setOnClickListener(v -> {
-                SponsorBlockUtils.onEditByHandClicked(NewSegmentHelperLayout.context);
-            });
+        ImageButton editButton = findViewById(identifier("new_segment_edit", ResourceType.ID, context));
+        if (editButton != null) {
+            setClickEffect(editButton);
+            editButton.setOnClickListener(v -> SponsorBlockUtils.onEditByHandClicked(NewSegmentHelperLayout.context));
         }
-        this.publishButton = this.findViewById(getIdentifier(context, "new_segment_publish", "id"));
-        if (this.publishButton != null) {
-            setClickEffect(this.publishButton);
-            this.publishButton.setOnClickListener(v -> {
-                SponsorBlockUtils.onPublishClicked(NewSegmentHelperLayout.context);
-            });
+        ImageButton publishButton = findViewById(identifier("new_segment_publish", ResourceType.ID, context));
+        if (publishButton != null) {
+            setClickEffect(publishButton);
+            publishButton.setOnClickListener(v -> SponsorBlockUtils.onPublishClicked(NewSegmentHelperLayout.context));
         }
 
-        this.defaultBottomMargin = resources.getDimensionPixelSize(getIdentifier(context, "brand_interaction_default_bottom_margin", "dimen"));
-        this.ctaBottomMargin = resources.getDimensionPixelSize(getIdentifier(context, "brand_interaction_cta_bottom_margin", "dimen"));
+        defaultBottomMargin = resources.getDimensionPixelSize(identifier("brand_interaction_default_bottom_margin", ResourceType.DIMEN, context));
+        ctaBottomMargin = resources.getDimensionPixelSize(identifier("brand_interaction_cta_bottom_margin", ResourceType.DIMEN, context));
     }
 
     private void setClickEffect(ImageButton btn) {
@@ -108,10 +86,5 @@ public class NewSegmentLayout extends FrameLayout {
 
         ColorStateList colorStateList = new ColorStateList(states, colors);
         rippleDrawable.setColor(colorStateList);
-    }
-
-    @SuppressLint("DiscouragedApi")
-    private int getIdentifier(Context context, String name, String defType) {
-        return context.getResources().getIdentifier(name, defType, context.getPackageName());
     }
 }

@@ -4,15 +4,19 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.PlayerController;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class VideoInformation {
-    private static String currentVideoId;
-    private static String channelName;
+    @NonNull
+    private static String currentVideoId = "";
+    @NonNull
+    private static String channelName = "";
+    public static long lastKnownVideoLength = 0L;
     public static long lastKnownVideoTime = -1L;
-    public static long lastKnownVideoLength = 1L;
 
     private static WeakReference<Object> Controller;
     private static Method seekMethod;
@@ -20,12 +24,7 @@ public class VideoInformation {
     private static final String SEEK_METHOD_NAME = "seekTo";
 
     // Call hook in the YT code when the video changes
-    public static void setCurrentVideoId(final String videoId) {
-        if (videoId == null) {
-            channelName = null;
-            return;
-        }
-
+    public static void setCurrentVideoId(@NonNull String videoId) {
         if (!videoId.equals(currentVideoId)) currentVideoId = videoId;
     }
 
@@ -40,18 +39,20 @@ public class VideoInformation {
     }
 
     public static void setCurrentVideoLength(final long length) {
+        if (lastKnownVideoLength == length) return;
+
         lastKnownVideoLength = length;
         PlayerController.lastKnownVideoLength = lastKnownVideoLength;
     }
 
-    public static void setChannelName(String name) {
+    public static void setChannelName(@NonNull String name) {
         channelName = name;
     }
 
     public static void onCreate(final Object object) {
         Controller = new WeakReference<>(object);
+        lastKnownVideoLength = 0L;
         lastKnownVideoTime = -1L;
-        lastKnownVideoLength = 1L;
         PlayerController.initialize();
 
         try {
@@ -86,10 +87,12 @@ public class VideoInformation {
         return lastKnownVideoLength;
     }
 
+    @NonNull
     public static String getCurrentVideoId() {
         return currentVideoId;
     }
 
+    @NonNull
     public static String getChannelName() {
         return channelName;
     }

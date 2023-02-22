@@ -5,11 +5,14 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.text.Bidi;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -25,41 +28,38 @@ public class ReVancedUtils {
     } // utility class
 
     /**
-     * Maximum number of background threads run concurrently
-     */
-    private static final int SHARED_THREAD_POOL_MAXIMUM_BACKGROUND_THREADS = 20;
-
-    /**
      * General purpose pool for network calls and other background tasks.
      * All tasks run at max thread priority.
      */
 
     private static final ThreadPoolExecutor backgroundThreadPool = new ThreadPoolExecutor(
-            2, // minimum 2 threads always ready to be used
+            2, // 2 threads always ready to go
+            Integer.MAX_VALUE,
             10, // For any threads over the minimum, keep them alive 10 seconds after they go idle
-            SHARED_THREAD_POOL_MAXIMUM_BACKGROUND_THREADS,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(),
-            r -> {
+            new SynchronousQueue<>(),
+            r -> { // ThreadFactory
                 Thread t = new Thread(r);
                 t.setPriority(Thread.MAX_PRIORITY); // run at max priority
                 return t;
             });
 
-    public static void runOnBackgroundThread(Runnable task) {
+    public static void runOnBackgroundThread(@NonNull Runnable task) {
         backgroundThreadPool.execute(task);
     }
 
-    public static <T> Future<T> submitOnBackgroundThread(Callable<T> call) {
+    @NonNull
+    public static <T> Future<T> submitOnBackgroundThread(@NonNull Callable<T> call) {
         return backgroundThreadPool.submit(call);
     }
 
-    public static boolean containsAny(final String value, final String... targets) {
+    public static boolean containsAny(@NonNull String value, @NonNull String... targets) {
         for (String string : targets)
             if (!string.isEmpty() && value.contains(string)) return true;
         return false;
     }
 
+    @Nullable
     private static Boolean isRightToLeftTextLayout;
     /**
      * If the device language uses right to left text layout (hebrew, arabic, etc)
@@ -73,16 +73,16 @@ public class ReVancedUtils {
     }
 
     /**
-     * Automatically logs any exceptions the runnable throws
+     * Automatically logs any exceptions the runnable throws.
      */
-    public static void runOnMainThread(Runnable runnable) {
+    public static void runOnMainThread(@NonNull Runnable runnable) {
         runOnMainThreadDelayed(runnable, 0);
     }
 
     /**
      * Automatically logs any exceptions the runnable throws
      */
-    public static void runOnMainThreadDelayed(Runnable runnable, long delayMillis) {
+    public static void runOnMainThreadDelayed(@NonNull Runnable runnable, long delayMillis) {
         Runnable loggingRunnable = () -> {
             try {
                 runnable.run();

@@ -7,12 +7,14 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 public class MicroGPatch {
     private static final String MICROG_VENDOR = "com.mgoogle";
     private static final String MICROG_PACKAGE_NAME = MICROG_VENDOR + ".android.gms";
     private static final Uri VANCED_MICROG_PROVIDER = Uri.parse("content://" + MICROG_VENDOR + ".android.gsf.gservices/prefix");
 
-    public static void checkAvailability(Context context) {
+    public static void checkAvailability(@NonNull Context context) {
         try {
             context.getPackageManager().getPackageInfo(MICROG_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
         } catch (PackageManager.NameNotFoundException exception) {
