@@ -14,8 +14,12 @@ public class SeekbarLayoutPatch {
         return SettingsEnum.ENABLE_SEEKBAR_TAPPING.getBoolean();
     }
 
-    public static boolean hideTimeAndSeekbar() {
-        return SettingsEnum.HIDE_TIME_AND_SEEKBAR.getBoolean();
+    public static boolean hideTimeStamp() {
+        return SettingsEnum.HIDE_TIME_STAMP.getBoolean();
+    }
+
+    public static boolean hideSeekbar() {
+        return SettingsEnum.HIDE_SEEKBAR.getBoolean();
     }
 
     public static int enableCustomSeekbarColor(int colorValue) {
