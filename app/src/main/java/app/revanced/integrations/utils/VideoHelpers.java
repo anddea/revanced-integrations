@@ -24,6 +24,8 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 public class VideoHelpers {
 
+    public static float currentSpeed;
+
     public static void copyUrl(Context context, Boolean withTimestamp) {
         try {
             String url = String.format("https://youtu.be/%s", VideoInformation.getCurrentVideoId());
@@ -72,8 +74,19 @@ public class VideoHelpers {
         String[] speedEntries = getListArray(context, entriesKey);
         String[] speedEntriesValues = getListArray(context, entriesValueKey);
 
+        String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F" : ""; // u200f = right to left character
+        String middleSeparatorString = "\u2009 " + "•" + " \u2009";  // u2009 = "half space" character
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append(leftSeparatorString)
+                .append(str("revanced_whitelisting_speed_button"))
+                .append(middleSeparatorString)
+                .append(currentSpeed)
+                .append("x");
+
         AlertDialog speedDialog = new AlertDialog.Builder(context)
-                .setTitle(str("revanced_whitelisting_speed_button"))
+                .setTitle(stringBuilder)
                 .setItems(speedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(speedEntriesValues[index] + "f")))
                 .show();
 
