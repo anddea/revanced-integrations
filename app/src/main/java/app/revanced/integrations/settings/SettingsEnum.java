@@ -34,6 +34,7 @@ public enum SettingsEnum {
     ENABLE_SAVE_BRIGHTNESS("revanced_enable_save_brightness", false, ReturnType.BOOLEAN, true),
     SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", 50f, ReturnType.FLOAT),
 
+
     // Layout settings (General)
     HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
     HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
@@ -86,6 +87,7 @@ public enum SettingsEnum {
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", true, ReturnType.BOOLEAN, true),
     HIDE_CAPTIONS_BUTTON("revanced_hide_captions_button", false, ReturnType.BOOLEAN),
     HIDE_LIVE_CHATS_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
+    HIDE_COLLAPSE_BUTTON("revanced_hide_collapse_button", false, ReturnType.BOOLEAN),
     HIDE_NEXT_BUTTON("revanced_hide_next_button", false, ReturnType.BOOLEAN),
     HIDE_PREV_BUTTON("revanced_hide_prev_button", false, ReturnType.BOOLEAN),
     HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", false, ReturnType.BOOLEAN, true),

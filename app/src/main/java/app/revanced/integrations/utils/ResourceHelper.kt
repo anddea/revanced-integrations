@@ -15,6 +15,8 @@ object ResourceHelper {
     private const val TRASH_BLACK_ICON = "yt_outline_trash_can_black_24"
     private const val TRASH_WHITE_ICON = "yt_outline_trash_can_white_24"
 
+    private const val COLLAPSE_BUTTON = "player_collapse_button"
+
     private const val LIVE_CHAT_BUTTON = "live_chat_overlay_button"
 
     private const val NEXT_BUTTON = "player_control_next_button"
@@ -41,6 +43,11 @@ object ResourceHelper {
             val themeName = if (dayNightTheme) TRASH_WHITE_ICON else TRASH_BLACK_ICON
             return identifier(themeName, ResourceType.DRAWABLE);
         }
+
+    @JvmStatic
+    fun hideCollapseButton(view: View): Boolean {
+        return SettingsEnum.HIDE_COLLAPSE_BUTTON.boolean && (view.id == identifier(COLLAPSE_BUTTON, ResourceType.ID))
+    }
 
     @JvmStatic
     fun hideLiveChatButton(view: View): Boolean {
@@ -76,6 +83,7 @@ object ResourceHelper {
         return hideLiveChatButton(view)
                 || hideNextButton(view)
                 || hidePrevButton(view)
+                || hideCollapseButton(view)
     }
 
 }
