@@ -110,6 +110,9 @@ public class ExtendedLithoFilterPatch {
         if (SettingsEnum.HIDE_MORE_MENU.getBoolean()) {
             menuItemBlockList.add("_info".getBytes());
         }
+        if (SettingsEnum.HIDE_SPEED_MENU.getBoolean()) {
+            menuItemBlockList.add("_half".getBytes());
+        }
         if (SettingsEnum.HIDE_LISTENING_CONTROLS_MENU.getBoolean()) {
             menuItemBlockList.add("_adjust".getBytes());
         }

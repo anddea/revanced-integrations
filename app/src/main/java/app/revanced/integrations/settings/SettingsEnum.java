@@ -128,6 +128,7 @@ public enum SettingsEnum {
     HIDE_REPORT_MENU("revanced_hide_menu_report", false, ReturnType.BOOLEAN),
     HIDE_HELP_MENU("revanced_hide_menu_help", false, ReturnType.BOOLEAN),
     HIDE_MORE_MENU("revanced_hide_menu_more_info", false, ReturnType.BOOLEAN),
+    HIDE_SPEED_MENU("revanced_hide_menu_speed", false, ReturnType.BOOLEAN),
     HIDE_LISTENING_CONTROLS_MENU("revanced_hide_menu_listening_controls", false, ReturnType.BOOLEAN),
     HIDE_AUDIO_TRACK_MENU("revanced_hide_menu_audio_track", false, ReturnType.BOOLEAN),
     HIDE_WATCH_IN_VR_MENU("revanced_hide_menu_watch_in_vr", false, ReturnType.BOOLEAN),
