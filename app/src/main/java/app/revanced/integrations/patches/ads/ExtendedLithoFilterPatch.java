@@ -4,23 +4,21 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.patches.utils.PatchStatus;
+import app.revanced.integrations.settings.SettingsEnum;
 
 
 public class ExtendedLithoFilterPatch {
-    private static final List<String> excludedBlockingList = List.of(
-        "home_video_with_context",
-        "related_video_with_context",
-        "search_video_with_context"
+    private static final List<String> bufferWhiteList = List.of(
+        "metadata",
+        "decorated_avatar"
     );
-    private static final List<String> whiteList = List.of(
+    private static final List<String> generalWhiteList = List.of(
         "library_recent_shelf"
     );
-    private static final int excludedBlockingListSize = excludedBlockingList.size() - 1;
 
     public static boolean InflatedLithoView(String value, ByteBuffer buffer) {
-        if (value == null || value.isEmpty() || whiteList.stream().anyMatch(value::contains)) return false;
+        if (value == null || value.isEmpty() || generalWhiteList.stream().anyMatch(value::contains)) return false;
 
         List<byte[]> actionButtonsBlockList = new ArrayList<>();
         List<byte[]> menuItemBlockList = new ArrayList<>();
@@ -70,24 +68,27 @@ public class ExtendedLithoFilterPatch {
         if (value.contains("|video_action_button")) {
             for (byte[] b: actionButtonsBlockList) {
                 int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 2000) count++;
+                if (bufferIndex > 0 && bufferIndex < 3000) count++;
             }
         }
 
         if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean()) {
             genericBufferList.add("mix-watch".getBytes());
-            genericBufferList.add("&list=".getBytes());
+            genericBufferList.add("list=".getBytes());
             genericBufferList.add("rellist".getBytes());
         }
 
         if (SettingsEnum.ADREMOVER_GENERAL_ADS.getBoolean()) {
             genericBufferList.add("Premium".getBytes());
             genericBufferList.add("/promos/".getBytes());
+            genericBufferList.add("yt_outline_x_".getBytes());
         }
 
-        if (containsAnyString(value)) {
+        if (value.contains("video_with_context") &&
+        bufferWhiteList.stream().noneMatch(value::contains)) {
             for (byte[] b: genericBufferList) {
-                if (indexOf(buffer.array(), b) > 0) count++;
+                int bufferIndex = indexOf(buffer.array(), b);
+                if (bufferIndex > 0 && bufferIndex < 3000) count++;
             }
         }
 
@@ -132,7 +133,7 @@ public class ExtendedLithoFilterPatch {
         if (value.contains("overflow_menu_item")) {
             for (byte[] b: menuItemBlockList) {
                 int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 2000) count++;
+                if (bufferIndex > 0 && bufferIndex < 3000) count++;
             }
         }
 
@@ -142,7 +143,7 @@ public class ExtendedLithoFilterPatch {
                 if (value.contains("|button")) {
                     for (byte[] b: bufferBlockList) {
                         int bufferIndex = indexOf(buffer.array(), b);
-                        if (bufferIndex > 0) count++;
+                        if (bufferIndex > 0 && bufferIndex < 3000) count++;
                     }
                 }
             }
@@ -190,13 +191,6 @@ public class ExtendedLithoFilterPatch {
         }
 
         return generalBlockList.stream().anyMatch(value::contains) || count > 0;
-    }
-
-    private static boolean containsAnyString(String value) {
-        for (int i = 1; i <= ExtendedLithoFilterPatch.excludedBlockingListSize; i++) {
-            if (value.contains(ExtendedLithoFilterPatch.excludedBlockingList.get(i))) return true;
-        }
-        return false;
     }
 
     public static int indexOf(byte[] array, byte[] target) {
