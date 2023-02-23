@@ -45,7 +45,6 @@ public class ExtendedLithoFilterPatch {
             byteBufferList.add("live-chat-item-section".getBytes());
         }
         if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
-            byteBufferList.add("yt_outline_share".getBytes());
             byteBufferList.add("id.video.share.button".getBytes());
         }
         if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
