@@ -264,9 +264,6 @@ public enum SettingsEnum {
                 for (SettingsEnum setting : values()) {
                     Object value = setting.getDefaultValue();
 
-                    //LogHelper is not initialized here
-                    Log.d("revanced: SettingsEnum", "Loading Setting: " + setting.name());
-
                     switch (setting.getReturnType()) {
                         case FLOAT:
                             value = SharedPrefHelper.getFloat(context, setting.sharedPref, setting.getPath(), (float) setting.getDefaultValue());
@@ -288,9 +285,6 @@ public enum SettingsEnum {
                             break;
                     }
                     setting.setValue(value);
-
-                    //LogHelper is not initialized here
-                    Log.d("revanced: SettingsEnum", "Loaded Setting: " + setting.name() + " Value: " + value);
                 }
             } catch (Throwable th) {
                 LogHelper.printException(SettingsEnum.class, "Error during load()!", th);
