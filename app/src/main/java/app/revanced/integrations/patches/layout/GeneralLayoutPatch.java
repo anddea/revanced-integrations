@@ -69,12 +69,6 @@ public class GeneralLayoutPatch {
         return SettingsEnum.HIDE_AUTO_PLAYER_POPUP_PANELS.getBoolean();
     }
 
-    public static void hideMixPlaylists(View view) {
-        if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean()) {
-            AdRemoverAPI.HideViewWithLayout1dp(view);
-        }
-    }
-
     public static void hideCrowdfundingBox(View view) {
         if (SettingsEnum.HIDE_CROWDFUNDING_BOX.getBoolean()) {
             AdRemoverAPI.HideViewWithLayout1dp(view);
