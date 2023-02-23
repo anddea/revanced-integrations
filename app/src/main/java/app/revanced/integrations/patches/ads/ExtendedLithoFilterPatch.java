@@ -11,8 +11,9 @@ import app.revanced.integrations.settings.SettingsEnum;
 public class ExtendedLithoFilterPatch {
     private static int count;
     private static final List<String> bufferWhiteList = List.of(
-        "metadata",
-        "decorated_avatar"
+            "|video_with_context",
+            "comment_thread",
+            "|comment."
     );
 
     public static boolean InflatedLithoView(String value, ByteBuffer buffer) {
@@ -70,10 +71,10 @@ public class ExtendedLithoFilterPatch {
             blockList.add("save_to_playlist_button");
         }
 
-        if (value.contains("|video_action_button"))
+        if (value.contains("|video_action_button")) {
             indexOfBuffer(byteBufferList, buffer);
-
-        if (blockList.stream().anyMatch(value::contains)) count++;
+            if (blockList.stream().anyMatch(value::contains)) count++;
+        }
     }
 
     private static void hideFlyoutPanels(String value, ByteBuffer buffer) {
@@ -171,7 +172,7 @@ public class ExtendedLithoFilterPatch {
         byteBufferList.add("list=".getBytes());
         byteBufferList.add("rellist".getBytes());
 
-        if (value.contains("video_with_context") &&
+        if (value.contains("video_with_context.") &&
                 bufferWhiteList.stream().noneMatch(value::contains))
             indexOfBuffer(byteBufferList, buffer);
     }
@@ -210,7 +211,7 @@ public class ExtendedLithoFilterPatch {
     private static void indexOfBuffer(List<byte[]> bufferList, ByteBuffer buffer) {
         for (byte[] b: bufferList) {
             int bufferIndex = indexOf(buffer.array(), b);
-            if (bufferIndex > 0 && bufferIndex < 4000) {
+            if (bufferIndex > 0 && bufferIndex < 1000) {
                 count++;
                 break;
             }
