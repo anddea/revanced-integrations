@@ -48,6 +48,12 @@ public class ExtendedLithoFilterPatch {
         if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
             byteBufferList.add("id.video.share.button".getBytes());
         }
+
+        if (value.contains("|video_action_button"))
+            indexOfBuffer(byteBufferList, buffer, 1000);
+
+        byteBufferList.clear();
+
         if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
             byteBufferList.add("yt_outline_flag".getBytes());
         }
@@ -174,7 +180,7 @@ public class ExtendedLithoFilterPatch {
 
         if (value.contains("video_with_context.") &&
                 bufferWhiteList.stream().noneMatch(value::contains))
-            indexOfBuffer(byteBufferList, buffer);
+            indexOfBuffer(byteBufferList, buffer, 1000);
     }
 
     private static void hideShortsComponent(String value) {
@@ -209,9 +215,13 @@ public class ExtendedLithoFilterPatch {
     }
 
     private static void indexOfBuffer(List<byte[]> bufferList, ByteBuffer buffer) {
+        indexOfBuffer(bufferList, buffer, 3000);
+    }
+
+    private static void indexOfBuffer(List<byte[]> bufferList, ByteBuffer buffer, int maxSize) {
         for (byte[] b: bufferList) {
             int bufferIndex = indexOf(buffer.array(), b);
-            if (bufferIndex > 0 && bufferIndex < 1000) {
+            if (bufferIndex > 0 && bufferIndex < maxSize) {
                 count++;
                 break;
             }
