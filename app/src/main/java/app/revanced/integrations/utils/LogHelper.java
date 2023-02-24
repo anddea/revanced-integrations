@@ -4,10 +4,6 @@ import android.util.Log;
 
 public class LogHelper {
 
-    public static void debug(Class clazz, String message) {
-        Log.d("revanced: " + (clazz != null ? clazz.getSimpleName() : ""), message);
-    }
-
     public static void printException(Class<?> clazz, String message, Throwable ex) {
         Log.e("revanced: " + (clazz != null ? clazz.getSimpleName() : ""), message, ex);
     }

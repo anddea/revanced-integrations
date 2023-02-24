@@ -10,7 +10,6 @@ import android.widget.Toast;
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.whitelist.Whitelist;
 
@@ -52,8 +51,8 @@ public class VideoSpeedPatch {
     }
 
     public static void overrideSpeed(final float speedValue) {
-        selectedSpeed = speedValue;
-        LogHelper.debug(VideoSpeedPatch.class, "Speed changed to: " + speedValue);
+        if (speedValue != selectedSpeed)
+            selectedSpeed = speedValue;
     }
 
     public static boolean isCustomVideoSpeedEnabled() {
