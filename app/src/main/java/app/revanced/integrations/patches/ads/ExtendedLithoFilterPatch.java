@@ -22,10 +22,12 @@ public class ExtendedLithoFilterPatch {
 
     public static boolean InflatedLithoView(String value, ByteBuffer buffer) {
         if (value == null || value.isEmpty() || whiteList.stream().anyMatch(value::contains)) return false;
-        if (value.contains("video_action_bar")) return hideActionBar(value, buffer);
+        if (value.contains("CellType|ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
+            return hideActionButton(buffer);
 
         count = 0;
 
+        hideActionBar(value);
         hideFlyoutPanels(value, buffer);
         hideGeneralAds(value, buffer);
         hideMixPlaylist(value, buffer);
@@ -34,11 +36,10 @@ public class ExtendedLithoFilterPatch {
         return count > 0;
     }
 
-    private static boolean hideActionBar(String value, ByteBuffer buffer) {
-        int actionBarCount = 0;
+    private static void hideActionBar(String value) {
+        if (!value.contains("video_action_bar")) return;
 
         List<String> rawStringList = new ArrayList<>();
-        List<String> inflatedBufferList = new ArrayList<>();
 
         if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean()) {
             rawStringList.add("|like_button");
@@ -53,6 +54,14 @@ public class ExtendedLithoFilterPatch {
         if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean()) {
             rawStringList.add("save_to_playlist_button");
         }
+        if (rawStringList.stream().anyMatch(value::contains)) count++;
+    }
+
+    private static boolean hideActionButton(ByteBuffer buffer) {
+        int actionBarCount = 0;
+
+        List<String> inflatedBufferList = new ArrayList<>();
+
         if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
             inflatedBufferList.add("live-chat-item-section");
         }
@@ -72,7 +81,6 @@ public class ExtendedLithoFilterPatch {
         if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
             inflatedBufferList.add("create-clip-button");
         }
-        if (rawStringList.stream().anyMatch(value::contains)) actionBarCount++;
         if (inflatedBufferList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
             actionBarCount++;
 
