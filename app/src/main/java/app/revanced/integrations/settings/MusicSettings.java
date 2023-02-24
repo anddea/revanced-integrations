@@ -1,17 +1,17 @@
 package app.revanced.integrations.settings;
 
+import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
+import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.View;
 
 import app.revanced.integrations.adremover.AdRemoverAPI;
-import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class MusicSettings {
     @SuppressLint("StaticFieldLeak")
     public static Context context;
-    public static SharedPrefHelper.SharedPrefNames prefName = SharedPrefHelper.SharedPrefNames.YOUTUBE;
 
     // ADS
     public static boolean hideMusicAds() {
@@ -36,8 +36,8 @@ public class MusicSettings {
         return getPrefBoolean("revanced_enable_opus_codec", true);
     }
 
-    public static boolean enableForceMinimizedPlayer() {
-        return getPrefBoolean("revanced_enable_force_minimized_player", true);
+    public static boolean enableForceMinimizedPlayer(boolean original) {
+        return getPrefBoolean("revanced_enable_force_minimized_player", true) || original;
     }
 
     public static boolean enableForceShuffle() {
@@ -60,6 +60,6 @@ public class MusicSettings {
 
     // Utils
     public static boolean getPrefBoolean(String key, boolean defaultValue) {
-        return SharedPrefHelper.getBoolean(context, prefName, key, defaultValue);
+        return getBoolean(context, YOUTUBE, key, defaultValue);
     }
 }
