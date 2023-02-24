@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,19 +10,22 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 
 public class ExtendedLithoFilterPatch {
-    private static int count;
-    private static final List<String> bufferWhiteList = List.of(
-            "|video_with_context",
-            "comment_thread",
-            "|comment."
+    private static final List<String> whiteList = List.of(
+            "avatar",
+            "carousel",
+            "comments",
+            "compact_channel_bar",
+            "metadata",
+            "thumbnail"
     );
+    private static int count;
 
     public static boolean InflatedLithoView(String value, ByteBuffer buffer) {
-        if (value == null || value.isEmpty()) return false;
+        if (value == null || value.isEmpty() || whiteList.stream().anyMatch(value::contains)) return false;
+        if (value.contains("video_action_bar")) return hideActionBar(value, buffer);
 
         count = 0;
 
-        hideActionBar(value, buffer);
         hideFlyoutPanels(value, buffer);
         hideGeneralAds(value, buffer);
         hideMixPlaylist(value, buffer);
@@ -30,61 +34,54 @@ public class ExtendedLithoFilterPatch {
         return count > 0;
     }
 
-    private static void hideActionBar(String value, ByteBuffer buffer) {
-        List<String> blockList = new ArrayList<>();
-        List<byte[]> byteBufferList = new ArrayList<>();
+    private static boolean hideActionBar(String value, ByteBuffer buffer) {
+        int actionBarCount = 0;
+
+        List<String> rawStringList = new ArrayList<>();
+        List<String> inflatedBufferList = new ArrayList<>();
 
         if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean()) {
-            byteBufferList.add("id.video.like.button".getBytes());
-            blockList.add("segmented_like_dislike_button");
+            rawStringList.add("|like_button");
         }
         if (SettingsEnum.HIDE_DISLIKE_BUTTON.getBoolean()) {
-            byteBufferList.add("id.video.dislike.button".getBytes());
-        }
-        if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
-            byteBufferList.add("yt_outline_message_bubble_overlap".getBytes());
-            byteBufferList.add("live-chat-item-section".getBytes());
-        }
-        if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
-            byteBufferList.add("id.video.share.button".getBytes());
-        }
-
-        if (value.contains("|video_action_button"))
-            indexOfBuffer(byteBufferList, buffer, 1000);
-
-        byteBufferList.clear();
-
-        if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
-            byteBufferList.add("yt_outline_flag".getBytes());
-        }
-        if (SettingsEnum.HIDE_CREATE_SHORT_BUTTON.getBoolean()) {
-            byteBufferList.add("yt_outline_youtube_shorts_plus".getBytes());
-            byteBufferList.add("shorts-creation-on-vod-watch".getBytes());
-        }
-        if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean()) {
-            byteBufferList.add("yt_outline_dollar_sign_heart".getBytes());
-            byteBufferList.add("watch-supervod-button".getBytes());
+            rawStringList.add("|dislike_button");
+            rawStringList.add("|segmented_like_dislike_button");
         }
         if (SettingsEnum.HIDE_DOWNLOAD_BUTTON.getBoolean()) {
-            blockList.add("download_button");
-        }
-        if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
-            byteBufferList.add("yt_outline_scissors".getBytes());
-            byteBufferList.add("create-clip-button".getBytes());
+            rawStringList.add("download_button");
         }
         if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean()) {
-            byteBufferList.add("id.video.add_to.button".getBytes());
-            blockList.add("save_to_playlist_button");
+            rawStringList.add("save_to_playlist_button");
         }
+        if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
+            inflatedBufferList.add("live-chat-item-section");
+        }
+        if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
+            inflatedBufferList.add("id.video.share.button");
+        }
+        if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
+            int bufferIndex = indexOf(buffer.array(), "yt_outline_flag".getBytes());
+            if (bufferIndex > 0 && bufferIndex < 2000) actionBarCount++;
+        }
+        if (SettingsEnum.HIDE_CREATE_SHORT_BUTTON.getBoolean()) {
+            inflatedBufferList.add("shorts-creation-on-vod-watch");
+        }
+        if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean()) {
+            inflatedBufferList.add("watch-supervod-button");
+        }
+        if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
+            inflatedBufferList.add("create-clip-button");
+        }
+        if (rawStringList.stream().anyMatch(value::contains)) actionBarCount++;
+        if (inflatedBufferList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+            actionBarCount++;
 
-        if (value.contains("|video_action_button")) {
-            indexOfBuffer(byteBufferList, buffer);
-            if (blockList.stream().anyMatch(value::contains)) count++;
-        }
+        return actionBarCount > 0;
     }
 
     private static void hideFlyoutPanels(String value, ByteBuffer buffer) {
         List<byte[]> byteBufferList = new ArrayList<>();
+        if (!value.contains("overflow_menu_item")) return;
 
         if (SettingsEnum.HIDE_CAPTIONS_MENU.getBoolean()) {
             byteBufferList.add("_caption".getBytes());
@@ -124,8 +121,7 @@ public class ExtendedLithoFilterPatch {
             byteBufferList.add("_open".getBytes());
         }
 
-        if (value.contains("overflow_menu_item"))
-            indexOfBuffer(byteBufferList, buffer);
+        indexOfBuffer(byteBufferList, buffer);
     }
 
     private static void hideGeneralAds(String value, ByteBuffer buffer) {
@@ -135,18 +131,21 @@ public class ExtendedLithoFilterPatch {
         List<byte[]> byteBufferList = new ArrayList<>();
         List<byte[]> genericBufferList = new ArrayList<>();
 
-        if (SettingsEnum.ADREMOVER_GENERAL_ADS.getBoolean()) {
+        if (SettingsEnum.ADREMOVER_GENERAL_ADS.getBoolean() &&
+                value.contains("home_video_with_context") &&
+                !value.contains("|ContainerType|ContainerType|")
+        ){
             byteBufferList.add("Premium".getBytes());
             byteBufferList.add("/promos/".getBytes());
-            if (value.contains("home_video_with_context") &&
-                    bufferWhiteList.stream().noneMatch(value::contains))
-                indexOfBuffer(byteBufferList, buffer);
+
+            indexOfBuffer(byteBufferList, buffer);
         }
 
-        if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean()) {
+        if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean() &&
+                value.contains("|button")
+        ) {
             genericBufferList.add("header_store_button".getBytes());
-            if (value.contains("|button"))
-                indexOfBuffer(genericBufferList, buffer);
+            indexOfBuffer(genericBufferList, buffer);
         }
 
         if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
@@ -169,7 +168,10 @@ public class ExtendedLithoFilterPatch {
     }
 
     private static void hideMixPlaylist(String value, ByteBuffer buffer) {
-        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean()) return;
+        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() ||
+                !value.contains("video_with_context") ||
+                value.contains("|ContainerType|ContainerType|"))
+            return;
 
         List<byte[]> byteBufferList = new ArrayList<>();
 
@@ -178,9 +180,15 @@ public class ExtendedLithoFilterPatch {
         byteBufferList.add("list=".getBytes());
         byteBufferList.add("rellist".getBytes());
 
-        if (value.contains("video_with_context.") &&
-                bufferWhiteList.stream().noneMatch(value::contains))
-            indexOfBuffer(byteBufferList, buffer, 1000);
+        // home feed
+        if (value.contains("home_video_with_context") &&
+                !value.contains("|ContainerType|ContainerType|"))
+            indexOfBuffer(byteBufferList, buffer);
+
+        // related video
+        if (value.contains("related_video_with_context") &&
+                !value.contains("|ContainerType|related_video_with_context_inner"))
+            indexOfBuffer(byteBufferList, buffer);
     }
 
     private static void hideShortsComponent(String value) {
@@ -199,29 +207,24 @@ public class ExtendedLithoFilterPatch {
             blockList.add("suggested_action");
         }
 
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() &&
-                value.contains("reel_channel_bar")
-        ) {
-            blockList.add("subscribe_button");
-        }
+        if (blockList.stream().anyMatch(value::contains)) count++;
+        blockList.clear();
 
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON.getBoolean() &&
-                value.contains("reel_channel_bar")
-        ) {
+        if (!value.contains("reel_channel_bar")) return;
+
+        if (SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean())
+            blockList.add("subscribe_button");
+
+        if (SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON.getBoolean())
             blockList.add("sponsor_button");
-        }
 
         if (blockList.stream().anyMatch(value::contains)) count++;
     }
 
     private static void indexOfBuffer(List<byte[]> bufferList, ByteBuffer buffer) {
-        indexOfBuffer(bufferList, buffer, 3000);
-    }
-
-    private static void indexOfBuffer(List<byte[]> bufferList, ByteBuffer buffer, int maxSize) {
         for (byte[] b: bufferList) {
             int bufferIndex = indexOf(buffer.array(), b);
-            if (bufferIndex > 0 && bufferIndex < maxSize) {
+            if (bufferIndex > 0 && bufferIndex < 2000) {
                 count++;
                 break;
             }
