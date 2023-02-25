@@ -188,8 +188,9 @@ public class ExtendedLithoFilterPatch {
         byteBufferList.add("list=".getBytes());
         byteBufferList.add("rellist".getBytes());
 
-        // home feed
-        if (value.contains("home_video_with_context") &&
+        // home feed & search result
+        if ((value.contains("home_video_with_context") ||
+                value.contains("search_video_with_context")) &&
                 !value.contains("|ContainerType|ContainerType|"))
             indexOfBuffer(byteBufferList, buffer);
 
