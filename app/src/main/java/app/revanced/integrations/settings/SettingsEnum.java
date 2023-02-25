@@ -59,7 +59,8 @@ public enum SettingsEnum {
 
     ADREMOVER_MERCHANDISE("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
     ADREMOVER_BROWSE_STORE_BUTTON("revanced_adremover_browse_store_button", true, ReturnType.BOOLEAN),
-    ADREMOVER_COMMUNITY_POSTS("revanced_adremover_community_posts", false, ReturnType.BOOLEAN),
+    ADREMOVER_COMMUNITY_POSTS_HOME("revanced_adremover_community_posts_home", false, ReturnType.BOOLEAN),
+    ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_adremover_community_posts_subscriptions", true, ReturnType.BOOLEAN),
     ADREMOVER_MOVIE_SHELF("revanced_adremover_movie_shelf", false, ReturnType.BOOLEAN),
     ADREMOVER_FEED_SURVEY("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
     ADREMOVER_IMAGE_SHELF("revanced_adremover_image_shelf", true, ReturnType.BOOLEAN),

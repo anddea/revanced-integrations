@@ -252,7 +252,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      */
     public void TabletLayoutLinks() {
         final String[] unavailablePreference = {
-                SettingsEnum.ADREMOVER_COMMUNITY_POSTS.getPath(),
+                SettingsEnum.ADREMOVER_COMMUNITY_POSTS_HOME.getPath(),
+                SettingsEnum.ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS.getPath(),
                 SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
                 SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getPath(),
                 SettingsEnum.HIDE_FULLSCREEN_PANELS.getPath(),

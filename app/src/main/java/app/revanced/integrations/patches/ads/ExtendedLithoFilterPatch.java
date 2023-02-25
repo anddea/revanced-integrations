@@ -138,6 +138,14 @@ public class ExtendedLithoFilterPatch {
         List<String> blockList = new ArrayList<>();
         List<byte[]> genericBufferList = new ArrayList<>();
 
+        if (value.contains("post_base_wrapper")) {
+            if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_HOME.getBoolean() &&
+                    !value.contains("heightConstraint=null") &&
+                    value.contains("horizontalCollectionSwipeProtector=null")) count++;
+            else if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean() &&
+                    value.contains("heightConstraint=null")) count++;
+        }
+
         if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean() &&
                 value.contains("|button")
         ) {
