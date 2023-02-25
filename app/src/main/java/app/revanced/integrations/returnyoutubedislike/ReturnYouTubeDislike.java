@@ -4,14 +4,30 @@ import static app.revanced.integrations.utils.StringRef.str;
 
 import android.icu.text.CompactDecimalFormat;
 import android.os.Build;
-import android.text.*;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.ScaleXSpan;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
+
 import app.revanced.integrations.returnyoutubedislike.requests.RYDVoteData;
 import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -19,12 +35,6 @@ import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ThemeHelper;
-
-import java.text.NumberFormat;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ReturnYouTubeDislike {
     /**
@@ -38,7 +48,7 @@ public class ReturnYouTubeDislike {
     /**
      * Separator character to use for segmented like/dislike
      */
-    private static final char middleSeparatorCharacter = '•';
+    private static final char MIDDLE_SEPARATOR_CHARACTER = '•';
 
     /**
      * Used to send votes, one by one, in the same order the user created them
@@ -144,13 +154,13 @@ public class ReturnYouTubeDislike {
     }
 
     public static void newVideoLoaded(@NonNull String videoId) {
+        if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
+
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean() ||
-                    !ReVancedUtils.isNetworkConnected())
-                return;
             Objects.requireNonNull(videoId);
 
-            if (PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL) {
+            PlayerType currentPlayerType = PlayerType.getCurrent();
+            if (currentPlayerType == PlayerType.INLINE_MINIMAL) {
                 setCurrentVideoId(null);
                 return;
             }
@@ -172,35 +182,46 @@ public class ReturnYouTubeDislike {
      * This method is sometimes called on the main thread, but it usually is called _off_ the main thread.
      * This method can be called multiple times for the same UI element (including after dislikes was added)
      */
-    public static void onComponentCreated(Object conversionContext, AtomicReference<Object> textRef) {
+    public static void onComponentCreated(@NonNull Object conversionContext, @NonNull AtomicReference<Object> textRef) {
+        if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
+
+        // do not set lastVideoLoadedWasShort to false. It will be cleared when the next regular video is loaded.
+        if (lastVideoLoadedWasShort || PlayerType.getCurrent().isNoneOrHidden()) return;
+
+        String conversionContextString = conversionContext.toString();
+        final boolean isSegmentedButton;
+        if (conversionContextString.contains("|segmented_like_dislike_button.eml|") &&
+                conversionContextString.contains("|TextType|")) {
+            isSegmentedButton = true;
+        } else if (conversionContextString.contains("|dislike_button.eml|")) {
+            isSegmentedButton = false;
+        } else {
+            return;
+        }
+
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
-
-            // do not set videoLoadedIsShort to false.  it will be cleared when the next regular video is loaded
-            if (lastVideoLoadedWasShort) {
-                return;
-            }
-            if (PlayerType.getCurrent().isNoneOrHidden()) {
-                return;
-            }
-
-            String conversionContextString = conversionContext.toString();
-            final boolean isSegmentedButton;
-            if (conversionContextString.contains("|segmented_like_dislike_button.eml|") &&
-                    conversionContextString.contains("|TextType|")) {
-                isSegmentedButton = true;
-            } else if (conversionContextString.contains("|dislike_button.eml|")) {
-                isSegmentedButton = false;
-            } else {
-                return;
-            }
-
             Spanned replacement = waitForFetchAndUpdateReplacementSpan((Spanned) textRef.get(), isSegmentedButton);
             if (replacement != null) {
                 textRef.set(replacement);
             }
         } catch (Exception ex) {
             LogHelper.printException(ReturnYouTubeDislike.class, "Error while trying to update dislikes", ex);
+        }
+    }
+
+    public static void sendVote(int vote) {
+        if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
+
+        try {
+            for (ReturnYouTubeDislike.Vote v : ReturnYouTubeDislike.Vote.values()) {
+                if (v.value == vote) {
+                    ReturnYouTubeDislike.sendVote(v);
+                    return;
+                }
+            }
+            LogHelper.printException(ReturnYouTubeDislike.class, "Unknown vote type: " + vote);
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislike.class, "sendVote failure", ex);
         }
     }
 
@@ -220,7 +241,7 @@ public class ReturnYouTubeDislike {
     }
 
     private static boolean isPreviouslyCreatedSegmentedSpan(Spanned span) {
-        return span.toString().indexOf(middleSeparatorCharacter) != -1;
+        return span.toString().indexOf(MIDDLE_SEPARATOR_CHARACTER) != -1;
     }
 
     /**
@@ -366,13 +387,13 @@ public class ReturnYouTubeDislike {
 
         // middle separator
         final boolean useCompactLayout = SettingsEnum.RYD_USE_COMPACT_LAYOUT.getBoolean();
-        String middleSegmentedSeparatorString = useCompactLayout
-                ? "\u2009 " + middleSeparatorCharacter + " \u2009"  // u2009 = "half space" character
-                : "  " + middleSeparatorCharacter + "  ";
-        Spannable middleSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, middleSegmentedSeparatorString);
         final int separatorColor = ThemeHelper.getDayNightTheme()
                 ? 0x29AAAAAA  // transparent dark gray
                 : 0xFFD9D9D9; // light gray
+        String middleSegmentedSeparatorString = useCompactLayout
+                ? "\u2009 " + MIDDLE_SEPARATOR_CHARACTER + " \u2009"  // u2009 = "half space" character
+                : "  " + MIDDLE_SEPARATOR_CHARACTER + "  ";
+        Spannable middleSeparatorSpan = newSpanUsingStylingOfAnotherSpan(oldSpannable, middleSegmentedSeparatorString);
         addSpanStyling(middleSeparatorSpan, new ForegroundColorSpan(separatorColor));
         CharacterStyle noAntiAliasingStyle = new CharacterStyle() {
             @Override
