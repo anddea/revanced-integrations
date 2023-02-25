@@ -136,18 +136,7 @@ public class ExtendedLithoFilterPatch {
         if (!PatchStatus.GeneralAds()) return;
 
         List<String> blockList = new ArrayList<>();
-        List<byte[]> byteBufferList = new ArrayList<>();
         List<byte[]> genericBufferList = new ArrayList<>();
-
-        if (SettingsEnum.ADREMOVER_GENERAL_ADS.getBoolean() &&
-                value.contains("home_video_with_context") &&
-                !value.contains("|ContainerType|ContainerType|")
-        ){
-            byteBufferList.add("Premium".getBytes());
-            byteBufferList.add("/promos/".getBytes());
-
-            indexOfBuffer(byteBufferList, buffer);
-        }
 
         if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean() &&
                 value.contains("|button")
