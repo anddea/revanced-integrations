@@ -23,7 +23,6 @@ public final class GeneralAdsPatch extends Filter {
         var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS, "carousel_ad");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner", "community_guidelines", "sponsorships_comments_upsell");
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
-        var chapterTeaser = new BlockRule(SettingsEnum.ADREMOVER_CHAPTER_TEASER, "expandable_metadata");
         var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR, "cell_divider");
         var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "compact_banner", "publisher_transparency_panel", "single_item_information_panel");
@@ -34,6 +33,7 @@ public final class GeneralAdsPatch extends Filter {
         var officialCard = new BlockRule(SettingsEnum.ADREMOVER_OFFICIAL_CARDS, "official_card");
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTENT, "paid_content_overlay");
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
+        var teaser = new BlockRule(SettingsEnum.ADREMOVER_TEASER, "expandable_metadata");
         var timedReactions = new BlockRule(SettingsEnum.ADREMOVER_TIMED_REACTIONS, "emoji_control_panel", "timed_reaction_player_animation", "timed_reaction_live_player_overlay");
         var webSearchPanel = new BlockRule(SettingsEnum.ADREMOVER_WEB_SEARCH_PANEL, "web_link_panel");
 
@@ -70,7 +70,6 @@ public final class GeneralAdsPatch extends Filter {
                 buttonedAd,
                 channelGuidelines,
                 channelMemberShelf,
-                chapterTeaser,
                 generalAds,
                 imageShelf,
                 infoPanel,
@@ -82,6 +81,7 @@ public final class GeneralAdsPatch extends Filter {
                 officialCard,
                 paidContent,
                 selfSponsor,
+                teaser,
                 timedReactions,
                 webSearchPanel
         );

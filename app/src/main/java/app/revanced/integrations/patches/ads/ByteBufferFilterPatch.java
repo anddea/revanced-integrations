@@ -167,7 +167,7 @@ public class ByteBufferFilterPatch {
             blockList.add("products_in_video");
         }
 
-        if (SettingsEnum.ADREMOVER_CHAPTER_TEASER.getBoolean() &&
+        if (SettingsEnum.ADREMOVER_TEASER.getBoolean() &&
                 value.contains("expandable_metadata")) count++;
 
         if (blockList.stream().anyMatch(value::contains)) count++;

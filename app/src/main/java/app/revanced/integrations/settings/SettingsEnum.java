@@ -71,7 +71,7 @@ public enum SettingsEnum {
     ADREMOVER_CHANNEL_GUIDELINES("revanced_adremover_channel_guidelines", true, ReturnType.BOOLEAN),
     ADREMOVER_CHANNEL_MEMBER_SHELF("revanced_adremover_channel_member_shelf", true, ReturnType.BOOLEAN),
     ADREMOVER_CHANNEL_BAR_JOIN_BUTTON("revanced_adremover_channelbar_join_button", true, ReturnType.BOOLEAN),
-    ADREMOVER_CHAPTER_TEASER("revanced_adremover_chapter_teaser", true, ReturnType.BOOLEAN),
+    ADREMOVER_TEASER("revanced_adremover_teaser", true, ReturnType.BOOLEAN),
     ADREMOVER_GRAY_SEPARATOR("revanced_adremover_separator", true, ReturnType.BOOLEAN),
     ADREMOVER_OFFICIAL_CARDS("revanced_adremover_official_card_in_search", true, ReturnType.BOOLEAN, true),
     ADREMOVER_ALBUM_CARDS("revanced_adremover_album_card_in_search", true, ReturnType.BOOLEAN),
