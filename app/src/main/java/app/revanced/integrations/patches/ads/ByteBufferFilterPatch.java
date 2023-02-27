@@ -1,7 +1,6 @@
 package app.revanced.integrations.patches.ads;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,22 +8,24 @@ import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 
 
-public class ExtendedLithoFilterPatch {
+public class ByteBufferFilterPatch {
+    private static final List<String> blockList = List.of(
+            "overflow_menu_item"
+    );
     private static final List<String> whiteList = List.of(
-            "avatar",
-            "carousel",
-            "comments",
-            "compact_channel_bar",
-            "metadata",
-            "thumbnail"
+            "comment_thread", // skip blocking anything in the comments
+            "|comment.", // skip blocking anything in the comments replies
+            "menu",
+            "-button",
+            "-count"
     );
     private static int count;
 
-    public static boolean InflatedLithoView(String value, ByteBuffer buffer) {
-        if (value == null || value.isEmpty() || whiteList.stream().anyMatch(value::contains)) return false;
-        if (value.contains("CellType|ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
+    public static boolean filters(String value, ByteBuffer buffer) {
+        if (value == null || value.isEmpty()) return false;
+        if ((whiteList.stream().anyMatch(value::contains) && blockList.stream().noneMatch(value::contains))) return false;
+        if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
             return hideActionButton(buffer);
-
         count = 0;
 
         hideActionBar(value);
@@ -58,33 +59,31 @@ public class ExtendedLithoFilterPatch {
     }
 
     private static boolean hideActionButton(ByteBuffer buffer) {
-        int actionBarCount = 0;
-
-        List<String> inflatedBufferList = new ArrayList<>();
-
-        if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
-            inflatedBufferList.add("live-chat-item-section");
-        }
         if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
-            inflatedBufferList.add("id.video.share.button");
+            int bufferIndex = indexOf(buffer.array(), "yt_outline_share".getBytes());
+            if (bufferIndex > 0 && bufferIndex < 2000) return true;
+        }
+        if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
+            int bufferIndex = indexOf(buffer.array(), "yt_outline_message_bubble_overlap".getBytes());
+            if (bufferIndex > 0 && bufferIndex < 2000) return true;
         }
         if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
             int bufferIndex = indexOf(buffer.array(), "yt_outline_flag".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) actionBarCount++;
+            if (bufferIndex > 0 && bufferIndex < 2000) return true;
         }
         if (SettingsEnum.HIDE_CREATE_SHORT_BUTTON.getBoolean()) {
-            inflatedBufferList.add("shorts-creation-on-vod-watch");
+            int bufferIndex = indexOf(buffer.array(), "yt_outline_youtube_shorts_plus".getBytes());
+            if (bufferIndex > 0 && bufferIndex < 2000) return true;
         }
         if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean()) {
-            inflatedBufferList.add("watch-supervod-button");
+            int bufferIndex = indexOf(buffer.array(), "yt_outline_dollar_sign_heart".getBytes());
+            if (bufferIndex > 0 && bufferIndex < 2000) return true;
         }
         if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
-            inflatedBufferList.add("create-clip-button");
+            int bufferIndex = indexOf(buffer.array(), "yt_outline_scissors".getBytes());
+            return bufferIndex > 0 && bufferIndex < 2000;
         }
-        if (inflatedBufferList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
-            actionBarCount++;
-
-        return actionBarCount > 0;
+        return false;
     }
 
     private static void hideFlyoutPanels(String value, ByteBuffer buffer) {
@@ -154,7 +153,7 @@ public class ExtendedLithoFilterPatch {
         }
 
         if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
-                value.contains("slimline_survey")) count++;
+                value.contains("_survey")) count++;
 
         if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
                 value.contains("horizontal_video_shelf") &&
@@ -174,7 +173,7 @@ public class ExtendedLithoFilterPatch {
 
     private static void hideMixPlaylist(String value, ByteBuffer buffer) {
         if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() ||
-                !value.contains("video_with_context") ||
+                !value.contains("video_with_context.") ||
                 value.contains("|ContainerType|ContainerType|"))
             return;
 
@@ -186,13 +185,13 @@ public class ExtendedLithoFilterPatch {
         byteBufferList.add("rellist".getBytes());
 
         // home feed & search result
-        if ((value.contains("home_video_with_context") ||
-                value.contains("search_video_with_context")) &&
+        if ((value.contains("home_video_with_context.") ||
+                value.contains("search_video_with_context.")) &&
                 !value.contains("|ContainerType|ContainerType|"))
             indexOfBuffer(byteBufferList, buffer);
 
         // related video
-        if (value.contains("related_video_with_context") &&
+        if (value.contains("related_video_with_context.") &&
                 !value.contains("|ContainerType|related_video_with_context_inner"))
             indexOfBuffer(byteBufferList, buffer);
     }

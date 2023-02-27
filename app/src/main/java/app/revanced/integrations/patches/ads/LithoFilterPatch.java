@@ -1,7 +1,12 @@
 package app.revanced.integrations.patches.ads;
 
+import static app.revanced.integrations.patches.ads.ByteBufferFilterPatch.filters;
+import static app.revanced.integrations.patches.utils.PatchStatus.ByteBuffer;
+import static app.revanced.integrations.patches.utils.PatchStatus.GeneralAds;
+
 import androidx.annotation.NonNull;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -97,7 +102,7 @@ public final class LithoFilterPatch {
             new CommentsPatch()
     };
 
-    public static boolean filter(final StringBuilder pathBuilder, final String identifier) {
+    public static boolean filter(StringBuilder pathBuilder, String identifier) {
         var path = pathBuilder.toString();
         if (path.isEmpty()) return false;
 
@@ -106,5 +111,9 @@ public final class LithoFilterPatch {
         }
 
         return false;
+    }
+
+    public static boolean filter(StringBuilder pathBuilder, String identifier, Object object, ByteBuffer buffer) {
+        return (ByteBuffer() && filters(object.toString(), buffer)) || (GeneralAds() && filter(pathBuilder, identifier));
     }
 }

@@ -8,7 +8,8 @@ import app.revanced.integrations.utils.ReVancedUtils;
 
 public final class GeneralAdsPatch extends Filter {
     private final String[] IGNORE = {
-            "home_video_with_context",
+            "comment_thread", // skip blocking anything in the comments
+            "|comment.", // skip blocking anything in the comments replies
             "related_video_with_context",
             "library_recent_shelf"
     };
@@ -25,7 +26,6 @@ public final class GeneralAdsPatch extends Filter {
         var chapterTeaser = new BlockRule(SettingsEnum.ADREMOVER_CHAPTER_TEASER, "expandable_metadata");
         var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR, "cell_divider");
         var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
-        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY, "infeed_survey");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "compact_banner", "publisher_transparency_panel", "single_item_information_panel");
         var joinMembership = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_BAR_JOIN_BUTTON, "compact_sponsor_button");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
@@ -73,7 +73,6 @@ public final class GeneralAdsPatch extends Filter {
                 chapterTeaser,
                 generalAds,
                 imageShelf,
-                inFeedSurvey,
                 infoPanel,
                 joinMembership,
                 latestPosts,
