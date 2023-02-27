@@ -19,6 +19,8 @@ object ResourceHelper {
 
     private const val LIVE_CHAT_BUTTON = "live_chat_overlay_button"
 
+    private const val FAST_FORWARD_BUTTON = "player_control_fast_forward_button"
+
     private const val NEXT_BUTTON = "player_control_next_button"
     private const val NEXT_BUTTON_AREA = "player_control_next_button_touch_area"
 
@@ -26,6 +28,8 @@ object ResourceHelper {
 
     private const val PREVIOUS_BUTTON = "player_control_previous_button"
     private const val PREVIOUS_BUTTON_AREA = "player_control_previous_button_touch_area"
+
+    private const val REWIND_BUTTON = "player_control_rewind_button"
 
     @JvmStatic
     val resources: Resources get() = ReVancedUtils.getContext().resources
@@ -64,9 +68,11 @@ object ResourceHelper {
     @JvmStatic
     fun hidePlayerButtonBackground(view: View) {
         if (SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND.boolean
-            && (view.id == identifier(PREVIOUS_BUTTON, ResourceType.ID)
+            && (view.id == identifier(FAST_FORWARD_BUTTON, ResourceType.ID)
+                    || view.id == identifier(NEXT_BUTTON, ResourceType.ID)
                     || view.id == identifier(PLAY_PAUSE_BUTTON, ResourceType.ID)
-                    || view.id == identifier(NEXT_BUTTON, ResourceType.ID))) {
+                    || view.id == identifier(PREVIOUS_BUTTON, ResourceType.ID)
+                    || view.id == identifier(REWIND_BUTTON, ResourceType.ID))) {
             view.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
     }
