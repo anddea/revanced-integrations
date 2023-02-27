@@ -13,9 +13,11 @@ public class ByteBufferFilterPatch {
             "overflow_menu_item"
     );
     private static final List<String> whiteList = List.of(
-            "comment_thread", // skip blocking anything in the comments
-            "|comment.", // skip blocking anything in the comments replies
+            "comment_thread",
+            "|comment.",
             "menu",
+            "metadata",
+            "thumbnail",
             "-button",
             "-count"
     );
