@@ -33,7 +33,7 @@ public class VideoQualityPatch {
                 try {
                     SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI.saveValue(defaultQuality);
                 } catch (Exception ex) {
-                    LogHelper.printException(VideoQualityPatch.class, "Failed to change default WI-FI quality" + ex);
+                    LogHelper.printException(() -> "Failed to change default WI-FI quality" + ex);
                     Toast.makeText(context, str("revanced_save_video_quality_wifi_error"), Toast.LENGTH_SHORT).show();
                 }
                 Toast.makeText(context, str("revanced_save_video_quality_wifi") + "" + defaultQuality + "p", Toast.LENGTH_SHORT).show();
@@ -114,7 +114,7 @@ public class VideoQualityPatch {
             m.invoke(qInterface, iStreamQualities.get(qualityIndex));
             return qualityIndex;
         } catch (Exception ex) {
-            LogHelper.printException(VideoQualityPatch.class, "Failed to set quality", ex);
+            LogHelper.printException(() -> "Failed to set quality", ex);
             Toast.makeText(context, str("revanced_save_video_quality_common_error"), Toast.LENGTH_SHORT).show();
             return qualityIndex;
         }

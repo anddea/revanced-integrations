@@ -31,7 +31,7 @@ public class AutoRepeat {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(AutoRepeat.class, constraintLayout, "autoreplay_button");
+            ImageView imageView = findView(constraintLayout, "autoreplay_button");
             imageView.setSelected(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean());
             imageView.setOnClickListener(view -> AutoRepeat.changeSelected(!view.isSelected(), false));
             buttonview = new WeakReference<>(imageView);
@@ -49,7 +49,7 @@ public class AutoRepeat {
             changeVisibility(false);
 
         } catch (Exception ex) {
-            LogHelper.printException(AutoRepeat.class, "Unable to set FrameLayout", ex);
+            LogHelper.printException(() -> "Unable to set FrameLayout", ex);
         }
     }
 

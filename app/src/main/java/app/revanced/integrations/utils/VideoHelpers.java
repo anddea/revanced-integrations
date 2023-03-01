@@ -37,7 +37,7 @@ public class VideoHelpers {
             setClipboard(context, url);
             Toast.makeText(context, str("share_copy_url_success"), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            LogHelper.printException(VideoHelpers.class, "Failed to generate video url", e);
+            LogHelper.printException(() -> "Failed to generate video url", e);
         }
     }
 
@@ -57,7 +57,7 @@ public class VideoHelpers {
 
             Toast.makeText(context, str("revanced_copytimestamp_success") + ": " + timeStamp, Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
+            LogHelper.printException(() -> "Couldn't generate video url", ex);
         }
     }
 

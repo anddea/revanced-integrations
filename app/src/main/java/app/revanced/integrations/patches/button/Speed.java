@@ -34,7 +34,7 @@ public class Speed {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(Speed.class, constraintLayout, "speed_button");
+            ImageView imageView = findView(constraintLayout, "speed_button");
 
             imageView.setOnClickListener(view -> VideoHelpers.videoSpeedDialogListener(view.getContext()));
             imageView.setOnLongClickListener(view -> {
@@ -57,7 +57,7 @@ public class Speed {
             changeVisibility(false);
 
         } catch (Exception ex) {
-            LogHelper.printException(Speed.class, "Unable to set FrameLayout", ex);
+            LogHelper.printException(() -> "Unable to set FrameLayout", ex);
         }
     }
 

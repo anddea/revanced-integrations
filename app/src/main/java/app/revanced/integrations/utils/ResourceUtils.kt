@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.view.View
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import app.revanced.integrations.utils.LogHelper.printException
 import app.revanced.integrations.utils.ReVancedUtils.getContext
 import app.revanced.integrations.utils.ResourceHelper.resources
 
@@ -28,21 +30,21 @@ object ResourceUtils {
     fun integer(name: String) = resources.getInteger(identifier(name, ResourceType.INTEGER))
 
     @JvmStatic
-    fun anim(name: String) =
+    fun anim(name: String): Animation =
         AnimationUtils.loadAnimation(getContext(), identifier(name, ResourceType.ANIM))
 
     @JvmStatic
-    fun <T : Class<*>, R : View> findView(clazz: T, view: View, name: String): R {
+    fun <R : View> findView(view: View, name: String): R {
         return view.findViewById(identifier(name, ResourceType.ID)) ?: run {
             val ex = IllegalArgumentException("View with name $name not found")
-            LogHelper.printException(clazz, "View not found", ex)
+            printException{"View not found"}
             throw ex
         }
     }
 
     @JvmStatic
-    fun <T : Class<*>, R : View> findView(clazz: T, activity: Activity, name: String): R {
-        return findView(clazz, activity.window.decorView, name)
+    fun <R : View> findView(activity: Activity, name: String): R {
+        return findView(activity.window.decorView, name)
     }
 }
 

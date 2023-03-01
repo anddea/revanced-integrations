@@ -24,6 +24,7 @@ object ResourceHelper {
     private const val NEXT_BUTTON = "player_control_next_button"
     private const val NEXT_BUTTON_AREA = "player_control_next_button_touch_area"
 
+    private const val PLAY_BUTTON = "play_button"
     private const val PLAY_PAUSE_BUTTON = "player_control_play_pause_replay_button"
 
     private const val PREVIOUS_BUTTON = "player_control_previous_button"
@@ -70,6 +71,7 @@ object ResourceHelper {
         if (SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND.boolean
             && (view.id == identifier(FAST_FORWARD_BUTTON, ResourceType.ID)
                     || view.id == identifier(NEXT_BUTTON, ResourceType.ID)
+                    || view.id == identifier(PLAY_BUTTON, ResourceType.ID)
                     || view.id == identifier(PLAY_PAUSE_BUTTON, ResourceType.ID)
                     || view.id == identifier(PREVIOUS_BUTTON, ResourceType.ID)
                     || view.id == identifier(REWIND_BUTTON, ResourceType.ID))) {

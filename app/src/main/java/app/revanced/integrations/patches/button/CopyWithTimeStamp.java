@@ -31,7 +31,7 @@ public class CopyWithTimeStamp {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(CopyWithTimeStamp.class, constraintLayout, "copy_with_timestamp_button");
+            ImageView imageView = findView(constraintLayout, "copy_with_timestamp_button");
 
             imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), true));
             imageView.setOnLongClickListener(view -> {
@@ -53,7 +53,7 @@ public class CopyWithTimeStamp {
             changeVisibility(false);
 
         } catch (Exception e) {
-            LogHelper.printException(CopyWithTimeStamp.class, "Unable to set FrameLayout", e);
+            LogHelper.printException(() -> "Unable to set FrameLayout", e);
         }
     }
 

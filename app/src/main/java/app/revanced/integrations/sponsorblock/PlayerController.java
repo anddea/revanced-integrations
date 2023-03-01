@@ -32,9 +32,7 @@ public class PlayerController {
     public static String currentVideoId;
     public static long lastKnownVideoTime = -1L;
     public static long lastKnownVideoLength = 1L;
-    private static final Runnable findAndSkipSegmentRunnable = () -> {
-        findAndSkipSegment(false);
-    };
+    private static final Runnable findAndSkipSegmentRunnable = () -> findAndSkipSegment(false);
     private static float sponsorBarLeft = 1f;
     private static float sponsorBarRight = 1f;
     private static float sponsorBarThickness = 2f;
@@ -153,9 +151,7 @@ public class PlayerController {
         if (SettingsEnum.SB_COUNT_SKIPS.getBoolean()
                 && segment.category != SponsorBlockSettings.SegmentInfo.UNSUBMITTED
                 && millis - segment.start < 2000) { // Only skips from the start should count as a view
-            ReVancedUtils.runOnBackgroundThread(() -> {
-                SBRequester.sendViewCountRequest(segment);
-            });
+            ReVancedUtils.runOnBackgroundThread(() -> SBRequester.sendViewCountRequest(segment));
         }
     }
 
@@ -259,7 +255,7 @@ public class PlayerController {
             lastKnownVideoTime = millisecond;
             VideoInformation.seekTo(millisecond);
         } catch (Exception e) {
-            LogHelper.printException(PlayerController.class, "Cannot skip to millisecond", e);
+            LogHelper.printException (() -> "Cannot skip to millisecond", e);
         }
 
         return true;

@@ -19,7 +19,7 @@ public class LayoutOverridePatch {
 
             return isTabletLayoutEnabled ? 720 : (isPhoneLayoutEnabled ? 480 : original);
         } catch (Exception ex){
-            LogHelper.printException(LayoutOverridePatch.class, "Failed to getBoolean", ex);
+            LogHelper.printException(() -> "Failed to getBoolean", ex);
             return original;
         }
 

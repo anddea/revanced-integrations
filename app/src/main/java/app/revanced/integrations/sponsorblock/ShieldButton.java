@@ -29,7 +29,7 @@ public class ShieldButton {
         try {
             youtubeControlsLayout = (RelativeLayout) viewStub;
 
-            ImageView imageView = findView(ShieldButton.class, youtubeControlsLayout, "sponsorblock_button");
+            ImageView imageView = findView(youtubeControlsLayout, "sponsorblock_button");
 
             imageView.setOnClickListener(SponsorBlockUtils.shieldButtonListener);
             buttonview = new WeakReference<>(imageView);
@@ -45,7 +45,7 @@ public class ShieldButton {
             isShowing = true;
             changeVisibilityImmediate(false);
         } catch (Exception ex) {
-            LogHelper.printException(ShieldButton.class, "Unable to set RelativeLayout", ex);
+            LogHelper.printException(() -> "Unable to set RelativeLayout", ex);
         }
     }
 

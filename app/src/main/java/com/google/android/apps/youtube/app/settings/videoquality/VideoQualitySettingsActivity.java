@@ -83,7 +83,7 @@ public class VideoQualitySettingsActivity extends Activity {
         try {
             getTextView(findViewById(identifier("toolbar", ResourceType.ID))).setText(i);
         } catch (Exception e) {
-            LogHelper.printException(VideoQualitySettingsActivity.class, "Couldn't set Toolbar title", e);
+            LogHelper.printException(() -> "Couldn't set Toolbar title", e);
         }
     }
 
@@ -93,7 +93,7 @@ public class VideoQualitySettingsActivity extends Activity {
             imageButton.setOnClickListener(view -> VideoQualitySettingsActivity.this.onBackPressed());
             imageButton.setImageDrawable(getResources().getDrawable(ResourceHelper.getArrow()));
         } catch (Exception e) {
-            LogHelper.printException(VideoQualitySettingsActivity.class, "Couldn't set Toolbar click handler", e);
+            LogHelper.printException(() -> "Couldn't set Toolbar click handler", e);
         }
     }
 }

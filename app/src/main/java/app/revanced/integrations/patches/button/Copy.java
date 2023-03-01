@@ -31,7 +31,7 @@ public class Copy {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(Copy.class, constraintLayout, "copy_button");
+            ImageView imageView = findView(constraintLayout, "copy_button");
 
             imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), false));
             buttonview = new WeakReference<>(imageView);
@@ -49,7 +49,7 @@ public class Copy {
             changeVisibility(false);
 
         } catch (Exception ex) {
-            LogHelper.printException(Copy.class, "Unable to set FrameLayout", ex);
+            LogHelper.printException(() -> "Unable to set FrameLayout", ex);
         }
     }
 

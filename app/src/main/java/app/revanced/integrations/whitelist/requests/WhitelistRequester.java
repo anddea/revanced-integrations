@@ -69,7 +69,7 @@ public class WhitelistRequester {
             }
             connection.disconnect();
         } catch (Exception ex) {
-            LogHelper.printException(WhitelistRequester.class, "Failed to fetch channelId", ex);
+            LogHelper.printException(() -> "Failed to fetch channelId", ex);
             runOnMainThread(() -> {
                 var context = Objects.requireNonNull(ReVancedUtils.getContext());
                 Toast.makeText(context, str("revanced_whitelisting_fetch_failed"), Toast.LENGTH_SHORT).show();

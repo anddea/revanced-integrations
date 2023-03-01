@@ -16,7 +16,6 @@ import app.revanced.integrations.swipecontrols.controller.gesture.PressToSwipeCo
 import app.revanced.integrations.swipecontrols.controller.gesture.core.GestureController
 import app.revanced.integrations.swipecontrols.misc.Rectangle
 import app.revanced.integrations.swipecontrols.views.SwipeControlsOverlayLayout
-import app.revanced.integrations.utils.LogHelper
 import java.lang.ref.WeakReference
 
 /**
@@ -71,7 +70,6 @@ class SwipeControlsHostActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         // create controllers
-        LogHelper.info(this.javaClass, "initializing swipe controls controllers")
         config = SwipeControlsConfigurationProvider(this)
         keys = VolumeKeysController(this)
         audio = createAudioController()
@@ -107,7 +105,6 @@ class SwipeControlsHostActivity : Activity() {
         super.onStart()
 
         // (re) attach overlay
-        LogHelper.info(this.javaClass, "attaching swipe controls overlay")
         contentRoot.removeView(overlay)
         contentRoot.addView(overlay)
     }

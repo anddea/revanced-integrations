@@ -39,7 +39,7 @@ public class Download {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(Download.class, constraintLayout, "download_button");
+            ImageView imageView = findView(constraintLayout, "download_button");
 
             imageView.setOnClickListener(view -> {
 
@@ -72,7 +72,7 @@ public class Download {
                     context.startActivity(intent);
 
                 } catch (Exception error) {
-                    LogHelper.printException(Download.class, "Failed to launch the intent", error);
+                    LogHelper.printException(() -> "Failed to launch the intent", error);
                 }
 
             });
@@ -91,7 +91,7 @@ public class Download {
             changeVisibility(false);
 
         } catch (Exception e) {
-            LogHelper.printException(Download.class, "Unable to set FrameLayout", e);
+            LogHelper.printException(() -> "Unable to set FrameLayout", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class Download {
 
             return findIndex >= 0 ? labelArray[findIndex] : DownloaderPackageName;
         } catch (Exception e) {
-            LogHelper.printException(Download.class, "Unable to set DownloaderName", e);
+            LogHelper.printException(() -> "Unable to set DownloaderName", e);
         }
         return DownloaderPackageName;
     }

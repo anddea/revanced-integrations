@@ -56,7 +56,7 @@ public class Whitelists {
 
             isButtonEnabled = setValue();
 
-            ImageView imageView = findView(Whitelists.class, constraintLayout, "whitelist_button");
+            ImageView imageView = findView(constraintLayout, "whitelist_button");
             imageView.setOnClickListener(view -> Whitelists.OpenDialog(view.getContext()));
             buttonview = new WeakReference<>(imageView);
 
@@ -73,7 +73,7 @@ public class Whitelists {
             changeVisibility(false);
 
         } catch (Exception ex) {
-            LogHelper.printException(Whitelists.class, "Unable to set FrameLayout", ex);
+            LogHelper.printException(() -> "Unable to set FrameLayout", ex);
         }
     }
 
@@ -180,7 +180,7 @@ public class Whitelists {
         try {
             Whitelist.removeFromWhitelist(whitelistType, VideoInformation.getChannelName(), context);
         } catch (Exception ex) {
-            LogHelper.printException(Whitelists.class, "Failed to remove from whitelist", ex);
+            LogHelper.printException(() -> "Failed to remove from whitelist", ex);
         }
     }
 

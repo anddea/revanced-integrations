@@ -145,20 +145,20 @@ public class ReturnYouTubeDislikeApi {
                     updateStatistics(false, false);
                     return votingData;
                 } catch (JSONException ex) {
-                    LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to parse video: " + videoId + " json: " + json, ex);
+                    LogHelper.printException(() -> "Failed to parse video: " + videoId + " json: " + json, ex);
                 }
             } else if (responseCode == HTTP_STATUS_CODE_NOT_FOUND) {
                 // normal response when viewing YouTube Stories (cannot vote for these)
                 return null; // do not updated connection statistics
             } else {
-                LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch votes for video: " + videoId + " response code was: " + responseCode);
+                LogHelper.printException(() -> "Failed to fetch votes for video: " + videoId + " response code was: " + responseCode);
                 connection.disconnect(); // something went wrong, might as well disconnect
             }
         } catch (SocketTimeoutException ex) { // connection timed out, response timeout, or some other network error
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch votes", ex);
+            LogHelper.printException(() -> "Failed to fetch votes", ex);
         } catch (Exception ex) {
             // should never happen
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch votes", ex);
+            LogHelper.printException(() -> "Failed to fetch votes", ex);
         }
 
         updateStatistics(true, false);
@@ -195,11 +195,11 @@ public class ReturnYouTubeDislikeApi {
                 String solution = solvePuzzle(challenge, difficulty);
                 return confirmRegistration(userId, solution);
             }
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to register new user: " + userId
+            LogHelper.printException(() -> "Failed to register new user: " + userId
                     + " response code was: " + responseCode);
             connection.disconnect();
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to register user", ex);
+            LogHelper.printException(() -> "Failed to register user", ex);
         }
         return null;
     }
@@ -230,15 +230,15 @@ public class ReturnYouTubeDislikeApi {
             if (responseCode == HTTP_STATUS_CODE_SUCCESS) {
                 String result = Requester.parseJson(connection);
                 if (result.equalsIgnoreCase("true")) return userId;
-                LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm registration for user: " + userId
+                LogHelper.printException(() -> "Failed to confirm registration for user: " + userId
                         + " solution: " + solution + " response string was: " + result);
             } else {
-                LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm registration for user: " + userId
+                LogHelper.printException(() -> "Failed to confirm registration for user: " + userId
                         + " solution: " + solution + " response code was: " + responseCode);
             }
             connection.disconnect(); // something went wrong, might as well disconnect
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm registration for user: " + userId
+            LogHelper.printException(() -> "Failed to confirm registration for user: " + userId
                     + "solution: " + solution, ex);
         }
         return null;
@@ -276,11 +276,11 @@ public class ReturnYouTubeDislikeApi {
                 confirmVote(videoId, userId, solution);
                 return;
             }
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to send vote for video: " + videoId
+            LogHelper.printException(() -> "Failed to send vote for video: " + videoId
                     + " userId: " + userId + " vote: " + vote + " response code was: " + responseCode);
             connection.disconnect(); // something went wrong, might as well disconnect
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to send vote for video: " + videoId
+            LogHelper.printException(() -> "Failed to send vote for video: " + videoId
                     + " user: " + userId + " vote: " + vote, ex);
         }
     }
@@ -311,15 +311,15 @@ public class ReturnYouTubeDislikeApi {
             if (responseCode == HTTP_STATUS_CODE_SUCCESS) {
                 String result = Requester.parseJson(connection);
                 if (result.equalsIgnoreCase("true")) return;
-                LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm vote for video: " + videoId
+                LogHelper.printException(() -> "Failed to confirm vote for video: " + videoId
                         + " user: " + userId + " solution: " + solution + " response string was: " + result);
             } else {
-                LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm vote for video: " + videoId
+                LogHelper.printException(() -> "Failed to confirm vote for video: " + videoId
                         + " user: " + userId + " solution: " + solution + " response code was: " + responseCode);
             }
             connection.disconnect(); // something went wrong, might as well disconnect
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to confirm vote for video: " + videoId
+            LogHelper.printException(() -> "Failed to confirm vote for video: " + videoId
                     + " user: " + userId + " solution: " + solution, ex);
         }
     }
