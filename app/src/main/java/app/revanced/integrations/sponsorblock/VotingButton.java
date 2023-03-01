@@ -29,7 +29,7 @@ public class VotingButton {
         try {
             youtubeControlsLayout = (RelativeLayout) viewStub;
 
-            ImageView imageView = findView(youtubeControlsLayout, "voting_button");
+            ImageView imageView = findView(VotingButton.class, youtubeControlsLayout, "voting_button");
 
             imageView.setOnClickListener(SponsorBlockUtils.voteButtonListener);
             buttonview = new WeakReference<>(imageView);
@@ -45,7 +45,7 @@ public class VotingButton {
             isShowing = true;
             changeVisibilityImmediate(false);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Unable to set RelativeLayout", ex);
+            LogHelper.printException(VotingButton.class, "Unable to set RelativeLayout", ex);
         }
     }
 

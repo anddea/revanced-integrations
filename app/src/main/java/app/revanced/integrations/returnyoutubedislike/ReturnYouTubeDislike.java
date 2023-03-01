@@ -176,7 +176,7 @@ public class ReturnYouTubeDislike {
                 voteFetchFuture = ReVancedUtils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Failed to load new video: " + videoId, ex);
+            LogHelper.printException(ReturnYouTubeDislike.class, "Failed to load new video: " + videoId, ex);
         }
     }
 
@@ -208,7 +208,7 @@ public class ReturnYouTubeDislike {
                 textRef.set(replacement);
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onComponentCreated failure", ex);
+            LogHelper.printException(ReturnYouTubeDislike.class, "onComponentCreated failure", ex);
         }
     }
 
@@ -222,7 +222,7 @@ public class ReturnYouTubeDislike {
                 }
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onShortsComponentCreated failure", ex);
+            LogHelper.printException(ReturnYouTubeDislike.class, "onShortsComponentCreated failure", ex);
         }
         return span;
     }
@@ -266,7 +266,7 @@ public class ReturnYouTubeDislike {
             return replacement;
         } catch (TimeoutException ignored) {
         } catch (Exception e) {
-            LogHelper.printException(() -> "createReplacementSpan failure", e); // should never happen
+            LogHelper.printException(ReturnYouTubeDislike.class, "createReplacementSpan failure", e); // should never happen
         }
         return null;
     }
@@ -281,9 +281,9 @@ public class ReturnYouTubeDislike {
                     return;
                 }
             }
-            LogHelper.printException(() -> "Unknown vote type: " + vote);
+            LogHelper.printException(ReturnYouTubeDislike.class, "Unknown vote type: " + vote);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "sendVote failure", ex);
+            LogHelper.printException(ReturnYouTubeDislike.class, "sendVote failure", ex);
         }
     }
 
@@ -296,7 +296,7 @@ public class ReturnYouTubeDislike {
             if (videoIdToVoteFor == null || (lastVideoLoadedWasShort && !PlayerType.getCurrent().isNoneOrHidden())) {
                 // User enabled RYD after starting playback of a video.
                 // Or shorts was loaded with regular video present, then shorts was closed, and then user voted on the now visible original video
-                LogHelper.printException(() -> "Cannot send vote");
+                LogHelper.printException(ReturnYouTubeDislike.class, "Cannot send vote");
                 return;
             }
 
@@ -307,7 +307,7 @@ public class ReturnYouTubeDislike {
                         ReturnYouTubeDislikeApi.sendVote(videoIdToVoteFor, userId, vote);
                     }
                 } catch (Exception ex) {
-                    LogHelper.printException(() -> "Failed to send vote", ex);
+                    LogHelper.printException(ReturnYouTubeDislike.class, "Failed to send vote", ex);
                 }
             });
 
@@ -318,7 +318,7 @@ public class ReturnYouTubeDislike {
             // update the downloaded vote data
             Future<RYDVoteData> future = getVoteFetchFuture();
             if (future == null) {
-                LogHelper.printException(() -> "Cannot update UI dislike count - vote fetch is null");
+                LogHelper.printException(ReturnYouTubeDislike.class, "Cannot update UI dislike count - vote fetch is null");
                 return;
             }
             // the future should always be completed before user can like/dislike, but use a timeout just in case
@@ -326,7 +326,7 @@ public class ReturnYouTubeDislike {
             if (voteData == null) return;
             voteData.updateUsingVote(vote);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Error trying to send vote", ex);
+            LogHelper.printException(ReturnYouTubeDislike.class, "Error trying to send vote", ex);
         }
     }
 

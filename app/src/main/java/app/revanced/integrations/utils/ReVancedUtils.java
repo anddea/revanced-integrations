@@ -86,7 +86,7 @@ public class ReVancedUtils {
             try {
                 runnable.run();
             } catch (Exception ex) {
-                LogHelper.printException(() -> runnable.getClass() + ": " + ex.getMessage(), ex);
+                LogHelper.printException(ReVancedUtils.class, runnable.getClass() + ": " + ex.getMessage(), ex);
             }
         };
         new Handler(Looper.getMainLooper()).postDelayed(loggingRunnable, delayMillis);

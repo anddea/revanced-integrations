@@ -111,7 +111,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                         value = Integer.parseInt(defaultValue);
                         break;
                     default:
-                        LogHelper.printException(() -> "Setting has no valid return type! " + setting.getReturnType());
+                        LogHelper.printException(ReVancedSettingsFragment.class, "Setting has no valid return type! " + setting.getReturnType());
                         break;
                 }
                 setting.setValue(value);
@@ -176,7 +176,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             setVideoQuality(false);
             setDoubleBackTimeout();
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error during onCreate()", th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error during onCreate()", th);
         }
     }
 
@@ -227,7 +227,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             autoRepeatPreference.setEnabled(!isAutoRepeatEnabled);
             AutoRepeat.isButtonEnabled = isAutoRepeatEnabled;
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting AutoRepeatLinks" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting AutoRepeatLinks" + th);
         }
     }
 
@@ -243,7 +243,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             tabletPreference.setEnabled(!isTablet);
             phonePreference.setEnabled(isTablet);
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting LayoutOverrideLinks" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting LayoutOverrideLinks" + th);
         }
     }
 
@@ -272,7 +272,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 switchPreference.setEnabled(!isTablet);
             }
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting TabletLayoutLinks" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting TabletLayoutLinks" + th);
         }
     }
 
@@ -293,7 +293,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 switchPreference.setEnabled(!isEnabled);
             }
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting FullScreenPanelPreferenceLinks" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting FullScreenPanelPreferenceLinks" + th);
         }
     }
 
@@ -326,7 +326,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             int entryIndex = speedListPreference.findIndexOfValue(value);
             speedListPreference.setSummary(entryIndex < 0 ? null : speedEntries[entryIndex]);
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting setVideoSpeed" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoSpeed" + th);
         }
     }
 
@@ -348,7 +348,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             VideoQualityPatch.refreshQuality();
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting setVideoQuality" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
         }
     }
 
@@ -374,7 +374,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             timeoutListPreference.setEntries(Entries);
             timeoutListPreference.setEntryValues(entryValues);
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting setDoubleBackTimeout" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setDoubleBackTimeout" + th);
         }
     }
 
@@ -398,7 +398,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             Preference integration = findPreferenceOnScreen("revanced-integrations");
             integration.setSummary(BuildConfig.VERSION_NAME);
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting setPatchesInformation" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setPatchesInformation" + th);
         }
     }
 
@@ -448,7 +448,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 this.overlayPreferenceScreen.removePreference(whitelistingPreferenceScreen);
             }
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting AddWhitelistSettings" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting AddWhitelistSettings" + th);
         }
     }
 
@@ -506,7 +506,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 this.downloaderPreferenceScreen.addPreference(downloaderPreference);
             }
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting setDownloaderPreference" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setDownloaderPreference" + th);
         }
     }
 
@@ -533,7 +533,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             });
             this.backupPreferenceScreen.addPreference(exportPreference);
         } catch (Throwable th) {
-            LogHelper.printException(() -> "Error setting setBackupRestorePreference" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setBackupRestorePreference" + th);
         }
     }
 

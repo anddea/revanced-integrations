@@ -31,7 +31,7 @@ public class SponsorBlockView {
 
             addView();
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Unable to set ViewGroup", ex);
+            LogHelper.printException(SponsorBlockView.class, "Unable to set ViewGroup", ex);
         }
     }
 
@@ -64,7 +64,7 @@ public class SponsorBlockView {
             setSkipBtnMargins(false);
             setNewSegmentLayoutMargins(false);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Player type changed caused a crash.", ex);
+            LogHelper.printException(SponsorBlockView.class, "Player type changed caused a crash.", ex);
         }
     }
 

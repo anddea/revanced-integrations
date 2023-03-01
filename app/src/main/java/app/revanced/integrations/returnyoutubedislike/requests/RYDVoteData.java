@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import app.revanced.integrations.utils.LogHelper;
+
 /**
  * ReturnYouTubeDislike API estimated like/dislike/view counts.
  *

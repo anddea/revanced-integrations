@@ -19,7 +19,7 @@ public class VersionOverridePatch {
 
             return isOldLayoutEnabled ? "17.28.35" : version;
         } catch (Exception ex){
-            LogHelper.printException(() -> "Failed to getBoolean", ex);
+            LogHelper.printException(VersionOverridePatch.class, "Failed to getBoolean", ex);
             return version;
         }
     }
