@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
 import static app.revanced.integrations.patches.ads.ByteBufferFilterPatch.filters;
+import static app.revanced.integrations.patches.ads.ByteBufferFilterPatch.hideGeneralAds;
 import static app.revanced.integrations.patches.utils.PatchStatus.ByteBuffer;
 import static app.revanced.integrations.patches.utils.PatchStatus.GeneralAds;
 
@@ -114,6 +115,6 @@ public final class LithoFilterPatch {
     }
 
     public static boolean filter(StringBuilder pathBuilder, String identifier, Object object, ByteBuffer buffer) {
-        return (ByteBuffer() && filters(object.toString(), buffer)) || (GeneralAds() && filter(pathBuilder, identifier));
+        return (ByteBuffer() && filters(object.toString(), buffer)) || hideGeneralAds(object.toString(), buffer) || (GeneralAds() && filter(pathBuilder, identifier));
     }
 }

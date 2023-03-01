@@ -19,7 +19,8 @@ public class ByteBufferFilterPatch {
             "metadata",
             "thumbnail",
             "-button",
-            "-count"
+            "-count",
+            "-space"
     );
     private static int count;
 
@@ -32,7 +33,6 @@ public class ByteBufferFilterPatch {
 
         hideActionBar(value);
         hideFlyoutPanels(value, buffer);
-        hideGeneralAds(value, buffer);
         hideMixPlaylist(value, buffer);
         hideShortsComponent(value);
 
@@ -133,44 +133,38 @@ public class ByteBufferFilterPatch {
         indexOfBuffer(byteBufferList, buffer);
     }
 
-    private static void hideGeneralAds(String value, ByteBuffer buffer) {
-        if (!PatchStatus.GeneralAds()) return;
-
-        List<String> blockList = new ArrayList<>();
-        List<byte[]> genericBufferList = new ArrayList<>();
+    static boolean hideGeneralAds(String value, ByteBuffer buffer) {
+        if (!PatchStatus.GeneralAds()) return false;
 
         if (value.contains("post_base_wrapper")) {
             if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_HOME.getBoolean() &&
                     !value.contains("heightConstraint=null") &&
-                    value.contains("horizontalCollectionSwipeProtector=null")) count++;
+                    value.contains("horizontalCollectionSwipeProtector=null")) return true;
             else if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean() &&
-                    value.contains("heightConstraint=null")) count++;
+                    value.contains("heightConstraint=null")) return true;
         }
 
         if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean() &&
                 value.contains("|button")
         ) {
-            genericBufferList.add("header_store_button".getBytes());
-            indexOfBuffer(genericBufferList, buffer);
+            int bufferIndex = indexOf(buffer.array(), "header_store_button".getBytes());
+            if (bufferIndex > 0 && bufferIndex < 2000) return true;
         }
 
         if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
-                value.contains("_survey")) count++;
+                value.contains("_survey")) return true;
 
         if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
                 value.contains("horizontal_video_shelf") &&
                 !value.contains("activeStateScrollSelectionController=com")
-        ) count++;
+        ) return true;
 
-        if (SettingsEnum.ADREMOVER_VIEW_PRODUCTS.getBoolean()) {
-            blockList.add("product_item");
-            blockList.add("products_in_video");
-        }
+        if (SettingsEnum.ADREMOVER_VIEW_PRODUCTS.getBoolean() &&
+                value.contains("product_item") ||
+                value.contains("products_in_video")) return true;
 
-        if (SettingsEnum.ADREMOVER_TEASER.getBoolean() &&
-                value.contains("expandable_metadata")) count++;
-
-        if (blockList.stream().anyMatch(value::contains)) count++;
+        return SettingsEnum.ADREMOVER_TEASER.getBoolean() &&
+                value.contains("expandable_metadata");
     }
 
     private static void hideMixPlaylist(String value, ByteBuffer buffer) {
