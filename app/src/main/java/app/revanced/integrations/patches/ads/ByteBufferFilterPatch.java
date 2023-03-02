@@ -151,20 +151,10 @@ public class ByteBufferFilterPatch {
             if (bufferIndex > 0 && bufferIndex < 2000) return true;
         }
 
-        if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
-                value.contains("_survey")) return true;
-
         if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
                 value.contains("horizontal_video_shelf") &&
                 !value.contains("activeStateScrollSelectionController=com")
         ) return true;
-
-        if (SettingsEnum.ADREMOVER_VIEW_PRODUCTS.getBoolean() &&
-                value.contains("product_item") ||
-                value.contains("products_in_video")) return true;
-
-        return SettingsEnum.ADREMOVER_TEASER.getBoolean() &&
-                value.contains("expandable_metadata");
     }
 
     private static void hideMixPlaylist(String value, ByteBuffer buffer) {

@@ -25,6 +25,7 @@ public final class GeneralAdsPatch extends Filter {
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
         var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR, "cell_divider");
         var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
+        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY, "_survey");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "compact_banner", "publisher_transparency_panel", "single_item_information_panel");
         var joinMembership = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_BAR_JOIN_BUTTON, "compact_sponsor_button");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
@@ -35,6 +36,7 @@ public final class GeneralAdsPatch extends Filter {
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
         var teaser = new BlockRule(SettingsEnum.ADREMOVER_TEASER, "expandable_metadata");
         var timedReactions = new BlockRule(SettingsEnum.ADREMOVER_TIMED_REACTIONS, "emoji_control_panel", "timed_reaction_player_animation", "timed_reaction_live_player_overlay");
+        var viewProducts = new BlockRule(SettingsEnum.ADREMOVER_VIEW_PRODUCTS, "product_item", "products_in_video");
         var webSearchPanel = new BlockRule(SettingsEnum.ADREMOVER_WEB_SEARCH_PANEL, "web_link_panel");
 
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
@@ -72,6 +74,7 @@ public final class GeneralAdsPatch extends Filter {
                 channelMemberShelf,
                 generalAds,
                 imageShelf,
+                inFeedSurvey,
                 infoPanel,
                 joinMembership,
                 latestPosts,
@@ -83,6 +86,7 @@ public final class GeneralAdsPatch extends Filter {
                 selfSponsor,
                 teaser,
                 timedReactions,
+                viewProducts,
                 webSearchPanel
         );
 
