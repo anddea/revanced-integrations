@@ -29,11 +29,15 @@ public class ByteBufferFilterPatch {
         if ((whiteList.stream().anyMatch(value::contains) && blockList.stream().noneMatch(value::contains))) return false;
         if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
             return hideActionButton(buffer);
+        if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() &&
+                value.contains("video_with_context."))
+            return hideMixPlaylist(value, buffer);
+
         count = 0;
 
         hideActionBar(value);
         hideFlyoutPanels(value, buffer);
-        hideMixPlaylist(value, buffer);
+        hideGeneralAds(value, buffer);
         hideShortsComponent(value);
 
         return count > 0;
@@ -133,36 +137,30 @@ public class ByteBufferFilterPatch {
         indexOfBuffer(byteBufferList, buffer);
     }
 
-    static boolean hideGeneralAds(String value, ByteBuffer buffer) {
-        if (!PatchStatus.GeneralAds()) return false;
+    private static void hideGeneralAds(String value, ByteBuffer buffer) {
+        if (!PatchStatus.GeneralAds()) return;
 
         if (value.contains("post_base_wrapper")) {
             if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_HOME.getBoolean() &&
-                    !value.contains("heightConstraint=null") &&
-                    value.contains("horizontalCollectionSwipeProtector=null")) return true;
+                    value.contains("horizontalCollectionSwipeProtector=null")) count++;
             else if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean() &&
-                    value.contains("heightConstraint=null")) return true;
+                    value.contains("heightConstraint=null")) count++;
         }
 
         if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean() &&
                 value.contains("|button")
         ) {
             int bufferIndex = indexOf(buffer.array(), "header_store_button".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) return true;
+            if (bufferIndex > 0 && bufferIndex < 2000) count++;
         }
 
         if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
                 value.contains("horizontal_video_shelf") &&
                 !value.contains("activeStateScrollSelectionController=com")
-        ) return true;
+        ) count++;
     }
 
-    private static void hideMixPlaylist(String value, ByteBuffer buffer) {
-        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() ||
-                !value.contains("video_with_context.") ||
-                value.contains("|ContainerType|ContainerType|"))
-            return;
-
+    private static boolean hideMixPlaylist(String value, ByteBuffer buffer) {
         List<byte[]> byteBufferList = new ArrayList<>();
 
         byteBufferList.add("for you".getBytes());
@@ -172,14 +170,23 @@ public class ByteBufferFilterPatch {
 
         // home feed & search result
         if ((value.contains("home_video_with_context.") ||
-                value.contains("search_video_with_context.")) &&
-                !value.contains("|ContainerType|ContainerType|"))
-            indexOfBuffer(byteBufferList, buffer);
+                value.contains("search_video_with_context."))) {
+
+            for (byte[] b: byteBufferList) {
+                int bufferIndex = indexOf(buffer.array(), b);
+                if (bufferIndex > 0 && bufferIndex < 2000) return true;
+            }
+        }
 
         // related video
-        if (value.contains("related_video_with_context.") &&
-                !value.contains("|ContainerType|related_video_with_context_inner"))
-            indexOfBuffer(byteBufferList, buffer);
+        if (value.contains("related_video_with_context.")) {
+            for (byte[] b: byteBufferList) {
+                int bufferIndex = indexOf(buffer.array(), b);
+                if (bufferIndex > 0 && bufferIndex < 2000) return true;
+            }
+        }
+
+        return false;
     }
 
     private static void hideShortsComponent(String value) {
