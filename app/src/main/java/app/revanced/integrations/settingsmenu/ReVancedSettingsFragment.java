@@ -385,8 +385,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private void setPatchesInformation() {
         try {
             Preference reportPreference = new Preference(ReVancedSettingsFragment.this.getActivity());
-            reportPreference.setTitle(str("revanced_extended_issue_center_title"));
-            reportPreference.setSummary(str("revanced_extended_issue_center_summary"));
+            reportPreference.setTitle(str("revanced_extended_support_center_title"));
+            reportPreference.setSummary(str("revanced_extended_support_center_summary"));
             reportPreference.setOnPreferenceClickListener(pref -> {
                 var intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://github.com/inotia00/ReVanced_Extended"));
