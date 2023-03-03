@@ -15,4 +15,8 @@ public class FlyoutPanelLayoutPatch {
         listView.setVisibility(View.GONE);
         runOnMainThread(() -> listView.performItemClick(null, 4, 0));
     }
+
+    public static int enableOldQualityLayout(int original) {
+        return SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean() ? 3 : original;
+    }
 }
