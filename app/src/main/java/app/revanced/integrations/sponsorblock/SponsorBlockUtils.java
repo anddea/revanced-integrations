@@ -1,7 +1,6 @@
 package app.revanced.integrations.sponsorblock;
 
 import static android.text.Html.fromHtml;
-import static android.view.View.GONE;
 import static app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment.FORMATTER;
 import static app.revanced.integrations.sponsorblock.PlayerController.getCurrentVideoId;
 import static app.revanced.integrations.sponsorblock.PlayerController.getCurrentVideoLength;
@@ -41,6 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
@@ -249,23 +249,25 @@ public abstract class SponsorBlockUtils {
     }
 
     public static void showShieldButton() {
-        ShieldButton.refreshVisibility();
         ShieldButton.changeVisibility(true);
     }
 
     public static void hideShieldButton() {
-        VotingButton.refreshVisibility();
         ShieldButton.changeVisibility(false);
     }
 
     public static void showVoteButton() {
-        VotingButton.refreshVisibility();
         VotingButton.changeVisibility(true);
     }
 
     public static void hideVoteButton() {
-        VotingButton.refreshVisibility();
         VotingButton.changeVisibility(false);
+    }
+
+    public static void updateButton() {
+        if (!PatchStatus.Sponsorblock()) return;
+        ShieldButton.refreshVisibility();
+        VotingButton.refreshVisibility();
     }
 
     @SuppressLint("DefaultLocale")

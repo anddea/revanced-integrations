@@ -1,14 +1,12 @@
 package app.revanced.integrations.patches.video;
 
-import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.hideShieldButton;
-import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.hideVoteButton;
+import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.updateButton;
 
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
-import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
@@ -59,6 +57,8 @@ public final class VideoInformation {
             videoId = newlyLoadedVideoId;
             videoEnd = false;
         }
+        if (!isAtEndOfVideo())
+            updateButton();
     }
 
     /**
@@ -178,9 +178,21 @@ public final class VideoInformation {
     }
 
     public static void videoEnd() {
+        clear();
         videoEnd = true;
-        if (!PatchStatus.Sponsorblock()) return;
-        hideShieldButton();
-        hideVoteButton();
+        updateButton();
+    }
+
+    private static void clear() {
+        videoId = "";
+        videoLength = 0;
+        videoTime = -1;
+    }
+
+    /**
+     * @return If the playback is at the end of the video
+     */
+    public static boolean isAtEndOfVideo() {
+        return videoTime > 0 && videoLength > 0 && videoTime >= videoLength;
     }
 }

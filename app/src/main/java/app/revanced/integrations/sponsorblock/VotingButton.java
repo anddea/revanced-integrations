@@ -67,6 +67,7 @@ public class VotingButton {
 
     public static void refreshVisibility() {
         isButtonEnabled = setValue();
+        changeVisibility(isButtonEnabled);
     }
 
     private static boolean setValue() {

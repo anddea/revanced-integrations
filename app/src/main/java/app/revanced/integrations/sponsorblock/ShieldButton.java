@@ -67,7 +67,9 @@ public class ShieldButton {
 
     public static void refreshVisibility() {
         isButtonEnabled = setValue();
+        changeVisibility(isButtonEnabled);
     }
+
     private static boolean setValue() {
         return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_NEW_SEGMENT_ENABLED.getBoolean() && !isVideoEnd();
     }
