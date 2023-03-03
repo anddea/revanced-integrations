@@ -1,10 +1,10 @@
 package app.revanced.integrations.whitelist;
 
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -109,10 +109,10 @@ public class Whitelist {
         boolean success = updateWhitelist(whitelistType, channels, ReVancedUtils.getContext());
         String friendlyName = whitelistType.getFriendlyName();
         if (success) {
-            Toast.makeText(context, str("revanced_whitelisting_removed", channelName, friendlyName), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("revanced_whitelisting_removed", channelName, friendlyName));
             ReVancedSettingsFragment.rebootDialogStatic(context, str("revanced_whitelisting_reboot"));
         } else {
-            Toast.makeText(context, str("revanced_whitelisting_remove_failed", channelName, friendlyName), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("revanced_whitelisting_remove_failed", channelName, friendlyName));
         }
     }
 

@@ -1,21 +1,20 @@
 package app.revanced.integrations.patches.video;
 
+import static app.revanced.integrations.utils.ReVancedUtils.getNetworkInfo;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class VideoQualityPatch {
 
@@ -27,25 +26,23 @@ public class VideoQualityPatch {
 
     public static void changeDefaultQuality(int defaultQuality) {
         if (SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean()) {
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
-
-            if (isConnectedWifi(context)) {
+            if (isConnectedWifi()) {
                 try {
                     SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI.saveValue(defaultQuality);
                 } catch (Exception ex) {
                     LogHelper.printException(VideoQualityPatch.class, "Failed to change default WI-FI quality" + ex);
-                    Toast.makeText(context, str("revanced_save_video_quality_wifi_error"), Toast.LENGTH_SHORT).show();
+                    showToastShort(str("revanced_save_video_quality_wifi_error"));
                 }
-                Toast.makeText(context, str("revanced_save_video_quality_wifi") + "" + defaultQuality + "p", Toast.LENGTH_SHORT).show();
-            } else if (isConnectedMobile(context)) {
+                showToastShort(str("revanced_save_video_quality_wifi") + "" + defaultQuality + "p");
+            } else if (isConnectedMobile()) {
                 try {
                     SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE.saveValue(defaultQuality);
                 } catch (Exception ex) {
-                    Toast.makeText(context, str("revanced_save_video_quality_mobile_error"), Toast.LENGTH_SHORT).show();
+                    showToastShort(str("revanced_save_video_quality_mobile_error"));
                 }
-                Toast.makeText(context, str("revanced_save_video_quality_mobile") + "" + defaultQuality + "p", Toast.LENGTH_SHORT).show();
+                showToastShort(str("revanced_save_video_quality_mobile") + "" + defaultQuality + "p");
             } else {
-                Toast.makeText(context, str("revanced_save_video_quality_internet_error"), Toast.LENGTH_SHORT).show();
+                showToastShort(str("revanced_save_video_quality_internet_error"));
             }
             refreshQuality();
         }
@@ -86,11 +83,10 @@ public class VideoQualityPatch {
             }
         }
         newVideo = false;
-        var context = Objects.requireNonNull(ReVancedUtils.getContext());
 
-        if (isConnectedWifi(context))
+        if (isConnectedWifi())
             defaultQuality = defaultQualityWiFi;
-        else if (isConnectedMobile(context))
+        else if (isConnectedMobile())
             defaultQuality = defaultQualityMobile;
         else
             return quality;
@@ -115,7 +111,7 @@ public class VideoQualityPatch {
             return qualityIndex;
         } catch (Exception ex) {
             LogHelper.printException(VideoQualityPatch.class, "Failed to set quality", ex);
-            Toast.makeText(context, str("revanced_save_video_quality_common_error"), Toast.LENGTH_SHORT).show();
+            showToastShort(str("revanced_save_video_quality_common_error"));
             return qualityIndex;
         }
     }
@@ -134,23 +130,18 @@ public class VideoQualityPatch {
         setDefaultQuality();
     }
 
-    public static void newVideoStarted(String videoId) {
+    public static void newVideoStarted(@NonNull String videoId) {
         setDefaultQuality();
         newVideo = true;
     }
 
-    private static NetworkInfo getNetworkInfo(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo();
-    }
-
-    private static boolean isConnectedWifi(Context context) {
-        NetworkInfo info = getNetworkInfo(context);
+    private static boolean isConnectedWifi() {
+        NetworkInfo info = getNetworkInfo();
         return info != null && info.isConnected() && info.getType() == 1;
     }
 
-    private static boolean isConnectedMobile(Context context) {
-        NetworkInfo info = getNetworkInfo(context);
+    private static boolean isConnectedMobile() {
+        NetworkInfo info = getNetworkInfo();
         return info != null && info.isConnected() && info.getType() == 0;
     }
 

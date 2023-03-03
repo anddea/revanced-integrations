@@ -1,5 +1,6 @@
 package app.revanced.integrations.patches.button;
 
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
@@ -14,7 +15,6 @@ import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -56,14 +56,13 @@ public class Download {
 
                 // If the package is not installed, show the toast
                 if (!packageEnabled) {
-                    Toast.makeText(context, getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"), Toast.LENGTH_LONG).show();
-
+                    showToastShort(context, getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
                     return;
                 }
 
                 // Launch PowerTube intent
                 try {
-                    var content = String.format("https://youtu.be/%s", VideoInformation.getCurrentVideoId());
+                    var content = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
 
                     var intent = new Intent("android.intent.action.SEND");
                     intent.setType("text/plain");

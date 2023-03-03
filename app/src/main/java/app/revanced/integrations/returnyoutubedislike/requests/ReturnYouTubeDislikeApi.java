@@ -1,12 +1,13 @@
 package app.revanced.integrations.returnyoutubedislike.requests;
 
+import static app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeRoutes.getRYDConnectionFromRoute;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
+import static app.revanced.integrations.utils.StringRef.str;
+
 import android.util.Base64;
-import android.widget.Toast;
+
 import androidx.annotation.Nullable;
-import app.revanced.integrations.requests.Requester;
-import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
-import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,8 +21,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Objects;
 
-import static app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeRoutes.getRYDConnectionFromRoute;
-import static app.revanced.integrations.utils.StringRef.str;
+import app.revanced.integrations.requests.Requester;
+import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
+import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ReVancedUtils;
 
 public class ReturnYouTubeDislikeApi {
     /**
@@ -92,9 +95,7 @@ public class ReturnYouTubeDislikeApi {
         if (httpResponseCode == RATE_LIMIT_HTTP_STATUS_CODE) {
             lastTimeRateLimitWasHit = System.currentTimeMillis();
             // don't care, field is used only as an estimate
-            ReVancedUtils.runOnMainThread(() -> { // must show toasts on main thread
-                Toast.makeText(ReVancedUtils.getContext(), str("revanced_ryd_failure_client_rate_limit_requested"), Toast.LENGTH_LONG).show();
-            });
+            ReVancedUtils.runOnMainThread(() -> showToastShort(str("revanced_ryd_failure_client_rate_limit_requested")));
             return true;
         }
         return false;

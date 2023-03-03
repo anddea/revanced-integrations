@@ -4,6 +4,8 @@ import static android.text.Html.fromHtml;
 import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.timeWithoutSegments;
 import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.videoHasSegments;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastLong;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
@@ -11,7 +13,6 @@ import android.content.Context;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,7 +93,7 @@ public class SBRequester {
         try {
             String start = String.format(Locale.US, TIME_TEMPLATE, startTime);
             String end = String.format(Locale.US, TIME_TEMPLATE, endTime);
-            String duration = String.valueOf(PlayerController.lastKnownVideoLength / 1000);
+            String duration = String.valueOf(PlayerController.getCurrentVideoLength() / 1000);
             HttpURLConnection connection = getConnectionFromRoute(SBRoutes.SUBMIT_SEGMENTS, videoId, uuid, start, end, category, duration);
             int responseCode = connection.getResponseCode();
 
@@ -155,7 +156,7 @@ public class SBRequester {
                         SponsorBlockUtils.messageToToast = str("vote_failed_unknown_error", responseCode, connection.getResponseMessage());
                         break;
                 }
-                runOnMainThread(() -> Toast.makeText(context, SponsorBlockUtils.messageToToast, Toast.LENGTH_LONG).show());
+                runOnMainThread(() -> showToastLong(context, SponsorBlockUtils.messageToToast));
                 connection.disconnect();
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -224,11 +225,11 @@ public class SBRequester {
     public static void setMirror() {
         if (SettingsEnum.SB_MIRROR_ENABLED.getBoolean()) {
             runOnMainThread(() -> {
-                Toast.makeText(ReVancedUtils.getContext(), str("sb_connection_failed"), Toast.LENGTH_SHORT).show();
-                Toast.makeText(ReVancedUtils.getContext(), str("sb_switching_to_mirror"), Toast.LENGTH_SHORT).show();
+                showToastShort(str("sb_connection_failed"));
+                showToastShort(str("sb_switching_to_mirror"));
             });
             SettingsEnum.SB_API_URL.saveValue(SettingsEnum.SB_API_MIRROR_URL.getString());
-            runOnMainThread(() -> Toast.makeText(ReVancedUtils.getContext(), str("sb_switching_success"), Toast.LENGTH_SHORT).show());
+            runOnMainThread(() -> showToastShort(str("sb_switching_success")));
         }
     }
 

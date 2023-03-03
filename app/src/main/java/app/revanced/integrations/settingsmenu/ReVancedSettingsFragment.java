@@ -1,6 +1,7 @@
 package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
 import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
@@ -22,7 +23,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -609,9 +609,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             printWriter.close();
             fileWriter.close();
 
-            Toast.makeText(context, str("settings_export_successful"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("settings_export_successful"));
         } catch (IOException | JSONException e) {
-            Toast.makeText(context, str("settings_export_failed"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("settings_export_failed"));
             throw new RuntimeException(e);
         }
     }
@@ -653,10 +653,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             bufferedReader.close();
             fileReader.close();
 
-            Toast.makeText(context, str("settings_import_successful"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("settings_import_successful"));
             runOnMainThreadDelayed(() -> reboot(ReVancedSettingsFragment.this.getActivity()), 1000L);
         } catch (IOException | JSONException e) {
-            Toast.makeText(context, str("settings_import_failed"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("settings_import_failed"));
             throw new RuntimeException(e);
         }
     }

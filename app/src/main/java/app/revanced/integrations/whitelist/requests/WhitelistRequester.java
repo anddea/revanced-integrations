@@ -1,10 +1,8 @@
 package app.revanced.integrations.whitelist.requests;
 
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
-
-import android.content.Context;
-import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -57,23 +55,18 @@ public class WhitelistRequester {
                 String whitelistTypeName = whitelistType.getFriendlyName();
                 runOnMainThread(() -> {
                     if (success) {
-                        Toast.makeText(context, str("revanced_whitelisting_added", author, whitelistTypeName), Toast.LENGTH_SHORT).show();
+                        showToastShort(str("revanced_whitelisting_added", author, whitelistTypeName));
                     } else {
-                        Toast.makeText(context, str("revanced_whitelisting_add_failed", author, whitelistTypeName), Toast.LENGTH_SHORT).show();
+                        showToastShort(str("revanced_whitelisting_add_failed", author, whitelistTypeName));
                     }
                 });
             } else {
-                runOnMainThread(() -> {
-                    Toast.makeText(context, str("revanced_whitelisting_fetch_failed", responseCode), Toast.LENGTH_SHORT).show();
-                });
+                runOnMainThread(() -> showToastShort(str("revanced_whitelisting_fetch_failed", responseCode)));
             }
             connection.disconnect();
         } catch (Exception ex) {
             LogHelper.printException(WhitelistRequester.class, "Failed to fetch channelId", ex);
-            runOnMainThread(() -> {
-                var context = Objects.requireNonNull(ReVancedUtils.getContext());
-                Toast.makeText(context, str("revanced_whitelisting_fetch_failed"), Toast.LENGTH_SHORT).show();
-            });
+            runOnMainThread(() -> showToastShort(str("revanced_whitelisting_fetch_failed")));
         }
     }
 

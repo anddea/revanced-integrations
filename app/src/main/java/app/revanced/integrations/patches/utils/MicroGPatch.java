@@ -1,11 +1,12 @@
 package app.revanced.integrations.patches.utils;
 
+import static app.revanced.integrations.utils.ReVancedUtils.showToastLong;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -18,15 +19,15 @@ public class MicroGPatch {
         try {
             context.getPackageManager().getPackageInfo(MICROG_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
         } catch (PackageManager.NameNotFoundException exception) {
-            Toast.makeText(context, str("microg_not_installed_warning"), Toast.LENGTH_LONG).show();
-            Toast.makeText(context, str("microg_not_installed_notice"), Toast.LENGTH_LONG).show();
+            showToastShort(str("microg_not_installed_warning"));
+            showToastShort(str("microg_not_installed_notice"));
 
             System.exit(0);
         }
 
         try (var client = context.getContentResolver().acquireContentProviderClient(VANCED_MICROG_PROVIDER)) {
             if (client != null) return;
-            Toast.makeText(context, str("microg_not_running_warning"), Toast.LENGTH_LONG).show();
+            showToastLong(str("microg_not_running_warning"));
         }
     }
 }

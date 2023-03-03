@@ -2,14 +2,18 @@ package app.revanced.integrations.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.text.Bidi;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
@@ -71,6 +75,38 @@ public class ReVancedUtils {
         return isRightToLeftTextLayout;
     }
 
+    public static void showToastShort(Context context, String messageToToast) {
+        showToast(context, messageToToast, Toast.LENGTH_SHORT);
+    }
+
+    public static void showToastLong(Context context, String messageToToast) {
+        showToast(context, messageToToast, Toast.LENGTH_LONG);
+    }
+
+    /**
+     * Safe to call from any thread
+     */
+    public static void showToastShort(@NonNull String messageToToast) {
+        showToast(context, messageToToast, Toast.LENGTH_SHORT);
+    }
+
+    /**
+     * Safe to call from any thread
+     */
+    public static void showToastLong(@NonNull String messageToToast) {
+        showToast(context, messageToToast, Toast.LENGTH_LONG);
+    }
+
+    private static void showToast(Context context, @NonNull String messageToToast, int toastDuration) {
+        Objects.requireNonNull(messageToToast);
+        runOnMainThreadNowOrLater(() -> {
+                    // cannot use getContext(), otherwise if context is null it will cause infinite recursion of error logging
+                    assert context != null;
+                    Toast.makeText(context, messageToToast, toastDuration).show();
+                }
+        );
+    }
+
     /**
      * Automatically logs any exceptions the runnable throws.
      */
@@ -115,5 +151,11 @@ public class ReVancedUtils {
         if (currentlyIsOnMainThread()) {
             throw new IllegalStateException("Must call _off_ the main thread");
         }
+    }
+
+    public static NetworkInfo getNetworkInfo() {
+        assert context != null;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo();
     }
 }

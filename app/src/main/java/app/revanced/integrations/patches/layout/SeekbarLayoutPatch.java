@@ -1,12 +1,11 @@
 package app.revanced.integrations.patches.layout;
 
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.graphics.Color;
-import android.widget.Toast;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class SeekbarLayoutPatch {
 
@@ -27,7 +26,7 @@ public class SeekbarLayoutPatch {
             try {
                 colorValue = Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString());
             } catch (Exception ignored) {
-                Toast.makeText(ReVancedUtils.getContext(), str("color_invalid"), Toast.LENGTH_SHORT).show();
+                showToastShort(str("color_invalid"));
             }
         }
         return colorValue;

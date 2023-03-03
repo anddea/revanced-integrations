@@ -2,6 +2,7 @@ package app.revanced.integrations.utils;
 
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.userChangedSpeed;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.StringRef.str;
 
@@ -14,7 +15,6 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Display;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class VideoHelpers {
             }
 
             setClipboard(context, url);
-            Toast.makeText(context, str("share_copy_url_success"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("share_copy_url_success"));
         } catch (Exception e) {
             LogHelper.printException(VideoHelpers.class, "Failed to generate video url", e);
         }
@@ -54,8 +54,7 @@ public class VideoHelpers {
             @SuppressLint("DefaultLocale") String timeStamp = h > 0 ? String.format("%02d:%02d:%02d", h, m, s) : String.format("%02d:%02d", m, s);
 
             setClipboard(context, timeStamp);
-
-            Toast.makeText(context, str("revanced_copytimestamp_success") + ": " + timeStamp, Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("revanced_copytimestamp_success") + ": " + timeStamp);
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
         }

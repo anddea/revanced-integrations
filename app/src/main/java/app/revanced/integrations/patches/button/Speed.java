@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.button;
 
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
@@ -11,7 +12,6 @@ import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
@@ -39,7 +39,7 @@ public class Speed {
             imageView.setOnClickListener(view -> VideoHelpers.videoSpeedDialogListener(view.getContext()));
             imageView.setOnLongClickListener(view -> {
                 overrideSpeed(1.0f);
-                Toast.makeText(view.getContext(), str("revanced_overlay_button_speed_reset"), Toast.LENGTH_SHORT).show();
+                showToastShort(view.getContext(), str("revanced_overlay_button_speed_reset"));
                 return true;
             });
             buttonView = new WeakReference<>(imageView);
