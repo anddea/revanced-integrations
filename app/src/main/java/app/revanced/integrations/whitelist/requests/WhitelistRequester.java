@@ -12,9 +12,9 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import app.revanced.integrations.patches.video.VideoChannel;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.requests.Requester;
-import app.revanced.integrations.sponsorblock.player.ChannelModel;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
@@ -39,7 +39,7 @@ public class WhitelistRequester {
             connection.setConnectTimeout(2 * 1000);
 
             String versionName = ReVancedHelper.getVersionName();
-            String jsonInputString = "{\"context\": {\"client\": { \"clientName\": \"Android\", \"clientVersion\": \"" + versionName + "\" } }, \"videoId\": \"" + VideoInformation.getCurrentVideoId() + "\"}";
+            String jsonInputString = "{\"context\": {\"client\": { \"clientName\": \"Android\", \"clientVersion\": \"" + versionName + "\" } }, \"videoId\": \"" + VideoInformation.getVideoId() + "\"}";
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
@@ -48,7 +48,7 @@ public class WhitelistRequester {
             if (responseCode == 200) {
                 JSONObject json = getJSONObject(connection);
                 JSONObject videoInfo = json.getJSONObject("videoDetails");
-                ChannelModel channelModel = new ChannelModel(videoInfo.getString("author"), videoInfo.getString("channelId"));
+                VideoChannel channelModel = new VideoChannel(videoInfo.getString("author"), videoInfo.getString("channelId"));
                 String author = channelModel.getAuthor();
 
                 boolean success = Whitelist.addToWhitelist(whitelistType, context, channelModel);

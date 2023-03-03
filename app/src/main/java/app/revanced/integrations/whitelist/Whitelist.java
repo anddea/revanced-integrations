@@ -13,15 +13,15 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import app.revanced.integrations.patches.video.VideoChannel;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
-import app.revanced.integrations.sponsorblock.player.ChannelModel;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class Whitelist {
 
-    private static final Map<WhitelistType, ArrayList<ChannelModel>> whitelistMap = parseWhitelist(ReVancedUtils.getContext());
+    private static final Map<WhitelistType, ArrayList<VideoChannel>> whitelistMap = parseWhitelist(ReVancedUtils.getContext());
     private static final Map<WhitelistType, Boolean> enabledMap = parseEnabledMap(ReVancedUtils.getContext());
 
     private Whitelist() {
@@ -39,12 +39,12 @@ public class Whitelist {
         return isWhitelisted(WhitelistType.SPEED);
     }
 
-    private static Map<WhitelistType, ArrayList<ChannelModel>> parseWhitelist(Context context) {
+    private static Map<WhitelistType, ArrayList<VideoChannel>> parseWhitelist(Context context) {
         if (context == null) {
             return Collections.emptyMap();
         }
         WhitelistType[] whitelistTypes = WhitelistType.values();
-        Map<WhitelistType, ArrayList<ChannelModel>> whitelistMap = new EnumMap<>(WhitelistType.class);
+        Map<WhitelistType, ArrayList<VideoChannel>> whitelistMap = new EnumMap<>(WhitelistType.class);
 
         for (WhitelistType whitelistType : whitelistTypes) {
             SharedPreferences preferences = SharedPrefHelper.getPreferences(context, whitelistType.getPreferencesName());
@@ -54,7 +54,7 @@ public class Whitelist {
                 continue;
             }
             try {
-                ArrayList<ChannelModel> deserializedChannels = (ArrayList<ChannelModel>) ObjectSerializer.deserialize(serializedChannels);
+                ArrayList<VideoChannel> deserializedChannels = (ArrayList<VideoChannel>) ObjectSerializer.deserialize(serializedChannels);
                 whitelistMap.put(whitelistType, deserializedChannels);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -75,10 +75,8 @@ public class Whitelist {
     }
 
     private static boolean isWhitelisted(WhitelistType whitelistType) {
-        if (VideoInformation.getChannelName() == null) {
-            return false;
-        }
-        for (ChannelModel channel : getWhitelistedChannels(whitelistType)) {
+        if (VideoInformation.getChannelName() == null) return false;
+        for (VideoChannel channel : getWhitelistedChannels(whitelistType)) {
             if (channel.getAuthor().equals(VideoInformation.getChannelName())) {
                 return true;
             }
@@ -86,9 +84,9 @@ public class Whitelist {
         return false;
     }
 
-    public static boolean addToWhitelist(WhitelistType whitelistType, Context context, ChannelModel channel) {
-        ArrayList<ChannelModel> whitelisted = getWhitelistedChannels(whitelistType);
-        for (ChannelModel whitelistedChannel : whitelisted) {
+    public static boolean addToWhitelist(WhitelistType whitelistType, Context context, VideoChannel channel) {
+        ArrayList<VideoChannel> whitelisted = getWhitelistedChannels(whitelistType);
+        for (VideoChannel whitelistedChannel : whitelisted) {
             String channelId = channel.getChannelId();
             if (whitelistedChannel.getChannelId().equals(channelId)) return true;
         }
@@ -97,10 +95,10 @@ public class Whitelist {
     }
 
     public static void removeFromWhitelist(WhitelistType whitelistType, String channelName, Context context) {
-        ArrayList<ChannelModel> channels = getWhitelistedChannels(whitelistType);
-        Iterator<ChannelModel> iterator = channels.iterator();
+        ArrayList<VideoChannel> channels = getWhitelistedChannels(whitelistType);
+        Iterator<VideoChannel> iterator = channels.iterator();
         while (iterator.hasNext()) {
-            ChannelModel channel = iterator.next();
+            VideoChannel channel = iterator.next();
             if (channel.getAuthor().equals(channelName)) {
                 iterator.remove();
                 break;
@@ -116,7 +114,7 @@ public class Whitelist {
         }
     }
 
-    public static boolean updateWhitelist(WhitelistType whitelistType, ArrayList<ChannelModel> channels, Context context) {
+    public static boolean updateWhitelist(WhitelistType whitelistType, ArrayList<VideoChannel> channels, Context context) {
         if (context == null) {
             return false;
         }
@@ -137,7 +135,7 @@ public class Whitelist {
         enabledMap.put(whitelistType, enabled);
     }
 
-    public static ArrayList<ChannelModel> getWhitelistedChannels(WhitelistType whitelistType) {
+    public static ArrayList<VideoChannel> getWhitelistedChannels(WhitelistType whitelistType) {
         return whitelistMap.get(whitelistType);
     }
 }

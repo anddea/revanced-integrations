@@ -1,12 +1,12 @@
-package app.revanced.integrations.sponsorblock.player;
+package app.revanced.integrations.patches.video;
 
 import java.io.Serializable;
 
-public class ChannelModel implements Serializable {
+public class VideoChannel implements Serializable {
     private String author;
     private String channelId;
 
-    public ChannelModel(String author, String channelId) {
+    public VideoChannel(String author, String channelId) {
         this.author = author;
         this.channelId = channelId;
     }

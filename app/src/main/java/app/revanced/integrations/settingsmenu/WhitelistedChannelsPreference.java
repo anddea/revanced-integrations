@@ -15,14 +15,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import app.revanced.integrations.sponsorblock.player.ChannelModel;
+import app.revanced.integrations.patches.video.VideoChannel;
 import app.revanced.integrations.utils.ResourceHelper;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.whitelist.WhitelistType;
 
 public class WhitelistedChannelsPreference extends DialogPreference {
 
-    private ArrayList<ChannelModel> mEntries;
+    private ArrayList<VideoChannel> mEntries;
     private WhitelistType whitelistType;
 
     public WhitelistedChannelsPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -60,7 +60,7 @@ public class WhitelistedChannelsPreference extends DialogPreference {
     private View getEntriesListView(Context context) {
         LinearLayout entriesContainer = new LinearLayout(context);
         entriesContainer.setOrientation(LinearLayout.VERTICAL);
-        for (final ChannelModel entry : mEntries) {
+        for (final VideoChannel entry : mEntries) {
             String author = entry.getAuthor();
             View entryView = getEntryView(context, author, v -> {
                 entriesContainer.removeView(entriesContainer.findViewWithTag(author));
