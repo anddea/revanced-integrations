@@ -19,6 +19,10 @@ public class GeneralLayoutPatch {
         }
     }
 
+    public static boolean switchCreateNotification(boolean original) {
+        return SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean() || original;
+    }
+
     public static void hideCreateButton(View view) {
         boolean enabled = SettingsEnum.HIDE_CREATE_BUTTON.getBoolean();
         if (enabled) view.setVisibility(View.GONE);

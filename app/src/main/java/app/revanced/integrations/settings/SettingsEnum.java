@@ -79,6 +79,9 @@ public enum SettingsEnum {
     ADREMOVER_WEB_SEARCH_PANEL("revanced_adremover_web_search_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_TIMED_REACTIONS("revanced_adremover_timed_reactions", false, ReturnType.BOOLEAN),
 
+    //Experimental Flags
+    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_switch"),
+
     // Layout settings (Player)
     HIDE_CAST_BUTTON("revanced_hide_cast_button", true, ReturnType.BOOLEAN, true),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", true, ReturnType.BOOLEAN, true),
