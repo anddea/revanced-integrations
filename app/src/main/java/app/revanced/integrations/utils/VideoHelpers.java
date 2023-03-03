@@ -28,9 +28,9 @@ public class VideoHelpers {
 
     public static void copyUrl(Context context, Boolean withTimestamp) {
         try {
-            String url = String.format("https://youtu.be/%s", VideoInformation.getCurrentVideoId());
+            String url = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
             if (withTimestamp) {
-                long seconds = VideoInformation.getCurrentVideoTime() / 1000;
+                long seconds = VideoInformation.getVideoTime() / 1000;
                 url += String.format("?t=%s", seconds);
             }
 
@@ -43,7 +43,7 @@ public class VideoHelpers {
 
     public static void copyTimeStamp(Context context) {
         try {
-            long videoTime = VideoInformation.getCurrentVideoTime();
+            long videoTime = VideoInformation.getVideoTime();
 
             Duration duration = Duration.ofMillis(videoTime);
 

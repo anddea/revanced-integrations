@@ -1,6 +1,7 @@
 package app.revanced.integrations.sponsorblock.objects;
 
 import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.formatColorString;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.app.AlertDialog;
@@ -13,7 +14,6 @@ import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import app.revanced.integrations.sponsorblock.SponsorBlockSettings;
 
@@ -54,13 +54,11 @@ public class EditTextListPreference extends ListPreference {
         builder.setView(mEditText);
         builder.setTitle(category.getTitleWithDot());
 
-        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
-            EditTextListPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-        });
+        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> EditTextListPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE));
         builder.setNeutralButton(str("reset"), (dialog, which) -> {
             int defaultColor = category.getDefaultColor();
             category.setColor(defaultColor);
-            Toast.makeText(getContext().getApplicationContext(), str("color_reset"), Toast.LENGTH_SHORT).show();
+            showToastShort(getContext(), str("color_reset"));
             getSharedPreferences().edit().putString(getColorPreferenceKey(), formatColorString(defaultColor)).apply();
             reformatTitle();
         });
@@ -82,15 +80,14 @@ public class EditTextListPreference extends ListPreference {
             if (colorString.equals(formatColorString(category.getColor()))) {
                 return;
             }
-            Context applicationContext = getContext().getApplicationContext();
             try {
                 int color = Color.parseColor(colorString);
                 category.setColor(color);
-                Toast.makeText(applicationContext, str("color_changed"), Toast.LENGTH_SHORT).show();
+                showToastShort(getContext(), str("color_changed"));
                 getSharedPreferences().edit().putString(getColorPreferenceKey(), formatColorString(color)).apply();
                 reformatTitle();
             } catch (Exception ex) {
-                Toast.makeText(applicationContext, str("color_invalid"), Toast.LENGTH_SHORT).show();
+                showToastShort(getContext(), str("color_invalid"));
             }
         }
     }

@@ -129,6 +129,18 @@ public class ReVancedUtils {
     }
 
     /**
+     * If called from the main thread, the code is run immediately.<p>
+     * If called off the main thread, this is the same as {@link #runOnMainThread(Runnable)}.
+     */
+    public static void runOnMainThreadNowOrLater(@NonNull Runnable runnable) {
+        if (currentlyIsOnMainThread()) {
+            runnable.run();
+        } else {
+            runOnMainThread(runnable);
+        }
+    }
+
+    /**
      * @return if the calling thread is on the main thread
      */
     public static boolean currentlyIsOnMainThread() {

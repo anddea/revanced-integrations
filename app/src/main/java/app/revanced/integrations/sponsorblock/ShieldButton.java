@@ -1,5 +1,6 @@
 package app.revanced.integrations.sponsorblock;
 
+import static app.revanced.integrations.patches.video.VideoInformation.isVideoEnd;
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
@@ -18,21 +19,22 @@ import app.revanced.integrations.utils.LogHelper;
 public class ShieldButton {
     @SuppressLint("StaticFieldLeak")
     static RelativeLayout youtubeControlsLayout;
-    static WeakReference<ImageView> buttonview = new WeakReference<>(null);
+    static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     static int fadeDurationFast;
     static int fadeDurationScheduled;
     static Animation fadeIn;
     static Animation fadeOut;
+    public static boolean isButtonEnabled;
     static boolean isShowing;
 
     public static void initialize(Object viewStub) {
         try {
             youtubeControlsLayout = (RelativeLayout) viewStub;
-
+            isButtonEnabled = setValue();
             ImageView imageView = findView(ShieldButton.class, youtubeControlsLayout, "sponsorblock_button");
 
             imageView.setOnClickListener(SponsorBlockUtils.shieldButtonListener);
-            buttonview = new WeakReference<>(imageView);
+            buttonView = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");
             fadeDurationScheduled = integer("fade_duration_scheduled");
@@ -43,45 +45,30 @@ public class ShieldButton {
             fadeOut = anim("fade_out");
             fadeOut.setDuration(fadeDurationScheduled);
             isShowing = true;
-            changeVisibilityImmediate(false);
+            changeVisibility(false);
         } catch (Exception ex) {
             LogHelper.printException(ShieldButton.class, "Unable to set RelativeLayout", ex);
         }
     }
 
-    public static void changeVisibilityImmediate(boolean visible) {
-        changeVisibility(visible, true);
-    }
+    public static void changeVisibility(boolean currentVisibility) {
+        ImageView imageView = buttonView.get();
+        if (isShowing == currentVisibility || youtubeControlsLayout == null || imageView == null) return;
 
-    public static void changeVisibilityNegatedImmediate(boolean visible) {
-        changeVisibility(!visible, true);
-    }
-
-    public static void changeVisibility(boolean visible) {
-        changeVisibility(visible, false);
-    }
-
-    public static void changeVisibility(boolean visible, boolean immediate) {
-        ImageView imageView = buttonview.get();
-        if (isShowing == visible || youtubeControlsLayout == null || imageView == null) return;
-
-        isShowing = visible;
-        if (visible && shouldBeShown()) {
-            if (PlayerController.lastKnownVideoTime >= PlayerController.lastKnownVideoLength) return;
+        isShowing = currentVisibility;
+        if (currentVisibility && isButtonEnabled) {
             imageView.setVisibility(View.VISIBLE);
-            if (!immediate)
-                imageView.startAnimation(fadeIn);
-            return;
-        }
-
-        if (imageView.getVisibility() == View.VISIBLE) {
-            if (!immediate)
-                imageView.startAnimation(fadeOut);
-            imageView.setVisibility(shouldBeShown() ? View.INVISIBLE : View.GONE);
+            imageView.startAnimation(fadeIn);
+        } else if (imageView.getVisibility() == View.VISIBLE) {
+            imageView.startAnimation(fadeOut);
+            imageView.setVisibility(View.GONE);
         }
     }
 
-    static boolean shouldBeShown() {
-        return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_NEW_SEGMENT_ENABLED.getBoolean();
+    public static void refreshVisibility() {
+        isButtonEnabled = setValue();
+    }
+    private static boolean setValue() {
+        return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_NEW_SEGMENT_ENABLED.getBoolean() && !isVideoEnd();
     }
 }

@@ -1,6 +1,5 @@
 package app.revanced.integrations.sponsorblock.player.ui;
 
-import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.annotation.SuppressLint;
@@ -24,6 +23,13 @@ public class SponsorBlockView {
     static WeakReference<SkipSponsorButton> _skipSponsorButton = new WeakReference<>(null);
     static WeakReference<NewSegmentLayout> _newSegmentLayout = new WeakReference<>(null);
     static boolean shouldShowOnPlayerType = true;
+
+    static {
+        PlayerType.getOnChange().addObserver((PlayerType type) -> {
+            playerTypeChanged(type);
+            return null;
+        });
+    }
 
     public static void initialize(Object viewGroup) {
         try {
@@ -51,18 +57,13 @@ public class SponsorBlockView {
         newSegmentLayoutVisibility(false);
     }
 
-    public static void playerTypeChanged(PlayerType playerType) {
+    private static void playerTypeChanged(PlayerType playerType) {
         try {
-            shouldShowOnPlayerType = (playerType == PlayerType.WATCH_WHILE_FULLSCREEN || playerType == PlayerType.WATCH_WHILE_MAXIMIZED);
+            final boolean isWatchFullScreen = playerType == PlayerType.WATCH_WHILE_FULLSCREEN;
+            shouldShowOnPlayerType = (isWatchFullScreen || playerType == PlayerType.WATCH_WHILE_MAXIMIZED);
 
-            if (playerType == PlayerType.WATCH_WHILE_FULLSCREEN) {
-                setSkipBtnMargins(true);
-                setNewSegmentLayoutMargins(true);
-                return;
-            }
-
-            setSkipBtnMargins(false);
-            setNewSegmentLayoutMargins(false);
+            setSkipBtnMargins(isWatchFullScreen);
+            setNewSegmentLayoutMargins(isWatchFullScreen);
         } catch (Exception ex) {
             LogHelper.printException(SponsorBlockView.class, "Player type changed caused a crash.", ex);
         }

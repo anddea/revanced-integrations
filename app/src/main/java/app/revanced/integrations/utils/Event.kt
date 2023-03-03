@@ -10,7 +10,7 @@ class Event<T> {
         addObserver(observer)
     }
 
-    private fun addObserver(observer: (T) -> Unit) {
+    fun addObserver(observer: (T) -> Unit) {
         eventListeners.add(observer)
     }
 
@@ -18,7 +18,7 @@ class Event<T> {
         removeObserver(observer)
     }
 
-    private fun removeObserver(observer: (T) -> Unit) {
+    fun removeObserver(observer: (T) -> Unit) {
         eventListeners.remove(observer)
     }
 

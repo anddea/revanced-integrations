@@ -2,13 +2,14 @@ package app.revanced.integrations.sponsorblock;
 
 import static android.text.Html.fromHtml;
 import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment.FORMATTER;
 import static app.revanced.integrations.sponsorblock.PlayerController.getCurrentVideoId;
 import static app.revanced.integrations.sponsorblock.PlayerController.getCurrentVideoLength;
 import static app.revanced.integrations.sponsorblock.PlayerController.getLastKnownVideoTime;
 import static app.revanced.integrations.sponsorblock.PlayerController.sponsorSegmentsOfCurrentVideo;
 import static app.revanced.integrations.sponsorblock.requests.SBRequester.voteForSegment;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastLong;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
@@ -25,7 +26,6 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -65,6 +65,13 @@ public abstract class SponsorBlockUtils {
     private static long newSponsorSegmentDialogShownMillis;
     private static long newSponsorSegmentStartMillis = -1;
     private static long newSponsorSegmentEndMillis = -1;
+
+    static {
+        PlayerType.getOnChange().addObserver((PlayerType type) -> {
+            playerTypeChanged(type);
+            return null;
+        });
+    }
     private static final DialogInterface.OnClickListener newSponsorSegmentDialogListener = new DialogInterface.OnClickListener() {
         @SuppressLint("DefaultLocale")
         @Override
@@ -74,12 +81,12 @@ public abstract class SponsorBlockUtils {
                 case DialogInterface.BUTTON_NEGATIVE:
                     // start
                     newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
-                    Toast.makeText(context.getApplicationContext(), str("new_segment_time_start_set"), Toast.LENGTH_LONG).show();
+                    showToastLong(context, str("new_segment_time_start_set"));
                     break;
                 case DialogInterface.BUTTON_POSITIVE:
                     // end
                     newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
-                    Toast.makeText(context.getApplicationContext(), str("new_segment_time_end_set"), Toast.LENGTH_SHORT).show();
+                    showToastShort(context, str("new_segment_time_end_set"));
                     break;
             }
             dialog.dismiss();
@@ -90,18 +97,13 @@ public abstract class SponsorBlockUtils {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             SponsorBlockSettings.SegmentInfo segmentType = SponsorBlockSettings.SegmentInfo.getSubmittableSegments()[which];
+            Context context = ((AlertDialog) dialog).getContext();
             boolean enableButton;
             if (!segmentType.getBehaviour().getShowOnTimeBar()) {
-                Toast.makeText(
-                        ((AlertDialog) dialog).getContext().getApplicationContext(),
-                        str("new_segment_disabled_category"),
-                        Toast.LENGTH_SHORT).show();
+                showToastShort(context, str("new_segment_disabled_category"));
                 enableButton = false;
             } else {
-                Toast.makeText(
-                        ((AlertDialog) dialog).getContext().getApplicationContext(),
-                        segmentType.getDescription().toString(),
-                        Toast.LENGTH_SHORT).show();
+                showToastShort(context, segmentType.getDescription().toString());
                 newSponsorBlockSegmentType = segmentType;
                 enableButton = true;
             }
@@ -144,8 +146,8 @@ public abstract class SponsorBlockUtils {
         public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
             Context context = ((AlertDialog) dialog).getContext().getApplicationContext();
-            Toast.makeText(context, str("submit_started"), Toast.LENGTH_SHORT).show();
 
+            showToastShort(context, str("submit_started"));
             appContext = new WeakReference<>(context);
             ReVancedUtils.runOnBackgroundThread(submitRunnable);
         }
@@ -182,7 +184,7 @@ public abstract class SponsorBlockUtils {
     private static final Runnable toastRunnable = () -> {
         Context context = appContext.get();
         if (context != null && messageToToast != null)
-            Toast.makeText(context, messageToToast, Toast.LENGTH_LONG).show();
+            showToastShort(context, messageToToast);
     };
     private static final DialogInterface.OnClickListener segmentVoteClickListener = (dialog, which) -> {
         final Context context = ((AlertDialog) dialog).getContext();
@@ -247,32 +249,23 @@ public abstract class SponsorBlockUtils {
     }
 
     public static void showShieldButton() {
-        View i = ShieldButton.buttonview.get();
-        if (i == null || !ShieldButton.shouldBeShown()) return;
-        i.setVisibility(VISIBLE);
-        i.bringToFront();
-        i.requestLayout();
-        i.invalidate();
+        ShieldButton.refreshVisibility();
+        ShieldButton.changeVisibility(true);
     }
 
     public static void hideShieldButton() {
-        View i = ShieldButton.buttonview.get();
-        if (i != null)
-            i.setVisibility(GONE);
+        VotingButton.refreshVisibility();
+        ShieldButton.changeVisibility(false);
     }
 
     public static void showVoteButton() {
-        var i = VotingButton.buttonview.get();
-        if (i == null || !VotingButton.shouldBeShown()) return;
-        i.setVisibility(VISIBLE);
-        i.bringToFront();
-        i.requestLayout();
-        i.invalidate();
+        VotingButton.refreshVisibility();
+        VotingButton.changeVisibility(true);
     }
 
     public static void hideVoteButton() {
-        var view = VotingButton.buttonview.get();
-        if (view != null) view.setVisibility(GONE);
+        VotingButton.refreshVisibility();
+        VotingButton.changeVisibility(false);
     }
 
     @SuppressLint("DefaultLocale")
@@ -307,13 +300,13 @@ public abstract class SponsorBlockUtils {
                     .setPositiveButton(android.R.string.yes, segmentReadyDialogButtonListener)
                     .show();
         } else {
-            Toast.makeText(context, str("new_segment_mark_locations_first"), Toast.LENGTH_SHORT).show();
-        }
+            showToastShort(context, str("new_segment_mark_locations_first"));
+       }
     }
 
     public static void onVotingClicked(final Context context) {
         if (sponsorSegmentsOfCurrentVideo == null || sponsorSegmentsOfCurrentVideo.length == 0) {
-            Toast.makeText(context.getApplicationContext(), str("vote_no_segments"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("vote_no_segments"));
             return;
         }
         int segmentAmount = sponsorSegmentsOfCurrentVideo.length;
@@ -365,7 +358,7 @@ public abstract class SponsorBlockUtils {
             Arrays.sort(segments);
             sponsorSegmentsOfCurrentVideo = segments;
         } else {
-            Toast.makeText(context, str("new_segment_mark_locations_first"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("new_segment_mark_locations_first"));
         }
     }
 
@@ -561,9 +554,9 @@ public abstract class SponsorBlockUtils {
             SettingsEnum.SB_MIN_DURATION.saveValue(Float.valueOf(settingsJson.getString("minDuration")));
             SettingsEnum.SB_COUNT_SKIPS.saveValue(settingsJson.getBoolean("trackViewCount"));
 
-            Toast.makeText(context, str("settings_import_successful"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("settings_import_successful"));
         } catch (Exception ex) {
-            Toast.makeText(context, str("settings_import_failed"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("settings_import_failed"));
             ex.printStackTrace();
         }
     }
@@ -602,7 +595,7 @@ public abstract class SponsorBlockUtils {
 
             return json.toString();
         } catch (Exception ex) {
-            Toast.makeText(context, str("settings_export_failed"), Toast.LENGTH_SHORT).show();
+            showToastShort(context, str("settings_export_failed"));
             ex.printStackTrace();
             return "";
         }
@@ -649,9 +642,9 @@ public abstract class SponsorBlockUtils {
                             DialogInterface.BUTTON_NEGATIVE :
                             DialogInterface.BUTTON_POSITIVE);
                 else
-                    Toast.makeText(context.getApplicationContext(), str("new_segment_edit_by_hand_saved"), Toast.LENGTH_SHORT).show();
+                    showToastShort(context, str("new_segment_edit_by_hand_saved"));
             } catch (ParseException e) {
-                Toast.makeText(context.getApplicationContext(), str("new_segment_edit_by_hand_parse_error"), Toast.LENGTH_LONG).show();
+                showToastLong(context, str("new_segment_edit_by_hand_parse_error"));
             }
         }
     }

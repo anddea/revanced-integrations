@@ -2,11 +2,9 @@ package app.revanced.integrations.sponsorblock;
 
 import static app.revanced.integrations.sponsorblock.player.ui.SponsorBlockView.hideSkipButton;
 import static app.revanced.integrations.sponsorblock.player.ui.SponsorBlockView.showSkipButton;
-
-import android.widget.Toast;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class SkipSegmentView {
 
@@ -25,6 +23,6 @@ public class SkipSegmentView {
 
         lastNotifiedSegment = segment;
         String skipMessage = segment.category.getSkipMessage().toString();
-        Toast.makeText(ReVancedUtils.getContext(), skipMessage, Toast.LENGTH_SHORT).show();
+        showToastShort(skipMessage);
     }
 }

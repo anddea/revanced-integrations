@@ -3,8 +3,6 @@ package app.revanced.integrations.patches.utils;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.shared.PlayerType;
-import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
-import app.revanced.integrations.sponsorblock.player.ui.SponsorBlockView;
 
 /**
  * Hook receiver class for 'player-type-hook' patch
@@ -27,8 +25,6 @@ public class PlayerTypeHookPatch {
         final PlayerType newType = PlayerType.safeParseFromString(type.toString());
         if (newType != null) {
             PlayerType.setCurrent(newType);
-            SponsorBlockView.playerTypeChanged(newType);
-            SponsorBlockUtils.playerTypeChanged(newType);
         }
     }
 }
