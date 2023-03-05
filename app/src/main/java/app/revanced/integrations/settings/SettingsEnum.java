@@ -37,6 +37,7 @@ public enum SettingsEnum {
 
     // Layout settings (General)
     HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
+    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true),
     HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
     HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", true, ReturnType.BOOLEAN, true),
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", true, ReturnType.BOOLEAN),
@@ -78,9 +79,6 @@ public enum SettingsEnum {
     ADREMOVER_BREAKING_NEWS_SHELF("revanced_adremover_breaking_news_shelf", false, ReturnType.BOOLEAN, true),
     ADREMOVER_WEB_SEARCH_PANEL("revanced_adremover_web_search_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_TIMED_REACTIONS("revanced_adremover_timed_reactions", false, ReturnType.BOOLEAN),
-
-    //Experimental Flags
-    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_switch"),
 
     // Layout settings (Player)
     HIDE_CAST_BUTTON("revanced_hide_cast_button", true, ReturnType.BOOLEAN, true),
