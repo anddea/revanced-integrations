@@ -158,6 +158,9 @@ public class ByteBufferFilterPatch {
                 value.contains("horizontal_video_shelf") &&
                 !value.contains("activeStateScrollSelectionController=com")
         ) count++;
+
+        if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
+                value.contains("_survey")) count++;
     }
 
     private static boolean hideMixPlaylist(String value, ByteBuffer buffer) {
