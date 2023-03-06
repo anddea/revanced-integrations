@@ -150,6 +150,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     @Override // android.preference.PreferenceFragment, android.app.Fragment
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
         getPreferenceManager().setSharedPreferencesName(REVANCED.getName());
         try {
             int identifier = identifier("revanced_prefs", ResourceType.XML);
@@ -161,7 +162,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.backupPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("backup");
             this.downloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("downloader");
             this.miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
-            this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlaybutton");
+            this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlay_button");
             this.whitelistingPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("whitelisting");
 
             initializeReVancedSettings();
@@ -361,7 +362,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             CharSequence[] Entries = new CharSequence[entryValues.length];
 
             for (int i = 0; i < entryValues.length; i++) {
-                Entries[i] = entryValues[i] + str("seconds");
+                Entries[i] = entryValues[i] + "\u2009" + str("seconds");
             }
 
             SettingsEnum doubleBackSetting = SettingsEnum.DOUBLE_BACK_TIMEOUT;
