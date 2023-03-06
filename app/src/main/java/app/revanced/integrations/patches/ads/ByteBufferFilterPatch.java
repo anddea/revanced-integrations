@@ -35,33 +35,11 @@ public class ByteBufferFilterPatch {
 
         count = 0;
 
-        hideActionBar(value);
         hideFlyoutPanels(value, buffer);
         hideGeneralAds(value, buffer);
         hideShortsComponent(value);
 
         return count > 0;
-    }
-
-    private static void hideActionBar(String value) {
-        if (!value.contains("video_action_bar")) return;
-
-        List<String> rawStringList = new ArrayList<>();
-
-        if (SettingsEnum.HIDE_LIKE_BUTTON.getBoolean()) {
-            rawStringList.add("|like_button");
-        }
-        if (SettingsEnum.HIDE_DISLIKE_BUTTON.getBoolean()) {
-            rawStringList.add("|dislike_button");
-            rawStringList.add("|segmented_like_dislike_button");
-        }
-        if (SettingsEnum.HIDE_DOWNLOAD_BUTTON.getBoolean()) {
-            rawStringList.add("download_button");
-        }
-        if (SettingsEnum.HIDE_PLAYLIST_BUTTON.getBoolean()) {
-            rawStringList.add("save_to_playlist_button");
-        }
-        if (rawStringList.stream().anyMatch(value::contains)) count++;
     }
 
     private static boolean hideActionButton(ByteBuffer buffer) {
