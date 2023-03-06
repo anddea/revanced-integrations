@@ -70,15 +70,6 @@ public class VideoQualityPatch {
             }
         } catch (Exception ignored) {
         }
-        if (isConnectedWifi())
-            defaultQuality = defaultQualityWiFi;
-        else if (isConnectedMobile())
-            defaultQuality = defaultQualityMobile;
-        else
-            return quality;
-
-        if (defaultQuality == 1) return defaultQuality;
-        if (defaultQuality == -2) return quality;
 
         Collections.sort(iStreamQualities);
         int index = 0;
@@ -94,6 +85,14 @@ public class VideoQualityPatch {
         }
 
         newVideo = false;
+        if (isConnectedWifi())
+            defaultQuality = defaultQualityWiFi;
+        else if (isConnectedMobile())
+            defaultQuality = defaultQualityMobile;
+        else
+            return quality;
+
+        if (defaultQuality == -2) return quality;
 
         for (int ignored : iStreamQualities) {
             index++;
