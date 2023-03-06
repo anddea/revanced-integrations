@@ -13,11 +13,13 @@ public class ByteBufferFilterPatch {
             "overflow_menu_item"
     );
     private static final List<String> whiteList = List.of(
+            "compact_channel_bar",
             "comment_thread",
             "|comment.",
             "menu",
             "metadata",
             "thumbnail",
+            "video_metadata",
             "-button",
             "-count",
             "-space"
@@ -30,7 +32,8 @@ public class ByteBufferFilterPatch {
         if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
             return hideActionButton(buffer);
         if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() &&
-                value.contains("video_with_context."))
+                value.contains("video_with_context.") &&
+                !value.contains("|ContainerType|ContainerType|"))
             return hideMixPlaylist(value, buffer);
 
         count = 0;
@@ -65,7 +68,7 @@ public class ByteBufferFilterPatch {
         }
         if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
             int bufferIndex = indexOf(buffer.array(), "yt_outline_scissors".getBytes());
-            return bufferIndex > 0 && bufferIndex < 2000;
+            if (bufferIndex > 0 && bufferIndex < 2000) return true;
         }
         return false;
     }
@@ -155,12 +158,13 @@ public class ByteBufferFilterPatch {
 
             for (byte[] b: byteBufferList) {
                 int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 2000) return true;
+                if (bufferIndex > 0 && bufferIndex < 1500) return true;
             }
         }
 
         // related video
-        if (value.contains("related_video_with_context.")) {
+        if (value.contains("related_video_with_context.") &&
+                !value.contains("|ContainerType|related_video_with_context_inner")) {
             for (byte[] b: byteBufferList) {
                 int bufferIndex = indexOf(buffer.array(), b);
                 if (bufferIndex > 0 && bufferIndex < 2000) return true;
