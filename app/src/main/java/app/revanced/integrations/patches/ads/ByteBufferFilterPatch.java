@@ -163,11 +163,10 @@ public class ByteBufferFilterPatch {
         }
 
         // related video
-        if (value.contains("related_video_with_context.") &&
-                !value.contains("|ContainerType|related_video_with_context_inner")) {
+        if (value.contains("related_video_with_context.")) {
             for (byte[] b: byteBufferList) {
                 int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 2000) return true;
+                if (bufferIndex > 0 && bufferIndex < 1500) return true;
             }
         }
 
