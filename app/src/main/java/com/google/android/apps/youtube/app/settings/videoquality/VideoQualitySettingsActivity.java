@@ -27,26 +27,29 @@ public class VideoQualitySettingsActivity extends Activity {
         super.onCreate(bundle);
         setContentView(identifier("revanced_settings_with_toolbar", ResourceType.LAYOUT));
         initImageButton();
-        String dataString = getIntent().getDataString();
 
-        if (dataString.equalsIgnoreCase("sponsorblock_settings")) {
-            trySetTitle(identifier("revanced_sponsorblock_settings_title", ResourceType.STRING));
-            getFragmentManager()
-            .beginTransaction()
-            .replace(identifier("revanced_settings_fragments", ResourceType.ID), new SponsorBlockSettingsFragment())
-            .commit();
-        } else if (dataString.equalsIgnoreCase("ryd_settings")) {
-            trySetTitle(identifier("revanced_ryd_settings_title", ResourceType.STRING));
-            getFragmentManager()
-            .beginTransaction()
-            .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReturnYouTubeDislikeSettingsFragment())
-            .commit();
-        } else {
-            trySetTitle(identifier("revanced_extended_settings_title", ResourceType.STRING));
-            getFragmentManager()
-            .beginTransaction()
-            .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())
-            .commit();
+        switch (getIntent().getDataString()) {
+            case "sponsorblock_settings":
+                trySetTitle(identifier("revanced_sponsorblock_settings_title", ResourceType.STRING));
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new SponsorBlockSettingsFragment())
+                        .commit();
+                break;
+            case "ryd_settings":
+                trySetTitle(identifier("revanced_ryd_settings_title", ResourceType.STRING));
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReturnYouTubeDislikeSettingsFragment())
+                        .commit();
+                break;
+            case "extended_settings":
+                trySetTitle(identifier("revanced_extended_settings_title", ResourceType.STRING));
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())
+                        .commit();
+                break;
         }
     }
 
