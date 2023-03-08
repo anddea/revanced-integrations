@@ -1,10 +1,11 @@
 package app.revanced.integrations.patches.video;
 
-import static app.revanced.integrations.utils.ReVancedUtils.getNetworkInfo;
+import static app.revanced.integrations.utils.ReVancedUtils.getNetworkType;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
+import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
+import static app.revanced.integrations.utils.SharedPrefHelper.getInt;
+import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 import static app.revanced.integrations.utils.StringRef.str;
-
-import android.net.NetworkInfo;
 
 import androidx.annotation.NonNull;
 
@@ -15,43 +16,33 @@ import java.util.Collections;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ReVancedUtils;
 
 public class VideoQualityPatch {
 
     public static int selectedQuality1 = -2;
     private static boolean newVideo = false;
     private static boolean userChangedQuality = false;
-    private static int defaultQualityWiFi;
-    private static int defaultQualityMobile;
 
     public static void changeDefaultQuality(int defaultQuality) {
         if (SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean()) {
-            if (isConnectedWifi()) {
-                try {
-                    SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI.saveValue(defaultQuality);
-                } catch (Exception ex) {
-                    LogHelper.printException(VideoQualityPatch.class, "Failed to change default WI-FI quality" + ex);
-                    showToastShort(str("revanced_save_video_quality_wifi_error"));
-                }
-                showToastShort(str("revanced_save_video_quality_wifi") + "" + defaultQuality + "p");
-            } else if (isConnectedMobile()) {
-                try {
-                    SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE.saveValue(defaultQuality);
-                } catch (Exception ex) {
-                    showToastShort(str("revanced_save_video_quality_mobile_error"));
-                }
-                showToastShort(str("revanced_save_video_quality_mobile") + "" + defaultQuality + "p");
+            var networkType = getNetworkType();
+            var preferenceKey = "revanced_default_video_quality_" + networkType.getName();
+            var toastMessage = str("revanced_save_video_quality_" + networkType.getName());
+            var changedMessage = toastMessage + "\u2009" + defaultQuality + "p";
+
+            if (networkType == ReVancedUtils.NetworkType.NONE) {
+                showToastShort(toastMessage);
             } else {
-                showToastShort(str("revanced_save_video_quality_internet_error"));
+                saveString(REVANCED, preferenceKey, defaultQuality + "");
+                showToastShort(changedMessage);
             }
-            refreshQuality();
         }
         userChangedQuality = false;
     }
 
     public static int setVideoQuality(Object[] qualities, int quality, Object qInterface, String qIndexMethod) {
         int defaultQuality;
-        refreshQuality();
 
         if (!(newVideo || userChangedQuality) || qInterface == null) return quality;
 
@@ -85,12 +76,11 @@ public class VideoQualityPatch {
         }
 
         newVideo = false;
-        if (isConnectedWifi())
-            defaultQuality = defaultQualityWiFi;
-        else if (isConnectedMobile())
-            defaultQuality = defaultQualityMobile;
-        else
-            return quality;
+        var networkType = getNetworkType();
+        var preferenceKey = "revanced_default_video_quality_" + networkType.getName();
+
+        if (networkType == ReVancedUtils.NetworkType.NONE) return quality;
+        else defaultQuality = getInt(REVANCED, preferenceKey, -2);
 
         if (defaultQuality == -2) return quality;
 
@@ -123,28 +113,7 @@ public class VideoQualityPatch {
         userChangedQuality = true;
     }
 
-    private static void setDefaultQuality() {
-        defaultQualityWiFi = SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI.getInt();
-        defaultQualityMobile = SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE.getInt();
-    }
-
-    public static void refreshQuality() {
-        setDefaultQuality();
-    }
-
     public static void newVideoStarted(@NonNull String videoId) {
-        setDefaultQuality();
         newVideo = true;
     }
-
-    private static boolean isConnectedWifi() {
-        NetworkInfo info = getNetworkInfo();
-        return info != null && info.isConnected() && info.getType() == 1;
-    }
-
-    private static boolean isConnectedMobile() {
-        NetworkInfo info = getNetworkInfo();
-        return info != null && info.isConnected() && info.getType() == 0;
-    }
-
 }

@@ -3,7 +3,6 @@ package app.revanced.integrations.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
@@ -165,9 +164,32 @@ public class ReVancedUtils {
         }
     }
 
-    public static NetworkInfo getNetworkInfo() {
+    public static NetworkType getNetworkType() {
         assert context != null;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo();
+        var networkInfo = cm.getActiveNetworkInfo();
+
+        if (networkInfo == null || !networkInfo.isConnected()) return NetworkType.NONE;
+        switch (networkInfo.getType()) {
+            case ConnectivityManager.TYPE_MOBILE:
+            case ConnectivityManager.TYPE_BLUETOOTH:
+                return NetworkType.MOBILE;
+            default:
+                return NetworkType.WIFI;
+        }
+    }
+
+    public enum NetworkType {
+        MOBILE("mobile"),
+        WIFI("wifi"),
+        NONE("none");
+
+        private final String name;
+        NetworkType(String name) {
+            this.name = name;
+        }
+        public String getName() {
+            return name;
+        }
     }
 }
