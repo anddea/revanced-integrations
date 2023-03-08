@@ -315,8 +315,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             var entriesValueKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY : DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY;
 
             var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            var value = SharedPrefHelper.getString(context, REVANCED, speedSetting.getPath(), "-2.0");
-            saveString(context, REVANCED, speedSetting.getPath(), value);
+            var value = SharedPrefHelper.getString(REVANCED, speedSetting.getPath(), "-2.0");
+            saveString(REVANCED, speedSetting.getPath(), value);
 
             String[] speedEntries = context.getResources().getStringArray(identifier(entriesKey, ResourceType.ARRAY));
             String[] speedEntriesValues = context.getResources().getStringArray(identifier(entriesValueKey, ResourceType.ARRAY));
@@ -339,15 +339,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             SettingsEnum qualitySetting = isQualityWiFi ? SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI : SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
 
             var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            var value = SharedPrefHelper.getString(context, REVANCED, qualitySetting.getPath(), "-2");
+            var value = SharedPrefHelper.getString(REVANCED, qualitySetting.getPath(), "-2");
             qualitySetting.saveValue(Integer.parseInt(value));
 
             ListPreference qualityListPreference = (ListPreference) findPreferenceOnScreen(qualitySetting.getPath());
             CharSequence[] entries = qualityListPreference.getEntries();
             int entryIndex = qualityListPreference.findIndexOfValue(value);
             qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
-
-            VideoQualityPatch.refreshQuality();
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
         }
@@ -368,7 +366,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             SettingsEnum doubleBackSetting = SettingsEnum.DOUBLE_BACK_TIMEOUT;
 
             var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            var value = SharedPrefHelper.getString(context, REVANCED, doubleBackSetting.getPath(), "2");
+            var value = SharedPrefHelper.getString(REVANCED, doubleBackSetting.getPath(), "2");
             doubleBackSetting.saveValue(Integer.parseInt(value));
 
             ListPreference timeoutListPreference = (ListPreference) findPreferenceOnScreen(doubleBackSetting.getPath());

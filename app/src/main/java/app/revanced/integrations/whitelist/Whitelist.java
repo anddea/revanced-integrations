@@ -1,6 +1,7 @@
 package app.revanced.integrations.whitelist;
 
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
+import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.content.Context;
@@ -69,13 +70,13 @@ public class Whitelist {
         }
         Map<WhitelistType, Boolean> enabledMap = new EnumMap<>(WhitelistType.class);
         for (WhitelistType whitelistType : WhitelistType.values()) {
-            enabledMap.put(whitelistType, SharedPrefHelper.getBoolean(context, whitelistType.getSharedPreferencesName(), whitelistType.getPreferenceEnabledName(), false));
+            enabledMap.put(whitelistType, getBoolean(whitelistType.getSharedPreferencesName(), whitelistType.getPreferenceEnabledName(), false));
         }
         return enabledMap;
     }
 
     private static boolean isWhitelisted(WhitelistType whitelistType) {
-        if (VideoInformation.getChannelName() == null) return false;
+        if (VideoInformation.getChannelName().equals("")) return false;
         for (VideoChannel channel : getWhitelistedChannels(whitelistType)) {
             if (channel.getAuthor().equals(VideoInformation.getChannelName())) {
                 return true;

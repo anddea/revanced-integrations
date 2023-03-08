@@ -1,11 +1,13 @@
 package app.revanced.integrations.settings;
 
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
-import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
+import static app.revanced.integrations.utils.SharedPrefHelper.getPreferences;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
+
+import java.util.Objects;
 
 import app.revanced.integrations.adremover.AdRemoverAPI;
 
@@ -60,6 +62,6 @@ public class MusicSettings {
 
     // Utils
     public static boolean getPrefBoolean(String key, boolean defaultValue) {
-        return getBoolean(context, YOUTUBE, key, defaultValue);
+        return Objects.requireNonNull(getPreferences(context, YOUTUBE)).getBoolean(key, defaultValue);
     }
 }

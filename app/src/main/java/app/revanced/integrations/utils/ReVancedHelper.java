@@ -49,11 +49,11 @@ public class ReVancedHelper {
     }
 
     public static void setBuildVersion(Context context) {
-        var savedVersion = getString(context, YOUTUBE, PREFERENCE_KEY, null);
+        var savedVersion = getString(YOUTUBE, PREFERENCE_KEY, null);
         var currentVersion = BuildConfig.VERSION_NAME;
 
         if (savedVersion == null) resetPreference(context, currentVersion);
-        else saveString(context, YOUTUBE, PREFERENCE_KEY, currentVersion);
+        else saveString(YOUTUBE, PREFERENCE_KEY, currentVersion);
     }
 
     public static void resetPreference(Context context, String currentVersion) {
@@ -61,7 +61,7 @@ public class ReVancedHelper {
             SharedPreferences.Editor prefEdit = SharedPrefHelper.getPreferences(context, REVANCED).edit();
             prefEdit.clear();
             prefEdit.apply();
-            saveString(context, YOUTUBE, PREFERENCE_KEY, currentVersion);
+            saveString(YOUTUBE, PREFERENCE_KEY, currentVersion);
         } catch (Exception ignored) {
         }
     }

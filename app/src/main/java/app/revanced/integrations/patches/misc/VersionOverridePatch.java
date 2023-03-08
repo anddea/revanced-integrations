@@ -1,10 +1,9 @@
 package app.revanced.integrations.patches.misc;
 
-import static app.revanced.integrations.utils.ReVancedUtils.context;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
+import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
 
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class VersionOverridePatch {
 
@@ -15,7 +14,7 @@ public class VersionOverridePatch {
     public static String getVersionOverride(String version) {
 
         try {
-            boolean isOldLayoutEnabled = SharedPrefHelper.getBoolean(context, REVANCED, "revanced_enable_old_layout", false);
+            boolean isOldLayoutEnabled = getBoolean(REVANCED, "revanced_enable_old_layout", false);
 
             return isOldLayoutEnabled ? "17.28.35" : version;
         } catch (Exception ex){
