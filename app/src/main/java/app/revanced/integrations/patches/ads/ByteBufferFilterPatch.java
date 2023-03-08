@@ -9,17 +9,15 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 
 public class ByteBufferFilterPatch {
-    private static final List<String> blockList = List.of(
-            "overflow_menu_item"
+    private static final List<String> bufferBlockList = List.of(
+            "for you",
+            "mix-watch",
+            "&list=",
+            "rellist"
     );
     private static final List<String> whiteList = List.of(
-            "compact_channel_bar",
             "comment_thread",
             "|comment.",
-            "menu",
-            "metadata",
-            "thumbnail",
-            "video_metadata",
             "-button",
             "-count",
             "-space"
@@ -28,13 +26,12 @@ public class ByteBufferFilterPatch {
 
     public static boolean filters(String value, ByteBuffer buffer) {
         if (value == null || value.isEmpty()) return false;
-        if ((whiteList.stream().anyMatch(value::contains) && blockList.stream().noneMatch(value::contains))) return false;
+        if (whiteList.stream().anyMatch(value::contains)) return false;
         if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
             return hideActionButton(buffer);
         if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() &&
-                value.contains("video_with_context.") &&
-                !value.contains("|ContainerType|ContainerType|"))
-            return hideMixPlaylist(value, buffer);
+                bufferBlockList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+            return true;
 
         count = 0;
 
@@ -142,35 +139,6 @@ public class ByteBufferFilterPatch {
 
         if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
                 value.contains("_survey")) count++;
-    }
-
-    private static boolean hideMixPlaylist(String value, ByteBuffer buffer) {
-        List<byte[]> byteBufferList = new ArrayList<>();
-
-        byteBufferList.add("for you".getBytes());
-        byteBufferList.add("mix-watch".getBytes());
-        byteBufferList.add("list=".getBytes());
-        byteBufferList.add("rellist".getBytes());
-
-        // home feed & search result
-        if ((value.contains("home_video_with_context.") ||
-                value.contains("search_video_with_context."))) {
-
-            for (byte[] b: byteBufferList) {
-                int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 1500) return true;
-            }
-        }
-
-        // related video
-        if (value.contains("related_video_with_context.")) {
-            for (byte[] b: byteBufferList) {
-                int bufferIndex = indexOf(buffer.array(), b);
-                if (bufferIndex > 0 && bufferIndex < 1500) return true;
-            }
-        }
-
-        return false;
     }
 
     private static void hideShortsComponent(String value) {
