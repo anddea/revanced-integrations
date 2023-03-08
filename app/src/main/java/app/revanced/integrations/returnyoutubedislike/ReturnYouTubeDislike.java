@@ -159,7 +159,17 @@ public class ReturnYouTubeDislike {
         if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
 
         try {
+            Objects.requireNonNull(videoId);
+
+            PlayerType currentPlayerType = PlayerType.getCurrent();
+            if (currentPlayerType == PlayerType.INLINE_MINIMAL) {
+                setCurrentVideoId(null);
+                return;
+            }
             synchronized (videoIdLockObject) {
+                if (videoId.equals(currentVideoId)) {
+                    return; // already loaded
+                }
                 setCurrentVideoId(videoId);
                 // no need to wrap the call in a try/catch,
                 // as any exceptions are propagated out in the later Future#Get call
