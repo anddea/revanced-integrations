@@ -54,6 +54,9 @@ public enum SettingsEnum {
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", true, ReturnType.BOOLEAN, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
 
+    //Experimental Flags
+    HIDE_SHORTS_PLAYER_PIVOT_BAR("revanced_hide_shorts_player_pivot_bar", false, ReturnType.BOOLEAN, true),
+
     ADREMOVER_MERCHANDISE("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
     ADREMOVER_BROWSE_STORE_BUTTON("revanced_adremover_browse_store_button", true, ReturnType.BOOLEAN),
     ADREMOVER_COMMUNITY_POSTS_HOME("revanced_adremover_community_posts_home", false, ReturnType.BOOLEAN),
