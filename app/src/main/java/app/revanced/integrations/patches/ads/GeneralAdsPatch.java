@@ -25,6 +25,7 @@ public final class GeneralAdsPatch extends Filter {
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
         var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR, "cell_divider");
         var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
+        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY, "in_feed_survey", "slimline_survey");
         var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "compact_banner", "publisher_transparency_panel", "single_item_information_panel");
         var joinMembership = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_BAR_JOIN_BUTTON, "compact_sponsor_button");
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
@@ -73,6 +74,7 @@ public final class GeneralAdsPatch extends Filter {
                 channelMemberShelf,
                 generalAds,
                 imageShelf,
+                inFeedSurvey,
                 infoPanel,
                 joinMembership,
                 latestPosts,
@@ -89,8 +91,8 @@ public final class GeneralAdsPatch extends Filter {
         );
 
         this.identifierRegister.registerAll(
-                graySeparator,
-                carouselAd
+                carouselAd,
+                graySeparator
         );
     }
 
