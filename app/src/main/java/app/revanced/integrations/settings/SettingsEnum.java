@@ -78,6 +78,7 @@ public enum SettingsEnum {
 
     // Layout settings (Player)
     HIDE_COLLAPSE_BUTTON("revanced_hide_collapse_button", false, ReturnType.BOOLEAN),
+    HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", true, ReturnType.BOOLEAN),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", true, ReturnType.BOOLEAN, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", true, ReturnType.BOOLEAN, true),
     HIDE_LIVE_CHATS_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
