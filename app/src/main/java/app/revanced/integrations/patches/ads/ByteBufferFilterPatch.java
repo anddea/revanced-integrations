@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,9 @@ public class ByteBufferFilterPatch {
             "&list=",
             "rellist"
     );
+    private static final List<String> bufferwhiteList = List.of(
+            "relatedH"
+    );
     private static final List<String> whiteList = List.of(
             "comment_thread",
             "|comment.",
@@ -25,8 +29,11 @@ public class ByteBufferFilterPatch {
     private static int count;
 
     public static boolean filters(String value, ByteBuffer buffer) {
-        if (value == null || value.isEmpty()) return false;
-        if (whiteList.stream().anyMatch(value::contains)) return false;
+        if (value == null ||
+                value.isEmpty() ||
+                whiteList.stream().anyMatch(value::contains) ||
+                bufferwhiteList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+            return false;
         if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
             return hideActionButton(buffer);
         if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() &&
