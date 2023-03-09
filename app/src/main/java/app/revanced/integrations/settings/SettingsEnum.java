@@ -115,6 +115,7 @@ public enum SettingsEnum {
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", false, ReturnType.BOOLEAN),
     HIDE_COMMENTS_SECTION("revanced_hide_comments_section", false, ReturnType.BOOLEAN),
     HIDE_PREVIEW_COMMENT("revanced_hide_preview_comment", false, ReturnType.BOOLEAN),
+    HIDE_COMMENTS_THANKS_BUTTON("revanced_hide_comments_thanks_button", false, ReturnType.BOOLEAN),
 
     // Layout settings (Flyout Panel)
     ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_old_quality_layout", true, ReturnType.BOOLEAN),
