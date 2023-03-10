@@ -72,7 +72,7 @@ public class ByteBufferFilterPatch {
         }
         if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
             int bufferIndex = indexOf(buffer.array(), "yt_outline_scissors".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) return true;
+            return bufferIndex > 0 && bufferIndex < 2000;
         }
         return false;
     }

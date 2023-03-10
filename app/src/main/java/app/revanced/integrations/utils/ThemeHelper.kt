@@ -42,12 +42,12 @@ object ThemeHelper {
     val settingTheme: Int
         get() {
             val themeName = if (dayNightTheme) PRIMARY_DARK_THEME else PRIMARY_WHITE_THEME
-            return identifier(themeName, ResourceType.STYLE);
+            return identifier(themeName, ResourceType.STYLE)
         }
 
     @JvmStatic
     fun matchTheme(themeValue: Int, themeName: String?): Boolean {
-        return themeValue == themeName?.let { identifier(it, ResourceType.STYLE) };
+        return themeValue == themeName?.let { identifier(it, ResourceType.STYLE) }
     }
 
 }

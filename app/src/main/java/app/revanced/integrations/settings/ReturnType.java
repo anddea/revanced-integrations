@@ -6,5 +6,5 @@ public enum ReturnType {
     INTEGER,
     STRING,
     LONG,
-    FLOAT;
+    FLOAT
 }
