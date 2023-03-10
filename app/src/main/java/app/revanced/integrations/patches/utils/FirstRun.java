@@ -19,7 +19,7 @@ public class FirstRun {
     }
 
     public static void initializationRVX(@NonNull Context context) {
-        setBuildVersion(context);
+        setBuildVersion();
     }
 
 }

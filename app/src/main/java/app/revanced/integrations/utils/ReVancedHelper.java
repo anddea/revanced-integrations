@@ -2,11 +2,8 @@ package app.revanced.integrations.utils;
 
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
-import static app.revanced.integrations.utils.SharedPrefHelper.getString;
 import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
@@ -48,22 +45,8 @@ public class ReVancedHelper {
         return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
     }
 
-    public static void setBuildVersion(Context context) {
-        var savedVersion = getString(YOUTUBE, PREFERENCE_KEY, null);
-        var currentVersion = BuildConfig.VERSION_NAME;
-
-        if (savedVersion == null) resetPreference(context, currentVersion);
-        else saveString(YOUTUBE, PREFERENCE_KEY, currentVersion);
-    }
-
-    public static void resetPreference(Context context, String currentVersion) {
-        try {
-            SharedPreferences.Editor prefEdit = SharedPrefHelper.getPreferences(context, REVANCED).edit();
-            prefEdit.clear();
-            prefEdit.apply();
-            saveString(YOUTUBE, PREFERENCE_KEY, currentVersion);
-        } catch (Exception ignored) {
-        }
+    public static void setBuildVersion() {
+        saveString(YOUTUBE, PREFERENCE_KEY, BuildConfig.VERSION_NAME);
     }
 
 }
