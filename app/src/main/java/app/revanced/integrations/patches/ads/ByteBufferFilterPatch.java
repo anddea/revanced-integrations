@@ -17,7 +17,8 @@ public class ByteBufferFilterPatch {
             "&list=",
             "rellist"
     );
-    private static final List<String> bufferwhiteList = List.of(
+    private static final List<String> bufferWhiteList = List.of(
+            "description",
             "relatedH"
     );
     private static final List<String> whiteList = List.of(
@@ -33,7 +34,7 @@ public class ByteBufferFilterPatch {
         if (value == null ||
                 value.isEmpty() ||
                 whiteList.stream().anyMatch(value::contains) ||
-                bufferwhiteList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+                bufferWhiteList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
             return false;
         if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
             return hideActionButton(buffer);
