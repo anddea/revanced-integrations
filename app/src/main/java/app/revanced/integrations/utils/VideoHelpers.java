@@ -73,19 +73,8 @@ public class VideoHelpers {
         String[] speedEntries = getListArray(context, entriesKey);
         String[] speedEntriesValues = getListArray(context, entriesValueKey);
 
-        String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F" : ""; // u200f = right to left character
-        String middleSeparatorString = "\u2009" + "•" + "\u2009";  // u2009 = "half space" character
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder
-                .append(leftSeparatorString)
-                .append(str("revanced_whitelisting_speed_button"))
-                .append(middleSeparatorString)
-                .append(currentSpeed)
-                .append("x");
-
         AlertDialog speedDialog = new AlertDialog.Builder(context)
-                .setTitle(stringBuilder)
+                .setTitle(setTitle(str("revanced_whitelisting_speed_button")))
                 .setItems(speedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(speedEntriesValues[index] + "f")))
                 .show();
 
@@ -97,6 +86,19 @@ public class VideoHelpers {
         params.width = (int)(size.x * 0.5);
         speedDialog.getWindow().setAttributes(params);
         speedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    public static String setTitle(String prefix) {
+        if (prefix == null) return currentSpeed + "x";
+
+        String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F" : ""; // u200f = right to left character
+        String middleSeparatorString = "\u2009" + "•" + "\u2009";  // u2009 = "half space" character
+
+        return leftSeparatorString +
+                prefix +
+                middleSeparatorString +
+                currentSpeed +
+                "x";
     }
 
     public static String[] getListArray(Context context, String key) {
