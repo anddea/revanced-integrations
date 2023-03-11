@@ -16,8 +16,13 @@ public class PatchStatus {
         return false;
     }
 
+    public static boolean SuggestedActions() {
+        // Replace this with true if the Suggested Actions patch succeeds
+        return false;
+    }
+
     public static boolean SponsorBlock() {
-        // Replace this with true if the Sponsorblock patch succeeds
+        // Replace this with true if the SponsorBlock patch succeeds
         return false;
     }
 

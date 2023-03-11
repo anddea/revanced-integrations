@@ -7,6 +7,7 @@ import java.util.List;
 
 import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.shared.PlayerType;
 
 
 public class ByteBufferFilterPatch {
@@ -45,6 +46,7 @@ public class ByteBufferFilterPatch {
         hideFlyoutPanels(value, buffer);
         hideGeneralAds(value, buffer);
         hideShortsComponent(value);
+        hideSuggestedActions(value);
 
         return count > 0;
     }
@@ -160,7 +162,8 @@ public class ByteBufferFilterPatch {
             blockList.add("shorts_shelf");
         }
 
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON.getBoolean()) {
+        if (SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON.getBoolean() &&
+                PlayerType.getCurrent().isNoneOrHidden()) {
             blockList.add("suggested_action");
         }
 
@@ -174,6 +177,18 @@ public class ByteBufferFilterPatch {
 
         if (SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON.getBoolean())
             blockList.add("sponsor_button");
+
+        if (blockList.stream().anyMatch(value::contains)) count++;
+    }
+
+    private static void hideSuggestedActions(String value) {
+        if (!PatchStatus.SuggestedActions()) return;
+
+        List<String> blockList = new ArrayList<>();
+
+        if (SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean() &&
+                !PlayerType.getCurrent().isNoneOrHidden())
+            blockList.add("suggested_action");
 
         if (blockList.stream().anyMatch(value::contains)) count++;
     }
