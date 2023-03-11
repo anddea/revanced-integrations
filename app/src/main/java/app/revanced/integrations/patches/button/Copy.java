@@ -34,6 +34,10 @@ public class Copy {
             ImageView imageView = findView(Copy.class, constraintLayout, "copy_button");
 
             imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), false));
+            imageView.setOnLongClickListener(view -> {
+                VideoHelpers.copyUrl(view.getContext(), true);
+                return true;
+            });
             buttonview = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");
