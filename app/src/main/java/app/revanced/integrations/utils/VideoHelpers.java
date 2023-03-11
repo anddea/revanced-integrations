@@ -74,7 +74,7 @@ public class VideoHelpers {
         String[] speedEntriesValues = getListArray(context, entriesValueKey);
 
         String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F" : ""; // u200f = right to left character
-        String middleSeparatorString = "\u2009 " + "•" + " \u2009";  // u2009 = "half space" character
+        String middleSeparatorString = "\u2009" + "•" + "\u2009";  // u2009 = "half space" character
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
