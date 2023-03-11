@@ -142,6 +142,7 @@ public enum SettingsEnum {
     ENABLE_SEEKBAR_TAPPING("revanced_enable_seekbar_tapping", true, ReturnType.BOOLEAN),
     HIDE_SEEKBAR("revanced_hide_seekbar", false, ReturnType.BOOLEAN),
     HIDE_TIME_STAMP("revanced_hide_time_stamp", false, ReturnType.BOOLEAN, true),
+    ENABLE_TIME_STAMP_SPEED("revanced_enable_time_stamp_speed", true, ReturnType.BOOLEAN),
 
     //Video Settings
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", -2, ReturnType.INTEGER),

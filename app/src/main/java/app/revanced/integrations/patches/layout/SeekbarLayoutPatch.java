@@ -2,8 +2,12 @@ package app.revanced.integrations.patches.layout;
 
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
+import static app.revanced.integrations.utils.VideoHelpers.setTitle;
 
 import android.graphics.Color;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
@@ -30,5 +34,17 @@ public class SeekbarLayoutPatch {
             }
         }
         return colorValue;
+    }
+
+    public static String enableTimeStampSpeed(String totalTime) {
+        if (SettingsEnum.ENABLE_TIME_STAMP_SPEED.getBoolean()) {
+            var regex = "\\((.*?)\\)";
+            Matcher matcher = Pattern.compile(regex).matcher(totalTime);
+            if (matcher.find())
+                totalTime = totalTime.replaceAll(regex, "") + String.format("\u2009(%s)", setTitle(matcher.group(1)));
+            else
+                totalTime = totalTime + String.format("\u2009(%s)", setTitle(null));
+        }
+        return totalTime;
     }
 }
