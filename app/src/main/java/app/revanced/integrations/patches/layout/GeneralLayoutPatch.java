@@ -66,6 +66,10 @@ public class GeneralLayoutPatch {
         }
     }
 
+    public static int hideShortsPlayerSubscriptionsButton(int original) {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() ? 0 : original;
+    }
+
     @SuppressLint("WrongConstant")
     public static void hideShortsPlayerPivotBar() {
         if (SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BAR.getBoolean() && shortsContext != null) {
