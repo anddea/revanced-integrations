@@ -8,6 +8,10 @@ import app.revanced.integrations.utils.ResourceHelper;
 
 public class PlayerLayoutPatch {
 
+    public static boolean hideMusicButton() {
+        return SettingsEnum.HIDE_YOUTUBE_MUSIC_BUTTON.getBoolean();
+    }
+
     public static int hideCastButton(int original) {
         return SettingsEnum.HIDE_CAST_BUTTON.getBoolean() ? View.GONE : original;
     }

@@ -17,8 +17,6 @@ object ResourceHelper {
 
     private const val COLLAPSE_BUTTON = "player_collapse_button"
 
-    private const val YOUTUBE_MUSIC_BUTTON = "music_app_deeplink_button"
-
     private const val LIVE_CHAT_BUTTON = "live_chat_overlay_button"
 
     private const val FAST_FORWARD_BUTTON = "player_control_fast_forward_button"
@@ -57,11 +55,6 @@ object ResourceHelper {
     }
 
     @JvmStatic
-    fun hideYouTubeMusicButton(view: View): Boolean {
-        return SettingsEnum.HIDE_YOUTUBE_MUSIC_BUTTON.boolean && (view.id == identifier(YOUTUBE_MUSIC_BUTTON, ResourceType.ID))
-    }
-
-    @JvmStatic
     fun hideLiveChatButton(view: View): Boolean {
         return SettingsEnum.HIDE_LIVE_CHATS_BUTTON.boolean && (view.id == identifier(LIVE_CHAT_BUTTON, ResourceType.ID))
     }
@@ -95,8 +88,7 @@ object ResourceHelper {
 
     @JvmStatic
     fun hidePlayerButton(view: View): Boolean {
-        return hideYouTubeMusicButton(view)
-                || hideLiveChatButton(view)
+        return hideLiveChatButton(view)
                 || hideNextButton(view)
                 || hidePrevButton(view)
                 || hideCollapseButton(view)
