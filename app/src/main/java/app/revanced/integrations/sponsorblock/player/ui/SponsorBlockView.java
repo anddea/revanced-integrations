@@ -1,5 +1,6 @@
 package app.revanced.integrations.sponsorblock.player.ui;
 
+import static app.revanced.integrations.utils.ReVancedHelper.isFullscreenHidden;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.annotation.SuppressLint;
@@ -96,7 +97,7 @@ public class SponsorBlockView {
         if (skipSponsorButton == null) return;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) skipSponsorButton.getLayoutParams();
         if (params == null) return;
-        params.bottomMargin = fullScreen ? skipSponsorButton.ctaBottomMargin : skipSponsorButton.defaultBottomMargin;
+        params.bottomMargin = fullScreen ? (isFullscreenHidden() ? skipSponsorButton.hiddenBottomMargin : skipSponsorButton.ctaBottomMargin) : skipSponsorButton.defaultBottomMargin;
         skipSponsorButton.setLayoutParams(params);
     }
 
@@ -114,7 +115,7 @@ public class SponsorBlockView {
         if (newSegmentLayout == null) return;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) newSegmentLayout.getLayoutParams();
         if (params == null) return;
-        params.bottomMargin = fullScreen ? newSegmentLayout.ctaBottomMargin : newSegmentLayout.defaultBottomMargin;
+        params.bottomMargin = fullScreen ? (isFullscreenHidden() ? newSegmentLayout.hiddenBottomMargin : newSegmentLayout.ctaBottomMargin) : newSegmentLayout.defaultBottomMargin;
         newSegmentLayout.setLayoutParams(params);
     }
 

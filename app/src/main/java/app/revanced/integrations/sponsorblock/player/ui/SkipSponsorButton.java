@@ -24,6 +24,7 @@ public class SkipSponsorButton extends FrameLayout {
     private final Paint border;
     final int defaultBottomMargin;
     final int ctaBottomMargin;
+    final int hiddenBottomMargin;
 
     public SkipSponsorButton(Context context) {
         this(context, null);
@@ -51,6 +52,7 @@ public class SkipSponsorButton extends FrameLayout {
         Resources resources = context.getResources();
         defaultBottomMargin = resources.getDimensionPixelSize(identifier("skip_button_default_bottom_margin", ResourceType.DIMEN, context));  // dimen:skip_button_default_bottom_margin
         ctaBottomMargin = resources.getDimensionPixelSize(identifier("skip_button_cta_bottom_margin", ResourceType.DIMEN, context));  // dimen:skip_button_cta_bottom_margin
+        hiddenBottomMargin = (int) Math.round((ctaBottomMargin) * 0.5);  // margin when the button container is hidden
 
         skipSponsorBtnContainer.setOnClickListener(v -> PlayerController.onSkipSponsorClicked());
     }
