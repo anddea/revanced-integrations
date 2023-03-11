@@ -21,6 +21,10 @@ public class MusicSettings {
     }
 
     // Design
+    public static boolean disableAutoCaptions(boolean original) {
+        return getPrefBoolean("revanced_disable_auto_captions", false) || original;
+    }
+
     public static boolean enableBlackNavbar() {
         return getPrefBoolean("revanced_enable_black_navbar", true);
     }
