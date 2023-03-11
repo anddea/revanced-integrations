@@ -265,7 +265,7 @@ public abstract class SponsorBlockUtils {
     }
 
     public static void updateButton() {
-        if (!PatchStatus.Sponsorblock()) return;
+        if (!PatchStatus.SponsorBlock()) return;
         ShieldButton.refreshVisibility();
         VotingButton.refreshVisibility();
     }

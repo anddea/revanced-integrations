@@ -407,7 +407,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void AddWhitelistSettings() {
         try {
             Activity activity = ReVancedSettingsFragment.this.getActivity();
-            boolean isIncludedSB = PatchStatus.Sponsorblock();
+            boolean isIncludedSB = PatchStatus.SponsorBlock();
             boolean isIncludedSPEED = PatchStatus.VideoSpeed();
             boolean isIncludedADS = PatchStatus.VideoAds();
 

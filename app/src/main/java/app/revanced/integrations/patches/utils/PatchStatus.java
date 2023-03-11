@@ -16,7 +16,7 @@ public class PatchStatus {
         return false;
     }
 
-    public static boolean Sponsorblock() {
+    public static boolean SponsorBlock() {
         // Replace this with true if the Sponsorblock patch succeeds
         return false;
     }

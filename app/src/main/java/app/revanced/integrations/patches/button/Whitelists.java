@@ -51,7 +51,7 @@ public class Whitelists {
             isSPEEDWhitelisted = Whitelist.isChannelSPEEDWhitelisted();
 
             isADSIncluded = PatchStatus.VideoAds();
-            isSBIncluded = PatchStatus.Sponsorblock();
+            isSBIncluded = PatchStatus.SponsorBlock();
             isSPEEDIncluded = PatchStatus.VideoSpeed();
 
             isButtonEnabled = setValue();
