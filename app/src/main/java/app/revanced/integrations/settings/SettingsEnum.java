@@ -26,8 +26,8 @@ public enum SettingsEnum {
     SWIPE_MAGNITUDE_THRESHOLD("revanced_swipe_magnitude_threshold", 0f, ReturnType.FLOAT),
 
     //Experimental Flags
-    ENABLE_SWIPE_BRIGHTNESS_HDR("revanced_enable_swipe_brightness_in_hdr", false, ReturnType.BOOLEAN, true),
-    ENABLE_SAVE_BRIGHTNESS("revanced_enable_save_brightness", false, ReturnType.BOOLEAN, true),
+    ENABLE_SWIPE_BRIGHTNESS_HDR("revanced_enable_swipe_brightness_in_hdr", true, ReturnType.BOOLEAN, true),
+    ENABLE_SAVE_BRIGHTNESS("revanced_enable_save_brightness", true, ReturnType.BOOLEAN, true),
     SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", 50f, ReturnType.FLOAT),
 
 
@@ -39,7 +39,7 @@ public enum SettingsEnum {
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", true, ReturnType.BOOLEAN),
     HIDE_STARTUP_SHORTS_PLAYER("revanced_hide_startup_shorts_player", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_COMMENTS_BUTTON("revanced_hide_shorts_player_comments_button", false, ReturnType.BOOLEAN),
-    HIDE_SHORTS_PLAYER_REMIX_BUTTON("revanced_hide_shorts_player_remix_button", false, ReturnType.BOOLEAN),
+    HIDE_SHORTS_PLAYER_REMIX_BUTTON("revanced_hide_shorts_player_remix_button", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_JOIN_BUTTON("revanced_hide_shorts_player_join_button", true, ReturnType.BOOLEAN),
@@ -59,14 +59,14 @@ public enum SettingsEnum {
 
     ADREMOVER_MERCHANDISE("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
     ADREMOVER_BROWSE_STORE_BUTTON("revanced_adremover_browse_store_button", true, ReturnType.BOOLEAN),
-    ADREMOVER_COMMUNITY_POSTS_HOME("revanced_adremover_community_posts_home", false, ReturnType.BOOLEAN),
-    ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_adremover_community_posts_subscriptions", true, ReturnType.BOOLEAN),
+    ADREMOVER_COMMUNITY_POSTS_HOME("revanced_adremover_community_posts_home", true, ReturnType.BOOLEAN),
+    ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_adremover_community_posts_subscriptions", false, ReturnType.BOOLEAN),
     ADREMOVER_MOVIE_SHELF("revanced_adremover_movie_shelf", false, ReturnType.BOOLEAN),
     ADREMOVER_FEED_SURVEY("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
     ADREMOVER_IMAGE_SHELF("revanced_adremover_image_shelf", true, ReturnType.BOOLEAN),
     ADREMOVER_INFO_PANEL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_MEDICAL_PANEL("revanced_adremover_medical_panel", true, ReturnType.BOOLEAN),
-    ADREMOVER_SUGGESTIONS("revanced_adremover_suggestions", false, ReturnType.BOOLEAN),
+    ADREMOVER_SUGGESTIONS("revanced_adremover_suggestions", true, ReturnType.BOOLEAN),
     ADREMOVER_LATEST_POSTS("revanced_adremover_latest_posts", true, ReturnType.BOOLEAN),
     ADREMOVER_CHANNEL_GUIDELINES("revanced_adremover_channel_guidelines", true, ReturnType.BOOLEAN),
     ADREMOVER_CHANNEL_MEMBER_SHELF("revanced_adremover_channel_member_shelf", true, ReturnType.BOOLEAN),
@@ -81,7 +81,7 @@ public enum SettingsEnum {
 
     // Layout settings (Player)
     HIDE_COLLAPSE_BUTTON("revanced_hide_collapse_button", false, ReturnType.BOOLEAN),
-    HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", true, ReturnType.BOOLEAN),
+    HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", false, ReturnType.BOOLEAN),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", true, ReturnType.BOOLEAN, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", true, ReturnType.BOOLEAN, true),
     HIDE_LIVE_CHATS_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
@@ -140,8 +140,8 @@ public enum SettingsEnum {
     ENABLE_CUSTOM_SEEKBAR_COLOR("revanced_enable_custom_seekbar_color", true, ReturnType.BOOLEAN, true),
     ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE("revanced_custom_seekbar_color_value", "#ff0000", ReturnType.STRING, true),
     ENABLE_SEEKBAR_TAPPING("revanced_enable_seekbar_tapping", true, ReturnType.BOOLEAN),
-    HIDE_TIME_STAMP("revanced_hide_time_stamp", false, ReturnType.BOOLEAN, true),
     HIDE_SEEKBAR("revanced_hide_seekbar", false, ReturnType.BOOLEAN),
+    HIDE_TIME_STAMP("revanced_hide_time_stamp", false, ReturnType.BOOLEAN, true),
 
     //Video Settings
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", -2, ReturnType.INTEGER),
@@ -197,7 +197,7 @@ public enum SettingsEnum {
     SB_VOTING_ENABLED("sb-voting-enabled", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_SKIPPED_SEGMENTS("sb-skipped-segments", 0, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.INTEGER),
     SB_SKIPPED_SEGMENTS_TIME("sb-skipped-segments-time", 0L, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.LONG),
-    SB_SHOW_TIME_WITHOUT_SEGMENTS("sb-length-without-segments", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_SHOW_TIME_WITHOUT_SEGMENTS("sb-length-without-segments", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_IS_VIP("sb-is-vip", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_LAST_VIP_CHECK("sb-last-vip-check", 0L, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.LONG),
     SB_API_URL("sb-api-host-url", "https://sponsor.ajay.app", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
