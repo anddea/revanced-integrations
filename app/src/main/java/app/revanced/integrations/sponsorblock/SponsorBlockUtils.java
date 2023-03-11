@@ -400,7 +400,7 @@ public abstract class SponsorBlockUtils {
         long seconds = (timeWithoutSegments / 1000) % 60;
         String format = (hours > 0 ? "%d:%02" : "%") + "d:%02d"; // mmLul
         String formatted = hours > 0 ? String.format(format, hours, minutes, seconds) : String.format(format, minutes, seconds);
-        return String.format(" (%s)", formatted);
+        return String.format("\u2009(%s)", formatted);
     }
 
     public static void playerTypeChanged(PlayerType playerType) {
@@ -490,9 +490,9 @@ public abstract class SponsorBlockUtils {
     }
 
     public static String formatTimeString(long hoursSaved, long minutesSaved, long secondsSaved) {
-        final var TIME_FORMAT_WITH_HOUR = "%d %s %2d %s %2d %s";
-        final var TIME_FORMAT_WITHOUT_HOUR = "%2d %s %2d %s";
-        final var TIME_FORMAT_WITHOUT_MINUTE = "%2d %s";
+        final var TIME_FORMAT_WITH_HOUR = "%d\u2009%s\u2009%2d\u2009%s\u2009%2d\u2009%s";
+        final var TIME_FORMAT_WITHOUT_HOUR = "%2d\u2009%s\u2009%2d\u2009%s";
+        final var TIME_FORMAT_WITHOUT_MINUTE = "%2d\u2009%s";
 
         final var hoursStr = str("hours");
         final var minutesStr = str("minutes");
