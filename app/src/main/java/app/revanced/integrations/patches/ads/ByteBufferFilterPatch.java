@@ -152,25 +152,20 @@ public class ByteBufferFilterPatch {
     }
 
     private static void hideShortsComponent(String value) {
-        if (!PatchStatus.ShortsComponent()) return;
+        if (!PatchStatus.ShortsComponent() || !PlayerType.getCurrent().isNoneOrHidden()) return;
 
         List<String> blockList = new ArrayList<>();
 
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON.getBoolean() &&
-                PlayerType.getCurrent().isNoneOrHidden()) {
+        if (SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON.getBoolean())
             blockList.add("suggested_action");
+
+        if (value.contains("reel_channel_bar")) {
+            if (SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean())
+                blockList.add("subscribe_button");
+
+            if (SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON.getBoolean())
+                blockList.add("sponsor_button");
         }
-
-        if (blockList.stream().anyMatch(value::contains)) count++;
-        blockList.clear();
-
-        if (!value.contains("reel_channel_bar")) return;
-
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean())
-            blockList.add("subscribe_button");
-
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON.getBoolean())
-            blockList.add("sponsor_button");
 
         if (blockList.stream().anyMatch(value::contains)) count++;
     }
