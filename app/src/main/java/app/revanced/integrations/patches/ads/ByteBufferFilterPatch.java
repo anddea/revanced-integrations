@@ -156,13 +156,6 @@ public class ByteBufferFilterPatch {
 
         List<String> blockList = new ArrayList<>();
 
-        if (SettingsEnum.HIDE_SHORTS_SHELF.getBoolean()) {
-            blockList.add("inline_shorts");
-            blockList.add("reels_player_overlay");
-            blockList.add("shorts_grid");
-            blockList.add("shorts_shelf");
-        }
-
         if (SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON.getBoolean() &&
                 PlayerType.getCurrent().isNoneOrHidden()) {
             blockList.add("suggested_action");

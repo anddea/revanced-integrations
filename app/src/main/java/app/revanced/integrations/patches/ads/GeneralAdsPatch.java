@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
+import static app.revanced.integrations.patches.utils.PatchStatus.ShortsComponent;
+
 import android.view.View;
 
 import app.revanced.integrations.adremover.AdRemoverAPI;
@@ -68,6 +70,12 @@ public final class GeneralAdsPatch extends Filter {
                 "compact_tvfilm_item",
                 "offer_module_root"
         );
+        var shorts = new BlockRule(SettingsEnum.HIDE_SHORTS_SHELF,
+                "reels_player_overlay",
+                "shorts_shelf",
+                "inline_shorts",
+                "shorts_grid"
+        );
 
         this.pathRegister.registerAll(
                 buttonedAd,
@@ -90,11 +98,10 @@ public final class GeneralAdsPatch extends Filter {
                 viewProducts,
                 webSearchPanel
         );
+        this.identifierRegister.registerAll(carouselAd, graySeparator);
 
-        this.identifierRegister.registerAll(
-                carouselAd,
-                graySeparator
-        );
+        if (ShortsComponent())
+            this.identifierRegister.registerAll(shorts);
     }
 
     public boolean filter(final String path, final String identifier) {
