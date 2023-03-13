@@ -11,36 +11,31 @@ import app.revanced.integrations.shared.PlayerType;
 
 
 public class ByteBufferFilterPatch {
-    private static final List<String> bufferBlockList = List.of(
-            "for you",
-            "mix-watch",
-            "&list=",
-            "rellist"
-    );
-    private static final List<String> bufferWhiteList = List.of(
-            "description",
-            "relatedH"
-    );
-    private static final List<String> whiteList = List.of(
+    private static final List<String> generalWhiteList = List.of(
+            "avatar",
             "comment_thread",
+            "creation_sheet_menu",
+            "metadata",
+            "thumbnail",
             "|comment.",
             "-button",
             "-count",
             "-space"
     );
+    private static final List<String> mixBufferBlockList = List.of(
+            "for you",
+            "&list="
+    );
     private static int count;
 
     public static boolean filters(String value, ByteBuffer buffer) {
-        if (value == null ||
-                value.isEmpty() ||
-                whiteList.stream().anyMatch(value::contains) ||
-                bufferWhiteList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+        if (value == null || value.isEmpty() || generalWhiteList.stream().anyMatch(value::contains))
             return false;
         if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
             return hideActionButton(buffer);
-        if (SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() &&
-                bufferBlockList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
-            return true;
+
+        if (mixBufferBlockList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+            return hideMixPlaylists(buffer);
 
         count = 0;
 
@@ -149,6 +144,21 @@ public class ByteBufferFilterPatch {
 
         if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
                 value.contains("_survey")) count++;
+    }
+
+    private static boolean hideMixPlaylists(ByteBuffer buffer) {
+        final List<String> mixBufferWhiteList = List.of("description", "share", "|ContainerType|ContainerType|");
+        final List<String> musicBufferList = List.of("YouTube Music");
+        final List<String> imageBufferList = List.of("ggpht.com");
+
+        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() ||
+                mixBufferWhiteList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+            return false;
+
+        if (musicBufferList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+            return true;
+
+        return imageBufferList.stream().noneMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains);
     }
 
     private static void hideShortsComponent(String value) {
