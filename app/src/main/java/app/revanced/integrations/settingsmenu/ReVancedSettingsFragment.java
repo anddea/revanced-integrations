@@ -489,6 +489,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     builder.setPositiveButton(str("save_metadata_menu"),
                             (dialog, id) -> {
                                 downloaderPackageName.saveValue(packageNameArray[finalIndex]);
+                                rebootDialog();
                                 dialog.dismiss();
                             });
                     builder.setNeutralButton(str("common_google_play_services_install_button"), null);

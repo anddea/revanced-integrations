@@ -161,7 +161,7 @@ public enum SettingsEnum {
     ENABLE_ALWAYS_AUTO_REPEAT("revanced_enable_always_auto_repeat", false, ReturnType.BOOLEAN),
     //Download Settings
     OVERLAY_BUTTON_DOWNLOADS("revanced_overlay_button_downloads", true, ReturnType.BOOLEAN),
-    DOWNLOADER_PACKAGE_NAME("revanced_downloader_package_name", null, ReturnType.STRING),
+    DOWNLOADER_PACKAGE_NAME("revanced_downloader_package_name", null, ReturnType.STRING, true),
     // Whitelist Settings
     ADS_WHITELIST("revanced_whitelist_ads", false, ReturnType.BOOLEAN),
     SPEED_WHITELIST("revanced_whitelist_speed", false, ReturnType.BOOLEAN),
