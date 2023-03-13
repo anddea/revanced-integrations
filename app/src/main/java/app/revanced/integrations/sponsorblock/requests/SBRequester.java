@@ -133,7 +133,7 @@ public class SBRequester {
         }
     }
 
-    public static void voteForSegment(SponsorSegment segment, VoteOption voteOption, Context context, String... args) {
+    public static void voteForSegment(SponsorSegment segment, VoteOption voteOption, String... args) {
         ReVancedUtils.runOnBackgroundThread(() -> {
             try {
                 String segmentUuid = segment.uuid;
@@ -156,7 +156,7 @@ public class SBRequester {
                         SponsorBlockUtils.messageToToast = str("vote_failed_unknown_error", responseCode, connection.getResponseMessage());
                         break;
                 }
-                runOnMainThread(() -> showToastLong(context, SponsorBlockUtils.messageToToast));
+                runOnMainThread(() -> showToastLong(SponsorBlockUtils.messageToToast));
                 connection.disconnect();
             } catch (Exception ex) {
                 ex.printStackTrace();

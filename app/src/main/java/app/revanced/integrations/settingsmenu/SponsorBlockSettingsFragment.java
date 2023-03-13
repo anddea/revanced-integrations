@@ -33,7 +33,6 @@ import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
 import app.revanced.integrations.sponsorblock.objects.EditTextListPreference;
 import app.revanced.integrations.sponsorblock.requests.SBRequester;
 import app.revanced.integrations.utils.SharedPrefHelper;
-import app.revanced.integrations.whitelist.WhitelistType;
 
 public class SponsorBlockSettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final DecimalFormat FORMATTER = new DecimalFormat("#,###,###");
@@ -400,7 +399,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment implements 
 
             preference.setTitle(str("settings_ie"));
             preference.setSummary(str("settings_ie_sum"));
-            preference.setText(SponsorBlockUtils.exportSettings(applicationContext));
+            preference.setText(SponsorBlockUtils.exportSettings());
             preference.setOnPreferenceChangeListener((pref, newValue) -> {
                 SponsorBlockUtils.importSettings((String) newValue, applicationContext);
                 return false;

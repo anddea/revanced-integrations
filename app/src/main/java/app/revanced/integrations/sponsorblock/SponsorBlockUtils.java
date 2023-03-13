@@ -76,17 +76,16 @@ public abstract class SponsorBlockUtils {
         @SuppressLint("DefaultLocale")
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            Context context = ((AlertDialog) dialog).getContext();
             switch (which) {
                 case DialogInterface.BUTTON_NEGATIVE:
                     // start
                     newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
-                    showToastLong(context, str("new_segment_time_start_set"));
+                    showToastLong(str("new_segment_time_start_set"));
                     break;
                 case DialogInterface.BUTTON_POSITIVE:
                     // end
                     newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
-                    showToastShort(context, str("new_segment_time_end_set"));
+                    showToastShort(str("new_segment_time_end_set"));
                     break;
             }
             dialog.dismiss();
@@ -97,13 +96,12 @@ public abstract class SponsorBlockUtils {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             SponsorBlockSettings.SegmentInfo segmentType = SponsorBlockSettings.SegmentInfo.getSubmittableSegments()[which];
-            Context context = ((AlertDialog) dialog).getContext();
             boolean enableButton;
             if (!segmentType.getBehaviour().getShowOnTimeBar()) {
-                showToastShort(context, str("new_segment_disabled_category"));
+                showToastShort(str("new_segment_disabled_category"));
                 enableButton = false;
             } else {
-                showToastShort(context, segmentType.getDescription().toString());
+                showToastShort(segmentType.getDescription().toString());
                 newSponsorBlockSegmentType = segmentType;
                 enableButton = true;
             }
@@ -147,7 +145,7 @@ public abstract class SponsorBlockUtils {
             dialog.dismiss();
             Context context = ((AlertDialog) dialog).getContext().getApplicationContext();
 
-            showToastShort(context, str("submit_started"));
+            showToastShort(str("submit_started"));
             appContext = new WeakReference<>(context);
             ReVancedUtils.runOnBackgroundThread(submitRunnable);
         }
@@ -182,9 +180,8 @@ public abstract class SponsorBlockUtils {
         dialog.dismiss();
     };
     private static final Runnable toastRunnable = () -> {
-        Context context = appContext.get();
-        if (context != null && messageToToast != null)
-            showToastShort(context, messageToToast);
+        assert messageToToast != null;
+        showToastShort(messageToToast);
     };
     private static final DialogInterface.OnClickListener segmentVoteClickListener = (dialog, which) -> {
         final Context context = ((AlertDialog) dialog).getContext();
@@ -210,7 +207,7 @@ public abstract class SponsorBlockUtils {
                     switch (voteOption) {
                         case UPVOTE:
                         case DOWNVOTE:
-                            voteForSegment(segment, voteOption, appContext.get());
+                            voteForSegment(segment, voteOption);
                             break;
                         case CATEGORY_CHANGE:
                             onNewCategorySelect(segment, context);
@@ -302,13 +299,13 @@ public abstract class SponsorBlockUtils {
                     .setPositiveButton(android.R.string.yes, segmentReadyDialogButtonListener)
                     .show();
         } else {
-            showToastShort(context, str("new_segment_mark_locations_first"));
+            showToastShort(str("new_segment_mark_locations_first"));
        }
     }
 
     public static void onVotingClicked(final Context context) {
         if (sponsorSegmentsOfCurrentVideo == null || sponsorSegmentsOfCurrentVideo.length == 0) {
-            showToastShort(context, str("vote_no_segments"));
+            showToastShort(str("vote_no_segments"));
             return;
         }
         int segmentAmount = sponsorSegmentsOfCurrentVideo.length;
@@ -343,12 +340,12 @@ public abstract class SponsorBlockUtils {
 
         new AlertDialog.Builder(context)
                 .setTitle(str("new_segment_choose_category"))
-                .setItems(titles, (dialog, which) -> voteForSegment(segment, VoteOption.CATEGORY_CHANGE, appContext.get(), values[which].getKey()))
+                .setItems(titles, (dialog, which) -> voteForSegment(segment, VoteOption.CATEGORY_CHANGE, values[which].getKey()))
                 .show();
     }
 
     @SuppressLint("DefaultLocale")
-    public static void onPreviewClicked(Context context) {
+    public static void onPreviewClicked() {
         if (newSponsorSegmentStartMillis >= 0 && newSponsorSegmentStartMillis < newSponsorSegmentEndMillis) {
             PlayerController.skipToMillisecond(newSponsorSegmentStartMillis - 3000);
             final SponsorSegment[] original = PlayerController.sponsorSegmentsOfCurrentVideo;
@@ -360,7 +357,7 @@ public abstract class SponsorBlockUtils {
             Arrays.sort(segments);
             sponsorSegmentsOfCurrentVideo = segments;
         } else {
-            showToastShort(context, str("new_segment_mark_locations_first"));
+            showToastShort(str("new_segment_mark_locations_first"));
         }
     }
 
@@ -556,14 +553,14 @@ public abstract class SponsorBlockUtils {
             SettingsEnum.SB_MIN_DURATION.saveValue(Float.valueOf(settingsJson.getString("minDuration")));
             SettingsEnum.SB_COUNT_SKIPS.saveValue(settingsJson.getBoolean("trackViewCount"));
 
-            showToastShort(context, str("settings_import_successful"));
+            showToastShort(str("settings_import_successful"));
         } catch (Exception ex) {
-            showToastShort(context, str("settings_import_failed"));
+            showToastShort(str("settings_import_failed"));
             ex.printStackTrace();
         }
     }
 
-    public static String exportSettings(Context context) {
+    public static String exportSettings() {
         try {
             JSONObject json = new JSONObject();
 
@@ -597,7 +594,7 @@ public abstract class SponsorBlockUtils {
 
             return json.toString();
         } catch (Exception ex) {
-            showToastShort(context, str("settings_export_failed"));
+            showToastShort(str("settings_export_failed"));
             ex.printStackTrace();
             return "";
         }
@@ -627,7 +624,6 @@ public abstract class SponsorBlockUtils {
         public void onClick(DialogInterface dialog, int which) {
             final EditText editText = this.editText.get();
             if (editText == null) return;
-            Context context = ((AlertDialog) dialog).getContext();
 
             try {
                 long time = (which == DialogInterface.BUTTON_NEUTRAL) ?
@@ -644,9 +640,9 @@ public abstract class SponsorBlockUtils {
                             DialogInterface.BUTTON_NEGATIVE :
                             DialogInterface.BUTTON_POSITIVE);
                 else
-                    showToastShort(context, str("new_segment_edit_by_hand_saved"));
+                    showToastShort(str("new_segment_edit_by_hand_saved"));
             } catch (ParseException e) {
-                showToastLong(context, str("new_segment_edit_by_hand_parse_error"));
+                showToastLong(str("new_segment_edit_by_hand_parse_error"));
             }
         }
     }

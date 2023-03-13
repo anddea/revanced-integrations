@@ -60,7 +60,7 @@ public class NewSegmentLayout extends FrameLayout {
         ImageButton compareButton = findViewById(identifier("new_segment_compare", ResourceType.ID, context));
         if (compareButton != null) {
             setClickEffect(compareButton);
-            compareButton.setOnClickListener(v -> SponsorBlockUtils.onPreviewClicked(NewSegmentHelperLayout.context));
+            compareButton.setOnClickListener(v -> SponsorBlockUtils.onPreviewClicked());
         }
         ImageButton editButton = findViewById(identifier("new_segment_edit", ResourceType.ID, context));
         if (editButton != null) {
