@@ -10,10 +10,7 @@ import app.revanced.integrations.whitelist.Whitelist;
 
 public class VideoSpeedPatch {
     private static float selectedSpeed = -1.0f;
-
     private static boolean newVideo = false;
-
-    private static boolean isLiveVideo = false;
 
     public static void userChangedSpeed(final float speed) {
         selectedSpeed = speed;
@@ -26,11 +23,6 @@ public class VideoSpeedPatch {
 
     public static void setDefaultSpeed() {
         float defaultSpeed = selectedSpeed;
-        if (isLiveVideo) {
-            isLiveVideo = false;
-            newVideo = false;
-            defaultSpeed = 1.0f;
-        }
         if (newVideo) {
             defaultSpeed = SettingsEnum.DEFAULT_VIDEO_SPEED.getFloat();
             selectedSpeed = defaultSpeed;
@@ -40,10 +32,6 @@ public class VideoSpeedPatch {
             else if (!isCustomVideoSpeedEnabled() && defaultSpeed >= 2.0f) defaultSpeed = 2.0f;
         }
         overrideSpeed(defaultSpeed);
-    }
-
-    public static void liveVideoStarted() {
-        isLiveVideo = true;
     }
 
     public static void newVideoStarted(@NonNull String videoId) {
