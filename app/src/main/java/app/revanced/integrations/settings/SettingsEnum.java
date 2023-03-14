@@ -178,6 +178,7 @@ public enum SettingsEnum {
     ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_tablet"),
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
     ENABLE_VP9_CODEC("revanced_enable_vp9_codec", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_vp9"),
+    DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_quic"),
 
     //RYD Settings
     RYD_USER_ID("ryd_userId", null, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.STRING),
