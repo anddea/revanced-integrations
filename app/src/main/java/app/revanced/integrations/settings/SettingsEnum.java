@@ -175,6 +175,8 @@ public enum SettingsEnum {
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", true, ReturnType.BOOLEAN),
     ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
     DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", 2, ReturnType.INTEGER),
+    ENABLE_PROTOBUF_SPOOF("revanced_enable_protobuf_spoof", false, ReturnType.BOOLEAN, true),
+    SPOOFING_TYPE("revanced_spoofing_type", false, ReturnType.BOOLEAN),
 
     //Experimental Flags
     ENABLE_OLD_LAYOUT("revanced_enable_old_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_oldlayout"),
