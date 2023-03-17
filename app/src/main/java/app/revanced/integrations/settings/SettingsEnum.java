@@ -176,8 +176,6 @@ public enum SettingsEnum {
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", true, ReturnType.BOOLEAN),
     ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
     DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", 2, ReturnType.INTEGER),
-    ENABLE_PROTOBUF_SPOOF("revanced_enable_protobuf_spoof", false, ReturnType.BOOLEAN, true),
-    SPOOFING_TYPE("revanced_spoofing_type", false, ReturnType.BOOLEAN),
 
     //Experimental Flags
     ENABLE_OLD_LAYOUT("revanced_enable_old_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_oldlayout"),
@@ -185,6 +183,8 @@ public enum SettingsEnum {
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
     ENABLE_VP9_CODEC("revanced_enable_vp9_codec", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_vp9"),
     DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_quic"),
+    ENABLE_PROTOBUF_SPOOF("revanced_enable_protobuf_spoof", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_protobuf"),
+    SPOOFING_TYPE("revanced_spoofing_type", false, ReturnType.BOOLEAN),
 
     //RYD Settings
     RYD_USER_ID("ryd_userId", null, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.STRING),
