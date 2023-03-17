@@ -13,10 +13,6 @@ public class FullscreenLayoutPatch {
             AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 
-    public static boolean hideFullscreenPanel() {
-        return SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean();
-    }
-
     public static int hideFullscreenPanels() {
         return SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean() ? 8 : 0;
     }
@@ -25,6 +21,10 @@ public class FullscreenLayoutPatch {
         if (SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean()) {
             AdRemoverAPI.HideViewWithLayout1dp(view);
         }
+    }
+
+    public static boolean showFullscreenTitle() {
+        return SettingsEnum.SHOW_FULLSCREEN_TITLE.getBoolean() || !SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean();
     }
 
     public static boolean hideEndscreenOverlay() {

@@ -258,6 +258,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
                 SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getPath(),
                 SettingsEnum.HIDE_FULLSCREEN_PANELS.getPath(),
+                SettingsEnum.SHOW_FULLSCREEN_TITLE.getPath(),
                 SettingsEnum.HIDE_MIX_PLAYLISTS.getPath()
         };
 
