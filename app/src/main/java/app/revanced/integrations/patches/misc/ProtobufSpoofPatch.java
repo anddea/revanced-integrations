@@ -14,7 +14,7 @@ public class ProtobufSpoofPatch {
 
     /**
      * Protobuf parameters used by the player.
-     * Known issue: YouTube client recognizes generic player as shorts video
+     * Known issue: captions are positioned above the player
      */
     private static final String PROTOBUF_PARAMETER_SHORTS = "8AEB";
 
