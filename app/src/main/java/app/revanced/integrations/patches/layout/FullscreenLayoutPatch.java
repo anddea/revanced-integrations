@@ -27,7 +27,7 @@ public class FullscreenLayoutPatch {
         return SettingsEnum.SHOW_FULLSCREEN_TITLE.getBoolean() || !SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean();
     }
 
-    public static boolean hideEndscreenOverlay() {
+    public static boolean hideEndScreenOverlay() {
         return SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getBoolean();
     }
 
