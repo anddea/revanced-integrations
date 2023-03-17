@@ -7,16 +7,16 @@ import app.revanced.integrations.utils.ReVancedUtils;
 
 public class ProtobufSpoofPatch {
     /**
-     * Protobuf parameters used by the player.
-     * Known issue: YouTube client recognizes generic player as shorts video
-     */
-    private static final String GENERAL_PROTOBUF_PARAMETER = "CgIQBg";
-
-    /**
      * Protobuf parameters used for general fixes.
      * Known issue: thumbnails not showing when tapping the seekbar
      */
-    private static final String SHORTS_PROTOBUF_PARAMETER = "8AEB";
+    private static final String PROTOBUF_PARAMETER_GENERAL = "CgIQBg";
+
+    /**
+     * Protobuf parameters used by the player.
+     * Known issue: YouTube client recognizes generic player as shorts video
+     */
+    private static final String PROTOBUF_PARAMETER_SHORTS = "8AEB";
 
     /**
      * Target Protobuf parameters.
@@ -33,8 +33,8 @@ public class ProtobufSpoofPatch {
             return original;
 
         if (original.startsWith(TARGET_PROTOBUF_PARAMETER)
-                || original.equals(""))
-            original = SettingsEnum.SPOOFING_TYPE.getBoolean() ? SHORTS_PROTOBUF_PARAMETER : GENERAL_PROTOBUF_PARAMETER;
+                || original.isEmpty())
+            original = SettingsEnum.SPOOFING_TYPE.getBoolean() ? PROTOBUF_PARAMETER_SHORTS : PROTOBUF_PARAMETER_GENERAL;
 
         return original;
     }
