@@ -45,7 +45,6 @@ import app.revanced.integrations.patches.button.Download;
 import app.revanced.integrations.patches.button.Speed;
 import app.revanced.integrations.patches.button.Whitelists;
 import app.revanced.integrations.patches.utils.PatchStatus;
-import app.revanced.integrations.patches.video.VideoQualityPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;
@@ -339,7 +338,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         try {
             SettingsEnum qualitySetting = isQualityWiFi ? SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI : SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
 
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
             var value = SharedPrefHelper.getString(REVANCED, qualitySetting.getPath(), "-2");
             qualitySetting.saveValue(Integer.parseInt(value));
 
@@ -366,7 +364,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             SettingsEnum doubleBackSetting = SettingsEnum.DOUBLE_BACK_TIMEOUT;
 
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
             var value = SharedPrefHelper.getString(REVANCED, doubleBackSetting.getPath(), "2");
             doubleBackSetting.saveValue(Integer.parseInt(value));
 
