@@ -28,7 +28,7 @@ public class FullscreenLayoutPatch {
     }
 
     public static boolean hideAutoPlayPreview() {
-        return SettingsEnum.HIDE_AUTOPLAY_PREVIEW.getBoolean();
+        return SettingsEnum.HIDE_AUTOPLAY_PREVIEW.getBoolean() || SettingsEnum.HIDE_AUTOPLAY_BUTTON.getBoolean();
     }
 
     public static boolean hideEndScreenOverlay() {
