@@ -89,16 +89,14 @@ public class VideoHelpers {
     }
 
     public static String setTitle(String prefix) {
-        if (prefix == null) return currentSpeed + "x";
+        String speed = currentSpeed + "x";
+        if (prefix == null) return speed;
 
-        String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout() ? "\u200F" : ""; // u200f = right to left character
         String middleSeparatorString = "\u2009" + "•" + "\u2009";  // u2009 = "half space" character
 
-        return leftSeparatorString +
-                prefix +
+        return prefix +
                 middleSeparatorString +
-                currentSpeed +
-                "x";
+                speed;
     }
 
     public static String[] getListArray(Context context, String key) {
