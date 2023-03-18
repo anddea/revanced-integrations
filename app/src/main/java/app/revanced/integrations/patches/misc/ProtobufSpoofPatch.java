@@ -24,12 +24,9 @@ public class ProtobufSpoofPatch {
      */
     private static final String TARGET_PROTOBUF_PARAMETER = "YADI";
 
-    private static final String YOUTUBE_PACKAGE_NAME = "com.google.android.youtube";
-
 
     public static String getProtobufOverride(String original) {
-        if (!SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()
-                || Objects.equals(ReVancedUtils.getContext().getPackageName(), YOUTUBE_PACKAGE_NAME))
+        if (!SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean())
             return original;
 
         if (original.startsWith(TARGET_PROTOBUF_PARAMETER)
