@@ -1,9 +1,11 @@
 package app.revanced.integrations.patches.utils;
 
 import static app.revanced.integrations.utils.ReVancedUtils.getContext;
+import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+
+import app.revanced.integrations.utils.ResourceType;
 
 public class LithoThemePatch {
     private static final int[] WHITE_VALUES = {
@@ -48,11 +50,9 @@ public class LithoThemePatch {
      */
     @SuppressLint("DiscouragedApi")
     private static int getColor(String name) {
-        Context context = getContext();
+        var context = getContext();
 
-        return context != null ? context.getColor(context.getResources()
-                .getIdentifier(name, "color", context.getPackageName())
-        ) : 0;
+        return context != null ? context.getColor(identifier(name, ResourceType.COLOR)) : 0;
     }
 
     private static boolean anyEquals(int value, int... of) {
