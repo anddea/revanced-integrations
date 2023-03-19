@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ResourceType;
 
 public class GeneralLayoutPatch {
@@ -86,7 +87,7 @@ public class GeneralLayoutPatch {
     }
 
     public static boolean hideAutoCaptions() {
-        return SettingsEnum.HIDE_AUTO_CAPTIONS.getBoolean();
+        return SettingsEnum.HIDE_AUTO_CAPTIONS.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden();
     }
 
     public static boolean hideAutoPlayerPopupPanels() {
