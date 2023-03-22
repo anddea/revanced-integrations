@@ -96,8 +96,4 @@ public final class MusicLithoFilterPatch {
         }
         return false;
     }
-
-    public static boolean filter(StringBuilder pathBuilder, String identifier, Object object, ByteBuffer buffer) {
-        return filter(pathBuilder, identifier);
-    }
 }
