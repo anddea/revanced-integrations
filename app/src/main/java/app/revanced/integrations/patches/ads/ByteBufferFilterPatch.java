@@ -31,8 +31,6 @@ public class ByteBufferFilterPatch {
     public static boolean filters(String value, ByteBuffer buffer) {
         if (value == null || value.isEmpty() || generalWhiteList.stream().anyMatch(value::contains))
             return false;
-        if (value.contains("ScrollableContainerType|ContainerType|ContainerType|video_action_button"))
-            return hideActionButton(buffer);
 
         if (mixBufferBlockList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
             return hideMixPlaylists(buffer);
@@ -45,34 +43,6 @@ public class ByteBufferFilterPatch {
         hideSuggestedActions(value);
 
         return count > 0;
-    }
-
-    private static boolean hideActionButton(ByteBuffer buffer) {
-        if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean()) {
-            int bufferIndex = indexOf(buffer.array(), "yt_outline_share".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) return true;
-        }
-        if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean()) {
-            int bufferIndex = indexOf(buffer.array(), "yt_outline_message_bubble_overlap".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) return true;
-        }
-        if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
-            int bufferIndex = indexOf(buffer.array(), "yt_outline_flag".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) return true;
-        }
-        if (SettingsEnum.HIDE_CREATE_SHORT_BUTTON.getBoolean()) {
-            int bufferIndex = indexOf(buffer.array(), "yt_outline_youtube_shorts_plus".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) return true;
-        }
-        if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean()) {
-            int bufferIndex = indexOf(buffer.array(), "yt_outline_dollar_sign_heart".getBytes());
-            if (bufferIndex > 0 && bufferIndex < 2000) return true;
-        }
-        if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean()) {
-            int bufferIndex = indexOf(buffer.array(), "yt_outline_scissors".getBytes());
-            return bufferIndex > 0 && bufferIndex < 2000;
-        }
-        return false;
     }
 
     private static void hideFlyoutPanels(String value, ByteBuffer buffer) {
