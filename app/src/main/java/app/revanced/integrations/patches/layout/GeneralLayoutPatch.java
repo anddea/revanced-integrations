@@ -4,7 +4,10 @@ import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.Spanned;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.apps.youtube.app.ui.pivotbar.PivotBar;
 
@@ -22,6 +25,21 @@ public class GeneralLayoutPatch {
     public static boolean captionsButtonStatus;
     public static PivotBar pivotbar;
     public static Enum lastPivotTab;
+
+    @SuppressLint("StaticFieldLeak")
+    public static View compactLink;
+
+    public static void hideAccountMenu(@NonNull Spanned span) {
+        if (compactLink == null || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
+
+        String[] blockList = SettingsEnum.ACCOUNT_MENU_CUSTOM_FILTER.getString().split(",");
+
+        for (String filter : blockList) {
+            if (span.toString().contains(filter))
+                AdRemoverAPI.HideViewWithLayout1dp(compactLink);
+        }
+    }
+
 
     public static void hideStoriesShelf(View view) {
         if (SettingsEnum.HIDE_STORIES_SHELF.getBoolean()) {

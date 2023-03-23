@@ -52,6 +52,8 @@ public enum SettingsEnum {
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", true, ReturnType.BOOLEAN, true),
     HIDE_SNACKBAR("revanced_hide_snackbar", false, ReturnType.BOOLEAN),
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", true, ReturnType.BOOLEAN, true),
+    HIDE_ACCOUNT_MENU("revanced_hide_account_menu", false, ReturnType.BOOLEAN),
+    ACCOUNT_MENU_CUSTOM_FILTER("revanced_account_menu_custom_filter", "YouTube Music,YouTube Kids", ReturnType.STRING, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
 
     //Experimental Flags
