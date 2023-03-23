@@ -111,8 +111,7 @@ public enum SettingsEnum {
     // Layout settings (Buttom Player)
     HIDE_LIKE_BUTTON("revanced_hide_button_like", false, ReturnType.BOOLEAN),
     HIDE_DISLIKE_BUTTON("revanced_hide_button_dislike", false, ReturnType.BOOLEAN),
-    HIDE_SHARE_BUTTON("revanced_hide_button_share", false, ReturnType.BOOLEAN),
-    HIDE_ACTION_BUTTON("revanced_hide_action_button", false, ReturnType.BOOLEAN),
+    HIDE_ACTION_BUTTON("revanced_hide_action_buttons", false, ReturnType.BOOLEAN),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", false, ReturnType.BOOLEAN),
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", false, ReturnType.BOOLEAN),
     HIDE_COMMENTS_SECTION("revanced_hide_comments_section", false, ReturnType.BOOLEAN),
