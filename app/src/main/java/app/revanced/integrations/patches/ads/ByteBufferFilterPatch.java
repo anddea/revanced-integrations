@@ -23,7 +23,6 @@ public class ByteBufferFilterPatch {
             "-space"
     );
     private static final List<String> mixBufferBlockList = List.of(
-            "for you",
             "&list="
     );
     private static int count;
