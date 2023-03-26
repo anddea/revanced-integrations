@@ -35,7 +35,7 @@ public class GeneralLayoutPatch {
         String[] blockList = SettingsEnum.ACCOUNT_MENU_CUSTOM_FILTER.getString().split(",");
 
         for (String filter : blockList) {
-            if (span.toString().contains(filter))
+            if (span.toString().contains(filter) && !filter.isEmpty())
                 AdRemoverAPI.HideViewWithLayout1dp(compactLink);
         }
     }
