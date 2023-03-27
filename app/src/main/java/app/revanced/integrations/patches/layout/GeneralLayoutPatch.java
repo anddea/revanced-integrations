@@ -130,6 +130,15 @@ public class GeneralLayoutPatch {
         return SettingsEnum.HIDE_FLOATING_MICROPHONE.getBoolean() || original;
     }
 
+    public static int hideCategoryBarInFeed(int original) {
+        return SettingsEnum.HIDE_CATEGORY_BAR_IN_FEED.getBoolean() ? 0 : original;
+    }
+
+    public static void hideCategoryBarInRelatedVideo(View view) {
+        if (SettingsEnum.HIDE_CATEGORY_BAR_IN_RELATED_VIDEO.getBoolean())
+            AdRemoverAPI.HideViewWithLayout1dp(view);
+    }
+
     public static int enablePremiumHeader(int originalValue) {
         if (SettingsEnum.ENABLE_PREMIUM_HEADER.getBoolean()) {
             originalValue = identifier(PREMIUM_HEADER_NAME, ResourceType.ATTR);
