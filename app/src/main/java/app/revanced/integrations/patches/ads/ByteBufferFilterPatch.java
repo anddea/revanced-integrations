@@ -171,7 +171,7 @@ public class ByteBufferFilterPatch {
         }
     }
 
-    private static int indexOf(byte[] array, byte[] target) {
+    public static int indexOf(byte[] array, byte[] target) {
         if (target.length == 0) return 0;
 
         for (int i = 0; i < array.length - target.length + 1; i++) {

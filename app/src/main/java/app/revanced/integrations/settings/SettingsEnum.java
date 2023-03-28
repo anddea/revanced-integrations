@@ -118,6 +118,15 @@ public enum SettingsEnum {
     HIDE_ACTION_BUTTON("revanced_hide_action_buttons", false, ReturnType.BOOLEAN),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", false, ReturnType.BOOLEAN),
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", false, ReturnType.BOOLEAN),
+
+    //Experimental Flags
+    HIDE_SHARE_BUTTON("revanced_hide_button_share", false, ReturnType.BOOLEAN),
+    HIDE_LIVE_CHAT_BUTTON("revanced_hide_button_live_chat", false, ReturnType.BOOLEAN),
+    HIDE_REPORT_BUTTON("revanced_hide_button_report", false, ReturnType.BOOLEAN),
+    HIDE_REMIX_BUTTON("revanced_hide_button_remix", false, ReturnType.BOOLEAN),
+    HIDE_THANKS_BUTTON("revanced_hide_button_thanks", false, ReturnType.BOOLEAN),
+    HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", false, ReturnType.BOOLEAN),
+
     HIDE_COMMENTS_SECTION("revanced_hide_comments_section", false, ReturnType.BOOLEAN),
     HIDE_PREVIEW_COMMENT("revanced_hide_preview_comment", false, ReturnType.BOOLEAN),
     HIDE_COMMENTS_THANKS_BUTTON("revanced_hide_comments_thanks_button", false, ReturnType.BOOLEAN),
