@@ -15,21 +15,24 @@ public class AdRemoverAPI {
      */
     //ToDo: refactor this
     public static void HideViewWithLayout1dp(View view) {
-        if (view instanceof LinearLayout) {
-            LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(0, 0);
-            view.setLayoutParams(linearLayoutParams);
-        } else if (view instanceof FrameLayout) {
-            FrameLayout.LayoutParams frameLayoutParms = new FrameLayout.LayoutParams(0, 0);
-            view.setLayoutParams(frameLayoutParms);
-        } else if (view instanceof RelativeLayout) {
-            RelativeLayout.LayoutParams relativeLayoutParms = new RelativeLayout.LayoutParams(0, 0);
-            view.setLayoutParams(relativeLayoutParms);
-        } else if (view instanceof Toolbar) {
-            Toolbar.LayoutParams toolbarParms = new Toolbar.LayoutParams(0, 0);
-            view.setLayoutParams(toolbarParms);
-        } else if (view instanceof ViewGroup) {
-            ViewGroup.LayoutParams viewGroupParms = new ViewGroup.LayoutParams(0, 0);
-            view.setLayoutParams(viewGroupParms);
+        try {
+            if (view instanceof LinearLayout) {
+                LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(0, 0);
+                view.setLayoutParams(linearLayoutParams);
+            } else if (view instanceof FrameLayout) {
+                FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(0, 0);
+                view.setLayoutParams(frameLayoutParams);
+            } else if (view instanceof RelativeLayout) {
+                RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(0, 0);
+                view.setLayoutParams(relativeLayoutParams);
+            } else if (view instanceof Toolbar) {
+                Toolbar.LayoutParams toolbarParams = new Toolbar.LayoutParams(0, 0);
+                view.setLayoutParams(toolbarParams);
+            } else if (view instanceof ViewGroup) {
+                ViewGroup.LayoutParams viewGroupParams = new ViewGroup.LayoutParams(0, 0);
+                view.setLayoutParams(viewGroupParams);
+            }
+        } catch (Exception ignored) {
         }
     }
 
