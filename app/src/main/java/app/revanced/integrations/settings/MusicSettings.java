@@ -63,6 +63,9 @@ public class MusicSettings {
         return getPrefBoolean("revanced_enable_tablet_mode", true) || original;
     }
 
+    public static String spoofVersion(String original) {
+        return getPrefBoolean("revanced_enable_spoof_version", false) ? "4.27.53" : original;
+    }
 
     // Utils
     public static boolean getPrefBoolean(String key, boolean defaultValue) {
