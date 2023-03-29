@@ -42,6 +42,7 @@ public final class GeneralAdsPatch extends Filter {
         var webSearchPanel = new BlockRule(SettingsEnum.ADREMOVER_WEB_SEARCH_PANEL, "web_link_panel");
 
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
+                "video_display_button_group_layout",
                 "video_display_full_buttoned_layout",
                 "_ad_with",
                 "landscape_image_wide_button_layout"
