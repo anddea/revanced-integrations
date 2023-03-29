@@ -28,8 +28,7 @@ public class GeneralLayoutPatch {
 
     @SuppressLint("StaticFieldLeak")
     public static View compactLink;
-    @SuppressLint("StaticFieldLeak")
-    public static View libraryList;
+
     public static void hideAccountMenu(@NonNull Spanned span) {
         if (compactLink == null || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
 
@@ -40,18 +39,6 @@ public class GeneralLayoutPatch {
                 AdRemoverAPI.HideViewWithLayout1dp(compactLink);
         }
     }
-
-    public static void hideLibraryMenu(@NonNull Spanned span) {
-        if (libraryList == null || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
-
-        String[] blockList = SettingsEnum.ACCOUNT_MENU_CUSTOM_FILTER.getString().split(",");
-
-        for (String filter : blockList) {
-            if (span.toString().contains(filter) && !filter.isEmpty())
-                AdRemoverAPI.HideViewWithLayout1dp(libraryList);
-        }
-    }
-
 
     public static void hideStoriesShelf(View view) {
         if (SettingsEnum.HIDE_STORIES_SHELF.getBoolean()) {
