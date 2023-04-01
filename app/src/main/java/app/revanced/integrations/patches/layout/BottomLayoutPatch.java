@@ -21,6 +21,10 @@ public class BottomLayoutPatch {
             int bufferIndex = indexOf(buffer.array(), "yt_outline_share".getBytes());
             if (bufferIndex > 0 && bufferIndex < 2500) return true;
         }
+        if (SettingsEnum.HIDE_SHOP_BUTTON.getBoolean()) {
+            int bufferIndex = indexOf(buffer.array(), "yt_outline_bag".getBytes());
+            if (bufferIndex > 0 && bufferIndex < 2500) return true;
+        }
         if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean()) {
             int bufferIndex = indexOf(buffer.array(), "yt_outline_flag".getBytes());
             if (bufferIndex > 0 && bufferIndex < 2500) return true;

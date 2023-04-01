@@ -125,8 +125,9 @@ public enum SettingsEnum {
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", false, ReturnType.BOOLEAN),
 
     //Experimental Flags
-    HIDE_SHARE_BUTTON("revanced_hide_button_share", false, ReturnType.BOOLEAN),
     HIDE_LIVE_CHAT_BUTTON("revanced_hide_button_live_chat", false, ReturnType.BOOLEAN),
+    HIDE_SHARE_BUTTON("revanced_hide_button_share", false, ReturnType.BOOLEAN),
+    HIDE_SHOP_BUTTON("revanced_hide_button_shop", false, ReturnType.BOOLEAN),
     HIDE_REPORT_BUTTON("revanced_hide_button_report", false, ReturnType.BOOLEAN),
     HIDE_REMIX_BUTTON("revanced_hide_button_remix", false, ReturnType.BOOLEAN),
     HIDE_THANKS_BUTTON("revanced_hide_button_thanks", false, ReturnType.BOOLEAN),
