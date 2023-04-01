@@ -142,6 +142,11 @@ public class GeneralLayoutPatch {
         return SettingsEnum.HIDE_CATEGORY_BAR_IN_SEARCH_RESULTS.getBoolean() ? 0 : original;
     }
 
+    public static void hideChannelListSubMenu(View view) {
+        if (SettingsEnum.HIDE_CHANNEL_LIST_SUBMENU.getBoolean())
+            view.setVisibility(View.GONE);
+    }
+
     public static int enablePremiumHeader(int originalValue) {
         if (SettingsEnum.ENABLE_PREMIUM_HEADER.getBoolean()) {
             originalValue = identifier(PREMIUM_HEADER_NAME, ResourceType.ATTR);

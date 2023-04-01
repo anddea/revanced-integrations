@@ -56,6 +56,7 @@ public enum SettingsEnum {
     HIDE_CATEGORY_BAR_IN_FEED("revanced_hide_category_bar_in_feed", false, ReturnType.BOOLEAN, true),
     HIDE_CATEGORY_BAR_IN_RELATED_VIDEO("revanced_hide_category_bar_in_related_video", false, ReturnType.BOOLEAN, true),
     HIDE_CATEGORY_BAR_IN_SEARCH_RESULTS("revanced_hide_category_bar_in_search_results", false, ReturnType.BOOLEAN, true),
+    HIDE_CHANNEL_LIST_SUBMENU("revanced_hide_channel_list_submenu", false, ReturnType.BOOLEAN, true),
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", false, ReturnType.BOOLEAN),
     ACCOUNT_MENU_CUSTOM_FILTER("revanced_account_menu_custom_filter", "YouTube Music,YouTube Kids", ReturnType.STRING, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
