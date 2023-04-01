@@ -18,6 +18,7 @@ import java.util.TimerTask;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.sponsorblock.requests.SBRequester;
 import app.revanced.integrations.utils.LogHelper;
@@ -51,7 +52,7 @@ public class PlayerController {
 
             SponsorBlockSettings.update(ReVancedUtils.getContext());
 
-            if (!SettingsEnum.SB_ENABLED.getBoolean()) {
+            if (!SettingsEnum.SB_ENABLED.getBoolean() || PlayerType.getCurrent() == PlayerType.NONE) {
                 currentVideoId = null;
                 return;
             }
