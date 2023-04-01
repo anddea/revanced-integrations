@@ -8,11 +8,10 @@ public class ProtobufSpoofPatch {
     /**
      * Target Protobuf parameters.
      */
-    private static final String[] TARGET_PROTOBUF_PARAMETER = {
-            "YADI", // Generic player
-            "wgIG", // Play video in notification
-            "6AQB", // Open video from external app (e.g. PlayStore, Google News)
-            "sAQB" // Play videos from YouTube Premium users only content
+    private static final String[] PROTOBUF_PARAMETER_WHITELIST = {
+            "8AEB", // Play video in shorts and stories
+            "YAHIAQ", // Autoplay in feed
+            "SAFgAxgB" // Autoplay in scrim
     };
 
     /**
@@ -29,13 +28,10 @@ public class ProtobufSpoofPatch {
 
 
     public static String getProtobufOverride(String original) {
-        if (!SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean())
+        if (!SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()
+                || containsAny(original, PROTOBUF_PARAMETER_WHITELIST))
             return original;
 
-        if (containsAny(original, TARGET_PROTOBUF_PARAMETER)
-                || original.isEmpty())
-            original = SettingsEnum.SPOOFING_TYPE.getBoolean() ? PROTOBUF_PARAMETER_SHORTS : PROTOBUF_PARAMETER_GENERAL;
-
-        return original;
+        return SettingsEnum.SPOOFING_TYPE.getBoolean() ? PROTOBUF_PARAMETER_SHORTS : PROTOBUF_PARAMETER_GENERAL;
     }
 }
