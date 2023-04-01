@@ -5,7 +5,7 @@ import app.revanced.integrations.utils.SharedPrefHelper;
 
 public enum SettingsEnum {
 
-    // Ad settings
+    // Ads
     HIDE_VIDEO_ADS("revanced_video_ads_removal", true, ReturnType.BOOLEAN, true),
     ADREMOVER_GENERAL_ADS("revanced_adremover_general_ads", true, ReturnType.BOOLEAN),
     ADREMOVER_BUTTON_ADS("revanced_adremover_button_ads", true, ReturnType.BOOLEAN),
@@ -13,6 +13,7 @@ public enum SettingsEnum {
     ADREMOVER_SELF_SPONSOR("revanced_adremover_self_sponsor", true, ReturnType.BOOLEAN),
     ADREMOVER_USER_FILTER("revanced_adremover_user_filter", false, ReturnType.BOOLEAN),
     ADREMOVER_CUSTOM_FILTER("revanced_adremover_custom_strings", "", ReturnType.STRING, true),
+
 
     // Swipe controls
     ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", false, ReturnType.BOOLEAN),
@@ -31,7 +32,7 @@ public enum SettingsEnum {
     SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", 50f, ReturnType.FLOAT),
 
 
-    // Layout settings (General)
+    // General
     HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
     SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true),
     HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
@@ -84,7 +85,8 @@ public enum SettingsEnum {
     ADREMOVER_WEB_SEARCH_PANEL("revanced_adremover_web_search_panel", true, ReturnType.BOOLEAN),
     ADREMOVER_TIMED_REACTIONS("revanced_adremover_timed_reactions", false, ReturnType.BOOLEAN),
 
-    // Layout settings (Player)
+
+    // Player
     HIDE_COLLAPSE_BUTTON("revanced_hide_collapse_button", false, ReturnType.BOOLEAN),
     HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", false, ReturnType.BOOLEAN),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", true, ReturnType.BOOLEAN, true),
@@ -101,7 +103,8 @@ public enum SettingsEnum {
     ADREMOVER_VIEW_PRODUCTS("revanced_adremover_view_products", true, ReturnType.BOOLEAN),
     HIDE_PLAYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", false, ReturnType.BOOLEAN, true),
 
-    // Layout settings (Fullscreen)
+
+    // Fullscreen
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", false, ReturnType.BOOLEAN, true),
     SHOW_FULLSCREEN_TITLE("revanced_show_fullscreen_title", true, ReturnType.BOOLEAN, true),
     HIDE_FULLSCREEN_BUTTON_CONTAINER("revanced_hide_fullscreen_button_container", false, ReturnType.BOOLEAN, true),
@@ -113,7 +116,8 @@ public enum SettingsEnum {
     DISABLE_HAPTIC_FEEDBACK_CHAPTERS("revanced_disable_haptic_feedback_chapters", false, ReturnType.BOOLEAN),
     DISABLE_HAPTIC_FEEDBACK_ZOOM("revanced_disable_haptic_feedback_zoom", false, ReturnType.BOOLEAN),
 
-    // Layout settings (Buttom Player)
+
+    // Bottom Player
     HIDE_LIKE_BUTTON("revanced_hide_button_like", false, ReturnType.BOOLEAN),
     HIDE_DISLIKE_BUTTON("revanced_hide_button_dislike", false, ReturnType.BOOLEAN),
     HIDE_ACTION_BUTTON("revanced_hide_action_buttons", false, ReturnType.BOOLEAN),
@@ -133,7 +137,8 @@ public enum SettingsEnum {
     HIDE_COMMENTS_THANKS_BUTTON("revanced_hide_comments_thanks_button", false, ReturnType.BOOLEAN),
     HIDE_EMOJI_PICKER("revanced_hide_emoji_picker", false, ReturnType.BOOLEAN),
 
-    // Layout settings (Flyout Panel)
+
+    // Flyout Panel
     ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_old_quality_layout", true, ReturnType.BOOLEAN),
     HIDE_CAPTIONS_MENU("revanced_hide_menu_captions", false, ReturnType.BOOLEAN),
     HIDE_LOOP_MENU("revanced_hide_menu_loop_video", false, ReturnType.BOOLEAN),
@@ -148,7 +153,8 @@ public enum SettingsEnum {
     HIDE_NERDS_MENU("revanced_hide_menu_stats_for_nerds", false, ReturnType.BOOLEAN),
     HIDE_YT_MUSIC_MENU("revanced_hide_menu_listen_with_youtube_music", false, ReturnType.BOOLEAN),
 
-    // Layout settings (Seekbar)
+
+    // Seekbar
     ENABLE_CUSTOM_SEEKBAR_COLOR("revanced_enable_custom_seekbar_color", true, ReturnType.BOOLEAN, true),
     ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE("revanced_custom_seekbar_color_value", "#ff0000", ReturnType.STRING, true),
     ENABLE_SEEKBAR_TAPPING("revanced_enable_seekbar_tapping", true, ReturnType.BOOLEAN),
@@ -156,7 +162,8 @@ public enum SettingsEnum {
     HIDE_TIME_STAMP("revanced_hide_time_stamp", false, ReturnType.BOOLEAN, true),
     ENABLE_TIME_STAMP_SPEED("revanced_enable_time_stamp_speed", true, ReturnType.BOOLEAN),
 
-    //Video Settings
+
+    // Video
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", -2, ReturnType.INTEGER),
     DEFAULT_VIDEO_QUALITY_MOBILE("revanced_default_video_quality_mobile", -2, ReturnType.INTEGER),
     DEFAULT_VIDEO_SPEED("revanced_default_video_speed", -2.0f, ReturnType.FLOAT),
@@ -167,22 +174,26 @@ public enum SettingsEnum {
     //Experimental Flags
     VERTICAL_VIDEO_RESTRICTIONS("revanced_vertical_video_restrictions", false, ReturnType.BOOLEAN, true),
 
-    //Overlaybutton Settings
+
+    // Overlay Button
     OVERLAY_BUTTON_SPEED("revanced_overlay_button_speed", true, ReturnType.BOOLEAN),
     OVERLAY_BUTTON_WHITELIST("revanced_overlay_button_whitelist", false, ReturnType.BOOLEAN),
     OVERLAY_BUTTON_COPY("revanced_overlay_button_copy_url", false, ReturnType.BOOLEAN),
     OVERLAY_BUTTON_COPY_WITH_TIMESTAMP("revanced_overlay_button_copy_url_with_timestamp", false, ReturnType.BOOLEAN),
     OVERLAY_BUTTON_AUTO_REPEAT("revanced_overlay_button_auto_repeat", false, ReturnType.BOOLEAN),
     ENABLE_ALWAYS_AUTO_REPEAT("revanced_enable_always_auto_repeat", false, ReturnType.BOOLEAN),
-    //Download Settings
+
+    // Default Downloader
     OVERLAY_BUTTON_DOWNLOADS("revanced_overlay_button_downloads", true, ReturnType.BOOLEAN),
     DOWNLOADER_PACKAGE_NAME("revanced_downloader_package_name", null, ReturnType.STRING, true),
-    // Whitelist Settings
+
+    // Channel Whitelist
     ADS_WHITELIST("revanced_whitelist_ads", false, ReturnType.BOOLEAN),
     SPEED_WHITELIST("revanced_whitelist_speed", false, ReturnType.BOOLEAN),
     SB_WHITELIST("revanced_whitelisting_sponsorblock", false, ReturnType.BOOLEAN),
 
-    //Misc Settings
+
+    // Misc
     ENABLE_EXTERNAL_BROWSER("revanced_enable_external_browser", true, ReturnType.BOOLEAN, true),
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", true, ReturnType.BOOLEAN),
     ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
@@ -197,13 +208,15 @@ public enum SettingsEnum {
     ENABLE_PROTOBUF_SPOOF("revanced_enable_protobuf_spoof", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_protobuf"),
     SPOOFING_TYPE("revanced_spoofing_type", false, ReturnType.BOOLEAN),
 
-    //RYD Settings
+
+    // Return YouTube Dislike
     RYD_USER_ID("ryd_userId", null, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.STRING),
     RYD_ENABLED("ryd_enabled", true, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
     RYD_SHOW_DISLIKE_PERCENTAGE("ryd_show_dislike_percentage", false, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
     RYD_USE_COMPACT_LAYOUT("ryd_use_compact_layout", true, SharedPrefHelper.SharedPrefNames.RYD, ReturnType.BOOLEAN),
 
-    //SponsorBlock Settings
+
+    // SponsorBlock
     SB_ENABLED("sb-enabled", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_MIRROR_ENABLED("sb-mirror-enabled", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_SHOW_TOAST_WHEN_SKIP("show-toast", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
