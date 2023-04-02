@@ -24,7 +24,7 @@ import app.revanced.integrations.whitelist.WhitelistType;
 import app.revanced.integrations.whitelist.requests.WhitelistRequester;
 
 public class Whitelists {
-    static WeakReference<ImageView> buttonview = new WeakReference<>(null);
+    static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
     static int fadeDurationFast;
@@ -58,7 +58,7 @@ public class Whitelists {
 
             ImageView imageView = findView(Whitelists.class, constraintLayout, "whitelist_button");
             imageView.setOnClickListener(view -> Whitelists.OpenDialog(view.getContext()));
-            buttonview = new WeakReference<>(imageView);
+            buttonView = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");
             fadeDurationScheduled = integer("fade_duration_scheduled");
@@ -88,8 +88,7 @@ public class Whitelists {
     }
 
     public static void changeVisibility(boolean currentVisibility) {
-        ImageView imageView = buttonview.get();
-
+        ImageView imageView = buttonView.get();
         if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
 
         isShowing = currentVisibility;
@@ -100,6 +99,10 @@ public class Whitelists {
             imageView.startAnimation(fadeOut);
             imageView.setVisibility(View.GONE);
         }
+    }
+
+    public static void changeVisibilityNegatedImmediate() {
+        changeVisibility(false);
     }
 
     public static void OpenDialog(Context context) {
@@ -174,7 +177,7 @@ public class Whitelists {
     }
 
     private static void removeFromWhitelist(WhitelistType whitelistType, Context context) {
-        ImageView imageView = buttonview.get();
+        ImageView imageView = buttonView.get();
         if (constraintLayout == null || imageView == null) return;
 
         try {

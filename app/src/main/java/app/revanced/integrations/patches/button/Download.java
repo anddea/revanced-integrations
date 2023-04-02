@@ -25,7 +25,7 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ResourceType;
 
 public class Download {
-    static WeakReference<ImageView> buttonview = new WeakReference<>(null);
+    static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
     static int fadeDurationFast;
@@ -75,7 +75,7 @@ public class Download {
                 }
 
             });
-            buttonview = new WeakReference<>(imageView);
+            buttonView = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");
             fadeDurationScheduled = integer("fade_duration_scheduled");
@@ -112,7 +112,7 @@ public class Download {
     }
 
     public static void changeVisibility(boolean currentVisibility) {
-        ImageView imageView = buttonview.get();
+        ImageView imageView = buttonView.get();
         if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
 
         isShowing = currentVisibility;
@@ -123,6 +123,10 @@ public class Download {
             imageView.startAnimation(fadeOut);
             imageView.setVisibility(View.GONE);
         }
+    }
+
+    public static void changeVisibilityNegatedImmediate() {
+        changeVisibility(false);
     }
 
     public static void refreshVisibility() {

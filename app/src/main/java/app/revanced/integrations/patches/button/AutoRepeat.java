@@ -17,7 +17,7 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class AutoRepeat {
-    static WeakReference<ImageView> buttonview = new WeakReference<>(null);
+    static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
     static int fadeDurationFast;
@@ -34,7 +34,7 @@ public class AutoRepeat {
             ImageView imageView = findView(AutoRepeat.class, constraintLayout, "autoreplay_button");
             imageView.setSelected(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean());
             imageView.setOnClickListener(view -> AutoRepeat.changeSelected(!view.isSelected(), false));
-            buttonview = new WeakReference<>(imageView);
+            buttonView = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");
             fadeDurationScheduled = integer("fade_duration_scheduled");
@@ -54,7 +54,7 @@ public class AutoRepeat {
     }
 
     public static void changeVisibility(boolean currentVisibility) {
-        ImageView imageView = buttonview.get();
+        ImageView imageView = buttonView.get();
 
         if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
 
@@ -68,8 +68,12 @@ public class AutoRepeat {
         }
     }
 
+    public static void changeVisibilityNegatedImmediate() {
+        changeVisibility(false);
+    }
+
     public static void changeSelected(boolean selected, boolean onlyView) {
-        ImageView imageView = buttonview.get();
+        ImageView imageView = buttonView.get();
         if (constraintLayout == null || imageView == null) return;
 
         imageView.setSelected(selected);

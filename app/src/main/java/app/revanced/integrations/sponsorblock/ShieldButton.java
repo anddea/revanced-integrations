@@ -65,6 +65,10 @@ public class ShieldButton {
         }
     }
 
+    public static void changeVisibilityNegatedImmediate() {
+        changeVisibility(false);
+    }
+
     public static void refreshVisibility() {
         isButtonEnabled = setValue();
         changeVisibility(isButtonEnabled);

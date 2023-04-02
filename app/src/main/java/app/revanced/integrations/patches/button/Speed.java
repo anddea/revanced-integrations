@@ -75,6 +75,10 @@ public class Speed {
         }
     }
 
+    public static void changeVisibilityNegatedImmediate() {
+        changeVisibility(false);
+    }
+
     public static void refreshVisibility() {
         isButtonEnabled = setValue();
     }
