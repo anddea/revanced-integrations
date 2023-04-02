@@ -34,9 +34,6 @@ public enum SettingsEnum {
 
     // General
     HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
-    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true),
-    HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
-    HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", true, ReturnType.BOOLEAN, true),
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", true, ReturnType.BOOLEAN),
     HIDE_STARTUP_SHORTS_PLAYER("revanced_hide_startup_shorts_player", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_COMMENTS_BUTTON("revanced_hide_shorts_player_comments_button", false, ReturnType.BOOLEAN),
@@ -60,9 +57,6 @@ public enum SettingsEnum {
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", false, ReturnType.BOOLEAN),
     ACCOUNT_MENU_CUSTOM_FILTER("revanced_account_menu_custom_filter", "YouTube Music,YouTube Kids", ReturnType.STRING, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
-
-    //Experimental Flags
-    HIDE_SHORTS_PLAYER_PIVOT_BAR("revanced_hide_shorts_player_pivot_bar", false, ReturnType.BOOLEAN, true),
 
     ADREMOVER_MERCHANDISE("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
     ADREMOVER_BROWSE_STORE_BUTTON("revanced_adremover_browse_store_button", true, ReturnType.BOOLEAN),
@@ -125,7 +119,7 @@ public enum SettingsEnum {
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", false, ReturnType.BOOLEAN),
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", false, ReturnType.BOOLEAN),
 
-    //Experimental Flags
+    // Experimental Flags
     HIDE_LIVE_CHAT_BUTTON("revanced_hide_button_live_chat", false, ReturnType.BOOLEAN),
     HIDE_SHARE_BUTTON("revanced_hide_button_share", false, ReturnType.BOOLEAN),
     HIDE_SHOP_BUTTON("revanced_hide_button_shop", false, ReturnType.BOOLEAN),
@@ -154,6 +148,15 @@ public enum SettingsEnum {
     HIDE_WATCH_IN_VR_MENU("revanced_hide_menu_watch_in_vr", false, ReturnType.BOOLEAN),
     HIDE_NERDS_MENU("revanced_hide_menu_stats_for_nerds", false, ReturnType.BOOLEAN),
     HIDE_YT_MUSIC_MENU("revanced_hide_menu_listen_with_youtube_music", false, ReturnType.BOOLEAN),
+
+
+    // Navigation
+    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true),
+    HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
+    HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", true, ReturnType.BOOLEAN, true),
+
+    // Experimental Flags
+    HIDE_SHORTS_NAVIGATION_BAR("revanced_hide_shorts_navigation_bar", false, ReturnType.BOOLEAN, true),
 
 
     // Seekbar

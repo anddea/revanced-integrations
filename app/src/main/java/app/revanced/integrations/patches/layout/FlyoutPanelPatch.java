@@ -7,7 +7,7 @@ import android.widget.ListView;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
-public class FlyoutPanelLayoutPatch {
+public class FlyoutPanelPatch {
 
     public static void enableOldQualityMenu(ListView listView) {
         if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) return;

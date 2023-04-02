@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ResourceHelper;
 
-public class PlayerLayoutPatch {
+public class PlayerPatch {
 
     public static boolean hideMusicButton() {
         return SettingsEnum.HIDE_YOUTUBE_MUSIC_BUTTON.getBoolean();

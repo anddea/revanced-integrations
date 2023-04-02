@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
-public class SeekbarLayoutPatch {
+public class SeekBarPatch {
 
     public static boolean enableSeekbarTapping() {
         return SettingsEnum.ENABLE_SEEKBAR_TAPPING.getBoolean();

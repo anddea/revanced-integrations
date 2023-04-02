@@ -5,7 +5,7 @@ import android.view.View;
 import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.settings.SettingsEnum;
 
-public class FullscreenLayoutPatch {
+public class FullscreenPatch {
 
     public static void hideFullscreenButtonContainer(View view) {
         if (SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getBoolean() ||

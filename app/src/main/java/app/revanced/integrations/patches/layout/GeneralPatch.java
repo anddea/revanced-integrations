@@ -3,28 +3,19 @@ package app.revanced.integrations.patches.layout;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.text.Spanned;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-
-import com.google.android.apps.youtube.app.ui.pivotbar.PivotBar;
-
-import java.util.Objects;
 
 import app.revanced.integrations.adremover.AdRemoverAPI;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ResourceType;
 
-public class GeneralLayoutPatch {
-    @SuppressLint("StaticFieldLeak")
-    public static Context shortsContext;
+public class GeneralPatch {
     private static final String PREMIUM_HEADER_NAME = "ytPremiumWordmarkHeader";
     public static boolean captionsButtonStatus;
-    public static PivotBar pivotbar;
-    public static Enum lastPivotTab;
 
     @SuppressLint("StaticFieldLeak")
     public static View compactLink;
@@ -43,22 +34,6 @@ public class GeneralLayoutPatch {
     public static void hideStoriesShelf(View view) {
         if (SettingsEnum.HIDE_STORIES_SHELF.getBoolean()) {
             AdRemoverAPI.HideViewWithLayout1dp(view);
-        }
-    }
-
-    public static boolean switchCreateNotification(boolean original) {
-        return SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean() || original;
-    }
-
-    public static void hideCreateButton(View view) {
-        boolean enabled = SettingsEnum.HIDE_CREATE_BUTTON.getBoolean();
-        if (enabled) view.setVisibility(View.GONE);
-    }
-
-    public static void hideShortsButton(View view) {
-        if (lastPivotTab != null && lastPivotTab.name().equals("TAB_SHORTS")) {
-            boolean enabled = SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean();
-            if (enabled) view.setVisibility(View.GONE);
         }
     }
 
@@ -86,13 +61,6 @@ public class GeneralLayoutPatch {
 
     public static int hideShortsPlayerSubscriptionsButton(int original) {
         return SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() ? 0 : original;
-    }
-
-    @SuppressLint("WrongConstant")
-    public static void hideShortsPlayerPivotBar() {
-        if (SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BAR.getBoolean() && shortsContext != null) {
-            Objects.requireNonNull(pivotbar).setVisibility(8);
-        }
     }
 
     public static boolean enableWideSearchbar() {

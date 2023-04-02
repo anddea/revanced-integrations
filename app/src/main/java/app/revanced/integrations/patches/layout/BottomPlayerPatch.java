@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
-public class BottomLayoutPatch {
+public class BottomPlayerPatch {
 
     public static boolean hideActionButtons(Object object, ByteBuffer buffer) {
         String value = object.toString();
