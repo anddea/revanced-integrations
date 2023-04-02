@@ -66,7 +66,6 @@ public final class GeneralAdsPatch extends Filter {
         );
         var movieAds = new BlockRule(
                 SettingsEnum.ADREMOVER_MOVIE_SHELF,
-                "browsy_bar",
                 "compact_movie",
                 "horizontal_movie_shelf",
                 "movie_and_show_upsell_card",
