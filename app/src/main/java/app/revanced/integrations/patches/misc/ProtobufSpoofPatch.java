@@ -20,24 +20,17 @@ public class ProtobufSpoofPatch {
     };
 
     /**
-     * Protobuf parameters used for general fixes.
-     * Known issue: thumbnails not showing when tapping the seekbar
-     */
-    private static final String PROTOBUF_PARAMETER_GENERAL = "CgIQBg";
-
-    /**
      * Protobuf parameters used by the player.
-     * Known issue: captions are positioned above the player
      */
     private static final String PROTOBUF_PARAMETER_SHORTS = "8AEB";
 
 
-    public static String getProtobufOverride(String original) {
+    public static String overrideProtobufParameter(String original) {
         if (!SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()
                 || containsAny(original, PROTOBUF_PARAMETER_WHITELIST))
             return original;
 
-        return SettingsEnum.SPOOFING_TYPE.getBoolean() ? PROTOBUF_PARAMETER_SHORTS : PROTOBUF_PARAMETER_GENERAL;
+        return PROTOBUF_PARAMETER_SHORTS;
     }
 
     /**
@@ -60,6 +53,24 @@ public class ProtobufSpoofPatch {
         } catch (Exception ex) {
             LogHelper.printException(ProtobufSpoofPatch.class, "onResponse failure", ex);
         }
+    }
+
+    /**
+     * Fix side issue when spoofing with shorts parameter.
+     * @param ap anchor position configuration
+     * @param ah anchorHorizontal
+     * @param av anchorVertical
+     */
+    public static int overrideAnchorPosition(int ap, int ah, int av) {
+        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden() && ah != 0 && av == 0)
+            ap = 34;
+        return ap;
+    }
+
+    public static int overrideAnchorVerticalPosition(int ah, int av) {
+        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden() && ah != 0 && av == 0)
+            av = 95;
+        return av;
     }
 
 }

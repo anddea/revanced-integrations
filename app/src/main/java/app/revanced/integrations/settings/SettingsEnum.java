@@ -210,8 +210,7 @@ public enum SettingsEnum {
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_phone"),
     ENABLE_VP9_CODEC("revanced_enable_vp9_codec", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_vp9"),
     DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_quic"),
-    ENABLE_PROTOBUF_SPOOF("revanced_enable_protobuf_spoof", false, ReturnType.BOOLEAN, true, "revanced_reboot_warning_protobuf"),
-    SPOOFING_TYPE("revanced_spoofing_type", false, ReturnType.BOOLEAN),
+    ENABLE_PROTOBUF_SPOOF("revanced_enable_protobuf_spoof", false, ReturnType.BOOLEAN, true),
 
 
     // Return YouTube Dislike
