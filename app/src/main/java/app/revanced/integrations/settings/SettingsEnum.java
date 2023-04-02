@@ -151,6 +151,7 @@ public enum SettingsEnum {
 
 
     // Navigation
+    ENABLE_TABLET_NAVIGATION_BAR("revanced_enable_tablet_navigation_bar", false, ReturnType.BOOLEAN, true),
     SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true),
     HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
     HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", true, ReturnType.BOOLEAN, true),

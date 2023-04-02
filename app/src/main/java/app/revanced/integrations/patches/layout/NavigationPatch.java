@@ -38,4 +38,8 @@ public class NavigationPatch {
             Objects.requireNonNull(pivotbar).setVisibility(8);
         }
     }
+
+    public static boolean enableTabletNavBar(boolean original) {
+        return SettingsEnum.ENABLE_TABLET_NAVIGATION_BAR.getBoolean() || original;
+    }
 }
