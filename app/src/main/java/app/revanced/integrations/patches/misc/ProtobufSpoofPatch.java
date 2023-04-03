@@ -73,10 +73,7 @@ public class ProtobufSpoofPatch {
         // But for auto generated and most other captions, the spoof incorrectly gives Shorts caption settings for all videos.
         // Override the parameters if the video is not a Short but it has Short caption settings.
         if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()
-                && !PlayerType.getCurrent().isNoneOrHidden() // video is not a Short or Story
-                && anchorPosition == 9 // but it has shorts specific subtitle parameters
-                && anchorHorizontal == 20
-                && anchorVertical == 0) {
+                && !PlayerType.getCurrent().isNoneOrHidden()) {
             if (sd) {
                 // values observed during playback
                 override[0] = 33;
