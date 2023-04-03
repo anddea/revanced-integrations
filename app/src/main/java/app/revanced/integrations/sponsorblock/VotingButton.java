@@ -65,8 +65,13 @@ public class VotingButton {
         }
     }
 
-    public static void changeVisibilityNegatedImmediate() {
-        changeVisibility(false);
+    public static void changeVisibilityNegatedImmediate(boolean isUserScrubbing) {
+        ImageView imageView = buttonView.get();
+
+        if (youtubeControlsLayout == null || imageView == null || !isUserScrubbing) return;
+
+        isShowing = false;
+        imageView.setVisibility(View.GONE);
     }
 
     public static void refreshVisibility() {

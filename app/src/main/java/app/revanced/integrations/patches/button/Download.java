@@ -113,6 +113,7 @@ public class Download {
 
     public static void changeVisibility(boolean currentVisibility) {
         ImageView imageView = buttonView.get();
+
         if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
 
         isShowing = currentVisibility;
@@ -125,8 +126,13 @@ public class Download {
         }
     }
 
-    public static void changeVisibilityNegatedImmediate() {
-        changeVisibility(false);
+    public static void changeVisibilityNegatedImmediate(boolean isUserScrubbing) {
+        ImageView imageView = buttonView.get();
+
+        if (constraintLayout == null || imageView == null || !isUserScrubbing) return;
+
+        isShowing = false;
+        imageView.setVisibility(View.GONE);
     }
 
     public static void refreshVisibility() {
