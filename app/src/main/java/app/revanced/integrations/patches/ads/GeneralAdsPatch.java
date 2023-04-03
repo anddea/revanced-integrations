@@ -22,6 +22,7 @@ public final class GeneralAdsPatch extends Filter {
     );
 
     public GeneralAdsPatch() {
+        var albumCard = new BlockRule(SettingsEnum.ADREMOVER_ALBUM_CARDS, "browsy_bar");
         var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS, "carousel_ad");
         var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner", "community_guidelines", "sponsorships_comments_upsell");
         var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
@@ -80,6 +81,7 @@ public final class GeneralAdsPatch extends Filter {
         );
 
         this.pathRegister.registerAll(
+                albumCard,
                 buttonedAd,
                 channelGuidelines,
                 channelMemberShelf,
@@ -148,11 +150,6 @@ public final class GeneralAdsPatch extends Filter {
 
     public static void hideBreakingNewsShelf(View view) {
         if (!SettingsEnum.ADREMOVER_BREAKING_NEWS_SHELF.getBoolean()) return;
-        AdRemoverAPI.HideViewWithLayout1dp(view);
-    }
-
-    public static void hideAlbumCards(View view) {
-        if (!SettingsEnum.ADREMOVER_ALBUM_CARDS.getBoolean()) return;
         AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 }
