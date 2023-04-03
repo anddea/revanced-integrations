@@ -56,21 +56,42 @@ public class ProtobufSpoofPatch {
     }
 
     /**
-     * Fix side issue when spoofing with shorts parameter.
-     * @param ap anchor position configuration
-     * @param ah anchorHorizontal
-     * @param av anchorVertical
+     * Injection point.  Overrides values passed into SubtitleWindowSettings constructor.
+     *
+     * @param anchorPosition       bitmask with 6 bit fields, that appears to be indicate the layout position on screen
+     * @param anchorHorizontal     percentage [0, 100], that appears to be a horizontal text anchor point
+     * @param anchorVertical       percentage [0, 100], that appears to be a vertical text anchor point
+     * @param vs                   appears to indicate is subtitles exist, and value is always true.
+     * @param sd                   appears to indicate if video has non standard aspect ratio (4:3, or a rotated orientation)
+     *                             Always true for Shorts playback.
      */
-    public static int overrideAnchorPosition(int ap, int ah, int av) {
-        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden() && ah != 0 && av == 0)
-            ap = 34;
-        return ap;
-    }
+    public static int[] getSubtitleWindowSettingsOverride(int anchorPosition, int anchorHorizontal, int anchorVertical,
+                                                          boolean vs, boolean sd) {
+        int[] override = {anchorPosition, anchorHorizontal, anchorVertical};
 
-    public static int overrideAnchorVerticalPosition(int ah, int av) {
-        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden() && ah != 0 && av == 0)
-            av = 95;
-        return av;
+        // Videos with custom captions that specify screen positions appear to always have correct screen positions (even with spoofing).
+        // But for auto generated and most other captions, the spoof incorrectly gives Shorts caption settings for all videos.
+        // Override the parameters if the video is not a Short but it has Short caption settings.
+        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()
+                && !PlayerType.getCurrent().isNoneOrHidden() // video is not a Short or Story
+                && anchorPosition == 9 // but it has shorts specific subtitle parameters
+                && anchorHorizontal == 20
+                && anchorVertical == 0) {
+            if (sd) {
+                // values observed during playback
+                override[0] = 33;
+                override[1] = 20;
+                override[2] = 100;
+            } else {
+                // Default values used for regular (non Shorts) playback of videos with a standard aspect ratio
+                // Values are found in SubtitleWindowSettings static field
+                override[0] = 34;
+                override[1] = 50;
+                override[2] = 95;
+            }
+        }
+
+        return override;
     }
 
 }
