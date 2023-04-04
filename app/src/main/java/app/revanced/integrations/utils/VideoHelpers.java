@@ -110,4 +110,8 @@ public class VideoHelpers {
          android.content.ClipData clip = android.content.ClipData.newPlainText("link", text);
          clipboard.setPrimaryClip(clip);
     }
+
+    public static float getCurrentSpeed() {
+        return currentSpeed;
+    }
 }

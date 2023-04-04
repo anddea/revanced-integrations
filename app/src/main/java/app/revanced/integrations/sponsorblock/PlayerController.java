@@ -10,6 +10,8 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -23,6 +25,7 @@ import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.sponsorblock.requests.SBRequester;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.integrations.utils.VideoHelpers;
 
 public class PlayerController {
 
@@ -105,7 +108,7 @@ public class PlayerController {
     }
 
 
-    public static void setVideoTime(long millis) {
+    public static void setVideoTime(@NonNull long millis) {
         try {
             if (!SettingsEnum.SB_ENABLED.getBoolean()) return;
             lastKnownVideoTime = millis;
@@ -121,8 +124,9 @@ public class PlayerController {
             SponsorSegment[] segments = sponsorSegmentsOfCurrentVideo;
             if (segments == null || segments.length == 0) return;
 
-            final long START_TIMER_BEFORE_SEGMENT_MILLIS = 1200;
-            final long startTimerAtMillis = millis + START_TIMER_BEFORE_SEGMENT_MILLIS;
+            final long START_TIMER_BEFORE_SEGMENT_MILLIS = 1500;
+            final float playbackSpeed = VideoHelpers.getCurrentSpeed();
+            final long startTimerAtMillis = millis + (long)(playbackSpeed * START_TIMER_BEFORE_SEGMENT_MILLIS);
 
             for (final SponsorSegment segment : segments) {
                 if (segment.start > millis) {
