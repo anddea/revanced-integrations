@@ -73,7 +73,7 @@ public class ProtobufSpoofPatch {
         }
     }
 
-    
+
     /**
      * Injection point.  Overrides values passed into SubtitleWindowSettings constructor.
      *

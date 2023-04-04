@@ -34,7 +34,6 @@ public final class GeneralAdsPatch extends Filter {
         var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
         var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL, "medical_panel", "emergency_onebox");
         var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE, "product_carousel");
-        var officialCard = new BlockRule(SettingsEnum.ADREMOVER_OFFICIAL_CARDS, "official_card");
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTENT, "paid_content_overlay");
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
         var teaser = new BlockRule(SettingsEnum.ADREMOVER_TEASER, "expandable_metadata");
@@ -94,7 +93,6 @@ public final class GeneralAdsPatch extends Filter {
                 medicalPanel,
                 merchandise,
                 movieAds,
-                officialCard,
                 paidContent,
                 selfSponsor,
                 teaser,
