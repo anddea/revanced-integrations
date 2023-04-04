@@ -131,7 +131,7 @@ public class ByteBufferFilterPatch {
     }
 
     private static void hideShortsComponent(String value) {
-        if (!PatchStatus.ShortsComponent() || !PlayerType.getCurrent().isNoneOrHidden()) return;
+        if (!PatchStatus.ShortsComponent()) return;
 
         List<String> blockList = new ArrayList<>();
 
