@@ -33,6 +33,7 @@ public class Whitelists {
     static Animation fadeOut;
     public static boolean isButtonEnabled;
     static boolean isShowing;
+    static boolean isScrubbed;
 
     static boolean isADSWhitelisted;
     static boolean isSBWhitelisted;
@@ -70,6 +71,7 @@ public class Whitelists {
             fadeOut.setDuration(fadeDurationScheduled);
 
             isShowing = true;
+            isScrubbed = false;
             changeVisibility(false);
 
         } catch (Exception ex) {
@@ -93,6 +95,13 @@ public class Whitelists {
         if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
 
         isShowing = currentVisibility;
+
+        if (isScrubbed && isButtonEnabled) {
+            isScrubbed = false;
+            imageView.setVisibility(View.VISIBLE);
+            return;
+        }
+
         if (currentVisibility && isButtonEnabled) {
             imageView.setVisibility(View.VISIBLE);
             imageView.startAnimation(fadeIn);
@@ -108,6 +117,7 @@ public class Whitelists {
         if (constraintLayout == null || imageView == null || !isUserScrubbing) return;
 
         isShowing = false;
+        isScrubbed = true;
         imageView.setVisibility(View.GONE);
     }
 
@@ -194,8 +204,6 @@ public class Whitelists {
     }
 
     private static void addToWhiteList(WhitelistType whitelistType) {
-        new Thread(() -> {
-            WhitelistRequester.addChannelToWhitelist(whitelistType);
-        }).start();
+        new Thread(() -> WhitelistRequester.addChannelToWhitelist(whitelistType)).start();
     }
 }

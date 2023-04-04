@@ -26,6 +26,7 @@ public class VotingButton {
     static Animation fadeOut;
     public static boolean isButtonEnabled;
     static boolean isShowing;
+    static boolean isScrubbed;
 
     public static void initialize(Object viewStub) {
         try {
@@ -44,7 +45,9 @@ public class VotingButton {
 
             fadeOut = anim("fade_out");
             fadeOut.setDuration(fadeDurationScheduled);
+
             isShowing = true;
+            isScrubbed = false;
             changeVisibility(false);
         } catch (Exception ex) {
             LogHelper.printException(VotingButton.class, "Unable to set RelativeLayout", ex);
@@ -56,6 +59,13 @@ public class VotingButton {
         if (isShowing == currentVisibility || youtubeControlsLayout == null || imageView == null) return;
 
         isShowing = currentVisibility;
+
+        if (isScrubbed && isButtonEnabled) {
+            isScrubbed = false;
+            imageView.setVisibility(View.VISIBLE);
+            return;
+        }
+
         if (currentVisibility && isButtonEnabled) {
             imageView.setVisibility(View.VISIBLE);
             imageView.startAnimation(fadeIn);
@@ -71,6 +81,7 @@ public class VotingButton {
         if (youtubeControlsLayout == null || imageView == null || !isUserScrubbing) return;
 
         isShowing = false;
+        isScrubbed = true;
         imageView.setVisibility(View.GONE);
     }
 

@@ -26,6 +26,7 @@ public class CopyWithTimeStamp {
     static Animation fadeOut;
     public static boolean isButtonEnabled;
     static boolean isShowing;
+    static boolean isScrubbed;
 
     public static void initialize(Object obj) {
         try {
@@ -50,6 +51,7 @@ public class CopyWithTimeStamp {
             fadeOut.setDuration(fadeDurationScheduled);
 
             isShowing = true;
+            isScrubbed = false;
             changeVisibility(false);
 
         } catch (Exception e) {
@@ -63,6 +65,13 @@ public class CopyWithTimeStamp {
         if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
 
         isShowing = currentVisibility;
+
+        if (isScrubbed && isButtonEnabled) {
+            isScrubbed = false;
+            imageView.setVisibility(View.VISIBLE);
+            return;
+        }
+
         if (currentVisibility && isButtonEnabled) {
             imageView.setVisibility(View.VISIBLE);
             imageView.startAnimation(fadeIn);
@@ -78,6 +87,7 @@ public class CopyWithTimeStamp {
         if (constraintLayout == null || imageView == null || !isUserScrubbing) return;
 
         isShowing = false;
+        isScrubbed = true;
         imageView.setVisibility(View.GONE);
     }
 

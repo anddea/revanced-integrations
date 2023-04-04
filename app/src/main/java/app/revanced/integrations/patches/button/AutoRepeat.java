@@ -14,7 +14,6 @@ import java.lang.ref.WeakReference;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 public class AutoRepeat {
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
@@ -26,6 +25,7 @@ public class AutoRepeat {
     static Animation fadeOut;
     public static boolean isButtonEnabled;
     static boolean isShowing;
+    static boolean isScrubbed;
 
     public static void initialize(Object obj) {
         try {
@@ -46,6 +46,7 @@ public class AutoRepeat {
             fadeOut.setDuration(fadeDurationScheduled);
 
             isShowing = true;
+            isScrubbed = false;
             changeVisibility(false);
 
         } catch (Exception ex) {
@@ -59,6 +60,13 @@ public class AutoRepeat {
         if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
 
         isShowing = currentVisibility;
+
+        if (isScrubbed && isButtonEnabled) {
+            isScrubbed = false;
+            imageView.setVisibility(View.VISIBLE);
+            return;
+        }
+
         if (currentVisibility && isButtonEnabled) {
             imageView.setVisibility(View.VISIBLE);
             imageView.startAnimation(fadeIn);
@@ -74,6 +82,7 @@ public class AutoRepeat {
         if (constraintLayout == null || imageView == null || !isUserScrubbing) return;
 
         isShowing = false;
+        isScrubbed = true;
         imageView.setVisibility(View.GONE);
     }
 
