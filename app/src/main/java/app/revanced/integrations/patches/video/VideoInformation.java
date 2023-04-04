@@ -100,8 +100,10 @@ public final class VideoInformation {
      * @param millisecond The millisecond to seek the video to.
      * @return if the seek was successful
      */
-    public static boolean seekTo(final long millisecond) {
-        ReVancedUtils.verifyOnMainThread();
+    public static boolean seekTo(long millisecond) {
+        if (isAtEndOfVideo(millisecond))
+            millisecond = videoLength - 500;
+       ReVancedUtils.verifyOnMainThread();
         if (seekMethod == null) {
             LogHelper.printException(VideoInformation.class, "seekMethod was null");
             return false;
@@ -195,4 +197,9 @@ public final class VideoInformation {
     public static boolean isAtEndOfVideo() {
         return videoTime > 0 && videoLength > 0 && videoTime >= videoLength;
     }
+
+    public static boolean isAtEndOfVideo(final long millisecond) {
+        return videoLength > 0 && millisecond >= videoLength;
+    }
+
 }
