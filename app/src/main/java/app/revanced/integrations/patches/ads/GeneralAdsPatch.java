@@ -62,7 +62,9 @@ public final class GeneralAdsPatch extends Filter {
                 "square_image_layout",
                 "carousel_footered_layout",
                 "text_image_button_layout",
-                "watch_metadata_app_promo"
+                "watch_metadata_app_promo",
+                "feature_grid_interstitial",
+                "carousel_interstitial"
         );
         var movieAds = new BlockRule(
                 SettingsEnum.ADREMOVER_MOVIE_SHELF,
