@@ -10,27 +10,46 @@ import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 
 public class ProtobufSpoofPatch {
+    private static boolean isPlayingShorts;
+
     /**
      * Target Protobuf parameters.
      */
     private static final String[] PROTOBUF_PARAMETER_WHITELIST = {
-            "8AEB", // Play video in shorts and stories
-            "YAHIAQ", // Autoplay in feed
-            "SAFgAxgB" // Autoplay in scrim
+            "YAHI", // Autoplay in feed
+            "SAFg"  // Autoplay in scrim
     };
 
     /**
-     * Protobuf parameters used by the player.
+     * Protobuf parameters used in autoplay in scrim
+     * Prepend this parameter to mute video playback (for autoplay in feed)
+     */
+    private static final String PROTOBUF_PARAMETER_SCRIM = "SAFgAXgB";
+
+    /**
+     * Protobuf parameters used in shorts and stories.
      */
     private static final String PROTOBUF_PARAMETER_SHORTS = "8AEB";
 
 
-    public static String overrideProtobufParameter(String original) {
-        if (!SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()
-                || containsAny(original, PROTOBUF_PARAMETER_WHITELIST))
-            return original;
+    public static String overrideProtobufParameter(String protobufParameter) {
+        return SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() ? setProtobufParameter(protobufParameter) : protobufParameter;
+    }
 
-        return PROTOBUF_PARAMETER_SHORTS;
+    public static String setProtobufParameter(String protobufParameter) {
+        // video is not a Short or Story
+        isPlayingShorts = protobufParameter.contains(PROTOBUF_PARAMETER_SHORTS);
+
+        if (isPlayingShorts)
+            return protobufParameter;
+
+        // protobuf value is empty when the Live video autoplays in the feed
+        boolean isPlayingFeed = containsAny(protobufParameter, PROTOBUF_PARAMETER_WHITELIST)
+                && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
+
+        return isPlayingFeed
+                ? PROTOBUF_PARAMETER_SCRIM + PROTOBUF_PARAMETER_SHORTS  // autoplay in feed should not play a sound
+                : PROTOBUF_PARAMETER_SHORTS;
     }
 
     /**
@@ -42,7 +61,7 @@ public class ProtobufSpoofPatch {
     public static void switchProtobufSpoof() {
         try {
             // already enabled or autoplay in the feed
-            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() || PlayerType.getCurrent().isNoneOrHidden()) return;
+            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()) return;
 
             SettingsEnum.ENABLE_PROTOBUF_SPOOF.saveValue(true);
             runOnMainThread(() -> {
@@ -72,8 +91,7 @@ public class ProtobufSpoofPatch {
         // Videos with custom captions that specify screen positions appear to always have correct screen positions (even with spoofing).
         // But for auto generated and most other captions, the spoof incorrectly gives Shorts caption settings for all videos.
         // Override the parameters if the video is not a Short but it has Short caption settings.
-        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()
-                && !PlayerType.getCurrent().isNoneOrHidden()) {
+        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !isPlayingShorts) {
             if (sd) {
                 // values observed during playback
                 override[0] = 33;
