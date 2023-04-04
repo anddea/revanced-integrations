@@ -10,8 +10,6 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -55,7 +53,7 @@ public class PlayerController {
 
             SponsorBlockSettings.update(ReVancedUtils.getContext());
 
-            if (!SettingsEnum.SB_ENABLED.getBoolean() || PlayerType.getCurrent() == PlayerType.NONE) {
+            if (!SettingsEnum.SB_ENABLED.getBoolean() || PlayerType.getCurrent().isNoneOrHidden()) {
                 currentVideoId = null;
                 return;
             }
@@ -108,9 +106,9 @@ public class PlayerController {
     }
 
 
-    public static void setVideoTime(@NonNull long millis) {
+    public static void setVideoTime(long millis) {
         try {
-            if (!SettingsEnum.SB_ENABLED.getBoolean()) return;
+            if (!SettingsEnum.SB_ENABLED.getBoolean() || PlayerType.getCurrent().isNoneOrHidden()) return;
             lastKnownVideoTime = millis;
             if (millis <= 0) return;
             //findAndSkipSegment(false);
@@ -180,9 +178,7 @@ public class PlayerController {
         if (SettingsEnum.SB_COUNT_SKIPS.getBoolean()
                 && segment.category != SponsorBlockSettings.SegmentInfo.UNSUBMITTED
                 && millis - segment.start < 2000) { // Only skips from the start should count as a view
-            ReVancedUtils.runOnBackgroundThread(() -> {
-                SBRequester.sendViewCountRequest(segment);
-            });
+            ReVancedUtils.runOnBackgroundThread(() -> SBRequester.sendViewCountRequest(segment));
         }
     }
 
