@@ -64,7 +64,7 @@ public class ProtobufSpoofPatch {
     public static void switchProtobufSpoof() {
         try {
             // already enabled or autoplay in the feed
-            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && getBoolean(YOUTUBE, PREFERENCE_KEY, false)) return;
+            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() || getBoolean(YOUTUBE, PREFERENCE_KEY, false)) return;
 
             SettingsEnum.ENABLE_PROTOBUF_SPOOF.saveValue(true);
             saveBoolean(YOUTUBE, PREFERENCE_KEY, true);
