@@ -12,6 +12,7 @@ import app.revanced.integrations.shared.PlayerType;
 
 public class ByteBufferFilterPatch {
     private static final List<String> generalWhiteList = List.of(
+            "FEhistory",
             "avatar",
             "comment_thread",
             "creation_sheet_menu",
