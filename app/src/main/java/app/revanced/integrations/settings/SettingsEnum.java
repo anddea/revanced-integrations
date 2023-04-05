@@ -58,26 +58,25 @@ public enum SettingsEnum {
     ACCOUNT_MENU_CUSTOM_FILTER("revanced_account_menu_custom_filter", "YouTube Music,YouTube Kids", ReturnType.STRING, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
 
-    ADREMOVER_MERCHANDISE("revanced_adremover_merchandise", true, ReturnType.BOOLEAN),
-    ADREMOVER_BROWSE_STORE_BUTTON("revanced_adremover_browse_store_button", true, ReturnType.BOOLEAN),
-    ADREMOVER_COMMUNITY_POSTS_HOME("revanced_adremover_community_posts_home", true, ReturnType.BOOLEAN),
-    ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_adremover_community_posts_subscriptions", false, ReturnType.BOOLEAN),
-    ADREMOVER_MOVIE_SHELF("revanced_adremover_movie_shelf", false, ReturnType.BOOLEAN),
-    ADREMOVER_FEED_SURVEY("revanced_adremover_feed_survey", true, ReturnType.BOOLEAN),
-    ADREMOVER_IMAGE_SHELF("revanced_adremover_image_shelf", true, ReturnType.BOOLEAN),
-    ADREMOVER_INFO_PANEL("revanced_adremover_info_panel", true, ReturnType.BOOLEAN),
-    ADREMOVER_MEDICAL_PANEL("revanced_adremover_medical_panel", true, ReturnType.BOOLEAN),
-    ADREMOVER_SUGGESTIONS("revanced_adremover_suggestions", true, ReturnType.BOOLEAN),
-    ADREMOVER_LATEST_POSTS("revanced_adremover_latest_posts", true, ReturnType.BOOLEAN),
-    ADREMOVER_CHANNEL_GUIDELINES("revanced_adremover_channel_guidelines", true, ReturnType.BOOLEAN),
-    ADREMOVER_CHANNEL_MEMBER_SHELF("revanced_adremover_channel_member_shelf", true, ReturnType.BOOLEAN),
-    ADREMOVER_CHANNEL_BAR_JOIN_BUTTON("revanced_adremover_channelbar_join_button", true, ReturnType.BOOLEAN),
-    ADREMOVER_TEASER("revanced_adremover_teaser", true, ReturnType.BOOLEAN),
-    ADREMOVER_GRAY_SEPARATOR("revanced_adremover_separator", true, ReturnType.BOOLEAN),
-    ADREMOVER_ALBUM_CARDS("revanced_adremover_album_card_in_search", true, ReturnType.BOOLEAN),
-    ADREMOVER_BREAKING_NEWS_SHELF("revanced_adremover_breaking_news_shelf", false, ReturnType.BOOLEAN, true),
-    ADREMOVER_WEB_SEARCH_PANEL("revanced_adremover_web_search_panel", true, ReturnType.BOOLEAN),
-    ADREMOVER_TIMED_REACTIONS("revanced_adremover_timed_reactions", false, ReturnType.BOOLEAN),
+    HIDE_MERCHANDISE("revanced_hide_merchandise", true, ReturnType.BOOLEAN),
+    HIDE_BROWSE_STORE_BUTTON("revanced_hide_browse_store_button", true, ReturnType.BOOLEAN),
+    HIDE_COMMUNITY_POSTS_HOME("revanced_hide_community_posts_home", true, ReturnType.BOOLEAN),
+    HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_hide_community_posts_subscriptions", false, ReturnType.BOOLEAN),
+    HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", false, ReturnType.BOOLEAN),
+    HIDE_FEED_SURVEY("revanced_hide_feed_survey", true, ReturnType.BOOLEAN),
+    HIDE_IMAGE_SHELF("revanced_hide_image_shelf", true, ReturnType.BOOLEAN),
+    HIDE_INFO_PANEL("revanced_hide_info_panel", true, ReturnType.BOOLEAN),
+    HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", true, ReturnType.BOOLEAN),
+    HIDE_SUGGESTIONS("revanced_hide_suggestions", true, ReturnType.BOOLEAN),
+    HIDE_LATEST_POSTS("revanced_hide_latest_posts", true, ReturnType.BOOLEAN),
+    HIDE_CHANNEL_MEMBER_SHELF("revanced_hide_channel_member_shelf", true, ReturnType.BOOLEAN),
+    HIDE_CHANNEL_BAR_JOIN_BUTTON("revanced_hide_channelbar_join_button", true, ReturnType.BOOLEAN),
+    HIDE_TEASER("revanced_hide_teaser", true, ReturnType.BOOLEAN),
+    HIDE_GRAY_SEPARATOR("revanced_hide_separator", true, ReturnType.BOOLEAN),
+    HIDE_ALBUM_CARDS("revanced_hide_album_card", true, ReturnType.BOOLEAN),
+    HIDE_BREAKING_NEWS_SHELF("revanced_hide_breaking_news_shelf", false, ReturnType.BOOLEAN, true),
+    HIDE_WEB_SEARCH_PANEL("revanced_hide_web_search_panel", true, ReturnType.BOOLEAN),
+    HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", false, ReturnType.BOOLEAN),
 
 
     // Player
@@ -94,7 +93,7 @@ public enum SettingsEnum {
     HIDE_INFO_CARDS("revanced_hide_info_cards", true, ReturnType.BOOLEAN, true),
     HIDE_CHANNEL_WATERMARK("revanced_hide_channel_watermark", true, ReturnType.BOOLEAN),
     HIDE_SUGGESTED_ACTION("revanced_hide_suggested_actions", true, ReturnType.BOOLEAN, true),
-    ADREMOVER_VIEW_PRODUCTS("revanced_adremover_view_products", true, ReturnType.BOOLEAN),
+    HIDE_VIEW_PRODUCTS("revanced_hide_view_products", true, ReturnType.BOOLEAN),
     HIDE_PLAYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", false, ReturnType.BOOLEAN, true),
 
 
@@ -135,6 +134,7 @@ public enum SettingsEnum {
     HIDE_PREVIEW_COMMENT("revanced_hide_preview_comment", false, ReturnType.BOOLEAN),
     HIDE_COMMENTS_THANKS_BUTTON("revanced_hide_comments_thanks_button", false, ReturnType.BOOLEAN),
     HIDE_EMOJI_PICKER("revanced_hide_emoji_picker", false, ReturnType.BOOLEAN),
+    HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", true, ReturnType.BOOLEAN),
 
 
     // Flyout Panel

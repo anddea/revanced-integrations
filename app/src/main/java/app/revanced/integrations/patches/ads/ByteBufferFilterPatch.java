@@ -93,25 +93,25 @@ public class ByteBufferFilterPatch {
         if (!PatchStatus.GeneralAds()) return;
 
         if (value.contains("post_base_wrapper")) {
-            if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_HOME.getBoolean() &&
+            if (SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean() &&
                     value.contains("horizontalCollectionSwipeProtector=null")) count++;
-            else if (SettingsEnum.ADREMOVER_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean() &&
+            else if (SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean() &&
                     value.contains("heightConstraint=null")) count++;
         }
 
-        if (SettingsEnum.ADREMOVER_BROWSE_STORE_BUTTON.getBoolean() &&
+        if (SettingsEnum.HIDE_BROWSE_STORE_BUTTON.getBoolean() &&
                 value.contains("|button")
         ) {
             int bufferIndex = indexOf(buffer.array(), "header_store_button".getBytes());
             if (bufferIndex > 0 && bufferIndex < 2000) count++;
         }
 
-        if (SettingsEnum.ADREMOVER_SUGGESTIONS.getBoolean() &&
+        if (SettingsEnum.HIDE_SUGGESTIONS.getBoolean() &&
                 value.contains("horizontal_video_shelf") &&
                 !value.contains("activeStateScrollSelectionController=com")
         ) count++;
 
-        if (SettingsEnum.ADREMOVER_FEED_SURVEY.getBoolean() &&
+        if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
                 value.contains("_survey")) count++;
     }
 

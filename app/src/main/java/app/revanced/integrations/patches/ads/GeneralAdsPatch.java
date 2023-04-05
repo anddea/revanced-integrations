@@ -22,24 +22,24 @@ public final class GeneralAdsPatch extends Filter {
     );
 
     public GeneralAdsPatch() {
-        var albumCard = new BlockRule(SettingsEnum.ADREMOVER_ALBUM_CARDS, "browsy_bar");
+        var albumCard = new BlockRule(SettingsEnum.HIDE_ALBUM_CARDS, "browsy_bar");
         var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS, "carousel_ad");
-        var channelGuidelines = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner", "community_guidelines", "sponsorships_comments_upsell");
-        var channelMemberShelf = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
-        var graySeparator = new BlockRule(SettingsEnum.ADREMOVER_GRAY_SEPARATOR, "cell_divider");
-        var imageShelf = new BlockRule(SettingsEnum.ADREMOVER_IMAGE_SHELF, "image_shelf");
-        var inFeedSurvey = new BlockRule(SettingsEnum.ADREMOVER_FEED_SURVEY, "in_feed_survey", "slimline_survey");
-        var infoPanel = new BlockRule(SettingsEnum.ADREMOVER_INFO_PANEL, "compact_banner", "publisher_transparency_panel", "single_item_information_panel");
-        var joinMembership = new BlockRule(SettingsEnum.ADREMOVER_CHANNEL_BAR_JOIN_BUTTON, "compact_sponsor_button");
-        var latestPosts = new BlockRule(SettingsEnum.ADREMOVER_LATEST_POSTS, "post_shelf");
-        var medicalPanel = new BlockRule(SettingsEnum.ADREMOVER_MEDICAL_PANEL, "medical_panel", "emergency_onebox");
-        var merchandise = new BlockRule(SettingsEnum.ADREMOVER_MERCHANDISE, "product_carousel");
+        var channelGuidelines = new BlockRule(SettingsEnum.HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner", "community_guidelines", "sponsorships_comments_upsell");
+        var channelMemberShelf = new BlockRule(SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
+        var graySeparator = new BlockRule(SettingsEnum.HIDE_GRAY_SEPARATOR, "cell_divider");
+        var imageShelf = new BlockRule(SettingsEnum.HIDE_IMAGE_SHELF, "image_shelf");
+        var inFeedSurvey = new BlockRule(SettingsEnum.HIDE_FEED_SURVEY, "in_feed_survey", "slimline_survey");
+        var infoPanel = new BlockRule(SettingsEnum.HIDE_INFO_PANEL, "compact_banner", "publisher_transparency_panel", "single_item_information_panel");
+        var joinMembership = new BlockRule(SettingsEnum.HIDE_CHANNEL_BAR_JOIN_BUTTON, "compact_sponsor_button");
+        var latestPosts = new BlockRule(SettingsEnum.HIDE_LATEST_POSTS, "post_shelf");
+        var medicalPanel = new BlockRule(SettingsEnum.HIDE_MEDICAL_PANEL, "medical_panel", "emergency_onebox");
+        var merchandise = new BlockRule(SettingsEnum.HIDE_MERCHANDISE, "product_carousel");
         var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTENT, "paid_content_overlay");
         var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
-        var teaser = new BlockRule(SettingsEnum.ADREMOVER_TEASER, "expandable_metadata");
-        var timedReactions = new BlockRule(SettingsEnum.ADREMOVER_TIMED_REACTIONS, "emoji_control_panel", "timed_reaction_player_animation", "timed_reaction_live_player_overlay");
-        var viewProducts = new BlockRule(SettingsEnum.ADREMOVER_VIEW_PRODUCTS, "product_item", "products_in_video");
-        var webSearchPanel = new BlockRule(SettingsEnum.ADREMOVER_WEB_SEARCH_PANEL, "web_link_panel");
+        var teaser = new BlockRule(SettingsEnum.HIDE_TEASER, "expandable_metadata");
+        var timedReactions = new BlockRule(SettingsEnum.HIDE_TIMED_REACTIONS, "emoji_control_panel", "timed_reaction_player_animation", "timed_reaction_live_player_overlay");
+        var viewProducts = new BlockRule(SettingsEnum.HIDE_VIEW_PRODUCTS, "product_item", "products_in_video");
+        var webSearchPanel = new BlockRule(SettingsEnum.HIDE_WEB_SEARCH_PANEL, "web_link_panel");
 
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
                 "video_display_button_group_layout",
@@ -67,7 +67,7 @@ public final class GeneralAdsPatch extends Filter {
                 "carousel_interstitial"
         );
         var movieAds = new BlockRule(
-                SettingsEnum.ADREMOVER_MOVIE_SHELF,
+                SettingsEnum.HIDE_MOVIE_SHELF,
                 "compact_movie",
                 "horizontal_movie_shelf",
                 "movie_and_show_upsell_card",
@@ -149,7 +149,7 @@ public final class GeneralAdsPatch extends Filter {
     }
 
     public static void hideBreakingNewsShelf(View view) {
-        if (!SettingsEnum.ADREMOVER_BREAKING_NEWS_SHELF.getBoolean()) return;
+        if (!SettingsEnum.HIDE_BREAKING_NEWS_SHELF.getBoolean()) return;
         AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 }
