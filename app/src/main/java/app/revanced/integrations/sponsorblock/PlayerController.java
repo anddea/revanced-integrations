@@ -24,6 +24,7 @@ import app.revanced.integrations.sponsorblock.requests.SBRequester;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.VideoHelpers;
+import app.revanced.integrations.whitelist.Whitelist;
 
 public class PlayerController {
 
@@ -95,7 +96,8 @@ public class PlayerController {
         try {
             videoHasSegments = false;
             timeWithoutSegments = "";
-
+            if (Whitelist.isChannelSBWhitelisted())
+                return;
             SponsorSegment[] segments = SBRequester.getSegments(videoId);
             Arrays.sort(segments);
 
