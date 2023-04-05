@@ -24,7 +24,7 @@ public class BottomPlayerPatch {
 
     public static boolean hideActionButtons(Object object, ByteBuffer buffer) {
         String value = object.toString();
-        if (generalWhiteList.stream().anyMatch(value::contains) || !value.contains("video_action_bar")) return false;
+        if (generalWhiteList.stream().anyMatch(value::contains) || !value.contains("ContainerType|video_action_button")) return false;
 
         List<String> actionButtonsBlockList = new ArrayList<>();
 
