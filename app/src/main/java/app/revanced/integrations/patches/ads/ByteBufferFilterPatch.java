@@ -91,6 +91,7 @@ public class ByteBufferFilterPatch {
 
     private static void hideGeneralAds(String value, ByteBuffer buffer) {
         if (!PatchStatus.GeneralAds()) return;
+        String charset = new String(buffer.array(), StandardCharsets.UTF_8);
 
         if (value.contains("post_base_wrapper")) {
             if (SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean() &&
@@ -113,6 +114,12 @@ public class ByteBufferFilterPatch {
 
         if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
                 value.contains("_survey")) count++;
+
+        if (SettingsEnum.HIDE_OFFICIAL_HEADER.getBoolean() &&
+                charset.contains("shelf_header") &&
+                charset.contains("YTSans-SemiBold") &&
+                charset.contains("sans-serif-medium")
+        ) count++;
     }
 
     private static boolean hideMixPlaylists(ByteBuffer buffer) {

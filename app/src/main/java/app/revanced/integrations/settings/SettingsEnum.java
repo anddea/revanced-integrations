@@ -73,6 +73,7 @@ public enum SettingsEnum {
     HIDE_CHANNEL_BAR_JOIN_BUTTON("revanced_hide_channelbar_join_button", true, ReturnType.BOOLEAN),
     HIDE_TEASER("revanced_hide_teaser", true, ReturnType.BOOLEAN),
     HIDE_GRAY_SEPARATOR("revanced_hide_separator", true, ReturnType.BOOLEAN),
+    HIDE_OFFICIAL_HEADER("revanced_hide_official_header", false, ReturnType.BOOLEAN),
     HIDE_ALBUM_CARDS("revanced_hide_album_card", true, ReturnType.BOOLEAN),
     HIDE_BREAKING_NEWS_SHELF("revanced_hide_breaking_news_shelf", false, ReturnType.BOOLEAN, true),
     HIDE_WEB_SEARCH_PANEL("revanced_hide_web_search_panel", true, ReturnType.BOOLEAN),
