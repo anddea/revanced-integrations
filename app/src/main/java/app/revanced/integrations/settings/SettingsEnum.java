@@ -105,6 +105,10 @@ public enum SettingsEnum {
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", false, ReturnType.BOOLEAN, true),
     HIDE_ENDSCREEN_OVERLAY("revanced_hide_endscreen_overlay", false, ReturnType.BOOLEAN, true),
     HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", false, ReturnType.BOOLEAN, true),
+
+    // Experimental Flags
+    DISABLE_LANDSCAPE_MODE("revanced_disable_landscape_mode", false, ReturnType.BOOLEAN, true),
+
     DISABLE_HAPTIC_FEEDBACK_SEEK("revanced_disable_haptic_feedback_seek", false, ReturnType.BOOLEAN),
     DISABLE_HAPTIC_FEEDBACK_SCRUBBING("revanced_disable_haptic_feedback_scrubbing", false, ReturnType.BOOLEAN),
     DISABLE_HAPTIC_FEEDBACK_CHAPTERS("revanced_disable_haptic_feedback_chapters", false, ReturnType.BOOLEAN),

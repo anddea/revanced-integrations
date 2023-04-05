@@ -39,6 +39,10 @@ public class FullscreenPatch {
         return SettingsEnum.HIDE_FILMSTRIP_OVERLAY.getBoolean();
     }
 
+    public static boolean disableLandScapeMode(boolean original) {
+        return SettingsEnum.DISABLE_LANDSCAPE_MODE.getBoolean() || original;
+    }
+
     public static boolean disableSeekVibrate() {
         return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_SEEK.getBoolean();
     }
