@@ -3,6 +3,9 @@ package app.revanced.integrations.patches.misc;
 import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
+import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
+import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
+import static app.revanced.integrations.utils.SharedPrefHelper.saveBoolean;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import app.revanced.integrations.settings.SettingsEnum;
@@ -10,6 +13,7 @@ import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 
 public class ProtobufSpoofPatch {
+    private static final String PREFERENCE_KEY = "auto_spoofing_enabled";
     private static boolean isPlayingShorts;
 
     /**
@@ -37,7 +41,7 @@ public class ProtobufSpoofPatch {
     }
 
     public static String setProtobufParameter(String protobufParameter) {
-        // video is not a Short or Story
+        // video is Short or Story
         isPlayingShorts = protobufParameter.contains(PROTOBUF_PARAMETER_SHORTS);
 
         if (isPlayingShorts)
@@ -60,9 +64,10 @@ public class ProtobufSpoofPatch {
     public static void switchProtobufSpoof() {
         try {
             // already enabled or autoplay in the feed
-            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean()) return;
+            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && getBoolean(YOUTUBE, PREFERENCE_KEY, false)) return;
 
             SettingsEnum.ENABLE_PROTOBUF_SPOOF.saveValue(true);
+            saveBoolean(YOUTUBE, PREFERENCE_KEY, true);
             runOnMainThread(() -> {
                 showToastShort(str("revanced_protobuf_spoof_notice"));
                 showToastShort(str("sb_switching_success"));
@@ -87,7 +92,7 @@ public class ProtobufSpoofPatch {
         // Videos with custom captions that specify screen positions appear to always have correct screen positions (even with spoofing).
         // But for auto generated and most other captions, the spoof incorrectly gives various default Shorts caption settings.
         // Check for these known default shorts captions parameters, and replace with the known correct values.
-        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() &&  !isPlayingShorts) { // video is not a Short or Story
+        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !isPlayingShorts) { // video is not a Short or Story
             for (SubtitleWindowReplacementSettings setting : SubtitleWindowReplacementSettings.values()) {
                 if (setting.match(ap, ah, av, vs, sd))
                     return setting.replacementSetting();
