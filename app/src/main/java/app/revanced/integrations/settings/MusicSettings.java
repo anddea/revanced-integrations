@@ -51,16 +51,20 @@ public class MusicSettings {
     }
 
     // Navigation
+    public static int enableCompactDialog(int original) {
+        return getPrefBoolean("revanced_enable_compact_dialog", true) && original < 600 ? 600 : original;
+    }
+
+    public static boolean enableTabletMode(boolean original) {
+        return getPrefBoolean("revanced_enable_tablet_mode", true) || original;
+    }
+
     public static int hideCastButton(int original) {
         return getPrefBoolean("revanced_hide_cast_button", true) ? View.GONE : original;
     }
 
     public static void hideCompactHeader(View view) {
         if (getPrefBoolean("revanced_hide_compact_header", true)) AdRemoverAPI.HideViewWithLayout1dp(view);
-    }
-
-    public static boolean enableTabletMode(boolean original) {
-        return getPrefBoolean("revanced_enable_tablet_mode", true) || original;
     }
 
     public static String spoofVersion(String original) {
