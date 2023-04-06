@@ -67,6 +67,10 @@ public class MusicSettings {
         if (getPrefBoolean("revanced_hide_compact_header", true)) AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 
+    public static boolean hideNewPlaylistButton() {
+        return getPrefBoolean("revanced_hide_new_playlist_button", false);
+    }
+
     public static String spoofVersion(String original) {
         return getPrefBoolean("revanced_enable_spoof_version", false) ? "4.27.53" : original;
     }
