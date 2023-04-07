@@ -32,10 +32,9 @@ public enum SettingsEnum {
     SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", 50f, ReturnType.FLOAT),
 
 
-    // General
-    HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
+    // Shorts
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", true, ReturnType.BOOLEAN),
-    HIDE_STARTUP_SHORTS_PLAYER("revanced_hide_startup_shorts_player", true, ReturnType.BOOLEAN),
+    DISABLE_STARTUP_SHORTS_PLAYER("revanced_disable_startup_shorts_player", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_COMMENTS_BUTTON("revanced_hide_shorts_player_comments_button", false, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_REMIX_BUTTON("revanced_hide_shorts_player_remix_button", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", true, ReturnType.BOOLEAN),
@@ -43,6 +42,10 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_JOIN_BUTTON("revanced_hide_shorts_player_join_button", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_INFO_PANEL("revanced_hide_shorts_player_info_panel", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_PAID_CONTENT("revanced_hide_shorts_player_paid_content", true, ReturnType.BOOLEAN),
+
+
+    // General
+    HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
     ENABLE_WIDE_SEARCHBAR("revanced_enable_wide_searchbar", false, ReturnType.BOOLEAN, true),
     ENABLE_TABLET_MINIPLAYER("revanced_enable_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
     HIDE_AUTO_CAPTIONS("revanced_hide_auto_captions", false, ReturnType.BOOLEAN, true),
