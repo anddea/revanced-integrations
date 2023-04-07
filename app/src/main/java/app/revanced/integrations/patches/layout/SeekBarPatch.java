@@ -26,13 +26,26 @@ public class SeekBarPatch {
     }
 
     public static int enableCustomSeekbarColor(int colorValue) {
-        if (SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean()) {
-            try {
-                colorValue = Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString());
-            } catch (Exception ignored) {
-                showToastShort(str("color_invalid"));
-            }
+        return overrideSeekbarColor(colorValue, false);
+    }
+
+    public static int enableCustomSeekbarColorDarkMode(int colorValue) {
+        return overrideSeekbarColor(colorValue, true);
+    }
+
+    private static int overrideSeekbarColor(int colorValue) {
+        try {
+            colorValue = Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString());
+        } catch (Exception ignored) {
+            showToastShort(str("color_invalid"));
         }
+        return colorValue;
+    }
+
+    private static int overrideSeekbarColor(int colorValue, boolean isDarkMode) {
+        if (SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean() &&
+                (isDarkMode || colorValue == -65536))
+            return overrideSeekbarColor(colorValue);
         return colorValue;
     }
 
