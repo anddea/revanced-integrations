@@ -51,4 +51,8 @@ public class PlayerPatch {
     public static int hidePlayerButton(View view, int originalValue) {
         return ResourceHelper.hidePlayerButton(view) ? 8 : originalValue;
     }
+
+    public static boolean hidePreviousNextButton(boolean original) {
+        return !SettingsEnum.HIDE_PREVIOUS_NEXT_BUTTON.getBoolean() && original;
+    }
 }
