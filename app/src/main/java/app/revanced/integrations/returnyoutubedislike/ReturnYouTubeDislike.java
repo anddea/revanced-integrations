@@ -229,6 +229,23 @@ public class ReturnYouTubeDislike {
         return span;
     }
 
+    public static SpannableString overrideLikeDislikeSpan(@NonNull Object conversionContext, @NonNull SpannableString original) {
+        try {
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) return original;
+
+            String conversionContextString = conversionContext.toString();
+            synchronized (videoIdLockObject) {
+                if (conversionContextString.contains("|segmented_like_dislike_button.eml|")
+                        && replacementLikeDislikeSpan != null
+                        && replacementLikeDislikeSpan.toString().contains(original))
+                    return (SpannableString) replacementLikeDislikeSpan;
+            }
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislike.class, "getReplacementLikeDislikeSpan failure", ex);
+        }
+        return original;
+    }
+
     // alternatively, this could check if the span contains one of the custom created spans, but this is simple and quick
     private static boolean isPreviouslyCreatedSegmentedSpan(@NonNull Spanned span) {
         return span.toString().indexOf(MIDDLE_SEPARATOR_CHARACTER) != -1;

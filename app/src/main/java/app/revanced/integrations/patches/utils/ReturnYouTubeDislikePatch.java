@@ -1,5 +1,6 @@
 package app.revanced.integrations.patches.utils;
 
+import android.text.SpannableString;
 import android.text.Spanned;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 
@@ -33,6 +34,15 @@ public class ReturnYouTubeDislikePatch {
      */
     public static Spanned onShortsComponentCreated(Spanned dislike) {
         return ReturnYouTubeDislike.onShortsComponentCreated(dislike);
+    }
+
+    /**
+     * Injection point
+     *
+     * Called when a litho text component is created
+     */
+    public static SpannableString overrideLikeDislikeSpan(Object conversionContext, SpannableString original) {
+        return ReturnYouTubeDislike.overrideLikeDislikeSpan(conversionContext, original);
     }
 
     /**
