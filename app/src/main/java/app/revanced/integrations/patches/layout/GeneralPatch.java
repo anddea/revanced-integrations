@@ -5,6 +5,7 @@ import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import android.annotation.SuppressLint;
 import android.text.Spanned;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
@@ -45,6 +46,10 @@ public class GeneralPatch {
         if (SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON.getBoolean()) {
             view.setVisibility(View.GONE);
         }
+    }
+
+    public static ViewGroup hideShortsPlayerInfoPanel(ViewGroup viewGroup) {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_INFO_PANEL.getBoolean() ? null : viewGroup;
     }
 
     public static void hideShortsPlayerRemixButton(View view) {

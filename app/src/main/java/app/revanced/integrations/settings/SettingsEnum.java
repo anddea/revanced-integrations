@@ -41,6 +41,7 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", true, ReturnType.BOOLEAN),
     HIDE_SHORTS_PLAYER_JOIN_BUTTON("revanced_hide_shorts_player_join_button", true, ReturnType.BOOLEAN),
+    HIDE_SHORTS_PLAYER_INFO_PANEL("revanced_hide_shorts_player_info_panel", true, ReturnType.BOOLEAN),
     ENABLE_WIDE_SEARCHBAR("revanced_enable_wide_searchbar", false, ReturnType.BOOLEAN, true),
     ENABLE_TABLET_MINIPLAYER("revanced_enable_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
     HIDE_AUTO_CAPTIONS("revanced_hide_auto_captions", false, ReturnType.BOOLEAN, true),
