@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.google.android.apps.youtube.app.ui.pivotbar.PivotBar;
+import com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity;
 
 import java.util.Objects;
 
@@ -15,6 +16,20 @@ public class NavigationPatch {
     public static Context shortsContext;
     public static PivotBar pivotbar;
     public static Enum lastPivotTab;
+
+    public static boolean changeHomePage() {
+        return SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean();
+    }
+
+    public static void changeHomePage(WatchWhileActivity activity) {
+        var intent = activity.getIntent();
+        if (SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean() &&
+                Objects.equals(intent.getAction(), "android.intent.action.MAIN")) {
+            intent.setAction("com.google.android.youtube.action.open.subscriptions");
+            intent.setPackage(activity.getPackageName());
+            activity.startActivity(intent);
+        }
+    }
 
     public static boolean switchCreateNotification(boolean original) {
         return SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean() || original;
