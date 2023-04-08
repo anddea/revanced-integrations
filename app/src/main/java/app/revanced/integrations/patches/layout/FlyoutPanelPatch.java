@@ -18,8 +18,4 @@ public class FlyoutPanelPatch {
                 1
         );
     }
-
-    public static int enableOldQualityLayout(int original) {
-        return SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean() ? 3 : original;
-    }
 }
