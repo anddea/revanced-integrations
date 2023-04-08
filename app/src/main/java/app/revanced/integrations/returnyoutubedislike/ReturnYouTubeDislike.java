@@ -520,6 +520,9 @@ public class ReturnYouTubeDislike {
     }
 
     private static SpannableString newSpanUsingStylingOfAnotherSpan(@NonNull Spanned sourceStyle, @NonNull String newSpanText) {
+        newSpanText = ReVancedUtils.isRightToLeftTextLayout()
+                ? "\u2066" + newSpanText + "\u2069"
+                : newSpanText;
         SpannableString destination = new SpannableString(newSpanText);
         Object[] spans = sourceStyle.getSpans(0, sourceStyle.length(), Object.class);
         for (Object span : spans) {
