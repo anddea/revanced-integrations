@@ -317,7 +317,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             var context = Objects.requireNonNull(ReVancedUtils.getContext());
             var value = SharedPrefHelper.getString(REVANCED, speedSetting.getPath(), "-2.0");
-            saveString(REVANCED, speedSetting.getPath(), value);
+            speedSetting.saveValue(Float.valueOf(value));
 
             String[] speedEntries = context.getResources().getStringArray(identifier(entriesKey, ResourceType.ARRAY));
             String[] speedEntriesValues = context.getResources().getStringArray(identifier(entriesValueKey, ResourceType.ARRAY));
