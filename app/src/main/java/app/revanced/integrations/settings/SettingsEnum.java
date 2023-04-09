@@ -54,6 +54,7 @@ public enum SettingsEnum {
     HIDE_CROWDFUNDING_BOX("revanced_hide_crowdfunding_box", true, ReturnType.BOOLEAN, true),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", true, ReturnType.BOOLEAN, true),
     HIDE_SNACKBAR("revanced_hide_snackbar", false, ReturnType.BOOLEAN),
+    HIDE_SEARCH_TERMS("revanced_hide_search_terms", false, ReturnType.BOOLEAN, true),
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", true, ReturnType.BOOLEAN, true),
     HIDE_CATEGORY_BAR_IN_FEED("revanced_hide_category_bar_in_feed", false, ReturnType.BOOLEAN, true),
     HIDE_CATEGORY_BAR_IN_RELATED_VIDEO("revanced_hide_category_bar_in_related_video", false, ReturnType.BOOLEAN, true),
