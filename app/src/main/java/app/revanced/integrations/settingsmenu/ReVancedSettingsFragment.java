@@ -430,16 +430,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     WhitelistSPEED.setWhitelistType(WhitelistType.SPEED);
                     this.whitelistingPreferenceScreen.addPreference(WhitelistSPEED);
                 }
-
-                // Video Ads
-                if (isIncludedADS) {
-                    Whitelist.setEnabled(WhitelistType.ADS, SettingsEnum.ADS_WHITELIST.getBoolean());
-
-                    WhitelistedChannelsPreference WhitelistADS = new WhitelistedChannelsPreference(activity);
-                    WhitelistADS.setTitle(str("revanced_whitelisting_ads"));
-                    WhitelistADS.setWhitelistType(WhitelistType.ADS);
-                    this.whitelistingPreferenceScreen.addPreference(WhitelistADS);
-                }
             } else {
                 SwitchPreference setWhitelist = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.OVERLAY_BUTTON_WHITELIST.getPath());
                 this.overlayPreferenceScreen.removePreference(setWhitelist);

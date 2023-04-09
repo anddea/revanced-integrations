@@ -35,11 +35,9 @@ public class Whitelists {
     static boolean isShowing;
     static boolean isScrubbed;
 
-    static boolean isADSWhitelisted;
     static boolean isSBWhitelisted;
     static boolean isSPEEDWhitelisted;
 
-    static boolean isADSIncluded;
     static boolean isSBIncluded;
     static boolean isSPEEDIncluded;
 
@@ -47,11 +45,9 @@ public class Whitelists {
         try {
             constraintLayout = (ConstraintLayout) obj;
 
-            isADSWhitelisted = Whitelist.isChannelADSWhitelisted();
             isSBWhitelisted = Whitelist.isChannelSBWhitelisted();
             isSPEEDWhitelisted = Whitelist.isChannelSPEEDWhitelisted();
 
-            isADSIncluded = PatchStatus.VideoAds();
             isSBIncluded = PatchStatus.SponsorBlock();
             isSPEEDIncluded = PatchStatus.VideoSpeed();
 
@@ -86,7 +82,7 @@ public class Whitelists {
     private static boolean setValue() {
         boolean isEnabled = SettingsEnum.OVERLAY_BUTTON_WHITELIST.getBoolean();
 
-        return isEnabled && (isSBIncluded || isSPEEDIncluded || isADSIncluded);
+        return isEnabled && (isSBIncluded || isSPEEDIncluded);
     }
 
     public static void changeVisibility(boolean currentVisibility) {
@@ -125,7 +121,6 @@ public class Whitelists {
         String included = str("revanced_whitelisting_included");
         String excluded = str("revanced_whitelisting_excluded");
 
-        isADSWhitelisted = Whitelist.isChannelADSWhitelisted();
         isSBWhitelisted = Whitelist.isChannelSBWhitelisted();
         isSPEEDWhitelisted = Whitelist.isChannelSPEEDWhitelisted();
 
@@ -140,25 +135,12 @@ public class Whitelists {
         msgBuilder.append(VideoInformation.getChannelName());
         msgBuilder.append("\n\n");
 
-        if (isADSIncluded) {
-            msgBuilder.append(str("revanced_whitelisting_ads"));
-            msgBuilder.append(":\n");
-            msgBuilder.append(isADSWhitelisted ? included : excluded);
-            msgBuilder.append("\n\n");
-            builder.setNeutralButton(str("revanced_whitelisting_ads_button"),
-                (dialog, id) -> {
-                    WhitelistListener(WhitelistType.ADS, isADSWhitelisted, context);
-                    dialog.dismiss();
-                }
-            );
-        }
-
         if (isSPEEDIncluded) {
             msgBuilder.append(str("revanced_whitelisting_speed"));
             msgBuilder.append(":\n");
             msgBuilder.append(isSPEEDWhitelisted ? included : excluded);
             msgBuilder.append("\n\n");
-            builder.setNegativeButton(str("revanced_whitelisting_speed_button"),
+            builder.setNeutralButton(str("revanced_whitelisting_speed_button"),
                 (dialog, id) -> {
                     WhitelistListener(WhitelistType.SPEED, isSPEEDWhitelisted, context);
                     dialog.dismiss();

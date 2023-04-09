@@ -1,6 +1,5 @@
 package app.revanced.integrations.utils
 
-import android.content.res.Resources
 import app.revanced.integrations.utils.ResourceUtils.identifier
 
 object ThemeHelper {
