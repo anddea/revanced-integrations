@@ -1,7 +1,5 @@
 package app.revanced.integrations.patches.layout;
 
-import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
-import static app.revanced.integrations.utils.StringRef.str;
 import static app.revanced.integrations.utils.VideoHelpers.setTitle;
 
 import android.graphics.Color;
@@ -37,7 +35,6 @@ public class SeekBarPatch {
         try {
             colorValue = Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString());
         } catch (Exception ignored) {
-            showToastShort(str("color_invalid"));
         }
         return colorValue;
     }
