@@ -1,5 +1,7 @@
 package app.revanced.integrations.settings;
 
+import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
+
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
@@ -236,24 +238,26 @@ public enum SettingsEnum {
 
 
     // SponsorBlock
-    SB_ENABLED("sb-enabled", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_MIRROR_ENABLED("sb-mirror-enabled", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_SHOW_TOAST_WHEN_SKIP("show-toast", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_COUNT_SKIPS("count-skips", true, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_UUID("uuid", null, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
-    SB_ADJUST_NEW_SEGMENT_STEP("new-segment-step-accuracy", 150, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.INTEGER),
-    SB_MIN_DURATION("sb-min-duration", 0F, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.FLOAT),
-    SB_SEEN_GUIDELINES("sb-seen-gl", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_NEW_SEGMENT_ENABLED("sb-new-segment-enabled", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_VOTING_ENABLED("sb-voting-enabled", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_SKIPPED_SEGMENTS("sb-skipped-segments", 0, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.INTEGER),
-    SB_SKIPPED_SEGMENTS_TIME("sb-skipped-segments-time", 0L, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.LONG),
-    SB_SHOW_TIME_WITHOUT_SEGMENTS("sb-length-without-segments", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_IS_VIP("sb-is-vip", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_LAST_VIP_CHECK("sb-last-vip-check", 0L, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.LONG),
-    SB_API_URL("sb-api-host-url", "https://sponsor.ajay.app", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
-    SB_API_MIRROR_URL("sb-api-host-mirror-url", "https://sponsorblock.hankmccord.dev", SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.STRING),
-    SB_FIRSTRUN("sb-firstrun", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN);
+    SB_ENABLED("sb-enabled", true, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_VOTING_ENABLED("sb-voting-enabled", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+
+    SB_CREATE_NEW_SEGMENT_ENABLED("sb-new-segment-enabled", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_USE_COMPACT_SKIPBUTTON("sb-use-compact-skip-button", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_SHOW_TOAST_ON_SKIP("show-toast", true, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_TRACK_SKIP_COUNT("count-skips", true, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_UUID("uuid", "", SPONSOR_BLOCK, ReturnType.STRING),
+    SB_ADJUST_NEW_SEGMENT_STEP("new-segment-step-accuracy", 150, SPONSOR_BLOCK, ReturnType.INTEGER),
+    SB_MIN_DURATION("sb-min-duration", 0F, SPONSOR_BLOCK, ReturnType.FLOAT),
+    SB_SEEN_GUIDELINES("sb-seen-gl", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_SKIPPED_SEGMENTS_NUMBER_SKIPPED("sb-skipped-segments", 0, SPONSOR_BLOCK, ReturnType.INTEGER),
+    SB_SKIPPED_SEGMENTS_TIME_SAVED("sb-skipped-segments-time", 0L, SPONSOR_BLOCK, ReturnType.LONG),
+    SB_SHOW_TIME_WITHOUT_SEGMENTS("sb-length-without-segments", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_IS_VIP("sb-is-vip", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_LAST_VIP_CHECK("sb-last-vip-check", 0L, SPONSOR_BLOCK, ReturnType.LONG),
+    SB_API_URL("sb-api-host-url", "https://sponsor.ajay.app", SPONSOR_BLOCK, ReturnType.STRING),
+    SB_FIRST_RUN("sb-firstrun", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN);
+
+
 
     private final String path;
     private final Object defaultValue;

@@ -1,6 +1,6 @@
 package app.revanced.integrations.patches.video;
 
-import static app.revanced.integrations.sponsorblock.SponsorBlockUtils.updateButton;
+import static app.revanced.integrations.sponsorblock.ui.SponsorBlockViewController.endOfVideoReached;
 
 import androidx.annotation.NonNull;
 
@@ -57,8 +57,6 @@ public final class VideoInformation {
             videoId = newlyLoadedVideoId;
             videoEnd = false;
         }
-        if (!isAtEndOfVideo())
-            updateButton();
     }
 
     /**
@@ -115,6 +113,10 @@ public final class VideoInformation {
             LogHelper.printException(VideoInformation.class, "Failed to seek", ex);
             return false;
         }
+    }
+
+    public static boolean seekToRelative(long millisecondsRelative) {
+        return seekTo(videoTime + millisecondsRelative);
     }
 
     public static boolean shouldAutoRepeat() {
@@ -181,8 +183,8 @@ public final class VideoInformation {
 
     public static void videoEnd() {
         clear();
+        endOfVideoReached();
         videoEnd = true;
-        updateButton();
     }
 
     private static void clear() {
@@ -201,5 +203,4 @@ public final class VideoInformation {
     public static boolean isAtEndOfVideo(final long millisecond) {
         return videoLength > 0 && millisecond >= videoLength;
     }
-
 }

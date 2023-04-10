@@ -164,6 +164,12 @@ public class ReVancedUtils {
         }
     }
 
+    public static boolean isNetworkConnected() {
+        NetworkType networkType = getNetworkType();
+        return networkType == NetworkType.MOBILE
+                || networkType == NetworkType.WIFI;
+    }
+
     public static NetworkType getNetworkType() {
         assert context != null;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
