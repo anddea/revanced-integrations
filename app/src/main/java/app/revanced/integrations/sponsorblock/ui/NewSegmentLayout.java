@@ -22,6 +22,7 @@ public class NewSegmentLayout extends FrameLayout {
     private final int rippleEffectId;
     final int defaultBottomMargin;
     final int ctaBottomMargin;
+    final int hiddenBottomMargin;
 
     public NewSegmentLayout(Context context) {
         this(context, null);
@@ -91,6 +92,7 @@ public class NewSegmentLayout extends FrameLayout {
         Resources resources = context.getResources();
         defaultBottomMargin = resources.getDimensionPixelSize(identifier("brand_interaction_default_bottom_margin", ResourceType.DIMEN, context));
         ctaBottomMargin = resources.getDimensionPixelSize(identifier("brand_interaction_cta_bottom_margin", ResourceType.DIMEN, context));
+        hiddenBottomMargin = (int) Math.round((ctaBottomMargin) * 0.5);  // margin when the button container is hidden
     }
 
     private void setClickEffect(ImageButton btn) {

@@ -1,5 +1,6 @@
 package app.revanced.integrations.sponsorblock.ui;
 
+import static app.revanced.integrations.utils.ReVancedHelper.isFullscreenHidden;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.content.Context;
@@ -142,7 +143,7 @@ public class SponsorBlockViewController {
             LogHelper.printException(SponsorBlockViewController.class, "setSkipButtonMargins failure");
             return;
         }
-        params.bottomMargin = fullScreen ? skipSponsorButton.ctaBottomMargin : skipSponsorButton.defaultBottomMargin;
+        params.bottomMargin = fullScreen ? (isFullscreenHidden() ? skipSponsorButton.hiddenBottomMargin : skipSponsorButton.ctaBottomMargin) : skipSponsorButton.defaultBottomMargin;
         skipSponsorButton.setLayoutParams(params);
     }
 
@@ -176,7 +177,7 @@ public class SponsorBlockViewController {
             LogHelper.printException(SponsorBlockViewController.class, "Unable to setNewSegmentLayoutMargins (params are null)");
             return;
         }
-        params.bottomMargin = fullScreen ? newSegmentLayout.ctaBottomMargin : newSegmentLayout.defaultBottomMargin;
+        params.bottomMargin = fullScreen ? (isFullscreenHidden() ? newSegmentLayout.hiddenBottomMargin : newSegmentLayout.ctaBottomMargin) : newSegmentLayout.defaultBottomMargin;
         newSegmentLayout.setLayoutParams(params);
     }
 
