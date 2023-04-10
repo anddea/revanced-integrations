@@ -12,6 +12,10 @@ public class VideoSpeedPatch {
     private static float selectedSpeed = -1.0f;
     private static boolean newVideo = false;
 
+    public static void liveStreamObserver(final boolean live) {
+        if (SettingsEnum.DISABLE_DEFAULT_VIDEO_SPEED_LIVE.getBoolean() && live && selectedSpeed != 1.0f) overrideSpeed(1.0f);
+    }
+
     public static void userChangedSpeed(final float speed) {
         selectedSpeed = speed;
 
