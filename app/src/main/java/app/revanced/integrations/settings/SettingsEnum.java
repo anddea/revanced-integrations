@@ -71,6 +71,7 @@ public enum SettingsEnum {
     HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", false, ReturnType.BOOLEAN),
     HIDE_FEED_SURVEY("revanced_hide_feed_survey", true, ReturnType.BOOLEAN),
     HIDE_IMAGE_SHELF("revanced_hide_image_shelf", true, ReturnType.BOOLEAN),
+    HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", true, ReturnType.BOOLEAN),
     HIDE_INFO_PANEL("revanced_hide_info_panel", true, ReturnType.BOOLEAN),
     HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", true, ReturnType.BOOLEAN),
     HIDE_SUGGESTIONS("revanced_hide_suggestions", true, ReturnType.BOOLEAN),
