@@ -72,11 +72,6 @@ public class ReturnYouTubeDislike {
 
 
     /**
-     * If {@link #currentVideoId} and the RYD data is for the last shorts loaded
-     */
-    private static volatile boolean lastVideoLoadedWasShort;
-
-    /**
      * Stores the results of the vote api fetch, and used as a barrier to wait until fetch completes
      */
     @Nullable
@@ -136,7 +131,6 @@ public class ReturnYouTubeDislike {
     private static void setCurrentVideoId(@Nullable String videoId) {
         synchronized (videoIdLockObject) {
             currentVideoId = videoId;
-            lastVideoLoadedWasShort = false;
             voteFetchFuture = null;
             originalDislikeSpan = null;
             replacementLikeDislikeSpan = null;
@@ -188,12 +182,7 @@ public class ReturnYouTubeDislike {
      */
     public static void onComponentCreated(@NonNull Object conversionContext, @NonNull AtomicReference<Object> textRef) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
-
-            // do not set lastVideoLoadedWasShort to false. It will be cleared when the next regular video is loaded.
-            if (lastVideoLoadedWasShort || PlayerType.getCurrent().isNoneOrHidden()) {
-                return;
-            }
+            if (!SettingsEnum.RYD_ENABLED.getBoolean() || PlayerType.getCurrent().isNoneOrHidden()) return;
 
             String conversionContextString = conversionContext.toString();
             final boolean isSegmentedButton;
@@ -214,19 +203,26 @@ public class ReturnYouTubeDislike {
         }
     }
 
-    public static Spanned onShortsComponentCreated(Spanned span) {
+    public static Spanned onShortsComponentCreated(Spanned textRef) {
+        if (!SettingsEnum.RYD_ENABLED.getBoolean()) return textRef;
+
         try {
-            if (SettingsEnum.RYD_ENABLED.getBoolean()) {
-                lastVideoLoadedWasShort = true;
-                Spanned replacement = waitForFetchAndUpdateReplacementSpan(span, false);
-                if (replacement != null) {
-                    return replacement;
-                }
+            // Have to block the current thread until fetching is done
+            // There's no known way to edit the text after creation yet
+            try {
+                Future<RYDVoteData> fetchFuture = getVoteFetchFuture();
+                if (fetchFuture == null) return null;
+                RYDVoteData votingData = fetchFuture.get(MAX_MILLISECONDS_TO_BLOCK_UI_WHILE_WAITING_FOR_FETCH_VOTES_TO_COMPLETE, TimeUnit.MILLISECONDS);
+                if (votingData == null) return null;
+                return (Spanned) newSpannableWithDislikes(textRef, votingData);
+
+            } catch (TimeoutException e) {
+                return textRef;
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "onShortsComponentCreated failure", ex);
+            LogHelper.printException(ReturnYouTubeDislike.class, "Error while trying to set shorts dislikes text", ex);
+            return textRef;
         }
-        return span;
     }
 
     public static SpannableString overrideLikeDislikeSpan(@NonNull Object conversionContext, @NonNull SpannableString original) {
@@ -313,7 +309,7 @@ public class ReturnYouTubeDislike {
         try {
             // Must make a local copy of videoId, since it may change between now and when the vote thread runs
             String videoIdToVoteFor = getCurrentVideoId();
-            if (videoIdToVoteFor == null || (lastVideoLoadedWasShort && !PlayerType.getCurrent().isNoneOrHidden())) {
+            if (videoIdToVoteFor == null || !PlayerType.getCurrent().isNoneOrHidden()) {
                 // User enabled RYD after starting playback of a video.
                 // Or shorts was loaded with regular video present, then shorts was closed, and then user voted on the now visible original video
                 LogHelper.printException(ReturnYouTubeDislike.class, "Cannot send vote");
