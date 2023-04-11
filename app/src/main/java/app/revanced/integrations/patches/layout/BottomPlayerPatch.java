@@ -11,8 +11,13 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 public class BottomPlayerPatch {
     private static final List<String> generalWhiteList = List.of(
+            "FEhistory",
+            "avatar",
             "channel_bar",
             "comment_thread",
+            "creation_sheet_menu",
+            "metadata",
+            "thumbnail",
             "home_video_with_context",
             "related_video_with_context",
             "search_video_with_context",
