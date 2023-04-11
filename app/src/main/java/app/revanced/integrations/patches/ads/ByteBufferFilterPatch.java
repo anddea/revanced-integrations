@@ -15,7 +15,7 @@ public class ByteBufferFilterPatch {
             "ContainerType|video_action_button",
             "FEhistory",
             "avatar",
-            "channel_bar",
+            "compact_channel_bar",
             "comment_thread",
             "creation_sheet_menu",
             "metadata",
