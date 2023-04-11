@@ -16,6 +16,7 @@ public class BottomPlayerPatch {
             "channel_bar",
             "comment_thread",
             "creation_sheet_menu",
+            "like_button",
             "metadata",
             "thumbnail",
             "home_video_with_context",
