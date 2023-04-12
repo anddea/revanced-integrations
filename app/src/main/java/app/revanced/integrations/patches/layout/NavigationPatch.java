@@ -54,6 +54,10 @@ public class NavigationPatch {
         }
     }
 
+    public static View hideShortsPlayerNavBar(View view) {
+        return SettingsEnum.HIDE_SHORTS_NAVIGATION_BAR.getBoolean() ? null : view;
+    }
+
     public static boolean enableTabletNavBar(boolean original) {
         return SettingsEnum.ENABLE_TABLET_NAVIGATION_BAR.getBoolean() || original;
     }
