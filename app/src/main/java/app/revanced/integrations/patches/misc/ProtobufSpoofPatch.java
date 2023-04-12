@@ -68,10 +68,7 @@ public class ProtobufSpoofPatch {
 
             SettingsEnum.ENABLE_PROTOBUF_SPOOF.saveValue(true);
             saveBoolean(YOUTUBE, PREFERENCE_KEY, true);
-            runOnMainThread(() -> {
-                showToastShort(str("revanced_protobuf_spoof_notice"));
-                showToastShort(str("sb_switching_success"));
-            });
+            runOnMainThread(() -> showToastShort(str("revanced_protobuf_spoof_notice")));
 
         } catch (Exception ex) {
             LogHelper.printException(ProtobufSpoofPatch.class, "onResponse failure", ex);
