@@ -214,7 +214,7 @@ public class ReturnYouTubeDislike {
                 if (fetchFuture == null) return null;
                 RYDVoteData votingData = fetchFuture.get(MAX_MILLISECONDS_TO_BLOCK_UI_WHILE_WAITING_FOR_FETCH_VOTES_TO_COMPLETE, TimeUnit.MILLISECONDS);
                 if (votingData == null) return null;
-                return (Spanned) newSpannableWithDislikes(textRef, votingData);
+                return newSpannableWithDislikes(textRef, votingData);
 
             } catch (TimeoutException e) {
                 return textRef;
