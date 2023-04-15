@@ -58,6 +58,7 @@ public final class GeneralAdsPatch extends Filter {
                 "legal_disclosure_cell",
                 "primetime_promo",
                 "brand_video_shelf",
+                "brand_video_singleton",
                 "hero_promo_image",
                 "statement_banner",
                 "square_image_layout",
