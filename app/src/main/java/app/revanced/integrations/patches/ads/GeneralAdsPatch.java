@@ -54,6 +54,7 @@ public final class GeneralAdsPatch extends Filter {
         var generalAds = new BlockRule(
             SettingsEnum.ADREMOVER_GENERAL_ADS,
                 "active_view_display_container",
+                "ads_",
                 "ads_video_with_context",
                 "ad_",
                 "banner_text_icon",
@@ -70,6 +71,7 @@ public final class GeneralAdsPatch extends Filter {
                 "video_display_full_layout",
                 "watch_metadata_app_promo",
                 "_ad",
+                "_ads",
                 "|ads_",
                 "|ad_"
         );
