@@ -11,9 +11,11 @@ import app.revanced.integrations.utils.ReVancedUtils;
 public final class GeneralAdsPatch extends Filter {
     private final String[] IGNORE = {
             "comment_thread", // skip blocking anything in the comments
-            "|comment.", // skip blocking anything in the comments replies
+            "download_",
+            "library_recent_shelf",
+            "playlist_add_to_option_wrapper",
             "related_video_with_context",
-            "library_recent_shelf"
+            "|comment." // skip blocking anything in the comments replies
     };
 
     private final BlockRule custom = new CustomBlockRule(
@@ -43,29 +45,33 @@ public final class GeneralAdsPatch extends Filter {
         var webSearchPanel = new BlockRule(SettingsEnum.HIDE_WEB_SEARCH_PANEL, "web_link_panel");
 
         var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
+                "full_width_square_image_layout",
+                "landscape_image_wide_button_layout",
                 "video_display_button_group_layout",
-                "video_display_full_buttoned_layout",
                 "_ad_with",
-                "landscape_image_wide_button_layout"
+                "_buttoned_layout"
         );
         var generalAds = new BlockRule(
             SettingsEnum.ADREMOVER_GENERAL_ADS,
-                "video_display_full_layout",
                 "active_view_display_container",
-                "|ad_",
-                "|ads_",
                 "ads_video_with_context",
-                "legal_disclosure_cell",
-                "primetime_promo",
+                "ad_",
+                "banner_text_icon",
                 "brand_video_shelf",
                 "brand_video_singleton",
-                "hero_promo_image",
-                "statement_banner",
-                "square_image_layout",
                 "carousel_footered_layout",
-                "text_image_button_layout",
+                "hero_promo_image",
+                "legal_disclosure_cell",
+                "primetime_promo",
                 "product_details",
-                "watch_metadata_app_promo"
+                "square_image_layout",
+                "statement_banner",
+                "text_image_button_layout",
+                "video_display_full_layout",
+                "watch_metadata_app_promo",
+                "_ad",
+                "|ads_",
+                "|ad_"
         );
         var movieAds = new BlockRule(
                 SettingsEnum.HIDE_MOVIE_SHELF,
