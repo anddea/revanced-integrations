@@ -170,6 +170,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             LayoutOverrideLinks();
             TabletLayoutLinks();
             FullScreenPanelPreferenceLinks();
+            NavigationPreferenceLinks();
 
             setVideoSpeed();
             setVideoQuality(true);
@@ -296,6 +297,20 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             }
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting FullScreenPanelPreferenceLinks" + th);
+        }
+    }
+
+    /**
+     * Enable/Disable Preference related to Navigation settings
+     */
+    public void NavigationPreferenceLinks() {
+        try {
+            boolean isEnabled = SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean();
+
+            SwitchPreference hideCreateButtonPreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(SettingsEnum.HIDE_CREATE_BUTTON.getPath()));
+            hideCreateButtonPreference.setEnabled(!isEnabled);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting NavigationPreferenceLinks" + th);
         }
     }
 
