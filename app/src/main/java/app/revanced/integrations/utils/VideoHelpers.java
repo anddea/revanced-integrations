@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -58,6 +59,47 @@ public class VideoHelpers {
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
         }
+    }
+
+    public static void download(Context context) {
+        try {
+            var downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString();
+            if (downloaderPackageName == null) downloaderPackageName = "ussr.razar.youtube_dl";
+
+            boolean packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
+
+            if (!packageEnabled) {
+                showToastShort(context, getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
+                return;
+            }
+            var content = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
+
+            var intent = new Intent("android.intent.action.SEND");
+            intent.setType("text/plain");
+            intent.setPackage(downloaderPackageName);
+            intent.putExtra("android.intent.extra.TEXT", content);
+            context.startActivity(intent);
+
+        } catch (Exception ex) {
+            LogHelper.printException(VideoHelpers.class, "Failed to launch the downloader intent", ex);
+        }
+    }
+
+    private static String getDownloaderName(Context context, String DownloaderPackageName) {
+        try {
+            final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
+            final var DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_downloader_package_name";
+
+            String[] labelArray = context.getResources().getStringArray(identifier(DOWNLOADER_LABEL_PREFERENCE_KEY, ResourceType.ARRAY));
+            String[] packageNameArray = context.getResources().getStringArray(identifier(DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY, ResourceType.ARRAY));
+
+            int findIndex = Arrays.binarySearch(packageNameArray, DownloaderPackageName);
+
+            return findIndex >= 0 ? labelArray[findIndex] : DownloaderPackageName;
+        } catch (Exception e) {
+            LogHelper.printException(VideoHelpers.class, "Unable to set DownloaderName", e);
+        }
+        return DownloaderPackageName;
     }
 
     public static void videoSpeedDialogListener(Context context) {

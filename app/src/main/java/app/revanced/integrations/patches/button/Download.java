@@ -1,28 +1,20 @@
 package app.revanced.integrations.patches.button;
 
-import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
-import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
-import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 
-import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ResourceType;
+import app.revanced.integrations.utils.VideoHelpers;
 
 public class Download {
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
@@ -42,40 +34,7 @@ public class Download {
             isButtonEnabled = setValue();
             ImageView imageView = findView(Download.class, constraintLayout, "download_button");
 
-            imageView.setOnClickListener(view -> {
-
-                final var context = view.getContext();
-                var downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString();
-                if (downloaderPackageName == null) downloaderPackageName = "ussr.razar.youtube_dl";
-
-                boolean packageEnabled = false;
-                try {
-                    assert context != null;
-                    packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
-                } catch (PackageManager.NameNotFoundException ignored) {
-                }
-
-                // If the package is not installed, show the toast
-                if (!packageEnabled) {
-                    showToastShort(context, getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
-                    return;
-                }
-
-                // Launch PowerTube intent
-                try {
-                    var content = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
-
-                    var intent = new Intent("android.intent.action.SEND");
-                    intent.setType("text/plain");
-                    intent.setPackage(downloaderPackageName);
-                    intent.putExtra("android.intent.extra.TEXT", content);
-                    context.startActivity(intent);
-
-                } catch (Exception error) {
-                    LogHelper.printException(Download.class, "Failed to launch the intent", error);
-                }
-
-            });
+            imageView.setOnClickListener(view -> VideoHelpers.download(view.getContext()));
             buttonView = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");
@@ -94,23 +53,6 @@ public class Download {
         } catch (Exception e) {
             LogHelper.printException(Download.class, "Unable to set FrameLayout", e);
         }
-    }
-
-    private static String getDownloaderName(Context context, String DownloaderPackageName) {
-        try {
-            final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
-            final var DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_downloader_package_name";
-
-            String[] labelArray = context.getResources().getStringArray(identifier(DOWNLOADER_LABEL_PREFERENCE_KEY, ResourceType.ARRAY));
-            String[] packageNameArray = context.getResources().getStringArray(identifier(DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY, ResourceType.ARRAY));
-
-            int findIndex = Arrays.binarySearch(packageNameArray, DownloaderPackageName);
-
-            return findIndex >= 0 ? labelArray[findIndex] : DownloaderPackageName;
-        } catch (Exception e) {
-            LogHelper.printException(Download.class, "Unable to set DownloaderName", e);
-        }
-        return DownloaderPackageName;
     }
 
     public static void changeVisibility(boolean currentVisibility) {
