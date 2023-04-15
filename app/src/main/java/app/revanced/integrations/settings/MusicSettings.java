@@ -1,10 +1,9 @@
 package app.revanced.integrations.settings;
 
+import static app.revanced.integrations.utils.ReVancedUtils.getContext;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
 import static app.revanced.integrations.utils.SharedPrefHelper.getPreferences;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.View;
 
 import java.util.Objects;
@@ -12,9 +11,6 @@ import java.util.Objects;
 import app.revanced.integrations.adremover.AdRemoverAPI;
 
 public class MusicSettings {
-    @SuppressLint("StaticFieldLeak")
-    public static Context context;
-
     // ADS
     public static boolean hideMusicAds() {
         return !getPrefBoolean("revanced_hide_music_ads", true);
@@ -77,6 +73,6 @@ public class MusicSettings {
 
     // Utils
     public static boolean getPrefBoolean(String key, boolean defaultValue) {
-        return Objects.requireNonNull(getPreferences(context, YOUTUBE)).getBoolean(key, defaultValue);
+        return Objects.requireNonNull(getPreferences(getContext(), YOUTUBE)).getBoolean(key, defaultValue);
     }
 }
