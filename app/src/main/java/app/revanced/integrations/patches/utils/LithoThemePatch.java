@@ -9,17 +9,18 @@ import app.revanced.integrations.utils.ResourceType;
 
 public class LithoThemePatch {
     private static final int[] WHITE_VALUES = {
-        -1, // comments chip background
-        -394759, // music related results panel background
-        -83886081 // video chapters list background
+            -1, // comments chip background
+            -394759, // music related results panel background
+            -83886081 // video chapters list background
     };
 
     private static final int[] DARK_VALUES = {
-        -14145496, // drawer content view background
-        -14606047, // comments chip background
-        -15198184, // music related results panel background
-        -15790321, // comments chip background (new layout)
-        -98492127 // video chapters list background
+            -14145496, // drawer content view background
+            -14606047, // comments chip background
+            -15198184, // music related results panel background
+            -15790321, // account settings background (youtube music)
+            -15790321, // comments chip background (new layout)
+            -98492127 // video chapters list background
     };
 
     // background colors
