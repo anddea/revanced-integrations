@@ -12,6 +12,7 @@ public final class GeneralAdsPatch extends Filter {
     private final String[] IGNORE = {
             "comment_thread", // skip blocking anything in the comments
             "download_",
+            "downloads_",
             "library_recent_shelf",
             "playlist_add_to_option_wrapper",
             "related_video_with_context",
