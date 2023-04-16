@@ -2,6 +2,7 @@ package app.revanced.integrations.utils;
 
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.userChangedSpeed;
+import static app.revanced.integrations.settings.MusicSettings.getDownloaderPackageName;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.StringRef.str;
@@ -11,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -66,26 +68,51 @@ public class VideoHelpers {
             var downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString();
             if (downloaderPackageName == null) downloaderPackageName = "ussr.razar.youtube_dl";
 
-            boolean packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
+            boolean packageEnabled = false;
+            try {
+                assert context != null;
+                packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
+            } catch (PackageManager.NameNotFoundException error) {
+                showToastShort(getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
+            }
 
             if (!packageEnabled) {
-                showToastShort(context, getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
+                showToastShort(getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
                 return;
             }
             var content = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
 
-            var intent = new Intent("android.intent.action.SEND");
-            intent.setType("text/plain");
-            intent.setPackage(downloaderPackageName);
-            intent.putExtra("android.intent.extra.TEXT", content);
-            context.startActivity(intent);
-
+            startDownloaderActivity(context, false, downloaderPackageName, content);
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Failed to launch the downloader intent", ex);
         }
     }
 
-    private static String getDownloaderName(Context context, String DownloaderPackageName) {
+    public static void downloadMusic(Context context) {
+        try {
+            var downloaderPackageName = getDownloaderPackageName();
+
+            boolean packageEnabled = false;
+            try {
+                assert context != null;
+                packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
+            } catch (PackageManager.NameNotFoundException error) {
+                showToastShort(str("revanced_downloader_not_installed", downloaderPackageName));
+            }
+
+            if (!packageEnabled) {
+                showToastShort(str("revanced_downloader_not_installed", downloaderPackageName));
+                return;
+            }
+            var content = String.format("https://music.youtube.com/watch?v=%s", VideoInformation.getVideoId());
+
+            startDownloaderActivity(context, true, downloaderPackageName, content);
+        } catch (Exception ex) {
+            LogHelper.printException(VideoHelpers.class, "Failed to launch the downloader intent", ex);
+        }
+    }
+
+    private static String getDownloaderName(Context context, String downloaderPackageName) {
         try {
             final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
             final var DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_downloader_package_name";
@@ -93,13 +120,27 @@ public class VideoHelpers {
             String[] labelArray = context.getResources().getStringArray(identifier(DOWNLOADER_LABEL_PREFERENCE_KEY, ResourceType.ARRAY));
             String[] packageNameArray = context.getResources().getStringArray(identifier(DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY, ResourceType.ARRAY));
 
-            int findIndex = Arrays.binarySearch(packageNameArray, DownloaderPackageName);
+            int findIndex = Arrays.binarySearch(packageNameArray, downloaderPackageName);
 
-            return findIndex >= 0 ? labelArray[findIndex] : DownloaderPackageName;
+            return findIndex >= 0 ? labelArray[findIndex] : downloaderPackageName;
         } catch (Exception e) {
             LogHelper.printException(VideoHelpers.class, "Unable to set DownloaderName", e);
         }
-        return DownloaderPackageName;
+        return downloaderPackageName;
+    }
+
+    public static void startDownloaderActivity(Context context, boolean isMusic, String downloaderPackageName, String content) {
+        try {
+            var intent = new Intent("android.intent.action.SEND");
+            intent.setType("text/plain");
+            intent.setPackage(downloaderPackageName);
+            intent.putExtra("android.intent.extra.TEXT", content);
+            if (isMusic)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            LogHelper.printException(VideoHelpers.class, "Unable to start DownloaderActivity", e);
+        }
     }
 
     public static void videoSpeedDialogListener(Context context) {

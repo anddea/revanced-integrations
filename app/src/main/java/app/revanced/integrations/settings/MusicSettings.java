@@ -67,6 +67,10 @@ public class MusicSettings {
         return getPrefBoolean("revanced_hide_new_playlist_button", false);
     }
 
+    public static boolean hookShareButton() {
+        return getPrefBoolean("revanced_hook_share_button", false);
+    }
+
     public static String spoofVersion(String original) {
         return getPrefBoolean("revanced_enable_spoof_version", false) ? "4.27.53" : original;
     }
@@ -74,5 +78,9 @@ public class MusicSettings {
     // Utils
     public static boolean getPrefBoolean(String key, boolean defaultValue) {
         return Objects.requireNonNull(getPreferences(getContext(), YOUTUBE)).getBoolean(key, defaultValue);
+    }
+
+    public static String getDownloaderPackageName() {
+        return "ussr.razar.youtube_dl";
     }
 }
