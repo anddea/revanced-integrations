@@ -18,7 +18,6 @@ public class LithoThemePatch {
             -14145496, // drawer content view background
             -14606047, // comments chip background
             -15198184, // music related results panel background
-            -15790321, // account settings background (youtube music)
             -15790321, // comments chip background (new layout)
             -98492127 // video chapters list background
     };
