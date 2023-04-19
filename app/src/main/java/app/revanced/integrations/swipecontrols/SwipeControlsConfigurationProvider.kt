@@ -27,7 +27,7 @@ class SwipeControlsConfigurationProvider(
         get() = SettingsEnum.ENABLE_SWIPE_VOLUME.boolean
 
     /**
-     * should swipe controls for brightness be enabled?
+     * should swipe controls for volume be enabled?
      */
     val enableBrightnessControl: Boolean
         get() = SettingsEnum.ENABLE_SWIPE_BRIGHTNESS.boolean
