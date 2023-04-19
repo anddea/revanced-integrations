@@ -1,7 +1,6 @@
 package app.revanced.integrations.sponsorblock.ui;
 
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
-import static app.revanced.integrations.utils.StringRef.str;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -14,9 +13,10 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
-import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.SegmentPlaybackController;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.utils.ResourceType;
@@ -25,9 +25,9 @@ public class SkipSponsorButton extends FrameLayout {
     private static final boolean highContrast = true;
     private final LinearLayout skipSponsorBtnContainer;
     private final TextView skipSponsorTextView;
-    private final CharSequence skipSponsorTextCompact;
     private final Paint background;
     private final Paint border;
+    private SponsorSegment segment;
     final int defaultBottomMargin;
     final int ctaBottomMargin;
     final int hiddenBottomMargin;
@@ -66,9 +66,8 @@ public class SkipSponsorButton extends FrameLayout {
         defaultBottomMargin = resources.getDimensionPixelSize(identifier("skip_button_default_bottom_margin", ResourceType.DIMEN, context));  // dimen:skip_button_default_bottom_margin
         ctaBottomMargin = resources.getDimensionPixelSize(identifier("skip_button_cta_bottom_margin", ResourceType.DIMEN, context));  // dimen:skip_button_cta_bottom_margin
         hiddenBottomMargin = (int) Math.round((ctaBottomMargin) * 0.5);  // margin when the button container is hidden
-        skipSponsorTextCompact = str("sb_skip_button_compact");  // string:skip_ads "Skip ads"
 
-        skipSponsorBtnContainer.setOnClickListener(v -> SegmentPlaybackController.onSkipSponsorClicked());
+        skipSponsorBtnContainer.setOnClickListener(v -> SegmentPlaybackController.onSkipSegmentClicked(segment));
     }
 
     @Override  // android.view.ViewGroup
@@ -92,10 +91,9 @@ public class SkipSponsorButton extends FrameLayout {
     /**
      * @return true, if this button state was changed
      */
-    public boolean updateSkipButtonText(SponsorSegment segment) {
-        CharSequence newText = SettingsEnum.SB_USE_COMPACT_SKIPBUTTON.getBoolean()
-                ? skipSponsorTextCompact
-                : segment.getSkipButtonText();
+    public boolean updateSkipButtonText(@NonNull SponsorSegment segment) {
+        this.segment = segment;
+        CharSequence newText = segment.getSkipButtonText();
         if (newText.equals(skipSponsorTextView.getText())) {
             return false;
         }

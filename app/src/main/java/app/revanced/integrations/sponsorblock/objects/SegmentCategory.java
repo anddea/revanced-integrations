@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.StringRef;
 
@@ -34,6 +35,11 @@ public enum SegmentCategory {
             SKIP_AUTOMATICALLY, 0xFFFF00),
     INTERACTION("interaction", sf("sb_segments_interaction"), sf("sb_segments_interaction_sum"), sf("sb_skip_button_interaction"), sf("sb_skipped_interaction"),
             SKIP_AUTOMATICALLY, 0xCC00FF),
+    /**
+     * Unique category that is treated differently than the rest.
+     */
+    HIGHLIGHT("poi_highlight", sf("sb_segments_highlight"), sf("sb_segments_highlight_sum"), sf("sb_skip_button_highlight"), sf("sb_skipped_highlight"),
+            IGNORE, 0xFF1684),
     INTRO("intro", sf("sb_segments_intro"), sf("sb_segments_intro_sum"),
             sf("sb_skip_button_intro_beginning"), sf("sb_skip_button_intro_middle"), sf("sb_skip_button_intro_end"),
             sf("sb_skipped_intro_beginning"), sf("sb_skipped_intro_middle"), sf("sb_skipped_intro_end"),
@@ -51,7 +57,10 @@ public enum SegmentCategory {
     UNSUBMITTED("unsubmitted", StringRef.empty, StringRef.empty, sf("sb_skip_button_unsubmitted"), sf("sb_skipped_unsubmitted"),
             SKIP_AUTOMATICALLY, 0xFFFFFF);
 
-    private static final SegmentCategory[] mValuesWithoutUnsubmitted = new SegmentCategory[]{
+    private static final StringRef skipSponsorTextCompact = sf("sb_skip_button_compact");
+    private static final StringRef skipSponsorTextCompactHighlight = sf("sb_skip_button_compact_highlight");
+
+    private static final SegmentCategory[] categoriesWithoutHighlights = new SegmentCategory[]{
             SPONSOR,
             SELF_PROMO,
             INTERACTION,
@@ -61,7 +70,19 @@ public enum SegmentCategory {
             FILLER,
             MUSIC_OFFTOPIC,
     };
-    private static final Map<String, SegmentCategory> mValuesMap = new HashMap<>(2 * mValuesWithoutUnsubmitted.length);
+
+    private static final SegmentCategory[] categoriesWithoutUnsubmitted = new SegmentCategory[]{
+            SPONSOR,
+            SELF_PROMO,
+            INTERACTION,
+            HIGHLIGHT,
+            INTRO,
+            OUTRO,
+            PREVIEW,
+            FILLER,
+            MUSIC_OFFTOPIC,
+    };
+    private static final Map<String, SegmentCategory> mValuesMap = new HashMap<>(2 * categoriesWithoutUnsubmitted.length);
 
     private static final String COLOR_PREFERENCE_KEY_SUFFIX = "_color";
 
@@ -71,13 +92,18 @@ public enum SegmentCategory {
     public static String sponsorBlockAPIFetchCategories = "[]";
 
     static {
-        for (SegmentCategory value : mValuesWithoutUnsubmitted)
+        for (SegmentCategory value : categoriesWithoutUnsubmitted)
             mValuesMap.put(value.key, value);
     }
 
     @NonNull
-    public static SegmentCategory[] valuesWithoutUnsubmitted() {
-        return mValuesWithoutUnsubmitted;
+    public static SegmentCategory[] categoriesWithoutUnsubmitted() {
+        return categoriesWithoutUnsubmitted;
+    }
+
+    @NonNull
+    public static SegmentCategory[] categoriesWithoutHighlights() {
+        return categoriesWithoutHighlights;
     }
 
     @Nullable
@@ -87,8 +113,7 @@ public enum SegmentCategory {
 
     public static void loadFromPreferences() {
         SharedPreferences preferences = getPreferences(SPONSOR_BLOCK);
-        for (SegmentCategory category : valuesWithoutUnsubmitted()) {
-            assert preferences != null;
+        for (SegmentCategory category : categoriesWithoutUnsubmitted()) {
             category.load(preferences);
         }
         updateEnabledCategories();
@@ -98,7 +123,7 @@ public enum SegmentCategory {
      * Must be called if behavior of any category is changed
      */
     public static void updateEnabledCategories() {
-        SegmentCategory[] categories = valuesWithoutUnsubmitted();
+        SegmentCategory[] categories = categoriesWithoutUnsubmitted();
         List<String> enabledCategories = new ArrayList<>(categories.length);
         for (SegmentCategory category : categories) {
             if (category.behaviour != CategoryBehaviour.IGNORE) {
@@ -273,17 +298,23 @@ public enum SegmentCategory {
      * @return the skip button text
      */
     @NonNull
-    public String getSkipButtonText(long segmentStartTime, long videoLength) {
+    StringRef getSkipButtonText(long segmentStartTime, long videoLength) {
+        if (SettingsEnum.SB_USE_COMPACT_SKIPBUTTON.getBoolean()) {
+            return (this == SegmentCategory.HIGHLIGHT)
+                    ? skipSponsorTextCompactHighlight
+                    : skipSponsorTextCompact;
+        }
+
         if (videoLength == 0) {
-            return skipButtonTextBeginning.toString(); // video is still loading.  Assume it's the beginning
+            return skipButtonTextBeginning; // video is still loading.  Assume it's the beginning
         }
         final float position = segmentStartTime / (float) videoLength;
         if (position < 0.25f) {
-            return skipButtonTextBeginning.toString();
+            return skipButtonTextBeginning;
         } else if (position < 0.75f) {
-            return skipButtonTextMiddle.toString();
+            return skipButtonTextMiddle;
         }
-        return skipButtonTextEnd.toString();
+        return skipButtonTextEnd;
     }
 
     /**
@@ -292,16 +323,16 @@ public enum SegmentCategory {
      * @return 'skipped segment' toast message
      */
     @NonNull
-    public String getSkippedToastText(long segmentStartTime, long videoLength) {
+    StringRef getSkippedToastText(long segmentStartTime, long videoLength) {
         if (videoLength == 0) {
-            return skippedToastBeginning.toString(); // video is still loading.  Assume it's the beginning
+            return skippedToastBeginning; // video is still loading.  Assume it's the beginning
         }
         final float position = segmentStartTime / (float) videoLength;
         if (position < 0.25f) {
-            return skippedToastBeginning.toString();
+            return skippedToastBeginning;
         } else if (position < 0.75f) {
-            return skippedToastMiddle.toString();
+            return skippedToastMiddle;
         }
-        return skippedToastEnd.toString();
+        return skippedToastEnd;
     }
 }
