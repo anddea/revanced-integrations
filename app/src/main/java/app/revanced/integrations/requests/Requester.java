@@ -20,7 +20,7 @@ public class Requester {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(route.getMethod().name());
         // TODO: change the user agent string
-        connection.setRequestProperty("User-agent", System.getProperty("http.agent") + ";vanced");
+        connection.setRequestProperty("User-agent", System.getProperty("http.agent") + ";revanced");
 
         return connection;
     }
