@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -10,7 +12,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 33
     }
 
     buildTypes {
