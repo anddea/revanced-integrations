@@ -17,8 +17,6 @@ object ResourceHelper {
 
     private const val COLLAPSE_BUTTON = "player_collapse_button"
 
-    private const val LIVE_CHAT_BUTTON = "live_chat_overlay_button"
-
     private const val FAST_FORWARD_BUTTON = "player_control_fast_forward_button"
 
     private const val NEXT_BUTTON = "player_control_next_button"
@@ -53,11 +51,6 @@ object ResourceHelper {
     }
 
     @JvmStatic
-    fun hideLiveChatButton(view: View): Boolean {
-        return SettingsEnum.HIDE_LIVE_CHATS_BUTTON.boolean && (view.id == identifier(LIVE_CHAT_BUTTON, ResourceType.ID))
-    }
-
-    @JvmStatic
     fun hidePlayerButtonBackground(view: View) {
         if (SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND.boolean
             && (view.id == identifier(FAST_FORWARD_BUTTON, ResourceType.ID)
@@ -72,6 +65,6 @@ object ResourceHelper {
 
     @JvmStatic
     fun hidePlayerButton(view: View): Boolean {
-        return hideLiveChatButton(view) || hideCollapseButton(view)
+        return hideCollapseButton(view)
     }
 }
