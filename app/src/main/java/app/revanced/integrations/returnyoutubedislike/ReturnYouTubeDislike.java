@@ -301,7 +301,7 @@ public class ReturnYouTubeDislike {
                 // Or shorts was loaded with regular video present, then shorts was closed,
                 // and then user voted on the now visible original video.
                 // Cannot send a vote, because the loaded videoId is for the wrong video.
-                ReVancedUtils.showToastLong(str("revanced_ryd_failure_ryd_enabled_while_playing_video_then_user_voted"));
+                ReVancedUtils.showToastLong(str("revanced_ryd_failure_user_voted"));
                 return;
             }
 
