@@ -98,9 +98,9 @@ final class LithoBlockRegister implements Iterable<BlockRule> {
 
 public final class LithoFilterPatch {
     private static final Filter[] filters = new Filter[]{
-            new GeneralAdsPatch(),
             new ButtonsPatch(),
-            new CommentsPatch()
+            new CommentsPatch(),
+            new GeneralAdsPatch()
     };
 
     public static boolean filter(StringBuilder pathBuilder, String identifier) {
