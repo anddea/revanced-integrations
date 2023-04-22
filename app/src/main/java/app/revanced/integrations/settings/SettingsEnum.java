@@ -114,6 +114,18 @@ public enum SettingsEnum {
     HIDE_ENDSCREEN_OVERLAY("revanced_hide_endscreen_overlay", false, ReturnType.BOOLEAN, true),
     HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", false, ReturnType.BOOLEAN, true),
 
+    // Quick Actions
+    HIDE_QUICK_ACTIONS("revanced_hide_quick_actions", false, ReturnType.BOOLEAN, true),
+    HIDE_QUICK_ACTIONS_LIKE_BUTTON("revanced_hide_quick_actions_like", false, ReturnType.BOOLEAN),
+    HIDE_QUICK_ACTIONS_DISLIKE_BUTTON("revanced_hide_quick_actions_dislike", false, ReturnType.BOOLEAN),
+    HIDE_QUICK_ACTIONS_COMMENT_BUTTON("revanced_hide_quick_actions_comment", false, ReturnType.BOOLEAN),
+    HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON("revanced_hide_quick_actions_live_chat", false, ReturnType.BOOLEAN),
+    HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON("revanced_hide_quick_actions_playlist", false, ReturnType.BOOLEAN),
+    HIDE_QUICK_ACTIONS_SHARE_BUTTON("revanced_hide_quick_actions_share", false, ReturnType.BOOLEAN),
+    HIDE_QUICK_ACTIONS_MORE_BUTTON("revanced_hide_quick_actions_more", false, ReturnType.BOOLEAN),
+    HIDE_QUICK_ACTIONS_RELATED_VIDEO("revanced_hide_quick_actions_related_videos", false, ReturnType.BOOLEAN),
+
+
     // Experimental Flags
     DISABLE_LANDSCAPE_MODE("revanced_disable_landscape_mode", false, ReturnType.BOOLEAN, true),
 

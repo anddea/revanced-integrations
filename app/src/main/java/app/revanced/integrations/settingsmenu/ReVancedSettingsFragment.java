@@ -4,7 +4,6 @@ import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelay
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
-import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
@@ -54,6 +53,7 @@ import app.revanced.integrations.utils.SharedPrefHelper;
 import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.whitelist.WhitelistType;
 
+/** @noinspection ALL*/
 public class ReVancedSettingsFragment extends PreferenceFragment {
     private List<PreferenceScreen> screens;
 
@@ -170,6 +170,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             LayoutOverrideLinks();
             TabletLayoutLinks();
             FullScreenPanelPreferenceLinks();
+            QuickActionsPreferenceLinks();
             NavigationPreferenceLinks();
 
             setVideoSpeed();
@@ -257,7 +258,15 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getPath(),
                 SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getPath(),
                 SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
-                SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_DISLIKE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_COMMENT_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO.getPath(),
                 SettingsEnum.HIDE_FULLSCREEN_PANELS.getPath(),
                 SettingsEnum.SHOW_FULLSCREEN_TITLE.getPath(),
                 SettingsEnum.HIDE_MIX_PLAYLISTS.getPath()
@@ -285,7 +294,15 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void FullScreenPanelPreferenceLinks() {
         final String[] unavailablePreference = {
                 SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
-                SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getPath()
+                SettingsEnum.HIDE_QUICK_ACTIONS.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_DISLIKE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_COMMENT_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO.getPath()
         };
 
         try {
@@ -297,6 +314,33 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             }
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting FullScreenPanelPreferenceLinks" + th);
+        }
+    }
+
+    /**
+     * Enable/Disable Preference related to Hide Quick Actions
+     */
+    public void QuickActionsPreferenceLinks() {
+        final String[] unavailablePreference = {
+                SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_DISLIKE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_COMMENT_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON.getPath(),
+                SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO.getPath()
+        };
+
+        try {
+            boolean isEnabled = SettingsEnum.HIDE_QUICK_ACTIONS.getBoolean();
+
+            for (String s : unavailablePreference) {
+                SwitchPreference switchPreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(s));
+                switchPreference.setEnabled(!isEnabled);
+            }
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting QuickActionsPreferenceLinks" + th);
         }
     }
 

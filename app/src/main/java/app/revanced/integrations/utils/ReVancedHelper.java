@@ -1,12 +1,10 @@
 package app.revanced.integrations.utils;
 
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
 import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.preference.SwitchPreference;
 
 import java.util.Objects;
 
@@ -47,7 +45,7 @@ public class ReVancedHelper {
                 !SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
         final SettingsEnum[] hideFullscreenSettings = {
                 SettingsEnum.ENABLE_TABLET_LAYOUT,
-                SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER,
+                SettingsEnum.HIDE_QUICK_ACTIONS,
                 SettingsEnum.HIDE_FULLSCREEN_PANELS
         };
         for (SettingsEnum s : hideFullscreenSettings) {
