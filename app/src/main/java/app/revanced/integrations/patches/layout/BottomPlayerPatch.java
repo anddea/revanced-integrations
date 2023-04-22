@@ -1,13 +1,12 @@
 package app.revanced.integrations.patches.layout;
 
-import static app.revanced.integrations.patches.ads.ByteBufferFilterPatch.indexOf;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.shared.PlayerType;
 
 public class BottomPlayerPatch {
     private static final List<String> generalWhiteList = List.of(
@@ -30,7 +29,7 @@ public class BottomPlayerPatch {
 
     public static boolean hideActionButtons(Object object, ByteBuffer buffer) {
         String value = object.toString();
-        if (generalWhiteList.stream().anyMatch(value::contains) || !value.contains("ContainerType|video_action_button")) return false;
+        if (generalWhiteList.stream().anyMatch(value::contains) || PlayerType.getCurrent() == PlayerType.WATCH_WHILE_FULLSCREEN || (!value.contains("ContainerType|video_action_button") && !value.contains("|button.eml|"))) return false;
 
         List<String> actionButtonsBlockList = new ArrayList<>();
 
