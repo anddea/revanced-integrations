@@ -40,6 +40,22 @@ public class NavigationPatch {
         if (enabled) view.setVisibility(View.GONE);
     }
 
+    public static void hideNavigationButton(View view) {
+        if (lastPivotTab == null) return;
+        var lastPivotTabName = lastPivotTab.name();
+
+        if (lastPivotTabName.equals(PivotEnum.HOME.getName()))
+            setNavigationButtonVisibility(PivotEnum.HOME, view);
+        else if (lastPivotTabName.equals(PivotEnum.SHORTS.getName()))
+            setNavigationButtonVisibility(PivotEnum.SHORTS, view);
+        else if (lastPivotTabName.equals(PivotEnum.SUBSCRIPTIONS.getName()))
+            setNavigationButtonVisibility(PivotEnum.SUBSCRIPTIONS, view);
+    }
+
+    public static void setNavigationButtonVisibility(PivotEnum pivotEnum, View view) {
+        if (pivotEnum.getBoolean()) view.setVisibility(View.GONE);
+    }
+
     public static void hideShortsButton(View view) {
         if (lastPivotTab != null && lastPivotTab.name().equals("TAB_SHORTS")) {
             boolean enabled = SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean();
@@ -60,5 +76,24 @@ public class NavigationPatch {
 
     public static boolean enableTabletNavBar(boolean original) {
         return SettingsEnum.ENABLE_TABLET_NAVIGATION_BAR.getBoolean() || original;
+    }
+
+    private enum PivotEnum {
+        HOME("PIVOT_HOME", SettingsEnum.HIDE_HOME_BUTTON.getBoolean()),
+        SHORTS("TAB_SHORTS", SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean()),
+        SUBSCRIPTIONS("PIVOT_SUBSCRIPTIONS", SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean());
+
+        private final String name;
+        private final boolean enabled;
+        PivotEnum(String name, boolean enabled) {
+            this.name = name;
+            this.enabled = enabled;
+        }
+        private String getName() {
+            return name;
+        }
+        private boolean getBoolean() {
+            return enabled;
+        }
     }
 }
