@@ -49,6 +49,7 @@ public final class GeneralAdsPatch extends Filter {
                 "full_width_square_image_layout",
                 "landscape_image_wide_button_layout",
                 "video_display_button_group_layout",
+                "video_display_carousel_buttoned_layout",
                 "_ad_with",
                 "_buttoned_layout"
         );
