@@ -29,7 +29,7 @@ public class FullscreenPatch {
 
     public static boolean hideQuickActionButtons(Object object, ByteBuffer buffer) {
         String value = object.toString();
-        if (generalWhiteList.stream().anyMatch(value::contains) || !value.contains("quick_actions") || PlayerType.getCurrent() != PlayerType.WATCH_WHILE_FULLSCREEN || SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean()) return false;
+        if (generalWhiteList.stream().anyMatch(value::contains) || !value.contains("quick_actions") || PlayerType.getCurrent() != PlayerType.WATCH_WHILE_FULLSCREEN) return false;
         if (SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean() || SettingsEnum.HIDE_QUICK_ACTIONS.getBoolean()) return true;
 
         List<String> actionButtonsBytebufferBlockList = new ArrayList<>();

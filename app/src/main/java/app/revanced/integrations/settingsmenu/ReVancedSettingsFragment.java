@@ -333,7 +333,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         };
 
         try {
-            boolean isEnabled = SettingsEnum.HIDE_QUICK_ACTIONS.getBoolean();
+            boolean isEnabled = SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean() || SettingsEnum.HIDE_QUICK_ACTIONS.getBoolean();
 
             for (String s : unavailablePreference) {
                 SwitchPreference switchPreference = Objects.requireNonNull((SwitchPreference) findPreferenceOnScreen(s));
