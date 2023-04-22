@@ -109,7 +109,6 @@ public enum SettingsEnum {
     // Fullscreen
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", false, ReturnType.BOOLEAN, true),
     SHOW_FULLSCREEN_TITLE("revanced_show_fullscreen_title", true, ReturnType.BOOLEAN, true),
-    HIDE_FULLSCREEN_BUTTON_CONTAINER("revanced_hide_fullscreen_button_container", false, ReturnType.BOOLEAN, true),
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", false, ReturnType.BOOLEAN, true),
     HIDE_ENDSCREEN_OVERLAY("revanced_hide_endscreen_overlay", false, ReturnType.BOOLEAN, true),
     HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", false, ReturnType.BOOLEAN, true),

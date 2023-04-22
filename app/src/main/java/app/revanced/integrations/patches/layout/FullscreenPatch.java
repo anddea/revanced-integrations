@@ -62,12 +62,6 @@ public class FullscreenPatch {
                 || actionButtonsObjectBlockList.stream().anyMatch(value::contains);
     }
 
-    public static void hideFullscreenButtonContainer(View view) {
-        if (SettingsEnum.HIDE_FULLSCREEN_BUTTON_CONTAINER.getBoolean() ||
-                SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean())
-            AdRemoverAPI.HideViewWithLayout1dp(view);
-    }
-
     public static int hideFullscreenPanels() {
         return SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean() ? 8 : 0;
     }
