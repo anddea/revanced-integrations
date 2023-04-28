@@ -5,6 +5,8 @@ import static app.revanced.integrations.utils.StringRef.sf;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.utils.StringRef;
 
@@ -112,7 +114,25 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
 
     @Override
     public int compareTo(SponsorSegment o) {
-        return (int) (this.start - o.start);
+        // If both segments start at the same time, then sort with the longer segment first.
+        // This keeps the seekbar drawing correct since it draws the segments using the sorted order.
+        return start == o.start ? Long.compare(o.length(), length()) : Long.compare(start, o.start);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SponsorSegment)) return false;
+        SponsorSegment other = (SponsorSegment) o;
+        return Objects.equals(UUID, other.UUID)
+                && category == other.category
+                && start == other.start
+                && end == other.end;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(UUID);
     }
 
     @NonNull

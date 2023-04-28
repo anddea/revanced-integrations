@@ -67,7 +67,11 @@ public class SkipSponsorButton extends FrameLayout {
         ctaBottomMargin = resources.getDimensionPixelSize(identifier("skip_button_cta_bottom_margin", ResourceType.DIMEN, context));  // dimen:skip_button_cta_bottom_margin
         hiddenBottomMargin = (int) Math.round((ctaBottomMargin) * 0.5);  // margin when the button container is hidden
 
-        skipSponsorBtnContainer.setOnClickListener(v -> SegmentPlaybackController.onSkipSegmentClicked(segment));
+        skipSponsorBtnContainer.setOnClickListener(v -> {
+            // The view controller handles hiding this button, but hide it here as well just in case something goofs.
+            setVisibility(View.GONE);
+            SegmentPlaybackController.onSkipSegmentClicked(segment);
+        });
     }
 
     @Override  // android.view.ViewGroup
@@ -89,15 +93,15 @@ public class SkipSponsorButton extends FrameLayout {
     }
 
     /**
-     * @return true, if this button state was changed
+     *
      */
-    public boolean updateSkipButtonText(@NonNull SponsorSegment segment) {
+    public void updateSkipButtonText(@NonNull SponsorSegment segment) {
         this.segment = segment;
         CharSequence newText = segment.getSkipButtonText();
+        //noinspection StringEqualsCharSequence
         if (newText.equals(skipSponsorTextView.getText())) {
-            return false;
+            return;
         }
         skipSponsorTextView.setText(newText);
-        return true;
     }
 }

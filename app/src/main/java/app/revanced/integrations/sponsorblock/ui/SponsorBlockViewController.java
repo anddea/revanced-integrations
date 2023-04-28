@@ -55,6 +55,9 @@ public class SponsorBlockViewController {
      */
     public static void initialize(Object obj) {
         try {
+            // hide any old components, just in case they somehow are still hanging around
+            hideAll();
+
             RelativeLayout layout = new RelativeLayout(ReVancedUtils.getContext());
             layout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
             LayoutInflater.from(ReVancedUtils.getContext()).inflate(identifier("inline_sponsor_overlay", ResourceType.LAYOUT), layout);
@@ -102,7 +105,7 @@ public class SponsorBlockViewController {
         skipHighlight = Objects.requireNonNull(segment);
         NewSegmentLayout newSegmentLayout = newSegmentLayoutRef.get();
         // don't show highlight button if create new segment is visible
-        final boolean buttonVisibility = newSegmentLayout != null && newSegmentLayout.getVisibility() != View.VISIBLE;
+        final boolean buttonVisibility = newSegmentLayout == null || newSegmentLayout.getVisibility() != View.VISIBLE;
         updateSkipButton(skipHighlightButtonRef.get(), segment, buttonVisibility);
     }
 
@@ -146,12 +149,7 @@ public class SponsorBlockViewController {
 
     public static void hideNewSegmentLayout() {
         newSegmentLayoutVisible = false;
-        NewSegmentLayout newSegmentLayout = newSegmentLayoutRef.get();
-        if (newSegmentLayout == null) {
-            LogHelper.printException(SponsorBlockViewController.class, "toggleNewSegmentLayoutVisibility failure");
-            return;
-        }
-        setViewVisibility(newSegmentLayout, false);
+        setViewVisibility(newSegmentLayoutRef.get(), false);
     }
 
     private static void setViewVisibility(@Nullable View view, boolean visible) {

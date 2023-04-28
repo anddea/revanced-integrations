@@ -2,6 +2,8 @@ package app.revanced.integrations.settings;
 
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
 
+import androidx.annotation.NonNull;
+
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
@@ -253,7 +255,8 @@ public enum SettingsEnum {
     SB_VOTING_ENABLED("sb-voting-enabled", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
 
     SB_CREATE_NEW_SEGMENT_ENABLED("sb-new-segment-enabled", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
-    SB_USE_COMPACT_SKIPBUTTON("sb-use-compact-skip-button", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_USE_COMPACT_SKIP_BUTTON("sb-use-compact-skip-button", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
+    SB_AUTO_HIDE_SKIP_BUTTON("sb-auto-hide-skip-segment-button", true, SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_SHOW_TOAST_ON_SKIP("show-toast", true, SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_TRACK_SKIP_COUNT("count-skips", true, SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_UUID("uuid", "", SPONSOR_BLOCK, ReturnType.STRING),
@@ -369,17 +372,13 @@ public enum SettingsEnum {
         }
     }
 
-    public int getInt() {
-        return (Integer) value;
-    }
-
-    public String getString() {
-        return (String) value;
-    }
-
     public boolean getBoolean() {
         if (value == null) return (boolean) defaultValue;
         else return (boolean) value;
+    }
+
+    public int getInt() {
+        return (Integer) value;
     }
 
     public long getLong() {
@@ -390,7 +389,15 @@ public enum SettingsEnum {
         return (Float) value;
     }
 
-    public boolean isNull() { return value == null; }
+    @NonNull
+    public String getString() {
+        return (String) value;
+    }
+
+    @NonNull
+    public Object getObjectValue() {
+        return value;
+    }
 
     public Object getDefaultValue() {
         return defaultValue;

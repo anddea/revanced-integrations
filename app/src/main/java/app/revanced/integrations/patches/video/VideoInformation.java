@@ -42,7 +42,7 @@ public final class VideoInformation {
         try {
             seekMethod = thisRef.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
             seekMethod.setAccessible(true);
-        } catch (NoSuchMethodException ex) {
+        } catch (Exception ex) {
             LogHelper.printException(VideoInformation.class, "Failed to initialize", ex);
         }
     }
@@ -150,7 +150,7 @@ public final class VideoInformation {
 
     /**
      * Length of the current video playing.
-     * Includes Shorts playback.
+     * Includes Shorts and YouTube Stories.
      *
      * @return The length of the video in milliseconds, or zero  if video is not yet loaded.
      */

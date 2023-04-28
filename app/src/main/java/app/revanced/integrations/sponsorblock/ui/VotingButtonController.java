@@ -1,8 +1,7 @@
 package app.revanced.integrations.sponsorblock.ui;
 
-import static app.revanced.integrations.sponsorblock.SegmentPlaybackController.currentVideoHasSegments;
+import static app.revanced.integrations.sponsorblock.SegmentPlaybackController.videoHasSegments;
 import static app.revanced.integrations.utils.ResourceUtils.anim;
-import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
 
@@ -105,7 +104,7 @@ public class VotingButtonController {
 
     private static boolean shouldBeShown() {
         return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_VOTING_ENABLED.getBoolean()
-                && !VideoInformation.isAtEndOfVideo() && currentVideoHasSegments();
+                && !VideoInformation.isAtEndOfVideo() && videoHasSegments();
     }
 
     public static void hide() {
