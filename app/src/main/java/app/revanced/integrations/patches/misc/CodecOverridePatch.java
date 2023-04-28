@@ -20,4 +20,19 @@ public class CodecOverridePatch {
         return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() || original;
     }
 
+    public static int overrideMinHeight(int original) {
+        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 64 : original;
+    }
+
+    public static int overrideMaxHeight(int original) {
+        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 3840 : original;
+    }
+
+    public static int overrideMinWidth(int original) {
+        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 64 : original;
+    }
+
+    public static int overrideMaxWidth(int original) {
+        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 2160 : original;
+    }
 }
