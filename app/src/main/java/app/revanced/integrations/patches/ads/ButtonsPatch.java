@@ -12,6 +12,7 @@ final class ButtonsPatch extends Filter {
                 new BlockRule(SettingsEnum.HIDE_LIKE_BUTTON, "|CellType|ContainerType|like_button", "|CellType|ContainerType|segmented_like_dislike_button"),
                 new BlockRule(SettingsEnum.HIDE_DISLIKE_BUTTON, "|CellType|ContainerType|dislike_button", "|CellType|ContainerType|segmented_like_dislike_button"),
                 new BlockRule(SettingsEnum.HIDE_DOWNLOAD_BUTTON, "download_button"),
+                new BlockRule(SettingsEnum.HIDE_CREATE_CLIP_BUTTON, "|clip_button.eml|"),
                 new BlockRule(SettingsEnum.HIDE_PLAYLIST_BUTTON, "save_to_playlist_button"),
                 new BlockRule(SettingsEnum.HIDE_ACTION_BUTTON, "ContainerType|video_action_button", "|CellType|CollectionType|CellType|ContainerType|button.eml|")
         );
