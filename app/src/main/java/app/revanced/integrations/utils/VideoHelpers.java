@@ -2,7 +2,6 @@ package app.revanced.integrations.utils;
 
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.userChangedSpeed;
-import static app.revanced.integrations.settings.MusicSettings.getDownloaderPackageName;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.StringRef.str;
@@ -21,6 +20,7 @@ import android.view.WindowManager;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Objects;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -82,31 +82,7 @@ public class VideoHelpers {
             }
             var content = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
 
-            startDownloaderActivity(context, false, downloaderPackageName, content);
-        } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Failed to launch the downloader intent", ex);
-        }
-    }
-
-    public static void downloadMusic(Context context) {
-        try {
-            var downloaderPackageName = getDownloaderPackageName();
-
-            boolean packageEnabled = false;
-            try {
-                assert context != null;
-                packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
-            } catch (PackageManager.NameNotFoundException error) {
-                showToastShort(str("revanced_downloader_not_installed", downloaderPackageName));
-            }
-
-            if (!packageEnabled) {
-                showToastShort(str("revanced_downloader_not_installed", downloaderPackageName));
-                return;
-            }
-            var content = String.format("https://music.youtube.com/watch?v=%s", VideoInformation.getVideoId());
-
-            startDownloaderActivity(context, true, downloaderPackageName, content);
+            startDownloaderActivity(context, downloaderPackageName, content);
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Failed to launch the downloader intent", ex);
         }
@@ -129,14 +105,12 @@ public class VideoHelpers {
         return downloaderPackageName;
     }
 
-    public static void startDownloaderActivity(Context context, boolean isMusic, String downloaderPackageName, String content) {
+    public static void startDownloaderActivity(Context context, String downloaderPackageName, String content) {
         try {
             var intent = new Intent("android.intent.action.SEND");
             intent.setType("text/plain");
             intent.setPackage(downloaderPackageName);
             intent.putExtra("android.intent.extra.TEXT", content);
-            if (isMusic)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } catch (Exception e) {
             LogHelper.printException(VideoHelpers.class, "Unable to start DownloaderActivity", e);
@@ -165,7 +139,7 @@ public class VideoHelpers {
         Point size = new Point();
         display.getSize(size);
 
-        WindowManager.LayoutParams params = speedDialog.getWindow().getAttributes();
+        WindowManager.LayoutParams params = Objects.requireNonNull(speedDialog.getWindow()).getAttributes();
         params.width = (int)(size.x * 0.5);
         speedDialog.getWindow().setAttributes(params);
         speedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

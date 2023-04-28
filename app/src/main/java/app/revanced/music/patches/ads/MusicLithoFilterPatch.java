@@ -1,15 +1,14 @@
-package app.revanced.integrations.patches.ads;
-
-import static app.revanced.integrations.settings.MusicSettings.getPrefBoolean;
+package app.revanced.music.patches.ads;
 
 import androidx.annotation.NonNull;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.music.settings.MusicSettingsEnum;
+import app.revanced.music.utils.LogHelper;
+import app.revanced.music.utils.ReVancedUtils;
 
 class MusicBlockRule {
     final static class BlockResult {
@@ -24,22 +23,22 @@ class MusicBlockRule {
         }
     }
 
-    protected final boolean value;
+    protected final MusicSettingsEnum setting;
     private final String[] blocks;
 
     /**
      * Initialize a new rule for components.
      *
-     * @param key The setting key which controls the blocking of this component.
+     * @param setting The setting which controls the blocking of this component.
      * @param blocks  The rules to block the component on.
      */
-    public MusicBlockRule(final String key, final String... blocks) {
-        this.value = getPrefBoolean(key, true);
+    public MusicBlockRule(final MusicSettingsEnum setting, final String... blocks) {
+        this.setting = setting;
         this.blocks = blocks;
     }
 
     public boolean isEnabled() {
-        return value;
+        return setting.getBoolean();
     }
 
     public BlockResult check(final String string) {
@@ -84,12 +83,14 @@ final class LithoBlockRegisters implements Iterable<MusicBlockRule> {
 public final class MusicLithoFilterPatch {
 
     private static final MusicFilter[] filters = new MusicFilter[]{
-            new MusicAdsPatch()
+            new GeneralMusicAdsPatch()
     };
 
     public static boolean filter(StringBuilder pathBuilder, String identifier) {
         var path = pathBuilder.toString();
         if (path.isEmpty()) return false;
+
+        LogHelper.printDebug(MusicLithoFilterPatch.class, String.format("Searching (ID: %s): %s", identifier, path));
 
         for (var filter : filters) {
             if (filter.filter(path, identifier)) return true;
