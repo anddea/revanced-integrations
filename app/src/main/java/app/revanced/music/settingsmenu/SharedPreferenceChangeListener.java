@@ -69,7 +69,7 @@ public class SharedPreferenceChangeListener {
         } catch (Exception ex) {
             LogHelper.printException(SharedPreferenceChangeListener.class, "editTextDialogBuilder failure", ex);
         }
-    };
+    }
 
     private static void reboot(Activity activity) {
         Intent restartIntent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
