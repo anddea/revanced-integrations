@@ -206,9 +206,6 @@ public enum SettingsEnum {
     ENABLE_CUSTOM_VIDEO_SPEED("revanced_enable_custom_video_speed", false, ReturnType.BOOLEAN, true),
     DISABLE_DEFAULT_VIDEO_SPEED_LIVE("revanced_disable_default_video_speed_live", true, ReturnType.BOOLEAN),
 
-    //Experimental Flags
-    VERTICAL_VIDEO_RESTRICTIONS("revanced_vertical_video_restrictions", false, ReturnType.BOOLEAN, true),
-
 
     // Overlay Button
     OVERLAY_BUTTON_SPEED("revanced_overlay_button_speed", true, ReturnType.BOOLEAN),
