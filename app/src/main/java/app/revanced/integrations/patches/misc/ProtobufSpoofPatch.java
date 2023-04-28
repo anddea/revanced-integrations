@@ -8,6 +8,9 @@ import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
 import static app.revanced.integrations.utils.SharedPrefHelper.saveBoolean;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
@@ -24,6 +27,14 @@ public class ProtobufSpoofPatch {
             "SAFg"  // Autoplay in scrim
     };
 
+    @Nullable
+    private static String currentVideoId;
+
+    /**
+     * If any of the subtitles settings encountered from the current video have been non default values.
+     */
+    private static boolean nonDefaultSubtitlesEncountered;
+
     /**
      * Protobuf parameters used in autoplay in scrim
      * Prepend this parameter to mute video playback (for autoplay in feed)
@@ -32,6 +43,8 @@ public class ProtobufSpoofPatch {
 
     /**
      * Protobuf parameters used in shorts and stories.
+     * Known issue: end screen card is hidden.
+     * Known issue: offline downloads not working for YouTube Premium users.
      */
     private static final String PROTOBUF_PARAMETER_SHORTS = "8AEB";
 
@@ -89,18 +102,36 @@ public class ProtobufSpoofPatch {
         // Videos with custom captions that specify screen positions appear to always have correct screen positions (even with spoofing).
         // But for auto generated and most other captions, the spoof incorrectly gives various default Shorts caption settings.
         // Check for these known default shorts captions parameters, and replace with the known correct values.
-        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !isPlayingShorts) { // video is not a Short or Story
+        //
+        // If a regular video uses a custom subtitle setting that match a default short setting,
+        // then this will incorrectly replace the setting.
+        // But, if the video uses multiple subtitles in different screen locations, then detect the non-default values
+        // and do not replace any window settings for the video (regardless if they match a shorts default).
+        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !nonDefaultSubtitlesEncountered && !isPlayingShorts) { // video is not a Short or Story
             for (SubtitleWindowReplacementSettings setting : SubtitleWindowReplacementSettings.values()) {
                 if (setting.match(ap, ah, av, vs, sd))
                     return setting.replacementSetting();
             }
-            // Parameters are either subtitles with custom positions, or a set of unidentified (and incorrect) default parameters.
-            // The subtitles could be forced to the bottom no matter what, but that would override custom screen positions.
-            // For now, just return the original parameters.
+            // Settings appear to be custom subtitles.
+            nonDefaultSubtitlesEncountered = true;
         }
 
-        // No matches, pass back the original values
         return new int[]{ap, ah, av};
+    }
+
+    /**
+     * Injection point.
+     */
+    public static void setCurrentVideoId(@NonNull String videoId) {
+        try {
+            if (videoId.equals(currentVideoId)) {
+                return;
+            }
+            currentVideoId = videoId;
+            nonDefaultSubtitlesEncountered = false;
+        } catch (Exception ex) {
+            LogHelper.printException(ProtobufSpoofPatch.class, "setCurrentVideoId failure", ex);
+        }
     }
 
 
@@ -119,8 +150,8 @@ public class ProtobufSpoofPatch {
         final int ap, ah, av;
         final boolean vs, sd;
 
-        // replacement values
-        final int replacementAp, replacementAh, replacementAv;
+        // replacement int values
+        final int[] replacement;
 
         SubtitleWindowReplacementSettings(int ap, int ah, int av, boolean vs, boolean sd,
                                           int replacementAp, int replacementAh, int replacementAv) {
@@ -129,9 +160,7 @@ public class ProtobufSpoofPatch {
             this.av = av;
             this.vs = vs;
             this.sd = sd;
-            this.replacementAp = replacementAp;
-            this.replacementAh = replacementAh;
-            this.replacementAv = replacementAv;
+            this.replacement = new int[]{replacementAp, replacementAh, replacementAv};
         }
 
         boolean match(int ap, int ah, int av, boolean vs, boolean sd) {
@@ -139,7 +168,7 @@ public class ProtobufSpoofPatch {
         }
 
         int[] replacementSetting() {
-            return new int[]{replacementAp, replacementAh, replacementAv};
+            return replacement;
         }
     }
 
