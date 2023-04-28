@@ -14,6 +14,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -41,6 +42,7 @@ import app.revanced.integrations.utils.ThemeHelper;
 
 /**
  * Because Litho creates spans using multiple threads, this entire class supports multithreading as well.
+ * @noinspection ALL, deprecation, deprecation
  */
 public class ReturnYouTubeDislike {
     /**
@@ -199,8 +201,8 @@ public class ReturnYouTubeDislike {
      * @return NULL if the span does not need changing or if RYD is not available.
      */
     @Nullable
-    public static SpannableString getDislikeSpanForContext(@NonNull Object conversionContext, @Nullable CharSequence original) {
-        if (original == null || PlayerType.getCurrent().isNoneOrHidden()) {
+    public static SpannableString getDislikeSpanForContext(@NonNull Object conversionContext, @NonNull CharSequence original) {
+        if (PlayerType.getCurrent().isNoneOrHidden()) {
             return null;
         }
         String conversionContextString = conversionContext.toString();
@@ -228,7 +230,7 @@ public class ReturnYouTubeDislike {
     /**
      * Called when a Shorts dislike Spannable is created.
      */
-    public static Spanned onShortsComponentCreated(@NonNull Spanned original) {
+    public static SpannableString getDislikeSpanForShort(@NonNull Spanned original) {
         lastVideoLoadedWasShort = true; // it's now certain the video and data are a short
         return waitForFetchAndUpdateReplacementSpan(original, false);
     }
@@ -245,25 +247,22 @@ public class ReturnYouTubeDislike {
     private static SpannableString waitForFetchAndUpdateReplacementSpan(@NonNull Spanned oldSpannable, boolean isSegmentedButton) {
         try {
             synchronized (videoIdLockObject) {
-                String oldSpannableString = oldSpannable.toString();
-                if (replacementLikeDislikeSpan != null
-                        && replacementLikeDislikeSpan.toString().equals(oldSpannableString)) {
-                    return null;
-                }
-                if (originalDislikeSpan != null
-                        && originalDislikeSpan.toString().equals(oldSpannableString)) {
-                    return replacementLikeDislikeSpan;
-                }
-                if (isSegmentedButton) {
-                    if (isPreviouslyCreatedSegmentedSpan(oldSpannable)) {
-                        // need to recreate using original, as oldSpannable has prior outdated dislike values
-                        oldSpannable = originalDislikeSpan;
-                        if (oldSpannable == null) {
-                            return null;
-                        }
-                    } else {
-                        originalDislikeSpan = oldSpannable; // most up to date original
+                if (replacementLikeDislikeSpan != null) {
+                    if (spansHaveEqualTextAndColor(replacementLikeDislikeSpan, oldSpannable)) {
+                        return null;
                     }
+                    if (spansHaveEqualTextAndColor(Objects.requireNonNull(originalDislikeSpan), oldSpannable)) {
+                        return replacementLikeDislikeSpan;
+                    }
+                }
+                if (isSegmentedButton && isPreviouslyCreatedSegmentedSpan(oldSpannable)) {
+                    // need to recreate using original, as oldSpannable has prior outdated dislike values
+                    oldSpannable = originalDislikeSpan;
+                    if (oldSpannable == null) {
+                        return null;
+                    }
+                } else {
+                    originalDislikeSpan = oldSpannable; // most up to date original
                 }
             }
 
@@ -450,6 +449,27 @@ public class ReturnYouTubeDislike {
             }
         }
         return false;
+    }
+
+    private static boolean spansHaveEqualTextAndColor(@NonNull Spanned one, @NonNull Spanned two) {
+        // Cannot use equals on the span, because many of the inner styling spans do not implement equals.
+        // Instead, compare the underlying text and the text color to handle when dark mode is changed.
+        // Cannot compare the status of device dark mode, as Litho components are updated just before dark mode status changes.
+        if (!one.toString().equals(two.toString())) {
+            return false;
+        }
+        ForegroundColorSpan[] oneColors = one.getSpans(0, one.length(), ForegroundColorSpan.class);
+        ForegroundColorSpan[] twoColors = two.getSpans(0, two.length(), ForegroundColorSpan.class);
+        final int oneLength = oneColors.length;
+        if (oneLength != twoColors.length) {
+            return false;
+        }
+        for (int i = 0; i < oneLength; i++) {
+            if (oneColors[i].getForegroundColor() != twoColors[i].getForegroundColor()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static SpannableString newSpannableWithDislikes(@NonNull Spanned sourceStyling, @NonNull RYDVoteData voteData) {

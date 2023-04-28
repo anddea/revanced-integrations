@@ -29,46 +29,34 @@ public class ReturnYouTubeDislikePatch {
 
     /**
      * Injection point.
-     * <p>
-     * Required to update the UI after the user dislikes.
      *
-     * @param textRef Reference to the dislike char sequence. The CharSequence inside can be null.
-     */
-    public static void onComponentCreated(@NonNull Object conversionContext, @NonNull AtomicReference<CharSequence> textRef) {
-        try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
-                return;
-            }
-
-            SpannableString replacement = ReturnYouTubeDislike.getDislikeSpanForContext(conversionContext, textRef.get());
-            if (replacement != null) {
-                textRef.set(replacement);
-            }
-        } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onComponentCreated AtomicReference failure", ex);
-        }
-    }
-
-    /**
-     * Injection point.
-     * <p>
-     * Called when a litho text component is initially created.
-     * <p>
+     * Called when a litho text component is initially created,
+     * and also when a Span is later reused again (such as scrolling off/on screen).
+     *
      * This method is sometimes called on the main thread, but it usually is called _off_ the main thread.
      * This method can be called multiple times for the same UI element (including after dislikes was added).
+     *
+     * @param textRef Cache reference to the like/dislike char sequence,
+     *                which may or may not be the same as the original span parameter.
+     *                If dislikes are added, the atomic reference must be set to the replacement span.
+     * @param original Original span that was created or reused by Litho.
+     * @return The original span (if nothing should change), or a replacement span that contains dislikes.
      */
-    public static CharSequence onComponentCreated(@NonNull Object conversionContext, @NonNull CharSequence original) {
+    @NonNull
+    public static CharSequence onLithoTextLoaded(@NonNull Object conversionContext,
+                                                 @NonNull AtomicReference<CharSequence> textRef,
+                                                 @NonNull CharSequence original) {
         try {
             if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
                 return original;
             }
-
-            SpannableString dislikes = ReturnYouTubeDislike.getDislikeSpanForContext(conversionContext, original);
-            if (dislikes != null) {
-                return dislikes;
+            SpannableString replacement = ReturnYouTubeDislike.getDislikeSpanForContext(conversionContext, original);
+            if (replacement != null) {
+                textRef.set(replacement);
+                return replacement;
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onComponentCreated CharSequence failure", ex);
+            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onLithoTextLoaded failure", ex);
         }
         return original;
     }
@@ -83,7 +71,7 @@ public class ReturnYouTubeDislikePatch {
             if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
                 return original;
             }
-            Spanned replacement = ReturnYouTubeDislike.onShortsComponentCreated(original);
+            SpannableString replacement = ReturnYouTubeDislike.getDislikeSpanForShort(original);
             if (replacement != null) {
                 return replacement;
             }
