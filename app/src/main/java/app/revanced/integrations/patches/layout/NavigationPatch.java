@@ -3,8 +3,8 @@ package app.revanced.integrations.patches.layout;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 
-import com.google.android.apps.youtube.app.ui.pivotbar.PivotBar;
 import com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity;
 
 import java.util.Objects;
@@ -14,7 +14,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 public class NavigationPatch {
     @SuppressLint("StaticFieldLeak")
     public static Context shortsContext;
-    public static PivotBar pivotbar;
+    public static Object pivotBar;
     public static Enum lastPivotTab;
 
     public static boolean changeHomePage() {
@@ -66,7 +66,9 @@ public class NavigationPatch {
     @SuppressLint("WrongConstant")
     public static void hideShortsPlayerNavBar() {
         if (SettingsEnum.HIDE_SHORTS_NAVIGATION_BAR.getBoolean() && shortsContext != null) {
-            Objects.requireNonNull(pivotbar).setVisibility(8);
+            if (pivotBar instanceof HorizontalScrollView) {
+                Objects.requireNonNull((HorizontalScrollView) pivotBar).setVisibility(8);
+            }
         }
     }
 
