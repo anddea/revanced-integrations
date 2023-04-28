@@ -229,7 +229,6 @@ public enum SettingsEnum {
     // Misc
     ENABLE_EXTERNAL_BROWSER("revanced_enable_external_browser", true, ReturnType.BOOLEAN, true),
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", true, ReturnType.BOOLEAN),
-    ENABLE_MINIMIZED_PLAYBACK("revanced_enable_minimized_playback", true, ReturnType.BOOLEAN),
     BYPASS_AMBIENT_MODE_RESTRICTIONS("revanced_bypass_ambient_mode_restrictions", false, ReturnType.BOOLEAN),
     DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", 2, ReturnType.INTEGER),
 
