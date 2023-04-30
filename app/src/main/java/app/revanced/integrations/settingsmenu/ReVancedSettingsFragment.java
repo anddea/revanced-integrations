@@ -129,6 +129,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 } else if (setting.equals(SettingsEnum.DOUBLE_BACK_TIMEOUT)) {
                     setDoubleBackTimeout();
                     rebootDialog();
+                } else if (setting.equals(SettingsEnum.SPOOF_APP_VERSION_TARGET)) {
+                    setSpoofAppVersionTarget();
                 }
             }
 
@@ -177,6 +179,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             setVideoQuality(true);
             setVideoQuality(false);
             setDoubleBackTimeout();
+            setSpoofAppVersionTarget();
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error during onCreate()", th);
         }
@@ -407,6 +410,25 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
+        }
+    }
+
+    /**
+     * Set interaction for spoof app version ListPreference
+     */
+    private void setSpoofAppVersionTarget() {
+        try {
+            SettingsEnum settingsEnum = SettingsEnum.SPOOF_APP_VERSION_TARGET;
+
+            var value = SharedPrefHelper.getString(REVANCED, settingsEnum.getPath(), settingsEnum.getDefaultValue().toString());
+            settingsEnum.saveValue(value);
+
+            ListPreference listPreference = (ListPreference) findPreferenceOnScreen(settingsEnum.getPath());
+            CharSequence[] entries = listPreference.getEntries();
+            int entryIndex = listPreference.findIndexOfValue(value);
+            listPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setSpoofAppVersionTarget" + th);
         }
     }
 
