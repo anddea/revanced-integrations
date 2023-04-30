@@ -14,11 +14,11 @@ public class VersionOverridePatch {
     public static String getVersionOverride(String version) {
 
         try {
-            boolean isOldLayoutEnabled = getBoolean(REVANCED, "revanced_enable_old_layout", false);
-
-            return isOldLayoutEnabled ? "17.28.35" : version;
+            return getBoolean(REVANCED, "revanced_spoof_app_version", false)
+                    ? "17.30.34"
+                    : version;
         } catch (Exception ex){
-            LogHelper.printException(VersionOverridePatch.class, "Failed to getBoolean", ex);
+            LogHelper.printException(VersionOverridePatch.class, "Failed to load getVersionOverride", ex);
             return version;
         }
     }
