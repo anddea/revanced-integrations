@@ -56,6 +56,7 @@ public enum SettingsEnum {
     HIDE_AUTO_PLAYER_POPUP_PANELS("revanced_hide_auto_player_popup_panels", true, ReturnType.BOOLEAN, true),
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", false, ReturnType.BOOLEAN),
     HIDE_CROWDFUNDING_BOX("revanced_hide_crowdfunding_box", true, ReturnType.BOOLEAN, true),
+    HIDE_GET_PREMIUM("revanced_hide_get_premium", true, ReturnType.BOOLEAN, true),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", true, ReturnType.BOOLEAN, true),
     HIDE_SNACKBAR("revanced_hide_snackbar", false, ReturnType.BOOLEAN),
     HIDE_SEARCH_TERMS("revanced_hide_search_terms", false, ReturnType.BOOLEAN, true),
