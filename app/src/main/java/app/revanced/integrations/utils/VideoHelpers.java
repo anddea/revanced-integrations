@@ -131,7 +131,7 @@ public class VideoHelpers {
         String[] speedEntriesValues = getListArray(context, entriesValueKey);
 
         AlertDialog speedDialog = new AlertDialog.Builder(context)
-                .setTitle(setTitle(str("revanced_whitelisting_speed_button")))
+                .setTitle(setTitle(str("camera_speed_button_label")))
                 .setItems(speedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(speedEntriesValues[index] + "f")))
                 .show();
 

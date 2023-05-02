@@ -1,7 +1,6 @@
 package app.revanced.integrations.patches.ads;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.whitelist.Whitelist;
 
 public class HideVideoAdsPatch {
 

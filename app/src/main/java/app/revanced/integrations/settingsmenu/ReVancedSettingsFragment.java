@@ -42,7 +42,6 @@ import app.revanced.integrations.patches.button.Copy;
 import app.revanced.integrations.patches.button.CopyWithTimeStamp;
 import app.revanced.integrations.patches.button.Download;
 import app.revanced.integrations.patches.button.Speed;
-import app.revanced.integrations.patches.button.Whitelists;
 import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
@@ -50,8 +49,6 @@ import app.revanced.integrations.utils.ReVancedHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ResourceType;
 import app.revanced.integrations.utils.SharedPrefHelper;
-import app.revanced.integrations.whitelist.Whitelist;
-import app.revanced.integrations.whitelist.WhitelistType;
 
 /** @noinspection ALL*/
 public class ReVancedSettingsFragment extends PreferenceFragment {
@@ -63,7 +60,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private PreferenceScreen downloaderPreferenceScreen;
     private PreferenceScreen miscPreferenceScreen;
     private PreferenceScreen overlayPreferenceScreen;
-    private PreferenceScreen whitelistingPreferenceScreen;
 
     @SuppressLint("SuspiciousIndentation")
     SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
@@ -77,8 +73,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
                 if (setting.equals(SettingsEnum.OVERLAY_BUTTON_SPEED)) {
                     Speed.refreshVisibility();
-                } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_WHITELIST)) {
-                    Whitelists.refreshVisibility();
                 } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_COPY)) {
                     Copy.refreshVisibility();
                 } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_COPY_WITH_TIMESTAMP)) {
@@ -164,7 +158,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             this.downloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("downloader");
             this.miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
             this.overlayPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("overlay_button");
-            this.whitelistingPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("whitelisting");
 
             initializeReVancedSettings();
             initializeOverlayButton();
@@ -217,7 +210,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private void initializeOverlayButton() {
         AutoRepeatLinks();
-        AddWhitelistSettings();
         setDownloaderPreference();
     }
 
@@ -478,46 +470,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             integration.setSummary(BuildConfig.VERSION_NAME);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setPatchesInformation" + th);
-        }
-    }
-
-    /**
-     * Add Preference to Whitelist settings submenu
-     */
-    public void AddWhitelistSettings() {
-        try {
-            Activity activity = ReVancedSettingsFragment.this.getActivity();
-            boolean isIncludedSB = PatchStatus.SponsorBlock();
-            boolean isIncludedSPEED = PatchStatus.VideoSpeed();
-            boolean isIncludedADS = PatchStatus.VideoAds();
-
-            if (isIncludedSB || isIncludedSPEED || isIncludedADS) {
-                // Sponsorblock
-                if (isIncludedSB) {
-                    Whitelist.setEnabled(WhitelistType.SPONSORBLOCK, SettingsEnum.SB_WHITELIST.getBoolean());
-
-                    WhitelistedChannelsPreference WhitelistSB = new WhitelistedChannelsPreference(activity);
-                    WhitelistSB.setTitle(str("revanced_whitelisting_sponsorblock"));
-                    WhitelistSB.setWhitelistType(WhitelistType.SPONSORBLOCK);
-                    this.whitelistingPreferenceScreen.addPreference(WhitelistSB);
-                }
-
-                // Video Speed
-                if (isIncludedSPEED) {
-                    Whitelist.setEnabled(WhitelistType.SPEED, SettingsEnum.SPEED_WHITELIST.getBoolean());
-
-                    WhitelistedChannelsPreference WhitelistSPEED = new WhitelistedChannelsPreference(activity);
-                    WhitelistSPEED.setTitle(str("revanced_whitelisting_speed"));
-                    WhitelistSPEED.setWhitelistType(WhitelistType.SPEED);
-                    this.whitelistingPreferenceScreen.addPreference(WhitelistSPEED);
-                }
-            } else {
-                SwitchPreference setWhitelist = (SwitchPreference) findPreferenceOnScreen(SettingsEnum.OVERLAY_BUTTON_WHITELIST.getPath());
-                this.overlayPreferenceScreen.removePreference(setWhitelist);
-                this.overlayPreferenceScreen.removePreference(whitelistingPreferenceScreen);
-            }
-        } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting AddWhitelistSettings" + th);
         }
     }
 

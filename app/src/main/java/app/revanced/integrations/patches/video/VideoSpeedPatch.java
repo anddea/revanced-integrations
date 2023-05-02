@@ -6,7 +6,6 @@ import static app.revanced.integrations.utils.StringRef.str;
 import androidx.annotation.NonNull;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.whitelist.Whitelist;
 
 public class VideoSpeedPatch {
     private static float selectedSpeed = -1.0f;
@@ -32,8 +31,7 @@ public class VideoSpeedPatch {
             selectedSpeed = defaultSpeed;
             newVideo = false;
 
-            if (Whitelist.isChannelSPEEDWhitelisted()) defaultSpeed = -1.0f;
-            else if (!isCustomVideoSpeedEnabled() && defaultSpeed >= 2.0f) defaultSpeed = 2.0f;
+            if (!isCustomVideoSpeedEnabled() && defaultSpeed >= 2.0f) defaultSpeed = 2.0f;
         }
         overrideSpeed(defaultSpeed);
     }
