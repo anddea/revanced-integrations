@@ -1,7 +1,7 @@
 package app.revanced.integrations.sponsorblock.ui;
 
 import static app.revanced.integrations.utils.ResourceUtils.anim;
-import static app.revanced.integrations.utils.ResourceUtils.findView;
+import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
 
 import android.view.View;
@@ -10,11 +10,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.integrations.utils.ResourceType;
 
 public class CreateSegmentButtonController {
     private static WeakReference<ImageView> buttonReference = new WeakReference<>(null);
@@ -28,9 +30,9 @@ public class CreateSegmentButtonController {
      */
     public static void initialize(Object viewStub) {
         try {
-            RelativeLayout youtubeControlsLayout = (RelativeLayout) viewStub;
-            String buttonIdentifier = "sb_sponsorblock_button";
-            ImageView imageView = findView(CreateSegmentButtonController.class, youtubeControlsLayout, buttonIdentifier);
+            RelativeLayout controlsLayout = (RelativeLayout) viewStub;
+            ImageView imageView = Objects.requireNonNull(controlsLayout.findViewById(
+                    identifier("sb_sponsorblock_button", ResourceType.ID)));
 
             imageView.setOnClickListener(v -> SponsorBlockViewController.toggleNewSegmentLayoutVisibility());
             buttonReference = new WeakReference<>(imageView);
@@ -45,7 +47,7 @@ public class CreateSegmentButtonController {
             isShowing = true;
             changeVisibilityImmediate(false);
         } catch (Exception ex) {
-            LogHelper.printException(CreateSegmentButtonController.class, "initialize failure", ex);
+            LogHelper.printException(CreateSegmentButtonController.class, "Unable to set RelativeLayout", ex);
         }
     }
 

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -31,9 +32,8 @@ public class VotingButtonController {
     public static void initialize(Object viewStub) {
         try {
             RelativeLayout controlsLayout = (RelativeLayout) viewStub;
-            String buttonResourceName = "sb_voting_button";
-            ImageView imageView = controlsLayout.findViewById(identifier(buttonResourceName, ResourceType.ID));
-            if (imageView == null) return;
+            ImageView imageView = Objects.requireNonNull(controlsLayout.findViewById(
+                    identifier("sb_voting_button", ResourceType.ID)));
 
             imageView.setOnClickListener(v -> SponsorBlockUtils.onVotingClicked(v.getContext()));
             buttonReference = new WeakReference<>(imageView);

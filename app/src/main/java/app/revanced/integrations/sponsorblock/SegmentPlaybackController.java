@@ -103,9 +103,9 @@ public class SegmentPlaybackController {
     @Nullable
     private static String timeWithoutSegments;
 
-    private static float sponsorBarLeft = 1f;
-    private static float sponsorBarRight = 1f;
-    private static float sponsorBarThickness = 2f;
+    private static int sponsorBarAbsoluteLeft;
+    private static int sponsorAbsoluteBarRight;
+    private static int sponsorBarThickness;
 
     @Nullable
     static SponsorSegment[] getSegments() {
@@ -233,7 +233,7 @@ public class SegmentPlaybackController {
             SponsorSegment[] segments = SBRequester.getSegments(videoId);
 
             ReVancedUtils.runOnMainThread(()-> {
-                if (!videoId.equals(SegmentPlaybackController.currentVideoId)) {
+                if (!videoId.equals(currentVideoId)) {
                     // user changed videos before get segments network call could complete
                     return;
                 }
@@ -490,7 +490,7 @@ public class SegmentPlaybackController {
                 // check for any smaller embedded segments, and count those as autoskipped
                 final boolean showSkipToast = SettingsEnum.SB_SHOW_TOAST_ON_SKIP.getBoolean();
                 assert segments != null;
-                for (final SponsorSegment otherSegment : segments) {
+                for (final SponsorSegment otherSegment : Objects.requireNonNull(segments)) {
                     if (segmentToSkip.end < otherSegment.start) {
                         break; // no other segments can be contained
                     }
@@ -564,32 +564,15 @@ public class SegmentPlaybackController {
     }
 
     /**
-     * Injection point.
-     */
-    public static void setSponsorBarAbsoluteLeft(final Rect rect) {
-        setSponsorBarAbsoluteLeft(rect.left);
-    }
-
-    public static void setSponsorBarAbsoluteLeft(final float left) {
-        if (sponsorBarLeft != left) {
-            sponsorBarLeft = left;
-        }
-    }
-
-    /**
      * Injection point
      */
     public static void setSponsorBarRect(final Object self) {
         try {
             Field field = self.getClass().getDeclaredField("replaceMeWithsetSponsorBarRect");
             field.setAccessible(true);
-            Rect rect = (Rect) field.get(self);
-            if (rect == null) {
-                LogHelper.printException(SegmentPlaybackController.class, "Could not find sponsorblock rect");
-            } else {
-                setSponsorBarAbsoluteLeft(rect.left);
-                setSponsorBarAbsoluteRight(rect.right);
-            }
+            Rect rect = (Rect) Objects.requireNonNull(field.get(self));
+            setSponsorBarAbsoluteLeft(rect);
+            setSponsorBarAbsoluteRight(rect);
         } catch (Exception ex) {
             LogHelper.printException(SegmentPlaybackController.class, "setSponsorBarRect failure", ex);
         }
@@ -598,27 +581,27 @@ public class SegmentPlaybackController {
     /**
      * Injection point.
      */
-    public static void setSponsorBarAbsoluteRight(final Rect rect) {
-        setSponsorBarAbsoluteRight(rect.right);
+    public static void setSponsorBarAbsoluteLeft(Rect rect) {
+        final int left = rect.left;
+        if (sponsorBarAbsoluteLeft != left)
+            sponsorBarAbsoluteLeft = left;
     }
 
-    public static void setSponsorBarAbsoluteRight(final float right) {
-        if (sponsorBarRight != right) {
-            sponsorBarRight = right;
-        }
+    /**
+     * Injection point.
+     */
+    public static void setSponsorBarAbsoluteRight(Rect rect) {
+        final int right = rect.right;
+        if (sponsorAbsoluteBarRight != right)
+            sponsorAbsoluteBarRight = right;
     }
 
     /**
      * Injection point
      */
-    public static void setSponsorBarThickness(final int thickness) {
-        setSponsorBarThickness((float) thickness);
-    }
-
-    public static void setSponsorBarThickness(final float thickness) {
-        if (sponsorBarThickness != thickness) {
+    public static void setSponsorBarThickness(int thickness) {
+        if (sponsorBarThickness != thickness)
             sponsorBarThickness = thickness;
-        }
     }
 
     /**
@@ -698,25 +681,23 @@ public class SegmentPlaybackController {
      */
     public static void drawSponsorTimeBars(final Canvas canvas, final float posY) {
         try {
-            if (sponsorBarThickness < 0.1) return;
             if (segments == null) return;
             final long videoLength = VideoInformation.getVideoLength();
             if (videoLength <= 0) return;
 
-            final float thicknessDiv2 = sponsorBarThickness / 2;
-            final float top = posY - thicknessDiv2;
+            final int thicknessDiv2 = sponsorBarThickness / 2; // rounds down
+            final float top = posY - (sponsorBarThickness - thicknessDiv2);
             final float bottom = posY + thicknessDiv2;
-            final float absoluteLeft = sponsorBarLeft;
-            final float absoluteRight = sponsorBarRight;
+            final float videoMillisecondsToPixels = (1f / videoLength) * (sponsorAbsoluteBarRight - sponsorBarAbsoluteLeft);
+            final float leftPadding = sponsorBarAbsoluteLeft;
 
-            final float tmp1 = (1f / videoLength) * (absoluteRight - absoluteLeft);
             for (SponsorSegment segment : segments) {
-                final float left = segment.start * tmp1 + absoluteLeft;
+                final float left = leftPadding + segment.start * videoMillisecondsToPixels;
                 final float right;
                 if (segment.category == SegmentCategory.HIGHLIGHT) {
                     right = left + getHighlightSegmentTimeBarScreenWidth();
                 } else {
-                     right = segment.end * tmp1 + absoluteLeft;
+                    right = leftPadding + segment.end * videoMillisecondsToPixels;
                 }
                 canvas.drawRect(left, top, right, bottom, segment.category.paint);
             }

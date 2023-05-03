@@ -53,7 +53,7 @@ public class SponsorBlockViewController {
     /**
      * Injection point.
      */
-    public static void initialize(Object obj) {
+    public static void initialize(ViewGroup viewGroup) {
         try {
             // hide any old components, just in case they somehow are still hanging around
             hideAll();
@@ -64,7 +64,6 @@ public class SponsorBlockViewController {
 
             inlineSponsorOverlayRef = new WeakReference<>(layout);
 
-            ViewGroup viewGroup = (ViewGroup) obj;
             viewGroup.addView(layout);
             viewGroup.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
                 @Override
