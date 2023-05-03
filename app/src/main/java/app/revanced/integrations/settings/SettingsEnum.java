@@ -97,6 +97,7 @@ public enum SettingsEnum {
     HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", false, ReturnType.BOOLEAN),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", true, ReturnType.BOOLEAN, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", true, ReturnType.BOOLEAN, true),
+    HIDE_LIVE_CHATS_BUTTON("revanced_hide_live_chat_button", false, ReturnType.BOOLEAN),
     HIDE_CAPTIONS_BUTTON("revanced_hide_captions_button", false, ReturnType.BOOLEAN),
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", false, ReturnType.BOOLEAN),
     HIDE_PREV_BUTTON("revanced_hide_prev_button", false, ReturnType.BOOLEAN),

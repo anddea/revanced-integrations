@@ -22,6 +22,7 @@ object ResourceHelper {
     private const val ARROW_WHITE_ICON = "yt_outline_arrow_left_white_24"
 
     private const val COLLAPSE_BUTTON = "player_collapse_button"
+    private const val LIVE_CHAT_BUTTON = "live_chat_overlay_button"
 
     @JvmStatic
     val resources: Resources get() = ReVancedUtils.getContext().resources
@@ -39,6 +40,11 @@ object ResourceHelper {
     }
 
     @JvmStatic
+    fun hideLiveChatButton(view: View): Boolean {
+        return SettingsEnum.HIDE_LIVE_CHATS_BUTTON.boolean && (view.id == identifier(LIVE_CHAT_BUTTON, ResourceType.ID))
+    }
+
+    @JvmStatic
     @Suppress("DEPRECATION")
     fun hidePlayerButtonBackground(view: View?) {
         if (view == null || !SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND.boolean) return
@@ -53,6 +59,6 @@ object ResourceHelper {
 
     @JvmStatic
     fun hidePlayerButton(view: View): Boolean {
-        return hideCollapseButton(view)
+        return hideLiveChatButton(view) || hideCollapseButton(view)
     }
 }
