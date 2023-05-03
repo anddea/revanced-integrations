@@ -42,7 +42,6 @@ import app.revanced.integrations.patches.button.Copy;
 import app.revanced.integrations.patches.button.CopyWithTimeStamp;
 import app.revanced.integrations.patches.button.Download;
 import app.revanced.integrations.patches.button.Speed;
-import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;

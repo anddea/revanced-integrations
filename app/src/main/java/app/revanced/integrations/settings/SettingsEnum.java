@@ -180,10 +180,10 @@ public enum SettingsEnum {
     // Navigation
     CHANGE_HOMEPAGE_TO_SUBSCRIPTION("revanced_change_homepage", false, ReturnType.BOOLEAN, true),
     ENABLE_TABLET_NAVIGATION_BAR("revanced_enable_tablet_navigation_bar", false, ReturnType.BOOLEAN, true),
-    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", false, ReturnType.BOOLEAN, true),
+    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", true, ReturnType.BOOLEAN, true),
     HIDE_CREATE_BUTTON("revanced_hide_create_button", true, ReturnType.BOOLEAN, true),
     HIDE_HOME_BUTTON("revanced_hide_home_button", false, ReturnType.BOOLEAN, true),
-    HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", true, ReturnType.BOOLEAN, true),
+    HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", false, ReturnType.BOOLEAN, true),
     HIDE_SUBSCRIPTIONS_BUTTON("revanced_hide_subscriptions_button", false, ReturnType.BOOLEAN, true),
 
     // Experimental Flags
