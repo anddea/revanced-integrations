@@ -38,7 +38,7 @@ public enum MusicSettingsEnum {
     ENABLE_FORCE_SHUFFLE("revanced_enable_force_shuffle", BOOLEAN, true),
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, true, true),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, true),
-    DEFAULT_DOWNLOADER("revanced_default_downloader", ReturnType.STRING, "ussr.razar.youtube_dl", true),
+    DEFAULT_DOWNLOADER("revanced_default_downloader", ReturnType.STRING, "org.schabi.newpipe", true),
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", INTEGER, -2),
     DEFAULT_VIDEO_QUALITY_MOBILE("revanced_default_video_quality_mobile", INTEGER, -2),
     HOOK_SHARE_BUTTON("revanced_hook_share_button", BOOLEAN, false, true),
