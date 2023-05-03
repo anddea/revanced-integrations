@@ -25,7 +25,7 @@ public final class GeneralAdsPatch extends Filter {
     );
 
     public GeneralAdsPatch() {
-        var albumCard = new BlockRule(SettingsEnum.HIDE_ALBUM_CARDS, "browsy_bar");
+        var albumCard = new BlockRule(SettingsEnum.HIDE_ALBUM_CARDS, "official_card", "browsy_bar");
         var audioTrackButton = new BlockRule(SettingsEnum.HIDE_AUDIO_TRACK_BUTTON, "multi_feed_icon_button");
         var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS, "carousel_ad");
         var channelGuidelines = new BlockRule(SettingsEnum.HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner", "community_guidelines", "sponsorships_comments_upsell");
