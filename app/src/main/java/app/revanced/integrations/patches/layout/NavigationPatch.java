@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.HorizontalScrollView;
+import android.widget.TextView;
 
 import com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity;
 
@@ -70,6 +71,11 @@ public class NavigationPatch {
                 Objects.requireNonNull((HorizontalScrollView) pivotBar).setVisibility(8);
             }
         }
+    }
+
+    public static void hideNavigationLabel(TextView view) {
+        boolean enabled = SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean();
+        if (enabled) view.setVisibility(View.GONE);
     }
 
     public static View hideShortsPlayerNavBar(View view) {

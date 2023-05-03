@@ -186,6 +186,7 @@ public enum SettingsEnum {
     HIDE_HOME_BUTTON("revanced_hide_home_button", false, ReturnType.BOOLEAN, true),
     HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", false, ReturnType.BOOLEAN, true),
     HIDE_SUBSCRIPTIONS_BUTTON("revanced_hide_subscriptions_button", false, ReturnType.BOOLEAN, true),
+    HIDE_NAVIGATION_LABEL("revanced_hide_navigation_label", false, ReturnType.BOOLEAN, true),
 
     // Experimental Flags
     HIDE_SHORTS_NAVIGATION_BAR("revanced_hide_shorts_navigation_bar", false, ReturnType.BOOLEAN, true),
