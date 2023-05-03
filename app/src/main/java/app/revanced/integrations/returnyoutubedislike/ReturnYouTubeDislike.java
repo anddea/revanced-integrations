@@ -289,6 +289,27 @@ public class ReturnYouTubeDislike {
         return null;
     }
 
+    public static CharSequence handleOnSetText(CharSequence originalText) {
+        try {
+            Future<RYDVoteData> fetchFuture = getVoteFetchFuture();
+            if (fetchFuture == null) {
+                return originalText;
+            }
+            RYDVoteData votingData = fetchFuture.get(MAX_MILLISECONDS_TO_BLOCK_UI_WHILE_WAITING_FOR_FETCH_VOTES_TO_COMPLETE, TimeUnit.MILLISECONDS);
+            if (votingData == null) {
+                return originalText;
+            }
+
+            return SettingsEnum.RYD_SHOW_DISLIKE_PERCENTAGE.getBoolean()
+                    ? formatDislikePercentage(votingData.getDislikePercentage())
+                    : formatDislikeCount(votingData.getDislikeCount());
+        } catch (TimeoutException ignored) {
+        } catch (Exception e) {
+            LogHelper.printException(ReturnYouTubeDislike.class, "Error while handling the setText", e);
+        }
+        return originalText;
+    }
+
     public static void sendVote(@NonNull Vote vote) {
         ReVancedUtils.verifyOnMainThread();
         Objects.requireNonNull(vote);
