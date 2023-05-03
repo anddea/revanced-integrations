@@ -11,8 +11,8 @@ public class LayoutPatch {
         return MusicSettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() || original;
     }
 
-    public static boolean enableBlackNavbar() {
-        return MusicSettingsEnum.ENABLE_BLACK_NAVBAR.getBoolean();
+    public static int enableBlackNavbar() {
+        return MusicSettingsEnum.ENABLE_BLACK_NAVBAR.getBoolean() ? -16777216 : -14869219;
     }
 
     public static boolean enableColorMatchPlayer() {
