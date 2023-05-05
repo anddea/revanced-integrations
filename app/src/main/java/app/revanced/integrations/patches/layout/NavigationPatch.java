@@ -51,6 +51,8 @@ public class NavigationPatch {
             setNavigationButtonVisibility(PivotEnum.SHORTS, view);
         else if (lastPivotTabName.equals(PivotEnum.SUBSCRIPTIONS.getName()))
             setNavigationButtonVisibility(PivotEnum.SUBSCRIPTIONS, view);
+        else if (lastPivotTabName.equals(PivotEnum.LIBRARY.getName()))
+            setNavigationButtonVisibility(PivotEnum.LIBRARY, view);
     }
 
     public static void setNavigationButtonVisibility(PivotEnum pivotEnum, View view) {
@@ -82,7 +84,8 @@ public class NavigationPatch {
     private enum PivotEnum {
         HOME("PIVOT_HOME", SettingsEnum.HIDE_HOME_BUTTON.getBoolean()),
         SHORTS("TAB_SHORTS", SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean()),
-        SUBSCRIPTIONS("PIVOT_SUBSCRIPTIONS", SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean());
+        SUBSCRIPTIONS("PIVOT_SUBSCRIPTIONS", SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean()),
+        LIBRARY("VIDEO_LIBRARY_WHITE", SettingsEnum.HIDE_LIBRARY_BUTTON.getBoolean());
 
         private final String name;
         private final boolean enabled;
