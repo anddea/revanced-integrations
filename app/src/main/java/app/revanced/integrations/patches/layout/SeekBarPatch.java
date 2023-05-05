@@ -31,6 +31,20 @@ public class SeekBarPatch {
         return overrideSeekbarColor(colorValue, true);
     }
 
+    /**
+     * Same method used in LithoThemePatch
+     * Resumed progress bar color in feed
+     *
+     * Resumed progress bar color in playlists and history can be changed in resource
+     * (R.drawable.resume_playback_progressbar_drawable)
+     */
+    public static int resumedProgressBarColor(int colorValue) {
+        if (SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean() &&
+                colorValue == -65536)
+            return overrideSeekbarColor(colorValue);
+        return colorValue;
+    }
+
     private static int overrideSeekbarColor(int colorValue) {
         try {
             colorValue = Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString());
