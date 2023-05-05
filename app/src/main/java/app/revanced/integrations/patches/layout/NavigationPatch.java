@@ -57,13 +57,6 @@ public class NavigationPatch {
         if (pivotEnum.getBoolean()) view.setVisibility(View.GONE);
     }
 
-    public static void hideShortsButton(View view) {
-        if (lastPivotTab != null && lastPivotTab.name().equals("TAB_SHORTS")) {
-            boolean enabled = SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean();
-            if (enabled) view.setVisibility(View.GONE);
-        }
-    }
-
     @SuppressLint("WrongConstant")
     public static void hideShortsPlayerNavBar() {
         if (SettingsEnum.HIDE_SHORTS_NAVIGATION_BAR.getBoolean() && shortsContext != null) {
