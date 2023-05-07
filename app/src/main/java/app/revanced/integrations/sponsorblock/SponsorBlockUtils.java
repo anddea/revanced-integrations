@@ -217,7 +217,7 @@ public class SponsorBlockUtils {
             ReVancedUtils.verifyOnMainThread();
             final String uuid = SettingsEnum.SB_UUID.getString();
             final long start = newSponsorSegmentStartMillis;
-            final long end = newSponsorSegmentEndMillis;
+            final long end = newSponsorSegmentEndMillis >= VideoInformation.getVideoTime() ? VideoInformation.getVideoTime() - 500 : newSponsorSegmentEndMillis;
             final String videoId = VideoInformation.getVideoId();
             final long videoLength = VideoInformation.getVideoLength();
             final SegmentCategory segmentCategory = newUserCreatedSegmentCategory;
@@ -369,7 +369,7 @@ public class SponsorBlockUtils {
                 SegmentPlaybackController.addUnsubmittedSegment(
                         new SponsorSegment(SegmentCategory.UNSUBMITTED, null,
                                 newSponsorSegmentStartMillis, newSponsorSegmentEndMillis, false));
-                VideoInformation.seekTo(newSponsorSegmentStartMillis - 2500);
+                VideoInformation.seekTo(newSponsorSegmentStartMillis - 1500);
             }
         } catch (Exception ex) {
             LogHelper.printException(SponsorBlockUtils.class, "onPreviewClicked failure", ex);
