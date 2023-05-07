@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class SeekBarPatch {
+    private static final int ORIGINAL_SEEKBAR_CLICKED_COLOR = 0xFFFF0000;
 
     public static boolean enableSeekbarTapping() {
         return SettingsEnum.ENABLE_SEEKBAR_TAPPING.getBoolean();
@@ -23,40 +24,33 @@ public class SeekBarPatch {
         return SettingsEnum.HIDE_SEEKBAR.getBoolean();
     }
 
-    public static int enableCustomSeekbarColor(int colorValue) {
-        return overrideSeekbarColor(colorValue, false);
-    }
-
-    public static int enableCustomSeekbarColorDarkMode(int colorValue) {
-        return overrideSeekbarColor(colorValue, true);
+    /**
+     * Injection point.
+     */
+    public static int getSeekbarClickedColorValue(final int colorValue) {
+        return colorValue == ORIGINAL_SEEKBAR_CLICKED_COLOR
+                ? overrideSeekbarColor(colorValue)
+                : colorValue;
     }
 
     /**
-     * Same method used in LithoThemePatch
-     * Resumed progress bar color in feed
-     *
-     * Resumed progress bar color in playlists and history can be changed in resource
-     * (R.drawable.resume_playback_progressbar_drawable)
+     * Injection point.
      */
-    public static int resumedProgressBarColor(int colorValue) {
-        if (SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean() &&
-                colorValue == -65536)
-            return overrideSeekbarColor(colorValue);
-        return colorValue;
+    public static int resumedProgressBarColor(final int colorValue) {
+        return SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean()
+                ? getSeekbarClickedColorValue(colorValue)
+                : colorValue;
     }
 
-    private static int overrideSeekbarColor(int colorValue) {
+    /**
+     * Points where errors occur when playing videos on the PlayStore (ROOT Build)
+     */
+    public static int overrideSeekbarColor(final int colorValue) {
         try {
-            colorValue = Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString());
-        } catch (Exception ignored) {
-        }
-        return colorValue;
-    }
-
-    private static int overrideSeekbarColor(int colorValue, boolean isDarkMode) {
-        if (SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean() &&
-                (isDarkMode || colorValue == -65536))
-            return overrideSeekbarColor(colorValue);
+            return SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean()
+                    ? Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString())
+                    : colorValue;
+        } catch (Exception ignored) {}
         return colorValue;
     }
 
