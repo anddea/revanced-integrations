@@ -165,9 +165,4 @@ public final class GeneralAdsPatch extends Filter {
     public static boolean hideGetPremium() {
         return SettingsEnum.AD_REMOVER_GET_PREMIUM.getBoolean();
     }
-
-    public static void hideBreakingNewsShelf(View view) {
-        if (!SettingsEnum.HIDE_BREAKING_NEWS_SHELF.getBoolean()) return;
-        AdRemoverAPI.HideViewWithLayout1dp(view);
-    }
 }

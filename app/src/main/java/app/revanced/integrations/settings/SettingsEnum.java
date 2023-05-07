@@ -65,6 +65,7 @@ public enum SettingsEnum {
     HIDE_CATEGORY_BAR_IN_RELATED_VIDEO("revanced_hide_category_bar_in_related_video", false, ReturnType.BOOLEAN, true),
     HIDE_CATEGORY_BAR_IN_SEARCH_RESULTS("revanced_hide_category_bar_in_search_results", false, ReturnType.BOOLEAN, true),
     HIDE_CHANNEL_LIST_SUBMENU("revanced_hide_channel_list_submenu", false, ReturnType.BOOLEAN, true),
+    HIDE_BREAKING_NEWS_SHELF("revanced_hide_breaking_news_shelf", false, ReturnType.BOOLEAN, true),
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", false, ReturnType.BOOLEAN),
     ACCOUNT_MENU_CUSTOM_FILTER("revanced_account_menu_custom_filter", "YouTube Music,YouTube Kids", ReturnType.STRING, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", false, ReturnType.BOOLEAN, true),
@@ -87,7 +88,6 @@ public enum SettingsEnum {
     HIDE_GRAY_SEPARATOR("revanced_hide_separator", true, ReturnType.BOOLEAN),
     HIDE_OFFICIAL_HEADER("revanced_hide_official_header", false, ReturnType.BOOLEAN),
     HIDE_ALBUM_CARDS("revanced_hide_album_card", true, ReturnType.BOOLEAN),
-    HIDE_BREAKING_NEWS_SHELF("revanced_hide_breaking_news_shelf", false, ReturnType.BOOLEAN, true),
     HIDE_WEB_SEARCH_PANEL("revanced_hide_web_search_panel", true, ReturnType.BOOLEAN),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", false, ReturnType.BOOLEAN),
 

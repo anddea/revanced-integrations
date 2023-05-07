@@ -92,6 +92,11 @@ public class GeneralPatch {
         return SettingsEnum.HIDE_CATEGORY_BAR_IN_SEARCH_RESULTS.getBoolean() ? 0 : original;
     }
 
+    public static void hideBreakingNewsShelf(View view) {
+        if (!SettingsEnum.HIDE_BREAKING_NEWS_SHELF.getBoolean()) return;
+        AdRemoverAPI.HideViewWithLayout1dp(view);
+    }
+
     public static void hideChannelListSubMenu(View view) {
         if (SettingsEnum.HIDE_CHANNEL_LIST_SUBMENU.getBoolean())
             view.setVisibility(View.GONE);
