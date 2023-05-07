@@ -20,14 +20,14 @@ public final class GeneralAdsPatch extends Filter {
     };
 
     private final BlockRule custom = new CustomBlockRule(
-            SettingsEnum.ADREMOVER_USER_FILTER,
-            SettingsEnum.ADREMOVER_CUSTOM_FILTER
+            SettingsEnum.AD_REMOVER_USER_FILTER,
+            SettingsEnum.AD_REMOVER_CUSTOM_FILTER
     );
 
     public GeneralAdsPatch() {
         var albumCard = new BlockRule(SettingsEnum.HIDE_ALBUM_CARDS, "official_card", "browsy_bar");
         var audioTrackButton = new BlockRule(SettingsEnum.HIDE_AUDIO_TRACK_BUTTON, "multi_feed_icon_button");
-        var carouselAd = new BlockRule(SettingsEnum.ADREMOVER_GENERAL_ADS, "carousel_ad");
+        var carouselAd = new BlockRule(SettingsEnum.AD_REMOVER_GENERAL_ADS, "carousel_ad");
         var channelGuidelines = new BlockRule(SettingsEnum.HIDE_CHANNEL_GUIDELINES, "channel_guidelines_entry_banner", "community_guidelines", "sponsorships_comments_upsell");
         var channelMemberShelf = new BlockRule(SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF, "member_recognition_shelf");
         var graySeparator = new BlockRule(SettingsEnum.HIDE_GRAY_SEPARATOR, "cell_divider");
@@ -38,15 +38,15 @@ public final class GeneralAdsPatch extends Filter {
         var latestPosts = new BlockRule(SettingsEnum.HIDE_LATEST_POSTS, "post_shelf");
         var medicalPanel = new BlockRule(SettingsEnum.HIDE_MEDICAL_PANEL, "medical_panel", "emergency_onebox");
         var merchandise = new BlockRule(SettingsEnum.HIDE_MERCHANDISE, "product_carousel");
-        var paidContent = new BlockRule(SettingsEnum.ADREMOVER_PAID_CONTENT, "paid_content_overlay");
-        var selfSponsor = new BlockRule(SettingsEnum.ADREMOVER_SELF_SPONSOR, "cta_shelf_card");
+        var paidContent = new BlockRule(SettingsEnum.AD_REMOVER_PAID_CONTENT, "paid_content_overlay");
+        var selfSponsor = new BlockRule(SettingsEnum.AD_REMOVER_SELF_SPONSOR, "cta_shelf_card");
         var teaser = new BlockRule(SettingsEnum.HIDE_TEASER, "expandable_metadata");
         var ticketShelf = new BlockRule(SettingsEnum.HIDE_TICKET_SHELF, "ticket_shelf", "ticket_horizontal_shelf");
         var timedReactions = new BlockRule(SettingsEnum.HIDE_TIMED_REACTIONS, "emoji_control_panel", "timed_reaction_player_animation", "timed_reaction_live_player_overlay");
         var viewProducts = new BlockRule(SettingsEnum.HIDE_VIEW_PRODUCTS, "product_item", "products_in_video");
         var webSearchPanel = new BlockRule(SettingsEnum.HIDE_WEB_SEARCH_PANEL, "web_link_panel");
 
-        var buttonedAd = new BlockRule(SettingsEnum.ADREMOVER_BUTTON_ADS,
+        var buttonedAd = new BlockRule(SettingsEnum.AD_REMOVER_BUTTON_ADS,
                 "full_width_square_image_layout",
                 "landscape_image_wide_button_layout",
                 "video_display_button_group_layout",
@@ -55,7 +55,7 @@ public final class GeneralAdsPatch extends Filter {
                 "_buttoned_layout"
         );
         var generalAds = new BlockRule(
-            SettingsEnum.ADREMOVER_GENERAL_ADS,
+            SettingsEnum.AD_REMOVER_GENERAL_ADS,
                 "active_view_display_container",
                 "ads_",
                 "ads_video_with_context",
@@ -158,7 +158,7 @@ public final class GeneralAdsPatch extends Filter {
      * @param view The view, which shows ads.
      */
     public static void hideAdAttributionView(View view) {
-        if (!SettingsEnum.ADREMOVER_GENERAL_ADS.getBoolean()) return;
+        if (!SettingsEnum.AD_REMOVER_GENERAL_ADS.getBoolean()) return;
         AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 

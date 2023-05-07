@@ -25,7 +25,7 @@ public class PlayerPatch {
     }
 
     public static void hideEndscreen(View view) {
-        if (SettingsEnum.HIDE_ENDSCREEN_CARDS.getBoolean()) {
+        if (SettingsEnum.HIDE_END_SCREEN_CARDS.getBoolean()) {
             view.setVisibility(View.GONE);
         }
     }

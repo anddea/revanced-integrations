@@ -43,7 +43,7 @@ public class GeneralPatch {
     }
 
     public static boolean enableTabletMiniPlayer(boolean original) {
-        return SettingsEnum.ENABLE_TABLET_MINIPLAYER.getBoolean() || original;
+        return SettingsEnum.ENABLE_TABLET_MINI_PLAYER.getBoolean() || original;
     }
 
     public static boolean hideAutoCaptions() {
@@ -68,8 +68,8 @@ public class GeneralPatch {
         return SettingsEnum.HIDE_EMAIL_ADDRESS.getBoolean() ? 8 : originalValue;
     }
 
-    public static boolean hideSnackbar() {
-        return SettingsEnum.HIDE_SNACKBAR.getBoolean();
+    public static boolean hideSnackBar() {
+        return SettingsEnum.HIDE_SNACK_BAR.getBoolean();
     }
 
     public static void hideSearchTerms(View view) {

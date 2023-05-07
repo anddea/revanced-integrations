@@ -81,7 +81,7 @@ public class FullscreenPatch {
     }
 
     public static boolean hideEndScreenOverlay() {
-        return SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getBoolean();
+        return SettingsEnum.HIDE_END_SCREEN_OVERLAY.getBoolean();
     }
 
     public static boolean hideFilmstripOverlay() {

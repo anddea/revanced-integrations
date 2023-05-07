@@ -251,7 +251,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_CHANNEL_LIST_SUBMENU.getPath(),
                 SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getPath(),
                 SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getPath(),
-                SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
+                SettingsEnum.HIDE_END_SCREEN_OVERLAY.getPath(),
                 SettingsEnum.HIDE_QUICK_ACTIONS.getPath(),
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON.getPath(),
                 SettingsEnum.HIDE_QUICK_ACTIONS_DISLIKE_BUTTON.getPath(),
@@ -287,7 +287,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      */
     public void FullScreenPanelPreferenceLinks() {
         final String[] unavailablePreference = {
-                SettingsEnum.HIDE_ENDSCREEN_OVERLAY.getPath(),
+                SettingsEnum.HIDE_END_SCREEN_OVERLAY.getPath(),
                 SettingsEnum.HIDE_QUICK_ACTIONS.getPath(),
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON.getPath(),
                 SettingsEnum.HIDE_QUICK_ACTIONS_DISLIKE_BUTTON.getPath(),

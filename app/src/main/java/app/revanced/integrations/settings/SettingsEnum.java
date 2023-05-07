@@ -11,12 +11,12 @@ public enum SettingsEnum {
 
     // Ads
     HIDE_VIDEO_ADS("revanced_video_ads_removal", true, ReturnType.BOOLEAN, true),
-    ADREMOVER_GENERAL_ADS("revanced_adremover_general_ads", true, ReturnType.BOOLEAN),
-    ADREMOVER_BUTTON_ADS("revanced_adremover_button_ads", true, ReturnType.BOOLEAN),
-    ADREMOVER_PAID_CONTENT("revanced_adremover_paid_content", true, ReturnType.BOOLEAN),
-    ADREMOVER_SELF_SPONSOR("revanced_adremover_self_sponsor", true, ReturnType.BOOLEAN),
-    ADREMOVER_USER_FILTER("revanced_adremover_user_filter", false, ReturnType.BOOLEAN),
-    ADREMOVER_CUSTOM_FILTER("revanced_adremover_custom_strings", "", ReturnType.STRING, true),
+    AD_REMOVER_GENERAL_ADS("revanced_ad_remover_general_ads", true, ReturnType.BOOLEAN),
+    AD_REMOVER_BUTTON_ADS("revanced_ad_remover_button_ads", true, ReturnType.BOOLEAN),
+    AD_REMOVER_PAID_CONTENT("revanced_ad_remover_paid_content", true, ReturnType.BOOLEAN),
+    AD_REMOVER_SELF_SPONSOR("revanced_ad_remover_self_sponsor", true, ReturnType.BOOLEAN),
+    AD_REMOVER_USER_FILTER("revanced_ad_remover_user_filter", false, ReturnType.BOOLEAN),
+    AD_REMOVER_CUSTOM_FILTER("revanced_ad_remover_custom_strings", "", ReturnType.STRING, true),
 
 
     // Swipe controls
@@ -51,14 +51,14 @@ public enum SettingsEnum {
     // General
     HIDE_STORIES_SHELF("revanced_hide_stories_shelf", true, ReturnType.BOOLEAN, true),
     ENABLE_WIDE_SEARCHBAR("revanced_enable_wide_searchbar", false, ReturnType.BOOLEAN, true),
-    ENABLE_TABLET_MINIPLAYER("revanced_enable_tablet_miniplayer", false, ReturnType.BOOLEAN, true),
+    ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", false, ReturnType.BOOLEAN, true),
     HIDE_AUTO_CAPTIONS("revanced_hide_auto_captions", false, ReturnType.BOOLEAN, true),
     HIDE_AUTO_PLAYER_POPUP_PANELS("revanced_hide_auto_player_popup_panels", true, ReturnType.BOOLEAN, true),
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", false, ReturnType.BOOLEAN),
     HIDE_CROWDFUNDING_BOX("revanced_hide_crowdfunding_box", true, ReturnType.BOOLEAN, true),
     HIDE_GET_PREMIUM("revanced_hide_get_premium", true, ReturnType.BOOLEAN, true),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", true, ReturnType.BOOLEAN, true),
-    HIDE_SNACKBAR("revanced_hide_snackbar", false, ReturnType.BOOLEAN),
+    HIDE_SNACK_BAR("revanced_hide_snack_bar", false, ReturnType.BOOLEAN),
     HIDE_SEARCH_TERMS("revanced_hide_search_terms", false, ReturnType.BOOLEAN, true),
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", true, ReturnType.BOOLEAN, true),
     HIDE_CATEGORY_BAR_IN_FEED("revanced_hide_category_bar_in_feed", false, ReturnType.BOOLEAN, true),
@@ -102,7 +102,7 @@ public enum SettingsEnum {
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", false, ReturnType.BOOLEAN),
     HIDE_PREV_BUTTON("revanced_hide_prev_button", false, ReturnType.BOOLEAN),
     HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", false, ReturnType.BOOLEAN, true),
-    HIDE_ENDSCREEN_CARDS("revanced_hide_endscreen_cards", true, ReturnType.BOOLEAN, true),
+    HIDE_END_SCREEN_CARDS("revanced_hide_end_screen_cards", true, ReturnType.BOOLEAN, true),
     HIDE_INFO_CARDS("revanced_hide_info_cards", true, ReturnType.BOOLEAN, true),
     HIDE_CHANNEL_WATERMARK("revanced_hide_channel_watermark", true, ReturnType.BOOLEAN),
     HIDE_SUGGESTED_ACTION("revanced_hide_suggested_actions", true, ReturnType.BOOLEAN, true),
@@ -115,7 +115,7 @@ public enum SettingsEnum {
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", false, ReturnType.BOOLEAN, true),
     SHOW_FULLSCREEN_TITLE("revanced_show_fullscreen_title", true, ReturnType.BOOLEAN, true),
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", false, ReturnType.BOOLEAN, true),
-    HIDE_ENDSCREEN_OVERLAY("revanced_hide_endscreen_overlay", false, ReturnType.BOOLEAN, true),
+    HIDE_END_SCREEN_OVERLAY("revanced_hide_end_screen_overlay", false, ReturnType.BOOLEAN, true),
     HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", false, ReturnType.BOOLEAN, true),
 
     // Quick Actions
@@ -267,7 +267,7 @@ public enum SettingsEnum {
     SB_IS_VIP("sb-is-vip", false, SPONSOR_BLOCK, ReturnType.BOOLEAN),
     SB_LAST_VIP_CHECK("sb-last-vip-check", 0L, SPONSOR_BLOCK, ReturnType.LONG),
     SB_API_URL("sb-api-host-url", "https://sponsor.ajay.app", SPONSOR_BLOCK, ReturnType.STRING),
-    SB_FIRST_RUN("sb-firstrun", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN);
+    SB_FIRST_RUN("sb-first-run", false, SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK, ReturnType.BOOLEAN);
 
 
 
