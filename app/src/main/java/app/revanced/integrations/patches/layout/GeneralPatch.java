@@ -60,10 +60,6 @@ public class GeneralPatch {
         }
     }
 
-    public static boolean hideGetPremium() {
-        return SettingsEnum.HIDE_GET_PREMIUM.getBoolean();
-    }
-
     public static int hideEmailAddress(int originalValue) {
         return SettingsEnum.HIDE_EMAIL_ADDRESS.getBoolean() ? 8 : originalValue;
     }

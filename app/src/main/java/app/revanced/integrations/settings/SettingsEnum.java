@@ -15,6 +15,7 @@ public enum SettingsEnum {
     AD_REMOVER_BUTTON_ADS("revanced_ad_remover_button_ads", true, ReturnType.BOOLEAN),
     AD_REMOVER_PAID_CONTENT("revanced_ad_remover_paid_content", true, ReturnType.BOOLEAN),
     AD_REMOVER_SELF_SPONSOR("revanced_ad_remover_self_sponsor", true, ReturnType.BOOLEAN),
+    AD_REMOVER_GET_PREMIUM("revanced_ad_remover_get_premium", true, ReturnType.BOOLEAN, true),
     AD_REMOVER_USER_FILTER("revanced_ad_remover_user_filter", false, ReturnType.BOOLEAN),
     AD_REMOVER_CUSTOM_FILTER("revanced_ad_remover_custom_strings", "", ReturnType.STRING, true),
 
@@ -56,7 +57,6 @@ public enum SettingsEnum {
     HIDE_AUTO_PLAYER_POPUP_PANELS("revanced_hide_auto_player_popup_panels", true, ReturnType.BOOLEAN, true),
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", false, ReturnType.BOOLEAN),
     HIDE_CROWDFUNDING_BOX("revanced_hide_crowdfunding_box", true, ReturnType.BOOLEAN, true),
-    HIDE_GET_PREMIUM("revanced_hide_get_premium", true, ReturnType.BOOLEAN, true),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", true, ReturnType.BOOLEAN, true),
     HIDE_SNACK_BAR("revanced_hide_snack_bar", false, ReturnType.BOOLEAN),
     HIDE_SEARCH_TERMS("revanced_hide_search_terms", false, ReturnType.BOOLEAN, true),
