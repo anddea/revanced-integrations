@@ -1,7 +1,5 @@
 package app.revanced.integrations.patches.video;
 
-import static app.revanced.integrations.sponsorblock.ui.SponsorBlockViewController.endOfVideoReached;
-
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
@@ -24,7 +22,6 @@ public final class VideoInformation {
     private static String videoId = "";
 
     private static long videoLength = 0;
-    private static boolean videoEnd = false;
     private static volatile long videoTime = -1; // must be volatile. Value is set off main thread from high precision patch hook
     /**
      * Injection point.
@@ -53,7 +50,6 @@ public final class VideoInformation {
     public static void setVideoId(@NonNull String newlyLoadedVideoId) {
         if (!videoId.equals(newlyLoadedVideoId)) {
             videoId = newlyLoadedVideoId;
-            videoEnd = false;
         }
     }
 
@@ -87,8 +83,6 @@ public final class VideoInformation {
      * @return if the seek was successful
      */
     public static boolean seekTo(long millisecond) {
-        if (isAtEndOfVideo(millisecond))
-            millisecond = videoLength - 500;
        ReVancedUtils.verifyOnMainThread();
         if (seekMethod == null) {
             LogHelper.printException(VideoInformation.class, "seekMethod was null");
@@ -103,8 +97,8 @@ public final class VideoInformation {
         }
     }
 
-    public static boolean seekToRelative(long millisecondsRelative) {
-        return seekTo(videoTime + millisecondsRelative);
+    public static void seekToRelative(long millisecondsRelative) {
+        seekTo(videoTime + millisecondsRelative);
     }
 
     public static boolean shouldAutoRepeat() {
@@ -154,30 +148,7 @@ public final class VideoInformation {
     /**
      * @return If the playback is at the end of the video
      */
-    public static boolean isVideoEnd() {
-        return videoEnd;
-    }
-
-    public static void videoEnd() {
-        clear();
-        endOfVideoReached();
-        videoEnd = true;
-    }
-
-    private static void clear() {
-        videoId = "";
-        videoLength = 0;
-        videoTime = -1;
-    }
-
-    /**
-     * @return If the playback is at the end of the video
-     */
     public static boolean isAtEndOfVideo() {
         return videoTime > 0 && videoLength > 0 && videoTime >= videoLength;
-    }
-
-    public static boolean isAtEndOfVideo(final long millisecond) {
-        return videoLength > 0 && millisecond >= videoLength;
     }
 }
