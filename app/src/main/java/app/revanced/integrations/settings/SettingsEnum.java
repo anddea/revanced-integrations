@@ -108,7 +108,7 @@ public enum SettingsEnum {
     HIDE_CHANNEL_WATERMARK("revanced_hide_channel_watermark", true, ReturnType.BOOLEAN),
     HIDE_SUGGESTED_ACTION("revanced_hide_suggested_actions", true, ReturnType.BOOLEAN, true),
     HIDE_VIEW_PRODUCTS("revanced_hide_view_products", true, ReturnType.BOOLEAN),
-    HIDE_AUDIO_TRACK_BUTTON("revanced_hide_audio_track_button", false, ReturnType.BOOLEAN),
+    HIDE_AUDIO_TRACK_BUTTON("revanced_hide_audio_track_button", true, ReturnType.BOOLEAN),
     HIDE_PLAYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", false, ReturnType.BOOLEAN, true),
 
 
