@@ -97,6 +97,11 @@ public class GeneralPatch {
         AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 
+    public static void hideLoadMoreButton(View view) {
+        if (!SettingsEnum.HIDE_LOAD_MORE_BUTTON.getBoolean()) return;
+        AdRemoverAPI.HideViewWithLayout1dp(view);
+    }
+
     public static void hideChannelListSubMenu(View view) {
         if (SettingsEnum.HIDE_CHANNEL_LIST_SUBMENU.getBoolean())
             view.setVisibility(View.GONE);
