@@ -330,24 +330,18 @@ public enum SettingsEnum {
                 Object value = setting.getDefaultValue();
 
                 switch (setting.getReturnType()) {
-                    case FLOAT:
-                        value = SharedPrefHelper.getFloat(setting.sharedPref, setting.getPath(), (float) setting.getDefaultValue());
-                        break;
-                    case LONG:
-                        value = SharedPrefHelper.getLong(setting.sharedPref, setting.getPath(), (long) setting.getDefaultValue());
-                        break;
-                    case BOOLEAN:
-                        value = SharedPrefHelper.getBoolean(setting.sharedPref, setting.getPath(), (boolean) setting.getDefaultValue());
-                        break;
-                    case INTEGER:
-                        value = SharedPrefHelper.getInt(setting.sharedPref, setting.getPath(), (int) setting.getDefaultValue());
-                        break;
-                    case STRING:
-                        value = SharedPrefHelper.getString(setting.sharedPref, setting.getPath(), (String) setting.getDefaultValue());
-                        break;
-                    default:
-                        LogHelper.printException(SettingsEnum.class, "Setting does not have a valid Type. Name is: " + setting.name());
-                        break;
+                    case FLOAT ->
+                            value = SharedPrefHelper.getFloat(setting.sharedPref, setting.getPath(), (float) setting.getDefaultValue());
+                    case LONG ->
+                            value = SharedPrefHelper.getLong(setting.sharedPref, setting.getPath(), (long) setting.getDefaultValue());
+                    case BOOLEAN ->
+                            value = SharedPrefHelper.getBoolean(setting.sharedPref, setting.getPath(), (boolean) setting.getDefaultValue());
+                    case INTEGER ->
+                            value = SharedPrefHelper.getInt(setting.sharedPref, setting.getPath(), (int) setting.getDefaultValue());
+                    case STRING ->
+                            value = SharedPrefHelper.getString(setting.sharedPref, setting.getPath(), (String) setting.getDefaultValue());
+                    default ->
+                            LogHelper.printException(SettingsEnum.class, "Setting does not have a valid Type. Name is: " + setting.name());
                 }
                 setting.setValue(value);
             }
@@ -365,7 +359,7 @@ public enum SettingsEnum {
             if (returnType == ReturnType.BOOLEAN) {
                 SharedPrefHelper.saveBoolean(sharedPref, path, (boolean) newValue);
             } else {
-                SharedPrefHelper.saveString(sharedPref, path, newValue + "");
+                SharedPrefHelper.saveString(sharedPref, path, String.valueOf(newValue));
             }
             this.value = newValue;
         } catch (Throwable th) {
