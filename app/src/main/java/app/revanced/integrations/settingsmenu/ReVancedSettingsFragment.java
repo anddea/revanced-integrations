@@ -72,18 +72,19 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SwitchPreference switchPref = (SwitchPreference) pref;
                 setting.setValue(switchPref.isChecked());
 
-                if (setting.equals(SettingsEnum.OVERLAY_BUTTON_SPEED)) {
-                    Speed.refreshVisibility();
-                } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_COPY)) {
-                    Copy.refreshVisibility();
-                } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_COPY_WITH_TIMESTAMP)) {
-                    CopyWithTimeStamp.refreshVisibility();
-                } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_AUTO_REPEAT)) {
-                    ReVancedSettingsFragment.this.AutoRepeatLinks();
-                } else if (setting.equals(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT)) {
-                    AutoRepeat.changeSelected(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean(), true);
-                } else if (setting.equals(SettingsEnum.OVERLAY_BUTTON_DOWNLOADS)) {
-                    Download.refreshVisibility();
+                switch (setting) {
+                    case OVERLAY_BUTTON_SPEED ->
+                            Speed.refreshVisibility();
+                    case OVERLAY_BUTTON_COPY ->
+                            Copy.refreshVisibility();
+                    case OVERLAY_BUTTON_COPY_WITH_TIMESTAMP ->
+                            CopyWithTimeStamp.refreshVisibility();
+                    case OVERLAY_BUTTON_AUTO_REPEAT ->
+                            ReVancedSettingsFragment.this.AutoRepeatLinks();
+                    case ENABLE_ALWAYS_AUTO_REPEAT ->
+                            AutoRepeat.changeSelected(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean(), true);
+                    case OVERLAY_BUTTON_DOWNLOADS ->
+                            Download.refreshVisibility();
                 }
 
             } else if (pref instanceof EditTextPreference) {
@@ -115,17 +116,17 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 }
 
             } else if (pref instanceof ListPreference) {
-                if (setting.equals(SettingsEnum.DEFAULT_VIDEO_SPEED)) {
-                    setVideoSpeed();
-                } else if (setting.equals(SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI)) {
-                    setVideoQuality(true);
-                } else if (setting.equals(SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE)) {
-                    setVideoQuality(false);
-                } else if (setting.equals(SettingsEnum.DOUBLE_BACK_TIMEOUT)) {
-                    setDoubleBackTimeout();
-                    rebootDialog();
-                } else if (setting.equals(SettingsEnum.SPOOF_APP_VERSION_TARGET)) {
-                    setSpoofAppVersionTarget();
+                switch (setting) {
+                    case DEFAULT_VIDEO_SPEED ->
+                            setVideoSpeed();
+                    case DEFAULT_VIDEO_QUALITY_WIFI ->
+                            setVideoQuality(true);
+                    case DEFAULT_VIDEO_QUALITY_MOBILE ->
+                            setVideoQuality(false);
+                    case DOUBLE_BACK_TIMEOUT ->
+                            setDoubleBackTimeout();
+                    case SPOOF_APP_VERSION_TARGET ->
+                            setSpoofAppVersionTarget();
                 }
             }
 
