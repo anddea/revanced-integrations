@@ -537,7 +537,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
 
     /**
-     * Add Preference to Open External Link
+     * Set Open External Link Preference onClickListener
      */
     private void setOpenSettingsPreference() {
         try {

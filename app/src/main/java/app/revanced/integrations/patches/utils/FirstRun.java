@@ -21,12 +21,29 @@ import app.revanced.integrations.settings.SettingsEnum;
 public class FirstRun {
     private static final String PREFERENCE_KEY = "integrations";
 
+    /**
+     * For some reason, when I first install the app, my SponsorBlock settings are not initialized.
+     * To solve this, forcibly initialize SponsorBlock.
+     */
     public static void initializationSB(@NonNull Context context) {
         if (SettingsEnum.SB_FIRST_RUN.getBoolean()) return;
         initialize(null);
         SettingsEnum.SB_FIRST_RUN.saveValue(true);
     }
 
+    /**
+     * The new layout is not loaded when the app is first installed.
+     * (Also reproduced on unPatched YouTube)
+     *
+     * Side effects when new layout is not loaded:
+     * - Button container's layout is broken
+     * - Zoom to fill screen not working
+     * - 8X zoom not working in fullscreen
+     *
+     * To fix this, show the reboot dialog when the app is installed for the first time.
+     *
+     * The version of the current integrations is saved to YouTube's SharedPreferences to identify if the app was first installed.
+     */
     public static void initializationRVX(@NonNull Context context) {
         var integrationVersion = getString(YOUTUBE, PREFERENCE_KEY, null);
 
