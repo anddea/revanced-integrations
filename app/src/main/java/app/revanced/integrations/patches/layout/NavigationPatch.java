@@ -1,12 +1,11 @@
 package app.revanced.integrations.patches.layout;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
-
-import com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity;
 
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ public class NavigationPatch {
         return SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean();
     }
 
-    public static void changeHomePage(WatchWhileActivity activity) {
+    public static void changeHomePage(Activity activity) {
         var intent = activity.getIntent();
         if (SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean() &&
                 Objects.equals(intent.getAction(), "android.intent.action.MAIN")) {

@@ -1,6 +1,6 @@
 package app.revanced.integrations.patches.utils;
 
-import com.google.android.apps.youtube.app.watchwhile.WatchWhileActivity;
+import android.app.Activity;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
@@ -25,7 +25,7 @@ public class DoubleBackToClosePatch {
      *
      * @param activity is used when closing the app
      */
-    public static void closeActivityOnBackPressed(WatchWhileActivity activity) {
+    public static void closeActivityOnBackPressed(Activity activity) {
         // Check scroll position reaches the top in home feed
         if (!isScrollTop) return;
 
