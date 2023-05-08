@@ -42,27 +42,23 @@ public class NavigationPatch {
 
     public static void hideNavigationButton(View view) {
         if (lastPivotTab == null) return;
-        var lastPivotTabName = lastPivotTab.name();
 
-        if (lastPivotTabName.equals(PivotEnum.HOME.getName()))
-            setNavigationButtonVisibility(PivotEnum.HOME, view);
-        else if (lastPivotTabName.equals(PivotEnum.SHORTS.getName()))
-            setNavigationButtonVisibility(PivotEnum.SHORTS, view);
-        else if (lastPivotTabName.equals(PivotEnum.SUBSCRIPTIONS.getName()))
-            setNavigationButtonVisibility(PivotEnum.SUBSCRIPTIONS, view);
-        else if (lastPivotTabName.equals(PivotEnum.LIBRARY.getName()))
-            setNavigationButtonVisibility(PivotEnum.LIBRARY, view);
+        clickLibraryButton(view);
+
+        for (NavigationButton button : NavigationButton.values())
+            if (button.name.equals(lastPivotTab.name()))
+                if (button.enabled) view.setVisibility(View.GONE);
     }
 
-    public static void setNavigationButtonVisibility(PivotEnum pivotEnum, View view) {
-        if (pivotEnum.getBoolean()) view.setVisibility(View.GONE);
+    private static void clickLibraryButton(View view) {
+        if (SettingsEnum.OPEN_LIBRARY_STARTUP.getBoolean() && NavigationButton.LIBRARY.name.equals(lastPivotTab.name()))
+            view.performClick();
     }
 
-    @SuppressLint("WrongConstant")
     public static void hideShortsPlayerNavBar() {
         if (SettingsEnum.HIDE_SHORTS_NAVIGATION_BAR.getBoolean() && shortsContext != null) {
             if (pivotBar instanceof HorizontalScrollView) {
-                Objects.requireNonNull((HorizontalScrollView) pivotBar).setVisibility(8);
+                Objects.requireNonNull((HorizontalScrollView) pivotBar).setVisibility(View.GONE);
             }
         }
     }
@@ -80,23 +76,17 @@ public class NavigationPatch {
         return SettingsEnum.ENABLE_TABLET_NAVIGATION_BAR.getBoolean() || original;
     }
 
-    private enum PivotEnum {
+    private enum NavigationButton {
         HOME("PIVOT_HOME", SettingsEnum.HIDE_HOME_BUTTON.getBoolean()),
         SHORTS("TAB_SHORTS", SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean()),
         SUBSCRIPTIONS("PIVOT_SUBSCRIPTIONS", SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean()),
         LIBRARY("VIDEO_LIBRARY_WHITE", SettingsEnum.HIDE_LIBRARY_BUTTON.getBoolean());
 
-        private final String name;
         private final boolean enabled;
-        PivotEnum(String name, boolean enabled) {
-            this.name = name;
+        private final String name;
+        NavigationButton(String name, boolean enabled) {
             this.enabled = enabled;
-        }
-        private String getName() {
-            return name;
-        }
-        private boolean getBoolean() {
-            return enabled;
+            this.name = name;
         }
     }
 }
