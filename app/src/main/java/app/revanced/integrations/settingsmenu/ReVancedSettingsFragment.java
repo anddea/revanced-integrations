@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -22,6 +23,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.provider.Settings;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -203,8 +205,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     private void initializeReVancedSettings() {
-        setPatchesInformation();
         setBackupRestorePreference();
+        setOpenSettingsPreference();
+        setPatchesInformation();
     }
 
     private void initializeOverlayButton() {
@@ -531,6 +534,31 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
 
+
+    /**
+     * Add Preference to Open External Link
+     */
+    private void setOpenSettingsPreference() {
+        try {
+            Preference openSettingsPreference = Objects.requireNonNull((Preference) findPreferenceOnScreen("revanced_default_app_settings"));
+            openSettingsPreference.setOnPreferenceClickListener(pref -> {
+                Intent intent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    intent = new Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
+                            Uri.parse("package:" + ReVancedSettingsFragment.this.getActivity().getPackageName()));
+                } else {
+                    intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:" + ReVancedSettingsFragment.this.getActivity().getPackageName()));
+                }
+
+                pref.getContext().startActivity(intent);
+                return false;
+            });
+        } catch (Throwable th) {
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setOpenSettingsPreference" + th);
+        }
+    }
+
     /**
      * Add Preference to Import/Export settings submenu
      */
@@ -718,14 +746,5 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         } else {
             rebootDialog();
         }
-    }
-
-    public static void rebootDialogStatic(Context context, String msg) {
-        Activity activity = (Activity) context;
-        new AlertDialog.Builder(activity)
-                .setMessage(str(msg))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
-                .setNegativeButton(str("sign_in_cancel"), null)
-                .show();
     }
 }
