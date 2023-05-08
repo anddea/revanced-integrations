@@ -118,6 +118,7 @@ public enum SettingsEnum {
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", false, ReturnType.BOOLEAN, true),
     HIDE_END_SCREEN_OVERLAY("revanced_hide_end_screen_overlay", false, ReturnType.BOOLEAN, true),
     HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", false, ReturnType.BOOLEAN, true),
+    HIDE_SEEK_MESSAGE("revanced_hide_seek_message", false, ReturnType.BOOLEAN, true),
 
     // Quick Actions
     HIDE_QUICK_ACTIONS("revanced_hide_quick_actions", false, ReturnType.BOOLEAN, true),

@@ -88,6 +88,10 @@ public class FullscreenPatch {
         return SettingsEnum.HIDE_FILMSTRIP_OVERLAY.getBoolean();
     }
 
+    public static boolean hideSeekMessage() {
+        return SettingsEnum.HIDE_SEEK_MESSAGE.getBoolean();
+    }
+
     public static boolean disableLandScapeMode(boolean original) {
         return SettingsEnum.DISABLE_LANDSCAPE_MODE.getBoolean() || original;
     }
