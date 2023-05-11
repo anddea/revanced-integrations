@@ -94,7 +94,9 @@ public class GeneralPatch {
     }
 
     public static void hideBreakingNewsShelf(View view) {
-        if (!SettingsEnum.HIDE_BREAKING_NEWS_SHELF.getBoolean()) return;
+        if (!SettingsEnum.HIDE_BREAKING_NEWS_SHELF.getBoolean()
+                || (SettingsEnum.SPOOF_APP_VERSION.getBoolean()
+                && SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().compareTo("17.30.34") < 0)) return;
         AdRemoverAPI.HideViewWithLayout1dp(view);
     }
 
