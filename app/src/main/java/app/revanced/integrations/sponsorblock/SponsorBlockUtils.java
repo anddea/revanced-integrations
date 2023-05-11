@@ -221,6 +221,7 @@ public class SponsorBlockUtils {
             final String videoId = VideoInformation.getVideoId();
             final long videoLength = VideoInformation.getVideoLength();
             final SegmentCategory segmentCategory = newUserCreatedSegmentCategory;
+
             if (start < 0 || end < 0 || start >= end || videoLength <= 0 || videoId.isEmpty()
                      || segmentCategory == null || uuid.isEmpty()) {
                 LogHelper.printException(SponsorBlockUtils.class, "invalid parameters");

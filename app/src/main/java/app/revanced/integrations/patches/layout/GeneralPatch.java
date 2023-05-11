@@ -73,6 +73,7 @@ public class GeneralPatch {
             view.setVisibility(View.GONE);
         else
             view.setVisibility(View.VISIBLE);
+
     }
 
     public static boolean hideFloatingMicrophone(boolean original) {

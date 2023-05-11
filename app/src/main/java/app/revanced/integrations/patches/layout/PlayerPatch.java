@@ -24,7 +24,7 @@ public class PlayerPatch {
         imageView.setVisibility(SettingsEnum.HIDE_CAPTIONS_BUTTON.getBoolean() ? ImageView.GONE : ImageView.VISIBLE);
     }
 
-    public static void hideEndscreen(View view) {
+    public static void hideEndScreen(View view) {
         if (SettingsEnum.HIDE_END_SCREEN_CARDS.getBoolean()) {
             view.setVisibility(View.GONE);
         }
@@ -44,8 +44,9 @@ public class PlayerPatch {
         }
     }
 
-    public static boolean hidePlayerOverlayFilter() {
-        return SettingsEnum.HIDE_PLAYER_OVERLAY_FILTER.getBoolean();
+    public static void hidePlayerOverlayFilter(ImageView view) {
+        if (!SettingsEnum.HIDE_PLAYER_OVERLAY_FILTER.getBoolean()) return;
+        view.setImageResource(android.R.color.transparent);
     }
 
     public static int hidePlayerButton(View view, int originalValue) {

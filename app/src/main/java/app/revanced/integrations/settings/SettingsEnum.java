@@ -166,6 +166,7 @@ public enum SettingsEnum {
 
     // Flyout Panel
     ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_old_quality_layout", true, ReturnType.BOOLEAN),
+    HIDE_QUALITY_MENU("revanced_hide_menu_qualities", false, ReturnType.BOOLEAN),
     HIDE_CAPTIONS_MENU("revanced_hide_menu_captions", false, ReturnType.BOOLEAN),
     HIDE_LOOP_MENU("revanced_hide_menu_loop_video", false, ReturnType.BOOLEAN),
     HIDE_AMBIENT_MENU("revanced_hide_menu_ambient_mode", false, ReturnType.BOOLEAN),
