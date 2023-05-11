@@ -105,6 +105,16 @@ public final class AdsFilter extends Filter {
                 "paid_content_overlay"
         );
 
+        final var quickAction = new StringFilterGroup(
+                SettingsEnum.HIDE_FULLSCREEN_PANELS,
+                "quick_actions"
+        );
+
+        final var quickActions = new StringFilterGroup(
+                SettingsEnum.HIDE_QUICK_ACTIONS,
+                "quick_actions"
+        );
+
         final var selfSponsor = new StringFilterGroup(
                 SettingsEnum.AD_REMOVER_SELF_SPONSOR,
                 "cta_shelf_card"
@@ -193,6 +203,8 @@ public final class AdsFilter extends Filter {
                 merchandise,
                 movieAds,
                 paidContent,
+                quickAction,
+                quickActions,
                 selfSponsor,
                 teaser,
                 ticketShelf,

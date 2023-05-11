@@ -76,7 +76,6 @@ final class QuickActionButtonsFilter extends Filter {
             if (quickActionsRule.check(identifier).isFiltered()) return true;
 
         if (PlayerType.getCurrent() != PlayerType.WATCH_WHILE_FULLSCREEN) return false;
-        if (SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean() || SettingsEnum.HIDE_QUICK_ACTIONS.getBoolean()) return true;
 
         return super.isFiltered(path, identifier, object, _protobufBufferArray);
     }
