@@ -18,20 +18,21 @@ public class ByteBufferFilterPatch {
             "compact_channel_bar",
             "comment_thread",
             "creation_sheet_menu",
+            "description",
+            "library_recent_shelf",
             "metadata",
+            "playlist_add_to_option_wrapper",
             "thumbnail",
             "|comment.",
             "-button",
             "-count",
             "-space"
     );
-    private static final List<String> mixBufferBlockList = List.of("&list=");
+    private static final List<String> mixBufferBlockList = List.of("&list=", "YouTube Music");
     private static int count;
 
-    public static boolean filter(Object object, ByteBuffer buffer) {
-        var value = object.toString();
-
-        if (value.isEmpty() || generalWhiteList.stream().anyMatch(value::contains))
+    public static boolean filter(String path, String value, ByteBuffer buffer) {
+        if (value.isEmpty() || generalWhiteList.stream().anyMatch(path::contains))
             return false;
 
         if (mixBufferBlockList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
@@ -65,16 +66,10 @@ public class ByteBufferFilterPatch {
     }
 
     private static boolean hideMixPlaylists(ByteBuffer buffer) {
-        final List<String> mixBufferWhiteList = List.of("description", "share", "|ContainerType|ContainerType|");
-        final List<String> musicBufferList = List.of("YouTube Music");
         final List<String> imageBufferList = List.of("ggpht.com");
 
-        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean() ||
-                mixBufferWhiteList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
+        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean())
             return false;
-
-        if (musicBufferList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
-            return true;
 
         return imageBufferList.stream().noneMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains);
     }

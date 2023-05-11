@@ -246,6 +246,6 @@ public final class LithoFilterPatch {
     }
 
     public static boolean filters(final StringBuilder pathBuilder, final String identifier, final Object object, final ByteBuffer protobufBuffer) {
-        return (ByteBuffer() && ByteBufferFilterPatch.filter(object.toString(), protobufBuffer)) || (GeneralAds() && filter(pathBuilder, identifier, object, protobufBuffer));
+        return (ByteBuffer() && ByteBufferFilterPatch.filter(pathBuilder.toString(), object.toString(), protobufBuffer)) || (GeneralAds() && filter(pathBuilder, identifier, object, protobufBuffer));
     }
 }
