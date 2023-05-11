@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
@@ -15,7 +16,7 @@ import app.revanced.integrations.utils.ReVancedUtils;
 public final class VideoInformation {
     private static final String SEEK_METHOD_NAME = "seekTo";
 
-    private static WeakReference<Object> playerController;
+    private static WeakReference<Object> playerControllerRef;
     private static Method seekMethod;
 
     @NonNull
@@ -23,19 +24,19 @@ public final class VideoInformation {
 
     private static long videoLength = 0;
     private static volatile long videoTime = -1; // must be volatile. Value is set off main thread from high precision patch hook
+
     /**
      * Injection point.
-     * Sets a reference to the YouTube playback controller.
      *
-     * @param thisRef Reference to the player controller object.
+     * @param playerController player controller object.
      */
-    public static void playerController_onCreateHook(final Object thisRef) {
-        playerController = new WeakReference<>(thisRef);
-        videoLength = 0;
-        videoTime = -1;
-
+    public static void initialize(@NonNull Object playerController) {
         try {
-            seekMethod = thisRef.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
+            playerControllerRef = new WeakReference<>(Objects.requireNonNull(playerController));
+            videoLength = 0;
+            videoTime = -1;
+
+            seekMethod = playerController.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
             seekMethod.setAccessible(true);
         } catch (Exception ex) {
             LogHelper.printException(VideoInformation.class, "Failed to initialize", ex);
@@ -90,7 +91,7 @@ public final class VideoInformation {
         }
 
         try {
-            return (Boolean) seekMethod.invoke(playerController.get(), millisecond);
+            return (Boolean) seekMethod.invoke(playerControllerRef.get(), millisecond);
         } catch (Exception ex) {
             LogHelper.printException(VideoInformation.class, "Failed to seek", ex);
             return false;

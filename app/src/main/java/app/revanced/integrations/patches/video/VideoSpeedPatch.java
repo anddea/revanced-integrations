@@ -3,8 +3,6 @@ package app.revanced.integrations.patches.video;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
-import androidx.annotation.NonNull;
-
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class VideoSpeedPatch {
@@ -36,7 +34,7 @@ public class VideoSpeedPatch {
         overrideSpeed(defaultSpeed);
     }
 
-    public static void newVideoStarted(@NonNull String videoId) {
+    public static void newVideoStarted(Object ignoredPlayerController) {
         newVideo = true;
     }
 
