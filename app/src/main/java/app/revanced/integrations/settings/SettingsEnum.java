@@ -12,7 +12,6 @@ public enum SettingsEnum {
     // Ads
     HIDE_VIDEO_ADS("revanced_video_ads_removal", true, ReturnType.BOOLEAN, true),
     AD_REMOVER_GENERAL_ADS("revanced_ad_remover_general_ads", true, ReturnType.BOOLEAN),
-    AD_REMOVER_BUTTON_ADS("revanced_ad_remover_button_ads", true, ReturnType.BOOLEAN),
     AD_REMOVER_PAID_CONTENT("revanced_ad_remover_paid_content", true, ReturnType.BOOLEAN),
     AD_REMOVER_SELF_SPONSOR("revanced_ad_remover_self_sponsor", true, ReturnType.BOOLEAN),
     AD_REMOVER_GET_PREMIUM("revanced_ad_remover_get_premium", true, ReturnType.BOOLEAN, true),

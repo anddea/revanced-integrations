@@ -316,14 +316,7 @@ public class ReturnYouTubeDislike {
         try {
             // Must make a local copy of videoId, since it may change between now and when the vote thread runs.
             String videoIdToVoteFor = getCurrentVideoId();
-            if (videoIdToVoteFor == null || lastVideoLoadedWasShort != PlayerType.getCurrent().isNoneOrHidden()) {
-                // User enabled RYD after starting playback of a video.
-                // Or shorts was loaded with regular video present, then shorts was closed,
-                // and then user voted on the now visible original video.
-                // Cannot send a vote, because the loaded videoId is for the wrong video.
-                ReVancedUtils.showToastLong(str("revanced_ryd_failure_user_voted"));
-                return;
-            }
+            if (videoIdToVoteFor == null || lastVideoLoadedWasShort != PlayerType.getCurrent().isNoneOrHidden()) return;
 
             voteSerialExecutor.execute(() -> {
                 try { // must wrap in try/catch to properly log exceptions
