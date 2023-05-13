@@ -18,7 +18,7 @@ public final class AdsFilter extends Filter {
                 "download_",
                 "downloads_",
                 "library_recent_shelf",
-                "playlist_add_to_option_wrapper",
+                "playlist_add",
                 "related_video_with_context",
                 "|comment." // skip blocking anything in the comments replies
         };

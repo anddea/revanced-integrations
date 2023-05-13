@@ -1,10 +1,14 @@
 package app.revanced.integrations.patches.ads;
 
+import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 
 final class QuickActionButtonsFilter extends Filter {
     private final StringFilterGroup quickActionsRule;
+
+    private final String[] exceptions;
 
     public QuickActionButtonsFilter() {
         quickActionsRule = new StringFilterGroup(
@@ -12,6 +16,13 @@ final class QuickActionButtonsFilter extends Filter {
                 "quick_actions"
         );
 
+        exceptions = new String[]{
+                "comment",
+                "horizontal_video_shelf",
+                "library_recent_shelf",
+                "playlist_add",
+                "video_with_context"
+        };
 
         pathFilterGroups.addAll(
                 new StringFilterGroup(
@@ -72,10 +83,13 @@ final class QuickActionButtonsFilter extends Filter {
 
     @Override
     public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
+        if (containsAny(path, exceptions)
+                || containsAny(object, exceptions)
+                || !containsAny(object, "quick_actions")
+                || PlayerType.getCurrent() != PlayerType.WATCH_WHILE_FULLSCREEN) return false;
+
         if (isEveryFilterGroupEnabled())
             if (quickActionsRule.check(identifier).isFiltered()) return true;
-
-        if (PlayerType.getCurrent() != PlayerType.WATCH_WHILE_FULLSCREEN) return false;
 
         return super.isFiltered(path, identifier, object, _protobufBufferArray);
     }

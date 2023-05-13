@@ -18,7 +18,7 @@ final class FlyoutPanelsFilter extends Filter {
                 "comment",
                 "horizontal_video_shelf",
                 "library_recent_shelf",
-                "playlist_add_to_option_wrapper",
+                "playlist_add",
                 "video_with_context"
         };
 

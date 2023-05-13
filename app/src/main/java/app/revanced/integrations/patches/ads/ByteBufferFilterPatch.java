@@ -21,7 +21,7 @@ public class ByteBufferFilterPatch {
             "description",
             "library_recent_shelf",
             "metadata",
-            "playlist_add_to_option_wrapper",
+            "playlist_add",
             "thumbnail",
             "|comment.",
             "-button",
