@@ -5,6 +5,7 @@ import static app.revanced.integrations.utils.ReVancedUtils.getNetworkType;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
@@ -21,6 +22,8 @@ public class VideoQualityPatch {
     private static final SettingsEnum mobileQualitySetting = SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
 
     private static boolean qualityNeedsUpdating;
+    @Nullable
+    private static String currentVideoId;
 
     private static boolean userChangedDefaultQuality;
 
@@ -112,8 +115,12 @@ public class VideoQualityPatch {
         userChangedDefaultQuality = true;
     }
 
-    public static void newVideoStarted(Object ignoredPlayerController) {
+    public static void newVideoStarted(@NonNull String videoId) {
         qualityNeedsUpdating = true;
-        videoQualities = null;
+
+        if (!videoId.equals(currentVideoId)) {
+            currentVideoId = videoId;
+            videoQualities = null;
+        }
     }
 }
