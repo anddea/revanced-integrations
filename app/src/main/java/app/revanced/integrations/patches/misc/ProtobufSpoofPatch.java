@@ -27,6 +27,17 @@ public class ProtobufSpoofPatch {
     };
 
     /**
+     * If you override protobuf when playing clips, the following issues arise.
+     * https://github.com/inotia00/ReVanced_Extended/issues/999
+     *
+     * This is because a clip's protobuf contains important information used in the clip, such as the start time of the clip, the length of the clip, and whether or not the clip has auto-repeat.
+     * Therefore, in the clip, the PROTOBUF_PARAMETER_SHORTS parameter must be prepend while maintaining the clip's protobuf.
+     *
+     * The general protobuf size does not exceed 26, but the size of the clip's protobuf exceeds 26, so we can identify whether the currently playing video is a clip or not.
+     */
+    private static final int MAX_PROTOBUF_LENGTH = 26;
+
+    /**
      * On app first start, the first video played usually contains a single non-default window setting value
      * and all other subtitle settings for the video are (incorrect) default shorts window settings.
      * For this situation, the shorts settings must be replaced.
@@ -69,6 +80,9 @@ public class ProtobufSpoofPatch {
     public static String setProtobufParameter(String protobufParameter) {
         if (protobufParameter.startsWith(PROTOBUF_PARAMETER_SHORTS))
             return protobufParameter;
+
+        if (protobufParameter.length() > MAX_PROTOBUF_LENGTH)
+            return PROTOBUF_PARAMETER_SHORTS + protobufParameter;
 
         final boolean isPlayingFeed = containsAny(protobufParameter, PROTOBUF_PARAMETER_WHITELIST)
                 && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
