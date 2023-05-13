@@ -17,7 +17,6 @@ import app.revanced.integrations.utils.LogHelper;
 
 public class ProtobufSpoofPatch {
     private static final String PREFERENCE_KEY = "auto_spoofing_enabled";
-    private static boolean isPlayingShorts;
 
     /**
      * Target Protobuf parameters.
@@ -68,13 +67,10 @@ public class ProtobufSpoofPatch {
     }
 
     public static String setProtobufParameter(String protobufParameter) {
-        // video is Short or Story
-        isPlayingShorts = protobufParameter.contains(PROTOBUF_PARAMETER_SHORTS);
-
-        if (isPlayingShorts)
+        if (protobufParameter.startsWith(PROTOBUF_PARAMETER_SHORTS))
             return protobufParameter;
 
-        boolean isPlayingFeed = containsAny(protobufParameter, PROTOBUF_PARAMETER_WHITELIST)
+        final boolean isPlayingFeed = containsAny(protobufParameter, PROTOBUF_PARAMETER_WHITELIST)
                 && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
 
         return isPlayingFeed
@@ -121,7 +117,7 @@ public class ProtobufSpoofPatch {
         // then this will incorrectly replace the setting.
         // But, if the video uses multiple subtitles in different screen locations, then detect the non-default values
         // and do not replace any window settings for the video (regardless if they match a shorts default).
-        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !isPlayingShorts
+        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden()
                 && numberOfNonDefaultSettingsObserved < NUMBER_OF_NON_DEFAULT_SUBTITLES_BEFORE_ENABLING_PASSTHRU) { // video is not a Short or Story
             for (SubtitleWindowReplacementSettings setting : SubtitleWindowReplacementSettings.values()) {
                 if (setting.match(ap, ah, av, vs, sd))
