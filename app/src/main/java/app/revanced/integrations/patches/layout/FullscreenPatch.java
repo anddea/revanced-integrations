@@ -2,6 +2,8 @@ package app.revanced.integrations.patches.layout;
 
 import android.view.View;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 
@@ -25,6 +27,11 @@ public class FullscreenPatch {
 
     public static int hideFullscreenPanels() {
         return SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean() ? 8 : 0;
+    }
+
+    public static void hideFullscreenPanels(CoordinatorLayout coordinatorLayout) {
+        if (!SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean()) return;
+        coordinatorLayout.setVisibility(View.GONE);
     }
 
     public static void hideQuickActions(View view) {
