@@ -11,7 +11,7 @@ import app.revanced.integrations.shared.PlayerType
  * @param context the context to create in
  */
 class SwipeControlsConfigurationProvider(
-        private val context: Context
+    private val context: Context
 ) {
 //region swipe enable
     /**
@@ -45,7 +45,7 @@ class SwipeControlsConfigurationProvider(
      */
     val overwriteVolumeKeyControls: Boolean
         get() = isFullscreenVideo && enableVolumeControls
-//endregioin
+//endregion
 
 //region gesture adjustments
     /**
@@ -58,8 +58,8 @@ class SwipeControlsConfigurationProvider(
      * threshold for swipe detection
      * this may be called rapidly in onScroll, so we have to load it once and then leave it constant
      */
-    val swipeMagnitudeThreshold: Float
-        get() = SettingsEnum.SWIPE_MAGNITUDE_THRESHOLD.float
+    val swipeMagnitudeThreshold: Int
+        get() = SettingsEnum.SWIPE_MAGNITUDE_THRESHOLD.int
 //endregion
 
 //region overlay adjustments
@@ -79,8 +79,8 @@ class SwipeControlsConfigurationProvider(
     /**
      * text size for the overlay, in sp
      */
-    val overlayTextSize: Float
-        get() = SettingsEnum.SWIPE_OVERLAY_TEXT_SIZE.float
+    val overlayTextSize: Int
+        get() = SettingsEnum.SWIPE_OVERLAY_TEXT_SIZE.int
 
     /**
      * get the background color for text on the overlay, as a color int

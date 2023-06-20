@@ -1,7 +1,6 @@
 package app.revanced.integrations.swipecontrols.controller.gesture
 
 import android.view.MotionEvent
-import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserver
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserverImpl
 import app.revanced.integrations.swipecontrols.SwipeControlsHostActivity
@@ -100,10 +99,12 @@ class ClassicSwipeController(
                 scrollVolume(distanceY)
                 true
             }
+
             in controller.zones.brightness -> {
                 scrollBrightness(distanceY)
                 true
             }
+
             else -> false
         }
     }

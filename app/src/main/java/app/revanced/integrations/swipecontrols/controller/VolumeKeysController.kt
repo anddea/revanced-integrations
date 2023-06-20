@@ -18,15 +18,17 @@ class VolumeKeysController(
      * @return consume the event?
      */
     fun onKeyEvent(event: KeyEvent): Boolean {
-        if(!controller.config.overwriteVolumeKeyControls) {
+        if (!controller.config.overwriteVolumeKeyControls) {
             return false
         }
 
         return when (event.keyCode) {
             KeyEvent.KEYCODE_VOLUME_DOWN ->
                 handleVolumeKeyEvent(event, false)
+
             KeyEvent.KEYCODE_VOLUME_UP ->
                 handleVolumeKeyEvent(event, true)
+
             else -> false
         }
     }

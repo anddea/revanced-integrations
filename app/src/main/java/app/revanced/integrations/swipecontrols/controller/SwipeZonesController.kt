@@ -9,7 +9,7 @@ import app.revanced.integrations.utils.ResourceType
 import app.revanced.integrations.utils.ResourceUtils
 import kotlin.math.min
 
-/** 
+/**
  * Y- Axis:
  * -------- 0
  *        ^
