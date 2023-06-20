@@ -11,6 +11,15 @@ public final class VideoInformation {
     @NonNull
     private static String videoId = "";
 
+    /**
+     * Id of the current video playing.  Includes Shorts and YouTube Stories.
+     *
+     * @return The id of the video. Empty string if not set yet.
+     */
+    @NonNull
+    public static String getVideoId() {
+        return videoId;
+    }
 
     /**
      * Injection point.
@@ -22,16 +31,6 @@ public final class VideoInformation {
             LogHelper.printDebug(VideoInformation.class, "New video id: " + newlyLoadedVideoId);
             videoId = newlyLoadedVideoId;
         }
-    }
-
-    /**
-     * Id of the current video playing.  Includes Shorts and YouTube Stories.
-     *
-     * @return The id of the video. Empty string if not set yet.
-     */
-    @NonNull
-    public static String getVideoId() {
-        return videoId;
     }
 
 }

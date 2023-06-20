@@ -4,9 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import app.revanced.music.settings.MusicSettingsEnum;
+import app.revanced.music.settings.SettingsEnum;
 
-/** @noinspection ALL*/
+/**
+ * @noinspection ALL
+ */
 public class LogHelper {
     private static final String LOG_PREFIX = "Extended: ";
 
@@ -19,7 +21,7 @@ public class LogHelper {
     }
 
     public static void printDebug(Class clazz, @NonNull String message) {
-        if (MusicSettingsEnum.ENABLE_DEBUG.getBoolean()) {
+        if (SettingsEnum.ENABLE_DEBUG.getBoolean()) {
             Log.d(LOG_PREFIX + (clazz != null ? clazz.getSimpleName() : ""), message);
         }
     }

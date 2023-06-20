@@ -1,54 +1,77 @@
 package app.revanced.music.patches.layout;
 
-import android.view.View;
+import static app.revanced.music.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
+import static app.revanced.music.utils.ReVancedUtils.hideViewUnderCondition;
 
-import app.revanced.integrations.adremover.AdRemoverAPI;
-import app.revanced.music.settings.MusicSettingsEnum;
+import android.view.View;
+import android.widget.TextView;
+
+import app.revanced.music.settings.SettingsEnum;
 
 public class LayoutPatch {
 
     public static boolean disableAutoCaptions(boolean original) {
-        return MusicSettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() || original;
+        return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() || original;
     }
 
     public static int enableBlackNavbar() {
-        return MusicSettingsEnum.ENABLE_BLACK_NAVBAR.getBoolean() ? -16777216 : -14869219;
+        return SettingsEnum.ENABLE_BLACK_NAVBAR.getBoolean() ? -16777216 : -14869219;
     }
 
     public static boolean enableColorMatchPlayer() {
-        return MusicSettingsEnum.ENABLE_COLOR_MATCH_PLAYER.getBoolean();
+        return SettingsEnum.ENABLE_COLOR_MATCH_PLAYER.getBoolean();
     }
 
     public static int enableCompactDialog(int original) {
-        return MusicSettingsEnum.ENABLE_COMPACT_DIALOG.getBoolean() && original < 600 ? 600 : original;
+        return SettingsEnum.ENABLE_COMPACT_DIALOG.getBoolean() && original < 600 ? 600 : original;
+    }
+
+    public static boolean enableDismissQueue(boolean original) {
+        return SettingsEnum.ENABLE_DISMISS_QUEUE.getBoolean() || original;
     }
 
     public static boolean enableForceMinimizedPlayer(boolean original) {
-        return MusicSettingsEnum.ENABLE_FORCE_MINIMIZED_PLAYER.getBoolean() || original;
+        return SettingsEnum.ENABLE_FORCE_MINIMIZED_PLAYER.getBoolean() || original;
     }
 
     public static boolean enableLandScapeMode(boolean original) {
         try {
-            return MusicSettingsEnum.ENABLE_LANDSCAPE_MODE.getBoolean() || original;
+            return SettingsEnum.ENABLE_LANDSCAPE_MODE.getBoolean() || original;
         } catch (Exception ignored) {
             return original;
         }
     }
 
+    public static boolean enableNewLayout(boolean original) {
+        return SettingsEnum.ENABLE_NEW_LAYOUT.getBoolean() || original;
+    }
+
+    public static boolean enableOldStyleMiniPlayer(boolean original) {
+        return !SettingsEnum.ENABLE_OLD_STYLE_MINI_PLAYER.getBoolean() && original;
+    }
+
+    public static boolean enableSleepTimer(boolean original) {
+        return SettingsEnum.ENABLE_SLEEP_TIMER.getBoolean() || original;
+    }
+
     public static boolean enableZenMode() {
-        return MusicSettingsEnum.ENABLE_ZEN_MODE.getBoolean();
+        return SettingsEnum.ENABLE_ZEN_MODE.getBoolean();
     }
 
     public static int hideCastButton(int original) {
-        return MusicSettingsEnum.HIDE_CAST_BUTTON.getBoolean() ? View.GONE : original;
+        return SettingsEnum.HIDE_CAST_BUTTON.getBoolean() ? View.GONE : original;
     }
 
     public static void hideCategoryBar(View view) {
-        if (MusicSettingsEnum.HIDE_CATEGORY_BAR.getBoolean()) AdRemoverAPI.HideViewWithLayout1dp(view);
+        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_CATEGORY_BAR.getBoolean(), view);
+    }
+
+    public static void hideNavigationLabel(TextView textview) {
+        hideViewUnderCondition(SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean(), textview);
     }
 
     public static boolean hideNewPlaylistButton() {
-        return MusicSettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
+        return SettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
     }
 
 }

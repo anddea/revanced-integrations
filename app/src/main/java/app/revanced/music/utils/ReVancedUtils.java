@@ -5,22 +5,59 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+import app.revanced.music.settings.SettingsEnum;
+
 public class ReVancedUtils {
     @SuppressLint("StaticFieldLeak")
     public static Context context;
+
+    private ReVancedUtils() {
+    } // utility class
 
     public static Context getContext() {
         return context;
     }
 
-    private ReVancedUtils() {
-    } // utility class
+    public static void hideViewBy0dpUnderCondition(boolean condition, View view) {
+        if (!condition) return;
+        hideViewByLayoutParams(view);
+    }
+
+    public static void hideViewUnderCondition(boolean condition, View view) {
+        if (!condition) return;
+        view.setVisibility(View.GONE);
+    }
+
+    public static void hideViewByLayoutParams(View view) {
+        if (view instanceof LinearLayout) {
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
+            view.setLayoutParams(layoutParams);
+        } else if (view instanceof FrameLayout) {
+            FrameLayout.LayoutParams layoutParams2 = new FrameLayout.LayoutParams(0, 0);
+            view.setLayoutParams(layoutParams2);
+        } else if (view instanceof RelativeLayout) {
+            RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(0, 0);
+            view.setLayoutParams(layoutParams3);
+        } else if (view instanceof Toolbar) {
+            Toolbar.LayoutParams layoutParams4 = new Toolbar.LayoutParams(0, 0);
+            view.setLayoutParams(layoutParams4);
+        } else if (view instanceof ViewGroup) {
+            ViewGroup.LayoutParams layoutParams5 = new ViewGroup.LayoutParams(0, 0);
+            view.setLayoutParams(layoutParams5);
+        }
+    }
 
     public static boolean containsAny(@NonNull String value, @NonNull String... targets) {
         for (String string : targets)
@@ -29,33 +66,22 @@ public class ReVancedUtils {
     }
 
     public static void showToastShort(Context context, String messageToToast) {
-        showToast(context, messageToToast, Toast.LENGTH_SHORT);
-    }
-
-    public static void showToastLong(Context context, String messageToToast) {
-        showToast(context, messageToToast, Toast.LENGTH_LONG);
+        showToast(context, messageToToast);
     }
 
     /**
      * Safe to call from any thread
      */
     public static void showToastShort(@NonNull String messageToToast) {
-        showToast(context, messageToToast, Toast.LENGTH_SHORT);
+        showToast(context, messageToToast);
     }
 
-    /**
-     * Safe to call from any thread
-     */
-    public static void showToastLong(@NonNull String messageToToast) {
-        showToast(context, messageToToast, Toast.LENGTH_LONG);
-    }
-
-    private static void showToast(Context context, @NonNull String messageToToast, int toastDuration) {
+    private static void showToast(Context context, @NonNull String messageToToast) {
         Objects.requireNonNull(messageToToast);
         runOnMainThreadNowOrLater(() -> {
                     // cannot use getContext(), otherwise if context is null it will cause infinite recursion of error logging
                     assert context != null;
-                    Toast.makeText(context, messageToToast, toastDuration).show();
+                    Toast.makeText(context, messageToToast, Toast.LENGTH_SHORT).show();
                 }
         );
     }
@@ -118,13 +144,11 @@ public class ReVancedUtils {
         var networkInfo = cm.getActiveNetworkInfo();
 
         if (networkInfo == null || !networkInfo.isConnected()) return NetworkType.NONE;
-        switch (networkInfo.getType()) {
-            case ConnectivityManager.TYPE_MOBILE:
-            case ConnectivityManager.TYPE_BLUETOOTH:
-                return NetworkType.MOBILE;
-            default:
-                return NetworkType.WIFI;
-        }
+        return switch (networkInfo.getType()) {
+            case ConnectivityManager.TYPE_MOBILE, ConnectivityManager.TYPE_BLUETOOTH ->
+                    NetworkType.MOBILE;
+            default -> NetworkType.WIFI;
+        };
     }
 
     public enum NetworkType {
@@ -133,9 +157,11 @@ public class ReVancedUtils {
         NONE("none");
 
         private final String name;
+
         NetworkType(String name) {
             this.name = name;
         }
+
         public String getName() {
             return name;
         }

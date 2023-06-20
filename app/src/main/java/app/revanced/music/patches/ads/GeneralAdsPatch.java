@@ -1,10 +1,10 @@
 package app.revanced.music.patches.ads;
 
-import app.revanced.music.settings.MusicSettingsEnum;
+import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
-public final class GeneralMusicAdsPatch extends MusicFilter {
+public final class GeneralAdsPatch extends Filter {
     private final String[] IGNORE = {
             "menu",
             "root",
@@ -13,11 +13,11 @@ public final class GeneralMusicAdsPatch extends MusicFilter {
             "-button"
     };
 
-    public GeneralMusicAdsPatch() {
-        var buttonShelf = new MusicBlockRule(MusicSettingsEnum.HIDE_BUTTON_SHELF, "entry_point_button_shelf");
-        var carouselShelf = new MusicBlockRule(MusicSettingsEnum.HIDE_CAROUSEL_SHELF, "music_grid_item_carousel");
-        var generalAds = new MusicBlockRule(MusicSettingsEnum.HIDE_MUSIC_ADS,"statement_banner");
-        var playlistCard = new MusicBlockRule(MusicSettingsEnum.HIDE_PLAYLIST_CARD, "music_container_card_shelf");
+    public GeneralAdsPatch() {
+        var buttonShelf = new BlockRule(SettingsEnum.HIDE_BUTTON_SHELF, "entry_point_button_shelf");
+        var carouselShelf = new BlockRule(SettingsEnum.HIDE_CAROUSEL_SHELF, "music_grid_item_carousel");
+        var generalAds = new BlockRule(SettingsEnum.HIDE_MUSIC_ADS, "statement_banner");
+        var playlistCard = new BlockRule(SettingsEnum.HIDE_PLAYLIST_CARD, "music_container_card_shelf");
 
         this.pathRegister.registerAll(
                 buttonShelf,
@@ -37,7 +37,7 @@ public final class GeneralMusicAdsPatch extends MusicFilter {
         else
             result = BlockResult.UNBLOCKED;
 
-        LogHelper.printDebug(GeneralMusicAdsPatch.class, String.format("%s (ID: %s): %s", result.message, identifier, path));
+        LogHelper.printDebug(GeneralAdsPatch.class, String.format("%s (ID: %s): %s", result.message, identifier, path));
 
         return result.filter;
     }

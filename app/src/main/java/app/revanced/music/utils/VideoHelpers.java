@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import app.revanced.music.patches.utils.VideoInformation;
-import app.revanced.music.settings.MusicSettingsEnum;
+import app.revanced.music.settings.SettingsEnum;
 
 public class VideoHelpers {
 
@@ -18,7 +18,7 @@ public class VideoHelpers {
                 showToastShort("Context is null!");
                 return;
             }
-            var downloaderPackageName = MusicSettingsEnum.DEFAULT_DOWNLOADER.getString();
+            var downloaderPackageName = SettingsEnum.DEFAULT_DOWNLOADER.getString();
 
             boolean packageEnabled = false;
             try {

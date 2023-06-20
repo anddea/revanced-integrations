@@ -13,26 +13,21 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.revanced.music.settings.MusicSettingsEnum;
+import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 
-public class MusicVideoQualityPatch {
+public class VideoQualityPatch {
     private static final int AUTOMATIC_VIDEO_QUALITY_VALUE = -2;
-    private static final MusicSettingsEnum wifiQualitySetting = MusicSettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI;
-    private static final MusicSettingsEnum mobileQualitySetting = MusicSettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
-
+    private static final SettingsEnum wifiQualitySetting = SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI;
+    private static final SettingsEnum mobileQualitySetting = SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
+    public static String qIndexMethod;
     private static boolean qualityNeedsUpdating;
     @Nullable
     private static String currentVideoId;
-
     private static boolean userChangedDefaultQuality;
-
     private static int userSelectedQualityIndex;
-
     @Nullable
     private static List<Integer> videoQualities;
-
-    public static String qIndexMethod;
 
     private static void changeDefaultQuality(int defaultQuality) {
         var networkType = getNetworkType();
@@ -78,13 +73,13 @@ public class MusicVideoQualityPatch {
                         }
                     }
                 }
-                LogHelper.printDebug(MusicVideoQualityPatch.class, "VideoId: " + currentVideoId + " videoQualities: " + videoQualities);
+                LogHelper.printDebug(VideoQualityPatch.class, "VideoId: " + currentVideoId + " videoQualities: " + videoQualities);
             }
 
             if (userChangedDefaultQuality) {
                 userChangedDefaultQuality = false;
                 final int quality = videoQualities.get(userSelectedQualityIndex);
-                LogHelper.printDebug(MusicVideoQualityPatch.class, "User changed default quality to: " + quality);
+                LogHelper.printDebug(VideoQualityPatch.class, "User changed default quality to: " + quality);
                 changeDefaultQuality(quality);
                 return userSelectedQualityIndex;
             }
@@ -94,32 +89,32 @@ public class MusicVideoQualityPatch {
             int qualityIndexToUse = 0;
             int i = 0;
             for (Integer quality : videoQualities) {
-                if (quality <= preferredQuality && qualityToUse < quality)  {
+                if (quality <= preferredQuality && qualityToUse < quality) {
                     qualityToUse = quality;
                     qualityIndexToUse = i;
                 }
                 i++;
             }
             if (qualityIndexToUse == originalQualityIndex) {
-                LogHelper.printDebug(MusicVideoQualityPatch.class, "Video is already preferred quality: " + preferredQuality);
+                LogHelper.printDebug(VideoQualityPatch.class, "Video is already preferred quality: " + preferredQuality);
                 return originalQualityIndex;
             }
 
             final int qualityToUseLog = qualityToUse;
-            LogHelper.printDebug(MusicVideoQualityPatch.class, "Quality changed from: "
+            LogHelper.printDebug(VideoQualityPatch.class, "Quality changed from: "
                     + videoQualities.get(originalQualityIndex) + " to: " + qualityToUseLog);
 
             Method m = qInterface.getClass().getMethod(qIndexMethod, Integer.TYPE);
             m.invoke(qInterface, qualityToUse);
             return qualityIndexToUse;
         } catch (Exception ex) {
-            LogHelper.printException(MusicVideoQualityPatch.class, "Failed to set quality", ex);
+            LogHelper.printException(VideoQualityPatch.class, "Failed to set quality", ex);
             return originalQualityIndex;
         }
     }
 
     public static void userChangedQuality(int selectedQuality) {
-        if (!MusicSettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean()) return;
+        if (!SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean()) return;
 
         userSelectedQualityIndex = selectedQuality;
         userChangedDefaultQuality = true;

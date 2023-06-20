@@ -1,6 +1,5 @@
 package app.revanced.music.settingsmenu;
 
-import static app.revanced.music.utils.ReVancedUtils.showToastShort;
 import static app.revanced.music.utils.SharedPrefHelper.saveString;
 import static app.revanced.music.utils.StringRef.str;
 
@@ -15,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-import app.revanced.music.settings.MusicSettingsEnum;
+import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 
 public class SharedPreferenceChangeListener {
@@ -28,7 +27,7 @@ public class SharedPreferenceChangeListener {
     }
 
     public static void onPreferenceChanged(@Nullable String key, boolean newValue) {
-        for (MusicSettingsEnum setting : MusicSettingsEnum.values()) {
+        for (SettingsEnum setting : SettingsEnum.values()) {
             if (!setting.path.equals(key) && key != null)
                 continue;
 
@@ -41,17 +40,17 @@ public class SharedPreferenceChangeListener {
     public static void initializeSettings(@NonNull Activity base) {
 
         String dataString = Objects.requireNonNull(base.getIntent()).getDataString();
-        for (MusicSettingsEnum setting : MusicSettingsEnum.values()) {
-            if (!setting.path.equals(dataString) && setting.returnType != MusicSettingsEnum.ReturnType.STRING && activity == null)
+        for (SettingsEnum setting : SettingsEnum.values()) {
+            if (!setting.path.equals(dataString) && setting.returnType != SettingsEnum.ReturnType.STRING && activity == null)
                 continue;
 
             editTextDialogBuilder(setting, base);
         }
     }
 
-    private static void editTextDialogBuilder(@NonNull MusicSettingsEnum setting, Activity base) {
+    private static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base) {
         try {
-            if (setting.returnType != MusicSettingsEnum.ReturnType.STRING) return;
+            if (setting.returnType != SettingsEnum.ReturnType.STRING) return;
             final EditText textView = new EditText(base);
             textView.setHint(setting.getString());
             textView.setText(setting.getString());
@@ -60,6 +59,11 @@ public class SharedPreferenceChangeListener {
                     .setTitle(str(setting.path + "_title"))
                     .setView(textView)
                     .setNegativeButton(android.R.string.cancel, (dialog, which) -> base.finish())
+                    .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
+                        saveString(setting.path, setting.defaultValue.toString());
+                        base.finish();
+                        rebootDialog();
+                    })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         saveString(setting.path, textView.getText().toString());
                         base.finish();

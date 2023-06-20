@@ -1,7 +1,7 @@
 package app.revanced.music.settings;
 
-import static app.revanced.music.settings.MusicSettingsEnum.ReturnType.BOOLEAN;
-import static app.revanced.music.settings.MusicSettingsEnum.ReturnType.INTEGER;
+import static app.revanced.music.settings.SettingsEnum.ReturnType.BOOLEAN;
+import static app.revanced.music.settings.SettingsEnum.ReturnType.INTEGER;
 import static app.revanced.music.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.music.utils.SharedPrefHelper.saveBoolean;
 import static app.revanced.music.utils.SharedPrefHelper.saveInteger;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-public enum MusicSettingsEnum {
+public enum SettingsEnum {
 
     // Ads
     HIDE_MUSIC_ADS("revanced_hide_music_ads", BOOLEAN, true, true),
@@ -22,13 +22,18 @@ public enum MusicSettingsEnum {
     ENABLE_BLACK_NAVBAR("revanced_enable_black_navbar", BOOLEAN, true),
     ENABLE_COLOR_MATCH_PLAYER("revanced_enable_color_match_player", BOOLEAN, true),
     ENABLE_COMPACT_DIALOG("revanced_enable_compact_dialog", BOOLEAN, true),
+    ENABLE_DISMISS_QUEUE("revanced_enable_dismiss_queue", BOOLEAN, true, true),
     ENABLE_FORCE_MINIMIZED_PLAYER("revanced_enable_force_minimized_player", BOOLEAN, true),
     ENABLE_LANDSCAPE_MODE("revanced_enable_landscape_mode", BOOLEAN, true, true),
+    ENABLE_NEW_LAYOUT("revanced_enable_new_layout", BOOLEAN, false, true),
+    ENABLE_OLD_STYLE_MINI_PLAYER("revanced_enable_old_style_mini_player", BOOLEAN, false, true),
+    ENABLE_SLEEP_TIMER("revanced_enable_sleep_timer", BOOLEAN, true, true),
     ENABLE_ZEN_MODE("revanced_enable_zen_mode", BOOLEAN, false),
     HIDE_BUTTON_SHELF("revanced_hide_button_shelf", BOOLEAN, false, true),
     HIDE_CAROUSEL_SHELF("revanced_hide_carousel_shelf", BOOLEAN, false, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", BOOLEAN, true),
     HIDE_CATEGORY_BAR("revanced_hide_category_bar", BOOLEAN, true, true),
+    HIDE_NAVIGATION_LABEL("revanced_hide_navigation_label", BOOLEAN, false, true),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, false),
     HIDE_PLAYLIST_CARD("revanced_hide_playlist_card", BOOLEAN, false, true),
 
@@ -42,9 +47,7 @@ public enum MusicSettingsEnum {
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", INTEGER, -2),
     DEFAULT_VIDEO_QUALITY_MOBILE("revanced_default_video_quality_mobile", INTEGER, -2),
     HOOK_SHARE_BUTTON("revanced_hook_share_button", BOOLEAN, false, true),
-    HOOK_TYPE("revanced_hook_type", BOOLEAN, false, true),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, false, true);
-
 
     static {
         loadAllSettings();
@@ -61,14 +64,14 @@ public enum MusicSettingsEnum {
 
     public Object value;
 
-    MusicSettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue) {
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue) {
         this.path = path;
         this.returnType = returnType;
         this.defaultValue = defaultValue;
         this.rebootApp = false;
     }
 
-    MusicSettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp) {
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp) {
         this.path = path;
         this.returnType = returnType;
         this.defaultValue = defaultValue;
@@ -76,39 +79,29 @@ public enum MusicSettingsEnum {
     }
 
     private static void loadAllSettings() {
-        for (MusicSettingsEnum setting : values()) {
+        for (SettingsEnum setting : values()) {
             setting.load();
         }
     }
 
     private void load() {
         switch (returnType) {
-            case BOOLEAN:
-                value = Objects.requireNonNull(getPreferences()).getBoolean(path, (boolean) defaultValue);
-                break;
-            case INTEGER:
-                value = Objects.requireNonNull(getPreferences()).getInt(path, (Integer) defaultValue);
-                break;
-            case STRING:
-                value = Objects.requireNonNull(getPreferences()).getString(path, (String) defaultValue);
-                break;
-            default:
-                throw new IllegalStateException(name());
+            case BOOLEAN ->
+                    value = Objects.requireNonNull(getPreferences()).getBoolean(path, (boolean) defaultValue);
+            case INTEGER ->
+                    value = Objects.requireNonNull(getPreferences()).getInt(path, (Integer) defaultValue);
+            case STRING ->
+                    value = Objects.requireNonNull(getPreferences()).getString(path, (String) defaultValue);
+            default -> throw new IllegalStateException(name());
         }
     }
 
     public void saveValue(@NonNull Object newValue) {
         Objects.requireNonNull(newValue);
         switch (returnType) {
-            case BOOLEAN:
-                saveBoolean(path, (boolean) newValue);
-                break;
-            case INTEGER:
-                saveInteger(path, (Integer) newValue);
-                break;
-            default:
-                saveString(path, newValue.toString());
-                break;
+            case BOOLEAN -> saveBoolean(path, (boolean) newValue);
+            case INTEGER -> saveInteger(path, (Integer) newValue);
+            default -> saveString(path, newValue.toString());
         }
         value = newValue;
     }

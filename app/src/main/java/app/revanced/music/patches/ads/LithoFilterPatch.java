@@ -6,24 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import app.revanced.music.settings.MusicSettingsEnum;
+import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
-class MusicBlockRule {
-    final static class BlockResult {
-        private final boolean blocked;
-
-        public BlockResult(final boolean blocked) {
-            this.blocked = blocked;
-        }
-
-        public boolean isBlocked() {
-            return blocked;
-        }
-    }
-
-    protected final MusicSettingsEnum setting;
+class BlockRule {
+    protected final SettingsEnum setting;
     private final String[] blocks;
 
     /**
@@ -32,7 +20,7 @@ class MusicBlockRule {
      * @param setting The setting which controls the blocking of this component.
      * @param blocks  The rules to block the component on.
      */
-    public MusicBlockRule(final MusicSettingsEnum setting, final String... blocks) {
+    public BlockRule(final SettingsEnum setting, final String... blocks) {
         this.setting = setting;
         this.blocks = blocks;
     }
@@ -44,25 +32,37 @@ class MusicBlockRule {
     public BlockResult check(final String string) {
         return new BlockResult(string != null && ReVancedUtils.containsAny(string, blocks));
     }
+
+    final static class BlockResult {
+        private final boolean blocked;
+
+        public BlockResult(final boolean blocked) {
+            this.blocked = blocked;
+        }
+
+        public boolean isBlocked() {
+            return blocked;
+        }
+    }
 }
 
-abstract class MusicFilter {
+abstract class Filter {
     final protected LithoBlockRegisters pathRegister = new LithoBlockRegisters();
     final protected LithoBlockRegisters identifierRegister = new LithoBlockRegisters();
 
     abstract boolean filter(final String path, final String identifier);
 }
 
-final class LithoBlockRegisters implements Iterable<MusicBlockRule> {
-    private final ArrayList<MusicBlockRule> blocks = new ArrayList<>();
+final class LithoBlockRegisters implements Iterable<BlockRule> {
+    private final ArrayList<BlockRule> blocks = new ArrayList<>();
 
-    public void registerAll(MusicBlockRule... blocks) {
+    public void registerAll(BlockRule... blocks) {
         this.blocks.addAll(Arrays.asList(blocks));
     }
 
     @NonNull
     @Override
-    public Iterator<MusicBlockRule> iterator() {
+    public Iterator<BlockRule> iterator() {
         return blocks.iterator();
     }
 
@@ -80,17 +80,17 @@ final class LithoBlockRegisters implements Iterable<MusicBlockRule> {
     }
 }
 
-public final class MusicLithoFilterPatch {
+public final class LithoFilterPatch {
 
-    private static final MusicFilter[] filters = new MusicFilter[]{
-            new GeneralMusicAdsPatch()
+    private static final Filter[] filters = new Filter[]{
+            new GeneralAdsPatch()
     };
 
     public static boolean filter(StringBuilder pathBuilder, String identifier) {
         var path = pathBuilder.toString();
         if (path.isEmpty()) return false;
 
-        LogHelper.printDebug(MusicLithoFilterPatch.class, String.format("Searching (ID: %s): %s", identifier, path));
+        LogHelper.printDebug(LithoFilterPatch.class, String.format("Searching (ID: %s): %s", identifier, path));
 
         for (var filter : filters) {
             if (filter.filter(path, identifier)) return true;
