@@ -9,20 +9,8 @@ import app.revanced.integrations.utils.ResourceUtils.identifier
 import app.revanced.integrations.utils.ThemeHelper.dayNightTheme
 
 object ResourceHelper {
-    private val PLAYER_CONTROL_BUTTON_LIST = listOf(
-        "player_control_fast_forward_button",
-        "player_control_next_button",
-        "play_button",
-        "player_control_play_pause_replay_button",
-        "player_control_previous_button",
-        "player_control_rewind_button"
-    )
-
     private const val ARROW_BLACK_ICON = "yt_outline_arrow_left_black_24"
     private const val ARROW_WHITE_ICON = "yt_outline_arrow_left_white_24"
-
-    private const val COLLAPSE_BUTTON = "player_collapse_button"
-    private const val LIVE_CHAT_BUTTON = "live_chat_overlay_button"
 
     @JvmStatic
     val resources: Resources get() = ReVancedUtils.getContext().resources
@@ -35,30 +23,65 @@ object ResourceHelper {
         }
 
     @JvmStatic
-    fun hideCollapseButton(view: View): Boolean {
-        return SettingsEnum.HIDE_COLLAPSE_BUTTON.boolean && (view.id == identifier(COLLAPSE_BUTTON, ResourceType.ID))
-    }
-
-    @JvmStatic
-    fun hideLiveChatButton(view: View): Boolean {
-        return SettingsEnum.HIDE_LIVE_CHATS_BUTTON.boolean && (view.id == identifier(LIVE_CHAT_BUTTON, ResourceType.ID))
-    }
-
-    @JvmStatic
     @Suppress("DEPRECATION")
     fun hidePlayerButtonBackground(view: View?) {
-        if (view == null || !SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND.boolean) return
-        for (blockList in PLAYER_CONTROL_BUTTON_LIST) {
-            if (view.id == identifier(blockList, ResourceType.ID)) view.setBackgroundDrawable(
-                ColorDrawable(
-                    Color.TRANSPARENT
-                )
-            )
+        PlayerButton.PLAYER.apply {
+            if (view == null || !settings.boolean) return
+            for (id in filter) {
+                if (view.id == identifier(id, ResourceType.ID))
+                    view.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            }
         }
     }
 
     @JvmStatic
-    fun hidePlayerButton(view: View): Boolean {
-        return hideLiveChatButton(view) || hideCollapseButton(view)
+    fun hidePlayerButton(view: View, original: Int): Int {
+        arrayOf(
+            PlayerButton.COLLAPSE,
+            PlayerButton.LIVE_CHAT,
+            PlayerButton.PREVIOUS_NEXT
+        ).forEach {
+            if (it.settings.boolean) {
+                for (id in it.filter) {
+                    if (view.id == identifier(id, ResourceType.ID))
+                        return 8
+                }
+            }
+        }
+        return original
     }
+}
+
+private enum class PlayerButton(
+    val settings: SettingsEnum,
+    val filter: List<String>
+) {
+    COLLAPSE(
+        SettingsEnum.HIDE_COLLAPSE_BUTTON,
+        listOf("player_collapse_button")
+    ),
+    LIVE_CHAT(
+        SettingsEnum.HIDE_LIVE_CHATS_BUTTON,
+        listOf("live_chat_overlay_button")
+    ),
+    PLAYER(
+        SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND,
+        listOf(
+            "player_control_fast_forward_button",
+            "player_control_next_button",
+            "play_button",
+            "player_control_play_pause_replay_button",
+            "player_control_previous_button",
+            "player_control_rewind_button"
+        )
+    ),
+    PREVIOUS_NEXT(
+        SettingsEnum.HIDE_PREVIOUS_NEXT_BUTTON,
+        listOf(
+            "player_control_next_button",
+            "player_control_next_button_touch_area",
+            "player_control_previous_button",
+            "player_control_previous_button_touch_area"
+        )
+    );
 }
