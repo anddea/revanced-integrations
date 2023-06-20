@@ -28,7 +28,7 @@ android {
             )
         }
         applicationVariants.all {
-            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
             outputs.all {
                 this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
 
