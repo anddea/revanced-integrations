@@ -42,6 +42,7 @@ import app.revanced.integrations.utils.ReVancedUtils;
 @SuppressWarnings("deprecation")
 public class SponsorBlockSettingsFragment extends PreferenceFragment {
 
+    private static final DecimalFormat statsNumberOfSegmentsSkippedFormatter = new DecimalFormat("#,###,###");
     private SwitchPreference sbEnabled;
     private SwitchPreference addNewSegment;
     private SwitchPreference votingEnabled;
@@ -50,13 +51,11 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
     private SwitchPreference showSkipToast;
     private SwitchPreference trackSkips;
     private SwitchPreference showTimeWithoutSegments;
-
     private EditTextPreference newSegmentStep;
     private EditTextPreference minSegmentDuration;
     private EditTextPreference privateUserId;
     private EditTextPreference importExport;
     private Preference apiUrl;
-
     private PreferenceCategory statsCategory;
     private PreferenceCategory segmentCategory;
 
@@ -327,7 +326,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
 
             DialogInterface.OnClickListener urlChangeListener = (dialog, buttonPressed) -> {
                 if (buttonPressed == DialogInterface.BUTTON_NEUTRAL) {
-                    SettingsEnum.SB_API_URL.saveValue(SettingsEnum.SB_API_URL.getDefaultValue());
+                    SettingsEnum.SB_API_URL.saveValue(SettingsEnum.SB_API_URL.defaultValue);
                     ReVancedUtils.showToastLong(str("sb_api_url_reset"));
                 } else if (buttonPressed == DialogInterface.BUTTON_POSITIVE) {
                     String serverAddress = editText.getText().toString();
@@ -435,8 +434,6 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         }
     }
 
-    private static final DecimalFormat statsNumberOfSegmentsSkippedFormatter = new DecimalFormat("#,###,###");
-
     private void addUserStats(@NonNull Preference loadingPlaceholder, @Nullable UserStats stats) {
         ReVancedUtils.verifyOnMainThread();
         try {
@@ -542,8 +539,8 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
                     new AlertDialog.Builder(preference1.getContext())
                             .setTitle(str("sb_stats_self_saved_reset_title"))
                             .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                SettingsEnum.SB_SKIPPED_SEGMENTS_NUMBER_SKIPPED.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS_NUMBER_SKIPPED.getDefaultValue());
-                                SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.getDefaultValue());
+                                SettingsEnum.SB_SKIPPED_SEGMENTS_NUMBER_SKIPPED.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS_NUMBER_SKIPPED.defaultValue);
+                                SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.defaultValue);
                                 updateStatsSelfSaved.run();
                             })
                             .setNegativeButton(android.R.string.no, null).show();
