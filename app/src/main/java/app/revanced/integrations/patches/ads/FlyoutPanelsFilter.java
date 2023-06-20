@@ -87,7 +87,8 @@ final class FlyoutPanelsFilter extends Filter {
 
     @Override
     public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        if (containsAny(path, exceptions) || containsAny(object, exceptions) || !containsAny(object, "overflow_menu_item")) return false;
+        if (containsAny(path, exceptions) || containsAny(object, exceptions) || !containsAny(object, "overflow_menu_item"))
+            return false;
 
         if (isEveryFilterGroupEnabled())
             if (flyoutPanelRule.check(identifier).isFiltered()) return true;

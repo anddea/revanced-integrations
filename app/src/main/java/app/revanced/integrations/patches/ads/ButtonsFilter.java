@@ -35,6 +35,10 @@ final class ButtonsFilter extends Filter {
                         "save_to_playlist_button"
                 ),
                 new StringFilterGroup(
+                        SettingsEnum.HIDE_REWARDS_BUTTON,
+                        "account_link_button"
+                ),
+                new StringFilterGroup(
                         SettingsEnum.HIDE_ACTION_BUTTON,
                         "ContainerType|video_action_button",
                         "|CellType|CollectionType|CellType|ContainerType|button.eml|"

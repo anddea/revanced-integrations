@@ -5,7 +5,21 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 
 public class StringRef {
+    /**
+     * Shorthand for <code>constant("")</code>
+     * Its value always resolves to empty string
+     */
+    @NonNull
+    public static final StringRef empty = constant("");
     private static final HashMap<String, StringRef> strings = new HashMap<>();
+    @NonNull
+    private String value;
+    private boolean resolved;
+
+
+    public StringRef(@NonNull String resName) {
+        this.value = resName;
+    }
 
     /**
      * Gets strings reference from shared collection or creates if not exists yet,
@@ -48,7 +62,6 @@ public class StringRef {
         return String.format(str(id), args);
     }
 
-
     /**
      * Creates a StringRef object that'll not change it's value
      *
@@ -60,21 +73,6 @@ public class StringRef {
         final StringRef ref = new StringRef(value);
         ref.resolved = true;
         return ref;
-    }
-
-    /**
-     * Shorthand for <code>constant("")</code>
-     * Its value always resolves to empty string
-     */
-    @NonNull
-    public static final StringRef empty = constant("");
-
-    @NonNull
-    private String value;
-    private boolean resolved;
-
-    public StringRef(@NonNull String resName) {
-        this.value = resName;
     }
 
     @Override

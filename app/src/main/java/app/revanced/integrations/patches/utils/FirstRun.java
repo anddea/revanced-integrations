@@ -34,14 +34,14 @@ public class FirstRun {
     /**
      * The new layout is not loaded when the app is first installed.
      * (Also reproduced on unPatched YouTube)
-     *
+     * <p>
      * Side effects when new layout is not loaded:
      * - Button container's layout is broken
      * - Zoom to fill screen not working
      * - 8X zoom not working in fullscreen
-     *
+     * <p>
      * To fix this, show the reboot dialog when the app is installed for the first time.
-     *
+     * <p>
      * The version of the current integrations is saved to YouTube's SharedPreferences to identify if the app was first installed.
      */
     public static void initializationRVX(@NonNull Context context) {
@@ -57,11 +57,11 @@ public class FirstRun {
         new AlertDialog.Builder(activity)
                 .setMessage(str("revanced_reboot_first_run"))
                 .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) ->
-                        runOnMainThreadDelayed(() ->{
+                        runOnMainThreadDelayed(() -> {
                             activity.finishAffinity();
                             activity.startActivity(activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName()));
                             System.exit(0);
-                            }, 1000L)
+                        }, 1000L)
                 )
                 .setNegativeButton(str("sign_in_cancel"), null)
                 .setCancelable(false)

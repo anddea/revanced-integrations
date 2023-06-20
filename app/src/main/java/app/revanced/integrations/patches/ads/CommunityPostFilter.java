@@ -20,13 +20,7 @@ public final class CommunityPostFilter extends Filter {
                 "heightConstraint=null"
         );
 
-        final var browserStoreButton = new ByteArrayAsStringFilterGroup(
-                SettingsEnum.HIDE_BROWSE_STORE_BUTTON,
-                "header_store_button"
-        );
-
-        this.pathFilterGroups.addAll(home, subscriptions);
-        this.protobufBufferFilterGroups.addAll(browserStoreButton);
+        pathFilterGroups.addAll(home, subscriptions);
     }
 
     @Override
@@ -34,6 +28,6 @@ public final class CommunityPostFilter extends Filter {
         if (communityPostGroup.check(object).isFiltered())
             if (this.pathFilterGroups.contains(object)) return true;
 
-        return this.protobufBufferFilterGroups.contains(protobufBufferArray);
+        return super.isFiltered(path, identifier, object, protobufBufferArray);
     }
 }

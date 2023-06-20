@@ -17,6 +17,7 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.VideoHelpers;
 
 public class Download {
+    public static boolean isButtonEnabled;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
@@ -24,7 +25,6 @@ public class Download {
     static int fadeDurationScheduled;
     static Animation fadeIn;
     static Animation fadeOut;
-    public static boolean isButtonEnabled;
     static boolean isShowing;
     static boolean isScrubbed;
 

@@ -16,6 +16,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
 public class AutoRepeat {
+    public static boolean isButtonEnabled;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
@@ -23,7 +24,6 @@ public class AutoRepeat {
     static int fadeDurationScheduled;
     static Animation fadeIn;
     static Animation fadeOut;
-    public static boolean isButtonEnabled;
     static boolean isShowing;
     static boolean isScrubbed;
 

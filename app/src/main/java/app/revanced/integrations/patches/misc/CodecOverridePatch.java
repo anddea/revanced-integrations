@@ -16,6 +16,10 @@ public class CodecOverridePatch {
         return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? "Pixel 7 Pro" : original;
     }
 
+    public static boolean shouldForceOpus() {
+        return SettingsEnum.ENABLE_OPUS_CODEC.getBoolean();
+    }
+
     public static boolean shouldForceVP9(boolean original) {
         return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() || original;
     }
@@ -25,7 +29,7 @@ public class CodecOverridePatch {
     }
 
     public static int overrideMaxHeight(int original) {
-        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 3840 : original;
+        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 4096 : original;
     }
 
     public static int overrideMinWidth(int original) {
@@ -33,6 +37,6 @@ public class CodecOverridePatch {
     }
 
     public static int overrideMaxWidth(int original) {
-        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 2160 : original;
+        return SettingsEnum.ENABLE_VP9_CODEC.getBoolean() ? 4096 : original;
     }
 }

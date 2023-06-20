@@ -32,6 +32,20 @@ public class Route {
         return new Route.CompiledRoute(this, compiledRoute.toString());
     }
 
+    private int countMatches(CharSequence seq, char c) {
+        int count = 0;
+        for (int i = 0; i < seq.length(); i++) {
+            if (seq.charAt(i) == c)
+                count++;
+        }
+        return count;
+    }
+
+    public enum Method {
+        GET,
+        POST
+    }
+
     public static class CompiledRoute {
         private final Route baseRoute;
         private final String compiledRoute;
@@ -48,19 +62,5 @@ public class Route {
         public Route.Method getMethod() {
             return baseRoute.method;
         }
-    }
-
-    private int countMatches(CharSequence seq, char c) {
-        int count = 0;
-        for (int i = 0; i < seq.length(); i++) {
-            if (seq.charAt(i) == c)
-                count++;
-        }
-        return count;
-    }
-
-    public enum Method {
-        GET,
-        POST
     }
 }

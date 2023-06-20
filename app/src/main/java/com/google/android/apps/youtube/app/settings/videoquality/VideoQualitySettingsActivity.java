@@ -17,49 +17,13 @@ import app.revanced.integrations.utils.ResourceHelper;
 import app.revanced.integrations.utils.ResourceType;
 import app.revanced.integrations.utils.ThemeHelper;
 
-// Hook a dummy Activity to make the Back button work
+/**
+ * @noinspection ALL
+ */
 public class VideoQualitySettingsActivity extends Activity {
 
-    @Override
-    protected void onCreate(Bundle bundle) {
-        setTheme(ThemeHelper.getSettingTheme());
-
-        super.onCreate(bundle);
-        setContentView(identifier("revanced_settings_with_toolbar", ResourceType.LAYOUT));
-        initImageButton();
-
-        switch (getIntent().getDataString()) {
-            case "sponsorblock_settings":
-                trySetTitle(identifier("revanced_sponsorblock_settings_title", ResourceType.STRING));
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new SponsorBlockSettingsFragment())
-                        .commit();
-                break;
-            case "ryd_settings":
-                trySetTitle(identifier("revanced_ryd_settings_title", ResourceType.STRING));
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReturnYouTubeDislikeSettingsFragment())
-                        .commit();
-                break;
-            case "extended_settings":
-                trySetTitle(identifier("revanced_extended_settings_title", ResourceType.STRING));
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())
-                        .commit();
-                break;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
     public static ImageButton getImageButton(ViewGroup viewGroup) {
-        if (viewGroup == null)  return null;
+        if (viewGroup == null) return null;
         int childCount = viewGroup.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View childAt = viewGroup.getChildAt(i);
@@ -80,6 +44,44 @@ public class VideoQualitySettingsActivity extends Activity {
             }
         }
         return null;
+    }
+
+    @Override
+    protected void onCreate(Bundle bundle) {
+        setTheme(ThemeHelper.getSettingTheme());
+
+        super.onCreate(bundle);
+        setContentView(identifier("revanced_settings_with_toolbar", ResourceType.LAYOUT));
+        initImageButton();
+
+        switch (getIntent().getDataString()) {
+            case "sponsorblock_settings" -> {
+                trySetTitle(identifier("revanced_sponsorblock_settings_title", ResourceType.STRING));
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new SponsorBlockSettingsFragment())
+                        .commit();
+            }
+            case "ryd_settings" -> {
+                trySetTitle(identifier("revanced_ryd_settings_title", ResourceType.STRING));
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReturnYouTubeDislikeSettingsFragment())
+                        .commit();
+            }
+            case "extended_settings" -> {
+                trySetTitle(identifier("revanced_extended_settings_title", ResourceType.STRING));
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())
+                        .commit();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     private void trySetTitle(int i) {

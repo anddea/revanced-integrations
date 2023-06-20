@@ -30,7 +30,7 @@ public class SharedPrefHelper {
         SharedPreferences sharedPreferences = getPreferences(prefName);
         try {
             assert sharedPreferences != null;
-            return Long.valueOf(sharedPreferences.getString(key, _default + ""));
+            return Long.valueOf(Objects.requireNonNull(sharedPreferences.getString(key, String.valueOf(_default))));
         } catch (ClassCastException ex) {
             return sharedPreferences.getLong(key, _default);
         }
@@ -40,7 +40,7 @@ public class SharedPrefHelper {
         SharedPreferences sharedPreferences = getPreferences(prefName);
         try {
             assert sharedPreferences != null;
-            return Float.valueOf(sharedPreferences.getString(key, _default + ""));
+            return Float.valueOf(Objects.requireNonNull(sharedPreferences.getString(key, String.valueOf(_default))));
         } catch (ClassCastException ex) {
             return sharedPreferences.getFloat(key, _default);
         }
@@ -50,7 +50,7 @@ public class SharedPrefHelper {
         SharedPreferences sharedPreferences = getPreferences(prefName);
         try {
             assert sharedPreferences != null;
-            return Integer.valueOf(sharedPreferences.getString(key, _default + ""));
+            return Integer.valueOf(Objects.requireNonNull(sharedPreferences.getString(key, String.valueOf(_default))));
         } catch (ClassCastException ex) {
             return sharedPreferences.getInt(key, _default);
         }

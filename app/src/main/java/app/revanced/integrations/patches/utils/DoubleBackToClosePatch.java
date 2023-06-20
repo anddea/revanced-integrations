@@ -40,7 +40,7 @@ public class DoubleBackToClosePatch {
 
     /**
      * Detect event when ScrollView is created by RecyclerView
-     *
+     * <p>
      * start of ScrollView
      */
     public static void onStartScrollView() {
@@ -49,7 +49,7 @@ public class DoubleBackToClosePatch {
 
     /**
      * Detect event when the scroll position reaches the top by the back button
-     *
+     * <p>
      * stop of ScrollView
      */
     public static void onStopScrollView() {

@@ -93,7 +93,7 @@ public class Requester {
     /**
      * Parse the {@link HttpURLConnection}, and closes the underlying InputStream.
      */
-    public static JSONArray parseJSONArray(HttpURLConnection connection) throws JSONException, IOException  {
+    public static JSONArray parseJSONArray(HttpURLConnection connection) throws JSONException, IOException {
         return new JSONArray(parseJson(connection));
     }
 
@@ -104,7 +104,7 @@ public class Requester {
      *
      * @see #parseJSONArray(HttpURLConnection)
      */
-    public static JSONArray parseJSONArrayAndDisconnect(HttpURLConnection connection) throws JSONException, IOException  {
+    public static JSONArray parseJSONArrayAndDisconnect(HttpURLConnection connection) throws JSONException, IOException {
         JSONArray array = parseJSONArray(connection);
         connection.disconnect();
         return array;

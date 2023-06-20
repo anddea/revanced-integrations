@@ -1,6 +1,5 @@
 package app.revanced.integrations.patches.ads;
 
-import static app.revanced.integrations.patches.utils.PatchStatus.ByteBuffer;
 import static app.revanced.integrations.patches.utils.PatchStatus.GeneralAds;
 
 import androidx.annotation.NonNull;
@@ -13,27 +12,10 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 abstract class FilterGroup<T> {
-    final static class FilterGroupResult {
-        private final boolean filtered;
-        private final SettingsEnum setting;
-
-        public FilterGroupResult(final SettingsEnum setting, final boolean filtered) {
-            this.setting = setting;
-            this.filtered = filtered;
-        }
-
-        public SettingsEnum getSetting() {
-            return setting;
-        }
-
-        public boolean isFiltered() {
-            return filtered;
-        }
-    }
-
     protected final SettingsEnum setting;
     protected final T[] filters;
 
@@ -58,6 +40,24 @@ abstract class FilterGroup<T> {
     }
 
     public abstract FilterGroupResult check(final T stack);
+
+    final static class FilterGroupResult {
+        private final boolean filtered;
+        private final SettingsEnum setting;
+
+        public FilterGroupResult(final SettingsEnum setting, final boolean filtered) {
+            this.setting = setting;
+            this.filtered = filtered;
+        }
+
+        public SettingsEnum getSetting() {
+            return setting;
+        }
+
+        public boolean isFiltered() {
+            return filtered;
+        }
+    }
 }
 
 class StringFilterGroup extends FilterGroup<String> {
@@ -81,11 +81,18 @@ final class CustomFilterGroup extends StringFilterGroup {
      * {@link FilterGroup#FilterGroup(SettingsEnum, Object[])}
      */
     public CustomFilterGroup(final SettingsEnum setting, final SettingsEnum filter) {
-        super(setting, filter.getString().split(","));
+        super(setting, filter.getString().split("\\n"));
     }
 }
 
 class ByteArrayFilterGroup extends FilterGroup<byte[]> {
+    /**
+     * {@link FilterGroup#FilterGroup(SettingsEnum, Object[])}
+     */
+    public ByteArrayFilterGroup(final SettingsEnum setting, final byte[]... filters) {
+        super(setting, filters);
+    }
+
     // Modified implementation from https://stackoverflow.com/a/1507813
     public static int indexOf(final byte[] data, final byte[] pattern) {
         // Computes the failure function using a boot-strapping process,
@@ -122,13 +129,6 @@ class ByteArrayFilterGroup extends FilterGroup<byte[]> {
             }
         }
         return -1;
-    }
-
-    /**
-     * {@link FilterGroup#FilterGroup(SettingsEnum, Object[])}
-     */
-    public ByteArrayFilterGroup(final SettingsEnum setting, final byte[]... filters) {
-        super(setting, filters);
     }
 
     @Override
@@ -212,9 +212,22 @@ abstract class Filter {
      * @return True if filtered, false otherwise.
      */
     boolean isFiltered(final String path, final String identifier, final String object, final byte[] protobufBufferArray) {
-        return pathFilterGroups.contains(path) ||
-                identifierFilterGroups.contains(identifier) ||
-                protobufBufferFilterGroups.contains(protobufBufferArray);
+        if (pathFilterGroups.contains(path)) {
+            LogHelper.printDebug(LithoFilterPatch.class, String.format("Filtered path: %s", path));
+            return true;
+        }
+
+        if (identifierFilterGroups.contains(identifier)) {
+            LogHelper.printDebug(LithoFilterPatch.class, String.format("Filtered identifier: %s", identifier));
+            return true;
+        }
+
+        if (protobufBufferFilterGroups.contains(protobufBufferArray)) {
+            LogHelper.printDebug(LithoFilterPatch.class, "Filtered from protobuf-buffer");
+            return true;
+        }
+
+        return false;
     }
 }
 
@@ -229,23 +242,30 @@ public final class LithoFilterPatch {
             new QuickActionButtonsFilter(),
             new ShortsFilter()
     };
+    public static ByteBuffer bytebuffer;
 
-    @SuppressWarnings("unused")
-    private static boolean filter(final StringBuilder pathBuilder, final String identifier, final Object object, final ByteBuffer protobufBuffer) {
-        var path = pathBuilder.toString();
-        // It is assumed that protobufBuffer is empty as well in this case.
-        if (path.isEmpty()) return false;
-
-        var protobufBufferArray = protobufBuffer.array();
-
+    private static boolean filter(final String path, final String identifier, final String value, final byte[] bufferArray) {
         // check if any filter-group
         for (var filter : filters)
-            if (filter.isFiltered(path, identifier, object.toString(), protobufBufferArray)) return true;
+            if (filter.isFiltered(path, identifier, value, bufferArray)) return true;
 
         return false;
     }
 
+    /**
+     * Injection point.
+     */
     public static boolean filters(final StringBuilder pathBuilder, final String identifier, final Object object, final ByteBuffer protobufBuffer) {
-        return (ByteBuffer() && ByteBufferFilterPatch.filter(pathBuilder.toString(), object.toString(), protobufBuffer)) || (GeneralAds() && filter(pathBuilder, identifier, object, protobufBuffer));
+        var path = pathBuilder.toString();
+        var value = object.toString();
+
+        if (path.isEmpty() || value.isEmpty() || protobufBuffer == null) return false;
+
+        var bufferArray = protobufBuffer.array();
+
+        // Log.d("RVXCharset", charset);
+        // Log.d("RVXValue", object.toString());
+
+        return ByteBufferFilterPatch.filter(path, value) || (GeneralAds() && filter(path, identifier, value, bufferArray));
     }
 }

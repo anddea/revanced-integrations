@@ -3,6 +3,7 @@ package app.revanced.integrations.patches.ads;
 import android.view.View;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public final class AdsFilter extends Filter {
@@ -52,6 +53,11 @@ public final class AdsFilter extends Filter {
         final var channelMemberShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF,
                 "member_recognition_shelf"
+        );
+
+        final var grayDescription = new StringFilterGroup(
+                SettingsEnum.HIDE_GRAY_DESCRIPTION,
+                "endorsement_header_footer"
         );
 
         final var graySeparator = new StringFilterGroup(
@@ -146,6 +152,7 @@ public final class AdsFilter extends Filter {
                 "brand_video_shelf",
                 "brand_video_singleton",
                 "carousel_footered_layout",
+                "carousel_headered_layout",
                 "full_width_square_image_layout",
                 "hero_promo_image",
                 "landscape_image_wide_button_layout",
@@ -182,6 +189,7 @@ public final class AdsFilter extends Filter {
                 channelGuidelines,
                 channelMemberShelf,
                 generalAds,
+                grayDescription,
                 imageShelf,
                 inFeedSurvey,
                 infoPanel,
@@ -230,6 +238,8 @@ public final class AdsFilter extends Filter {
             result = FilterResult.FILTERED;
         else
             result = FilterResult.UNFILTERED;
+
+        LogHelper.printDebug(AdsFilter.class, String.format("%s (ID: %s): %s", result.message, identifier, path));
 
         return result.filter;
     }

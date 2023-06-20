@@ -1,5 +1,8 @@
 package app.revanced.integrations.patches.utils;
 
+import static app.revanced.integrations.patches.layout.SeekBarPatch.ORIGINAL_SEEKBAR_COLOR;
+import static app.revanced.integrations.patches.layout.SeekBarPatch.resumedProgressBarColor;
+
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
@@ -9,20 +12,18 @@ import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import app.revanced.integrations.patches.layout.SeekBarPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class ProgressBarDrawable extends Drawable {
-    private static final int ORIGINAL_SEEKBAR_CLICKED_COLOR = 0xFFFF0000;
 
     private final Paint paint = new Paint();
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        if (SettingsEnum.HIDE_SEEKBAR.getBoolean()) {
+        if (SettingsEnum.HIDE_SEEKBAR_THUMBNAIL.getBoolean()) {
             return;
         }
-        paint.setColor(SeekBarPatch.resumedProgressBarColor(ORIGINAL_SEEKBAR_CLICKED_COLOR));
+        paint.setColor(resumedProgressBarColor(ORIGINAL_SEEKBAR_COLOR));
         canvas.drawRect(getBounds(), paint);
     }
 

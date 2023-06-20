@@ -2,87 +2,68 @@ package app.revanced.integrations.patches.ads;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
+import app.revanced.integrations.patches.utils.NavBarIndexPatch;
 import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 
 
 public class ByteBufferFilterPatch {
-    private static final List<String> generalWhiteList = List.of(
+    private static final List<String> ignoredList = Arrays.asList(
             "ContainerType|video_action_button",
-            "FEhistory",
             "avatar",
-            "compact_channel_bar",
-            "comment_thread",
-            "creation_sheet_menu",
+            "compact_channel",
             "description",
-            "library_recent_shelf",
+            "grid_video",
             "metadata",
-            "playlist_add",
             "thumbnail",
-            "|comment.",
+            "_menu",
             "-button",
             "-count",
             "-space"
     );
-    private static final List<String> mixBufferBlockList = List.of("&list=", "YouTube Music");
-    private static int count;
 
-    public static boolean filter(String path, String value, ByteBuffer buffer) {
-        if (value.isEmpty() || generalWhiteList.stream().anyMatch(path::contains))
+    private static final List<String> header = Arrays.asList(
+            "YTSans-SemiBold",
+            "sans-serif-medium",
+            "shelf_header"
+    );
+
+    public static ByteBuffer bytebuffer;
+
+    public static boolean filter(String path, String value) {
+        if (ignoredList.stream().anyMatch(path::contains))
             return false;
 
-        if (mixBufferBlockList.stream().anyMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains))
-            return hideMixPlaylists(buffer);
+        if (path.contains("library_recent_shelf")) {
+            NavBarIndexPatch.setNavBarIndex(4);
+        } else if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() && path.contains("horizontal_video_shelf")) {
+            return NavBarIndexPatch.isNoneLibraryTab();
+        }
 
-        count = 0;
+        final String charset = new String(bytebuffer.array(), StandardCharsets.UTF_8);
+        int count = 0;
 
-        hideGeneralAds(value, buffer);
-        hideSuggestedActions(value);
+        if (PatchStatus.GeneralAds()) {
+            if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
+                    value.contains("_survey")) count++;
+
+            if (SettingsEnum.HIDE_OFFICIAL_HEADER.getBoolean() &&
+                    Stream.of("shelf_header")
+                            .allMatch(value::contains) &&
+                    Stream.of("YTSans-SemiBold", "sans-serif-medium")
+                            .allMatch(charset::contains)) count++;
+        }
+
+        if (PatchStatus.SuggestedActions() && !PlayerType.getCurrent().isNoneOrHidden()) {
+            if (SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean() &&
+                    value.contains("suggested_action")) count++;
+        }
 
         return count > 0;
-    }
-
-    private static void hideGeneralAds(String value, ByteBuffer buffer) {
-        if (!PatchStatus.GeneralAds()) return;
-        String charset = new String(buffer.array(), StandardCharsets.UTF_8);
-
-        if (SettingsEnum.HIDE_SUGGESTIONS.getBoolean() &&
-                value.contains("horizontal_video_shelf") &&
-                !value.contains("activeStateScrollSelectionController=com")
-        ) count++;
-
-        if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
-                value.contains("_survey")) count++;
-
-        if (SettingsEnum.HIDE_OFFICIAL_HEADER.getBoolean() &&
-                charset.contains("shelf_header") &&
-                charset.contains("YTSans-SemiBold") &&
-                charset.contains("sans-serif-medium")
-        ) count++;
-    }
-
-    private static boolean hideMixPlaylists(ByteBuffer buffer) {
-        final List<String> imageBufferList = List.of("ggpht.com");
-
-        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean())
-            return false;
-
-        return imageBufferList.stream().noneMatch(new String(buffer.array(), StandardCharsets.UTF_8)::contains);
-    }
-
-    private static void hideSuggestedActions(String value) {
-        if (!PatchStatus.SuggestedActions()) return;
-
-        List<String> blockList = new ArrayList<>();
-
-        if (SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean() &&
-                !PlayerType.getCurrent().isNoneOrHidden())
-            blockList.add("suggested_action");
-
-        if (blockList.stream().anyMatch(value::contains)) count++;
     }
 }

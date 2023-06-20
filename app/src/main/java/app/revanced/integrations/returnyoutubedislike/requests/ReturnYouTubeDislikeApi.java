@@ -33,7 +33,7 @@ public class ReturnYouTubeDislikeApi {
 
     /**
      * {@link #fetchVotes(String)} HTTP read timeout
-     *  To locally debug and force timeouts, change this to a very small number (ie: 100)
+     * To locally debug and force timeouts, change this to a very small number (ie: 100)
      */
     private static final int API_GET_VOTES_HTTP_TIMEOUT_MILLISECONDS = 4000;
 
@@ -90,8 +90,8 @@ public class ReturnYouTubeDislikeApi {
     /**
      * @return True, if a client rate limit was requested
      */
-        private static boolean checkIfRateLimitWasHit(int httpResponseCode) {
-            if (httpResponseCode == RATE_LIMIT_HTTP_STATUS_CODE) {
+    private static boolean checkIfRateLimitWasHit(int httpResponseCode) {
+        if (httpResponseCode == RATE_LIMIT_HTTP_STATUS_CODE) {
             lastTimeRateLimitWasHit = System.currentTimeMillis();
             ReVancedUtils.showToastLong(str("revanced_ryd_failure_client_rate_limit_requested"));
             return true;
@@ -155,7 +155,8 @@ public class ReturnYouTubeDislikeApi {
                 LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch votes for video: " + videoId + " response code was: " + responseCode);
                 connection.disconnect(); // something went wrong, might as well disconnect
             }
-        } catch (SocketTimeoutException ex) { // connection timed out, response timeout, or some other network error
+        } catch (
+                SocketTimeoutException ex) { // connection timed out, response timeout, or some other network error
             LogHelper.printException(ReturnYouTubeDislikeApi.class, "Failed to fetch votes", ex);
         } catch (Exception ex) {
             // should never happen

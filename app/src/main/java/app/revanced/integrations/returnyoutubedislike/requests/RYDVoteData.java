@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 /**
  * ReturnYouTubeDislike API estimated like/dislike/view counts.
- *
+ * <p>
  * ReturnYouTubeDislike does not guarantee when the counts are updated.
  * So these values may lag behind what YouTube shows.
  */
@@ -23,10 +23,9 @@ public final class RYDVoteData {
     public final long viewCount;
 
     private final long fetchedLikeCount;
+    private final long fetchedDislikeCount;
     private volatile long likeCount; // read/write from different threads
     private volatile float likePercentage;
-
-    private final long fetchedDislikeCount;
     private volatile long dislikeCount; // read/write from different threads
     private volatile float dislikePercentage;
 
@@ -62,7 +61,7 @@ public final class RYDVoteData {
 
     /**
      * Estimated percentage of likes for all votes.  Value has range of [0, 1]
-     *
+     * <p>
      * A video with 400 positive votes, and 100 negative votes, has a likePercentage of 0.8
      */
     public float getLikePercentage() {
@@ -71,7 +70,7 @@ public final class RYDVoteData {
 
     /**
      * Estimated percentage of dislikes for all votes. Value has range of [0, 1]
-     *
+     * <p>
      * A video with 400 positive votes, and 100 negative votes, has a dislikePercentage of 0.2
      */
     public float getDislikePercentage() {

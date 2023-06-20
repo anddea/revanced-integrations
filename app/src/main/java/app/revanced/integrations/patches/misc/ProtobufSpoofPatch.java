@@ -1,6 +1,5 @@
 package app.revanced.integrations.patches.misc;
 
-import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
@@ -10,6 +9,8 @@ import static app.revanced.integrations.utils.StringRef.str;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.Arrays;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
@@ -28,11 +29,11 @@ public class ProtobufSpoofPatch {
 
     /**
      * If you override protobuf when playing clips, the following issues arise.
-     * https://github.com/inotia00/ReVanced_Extended/issues/999
-     *
+     * github.com/inotia00/ReVanced_Extended/issues/999
+     * <p>
      * This is because a clip's protobuf contains important information used in the clip, such as the start time of the clip, the length of the clip, and whether or not the clip has auto-repeat.
      * Therefore, in the clip, the PROTOBUF_PARAMETER_SHORTS parameter must be prepend while maintaining the clip's protobuf.
-     *
+     * <p>
      * The general protobuf size does not exceed 26, but the size of the clip's protobuf exceeds 26, so we can identify whether the currently playing video is a clip or not.
      */
     private static final int MAX_PROTOBUF_LENGTH = 26;
@@ -41,37 +42,32 @@ public class ProtobufSpoofPatch {
      * On app first start, the first video played usually contains a single non-default window setting value
      * and all other subtitle settings for the video are (incorrect) default shorts window settings.
      * For this situation, the shorts settings must be replaced.
-     *
+     * <p>
      * But some videos use multiple text positions on screen (such as youtu.be/3hW1rMNC89o),
      * and by chance many of the subtitles uses window positions that match a default shorts position.
      * To handle these videos, selectively allowing the shorts specific window settings to 'pass thru' unchanged,
      * but only if the video contains multiple non-default subtitle window positions.
-     *
+     * <p>
      * Do not enable 'pass thru mode' until this many non default subtitle settings are observed for a single video.
      */
     private static final int NUMBER_OF_NON_DEFAULT_SUBTITLES_BEFORE_ENABLING_PASSTHRU = 2;
-
-    /**
-     * The number of non default subtitle settings encountered for the current video.
-     */
-    private static int numberOfNonDefaultSettingsObserved;
-
-    @Nullable
-    private static String currentVideoId;
-
     /**
      * Protobuf parameters used in autoplay in scrim
      * Prepend this parameter to mute video playback (for autoplay in feed)
      */
     private static final String PROTOBUF_PARAMETER_SCRIM = "SAFgAXgB";
-
     /**
      * Protobuf parameters used in shorts and stories.
      * Known issue: end screen card is hidden.
      * Known issue: offline downloads not working for YouTube Premium users.
      */
     private static final String PROTOBUF_PARAMETER_SHORTS = "8AEB";
-
+    /**
+     * The number of non default subtitle settings encountered for the current video.
+     */
+    private static int numberOfNonDefaultSettingsObserved;
+    @Nullable
+    private static String currentVideoId;
 
     public static String overrideProtobufParameter(String protobufParameter) {
         return SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() ? setProtobufParameter(protobufParameter) : protobufParameter;
@@ -84,7 +80,7 @@ public class ProtobufSpoofPatch {
         if (protobufParameter.length() > MAX_PROTOBUF_LENGTH)
             return PROTOBUF_PARAMETER_SHORTS + protobufParameter;
 
-        final boolean isPlayingFeed = containsAny(protobufParameter, PROTOBUF_PARAMETER_WHITELIST)
+        final boolean isPlayingFeed = Arrays.stream(PROTOBUF_PARAMETER_WHITELIST).anyMatch(protobufParameter::startsWith)
                 && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
 
         return isPlayingFeed
@@ -96,12 +92,12 @@ public class ProtobufSpoofPatch {
      * Injection point. Runs off the main thread.
      * <p>
      * This method is called when returning a 403 response, and switches Protobuf Spoof.
-     *
      */
     public static void switchProtobufSpoof() {
         try {
             // already enabled or autoplay in the feed
-            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() || getBoolean(YOUTUBE, PREFERENCE_KEY, false)) return;
+            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() || getBoolean(YOUTUBE, PREFERENCE_KEY, false))
+                return;
 
             SettingsEnum.ENABLE_PROTOBUF_SPOOF.saveValue(true);
             saveBoolean(YOUTUBE, PREFERENCE_KEY, true);
