@@ -3,14 +3,27 @@ package app.revanced.integrations.patches.video;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import java.util.Objects;
+
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.shared.PlayerType;
 
 public class VideoSpeedPatch {
     private static float selectedSpeed = -1.0f;
-    private static boolean newVideo = false;
+    private static String currentContentCpn;
 
-    public static void liveStreamObserver(final boolean live) {
-        if (SettingsEnum.DISABLE_DEFAULT_VIDEO_SPEED_LIVE.getBoolean() && live && selectedSpeed != 1.0f) overrideSpeed(1.0f);
+    public static void newVideoStarted(final String contentCpn, final boolean isLive) {
+        if (contentCpn.isEmpty() || Objects.equals(currentContentCpn, contentCpn) || PlayerType.getCurrent().isNoneHiddenOrMinimized())
+            return;
+
+        currentContentCpn = contentCpn;
+
+        if (SettingsEnum.DISABLE_DEFAULT_VIDEO_SPEED_LIVE.getBoolean() && isLive)
+            return;
+
+        selectedSpeed = SettingsEnum.DEFAULT_VIDEO_SPEED.getFloat();
+
+        overrideSpeed(selectedSpeed);
     }
 
     public static void userChangedSpeed(final float speed) {
@@ -22,29 +35,8 @@ public class VideoSpeedPatch {
         }
     }
 
-    public static void setDefaultSpeed() {
-        float defaultSpeed = selectedSpeed;
-        if (newVideo) {
-            defaultSpeed = SettingsEnum.DEFAULT_VIDEO_SPEED.getFloat();
-            selectedSpeed = defaultSpeed;
-            newVideo = false;
-
-            if (!isCustomVideoSpeedEnabled() && defaultSpeed >= 2.0f) defaultSpeed = 2.0f;
-        }
-        overrideSpeed(defaultSpeed);
-    }
-
-    public static void newVideoStarted(Object ignoredPlayerController) {
-        newVideo = true;
-    }
-
     public static void overrideSpeed(final float speedValue) {
         if (speedValue != selectedSpeed)
             selectedSpeed = speedValue;
     }
-
-    public static boolean isCustomVideoSpeedEnabled() {
-        return SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
-    }
-
 }

@@ -44,39 +44,9 @@ public final class VideoInformation {
     }
 
     /**
-     * Injection point.
-     *
-     * @param newlyLoadedVideoId id of the current video
-     */
-    public static void setVideoId(@NonNull String newlyLoadedVideoId) {
-        if (!videoId.equals(newlyLoadedVideoId)) {
-            videoId = newlyLoadedVideoId;
-        }
-    }
-
-    /**
-     * Injection point.
-     *
-     * @param length The length of the video in milliseconds.
-     */
-    public static void setVideoLength(final long length) {
-            videoLength = length;
-    }
-
-    /**
-     * Injection point.
-     * Called off the main thread approximately every 50ms to 100ms
-     *
-     * @param time The current playback time of the video in milliseconds.
-     */
-    public static void setVideoTime(final long time) {
-        videoTime = time;
-    }
-
-    /**
      * Seek on the current video.
      * <b>Currently this does not function for Shorts playback.</b>
-     *
+     * <p>
      * Caution: If called from a videoTimeHook() callback,
      * this will cause a recursive call into the same videoTimeHook() callback.
      *
@@ -84,7 +54,7 @@ public final class VideoInformation {
      * @return if the seek was successful
      */
     public static boolean seekTo(long millisecond) {
-       ReVancedUtils.verifyOnMainThread();
+        ReVancedUtils.verifyOnMainThread();
         if (seekMethod == null) {
             LogHelper.printException(VideoInformation.class, "seekMethod was null");
             return false;
@@ -121,29 +91,59 @@ public final class VideoInformation {
     }
 
     /**
+     * Injection point.
+     *
+     * @param newlyLoadedVideoId id of the current video
+     */
+    public static void setVideoId(@NonNull String newlyLoadedVideoId) {
+        if (!videoId.equals(newlyLoadedVideoId)) {
+            videoId = newlyLoadedVideoId;
+        }
+    }
+
+    /**
      * Length of the current video playing.
      * Includes Shorts and YouTube Stories.
      *
      * @return The length of the video in milliseconds, or zero  if video is not yet loaded.
      */
     public static long getVideoLength() {
-       return videoLength;
+        return videoLength;
+    }
+
+    /**
+     * Injection point.
+     *
+     * @param length The length of the video in milliseconds.
+     */
+    public static void setVideoLength(final long length) {
+        videoLength = length;
     }
 
     /**
      * Playback time of the current video playing.
      * Value can lag up to approximately 100ms behind the actual current video playback time.
-     *
+     * <p>
      * Note: Code inside a videoTimeHook patch callback
      * should use the callback video time and avoid using this method
      * (in situations of recursive hook callbacks, the value returned here may be outdated).
-     *
+     * <p>
      * Includes Shorts playback.
      *
      * @return The time of the video in milliseconds. -1 if not set yet.
      */
     public static long getVideoTime() {
         return videoTime;
+    }
+
+    /**
+     * Injection point.
+     * Called off the main thread approximately every 50ms to 100ms
+     *
+     * @param time The current playback time of the video in milliseconds.
+     */
+    public static void setVideoTime(final long time) {
+        videoTime = time;
     }
 
     /**

@@ -90,7 +90,7 @@ public class VideoQualityPatch {
             int qualityIndexToUse = 0;
             int i = 0;
             for (Integer quality : videoQualities) {
-                if (quality <= preferredQuality && qualityToUse < quality)  {
+                if (quality <= preferredQuality && qualityToUse < quality) {
                     qualityToUse = quality;
                     qualityIndexToUse = i;
                 }

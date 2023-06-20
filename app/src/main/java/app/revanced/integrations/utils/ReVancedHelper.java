@@ -2,36 +2,60 @@ package app.revanced.integrations.utils;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.widget.TextView;
 
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class ReVancedHelper {
+    private static final String DEFAULT_APP_NAME = "ReVanced_Extended";
+    private static final int DEFAULT_VERSION_CODE = 1537729984; // 18.19.36
+    private static final String DEFAULT_VERSION_NAME = "18.19.36";
+    private static final int TARGET_VERSION_CODE = 1538115008; // 18.22.32
+
     private ReVancedHelper() {
     } // utility class
 
+    public static void test(TextView textview) {
+        var id = textview.getId();
+    }
+
     public static String getAppName() {
-        String appName = "ReVanced_Extended";
+        var packageInfo = getPackageInfo();
+        return packageInfo == null
+                ? DEFAULT_APP_NAME
+                : (String) packageInfo.applicationInfo.loadLabel(getPackageManager());
+    }
+
+    private static PackageInfo getPackageInfo() {
         try {
             var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            PackageManager packageManager = context.getPackageManager();
-            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            appName = String.valueOf(packageInfo.applicationInfo.loadLabel(packageManager));
+            return getPackageManager().getPackageInfo(context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return appName;
+        return null;
+    }
+
+    private static PackageManager getPackageManager() {
+        var context = Objects.requireNonNull(ReVancedUtils.getContext());
+        return context.getPackageManager();
+    }
+
+    private static int getVersionCode() {
+        var packageInfo = getPackageInfo();
+        return packageInfo == null
+                ? DEFAULT_VERSION_CODE
+                : packageInfo.versionCode;
     }
 
     public static String getVersionName() {
-        try {
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return "18.12.35";
+        var packageInfo = getPackageInfo();
+        return packageInfo == null
+                ? DEFAULT_VERSION_NAME
+                : packageInfo.versionName;
     }
 
     public static boolean isFullscreenHidden() {
@@ -46,6 +70,12 @@ public class ReVancedHelper {
             isFullscreenHidden |= s.getBoolean();
         }
         return isFullscreenHidden;
+    }
+
+    public static boolean isSupportSplashAnimation() {
+        final boolean aboveAndroidS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
+
+        return aboveAndroidS || getVersionCode() >= TARGET_VERSION_CODE;
     }
 
     public static boolean isTablet() {

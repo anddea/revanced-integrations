@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
 
+import app.revanced.integrations.patches.video.CustomVideoSpeedPatch;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 
@@ -66,7 +67,7 @@ public class VideoHelpers {
     public static void download(Context context) {
         try {
             var downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString();
-            if (downloaderPackageName == null) downloaderPackageName = "ussr.razar.youtube_dl";
+            if (downloaderPackageName.equals("")) downloaderPackageName = "org.schabi.newpipe";
 
             boolean packageEnabled = false;
             try {
@@ -118,21 +119,12 @@ public class VideoHelpers {
     }
 
     public static void videoSpeedDialogListener(Context context) {
-        final var CUSTOM_SPEED_ENTRY_ARRAY_KEY = "revanced_custom_video_speed_entry";
-        final var CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_custom_video_speed_entry_value";
-        final var DEFAULT_SPEED_ENTRY_ARRAY_KEY = "revanced_default_video_speed_entry";
-        final var DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY = "revanced_default_video_speed_entry_value";
-
-        boolean isCustomSpeedEnabled = SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
-        String entriesKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_ARRAY_KEY : DEFAULT_SPEED_ENTRY_ARRAY_KEY;
-        String entriesValueKey = isCustomSpeedEnabled ? CUSTOM_SPEED_ENTRY_VALUE_ARRAY_KEY : DEFAULT_SPEED_ENTRY_VALUE_ARRAY_KEY;
-
-        String[] speedEntries = getListArray(context, entriesKey);
-        String[] speedEntriesValues = getListArray(context, entriesValueKey);
+        String[] speedEntries = CustomVideoSpeedPatch.getListEntries();
+        String[] speedEntryValues = CustomVideoSpeedPatch.getListEntryValues();
 
         AlertDialog speedDialog = new AlertDialog.Builder(context)
                 .setTitle(setTitle(str("camera_speed_button_label")))
-                .setItems(speedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(speedEntriesValues[index] + "f")))
+                .setItems(speedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(speedEntryValues[index] + "f")))
                 .show();
 
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
@@ -140,7 +132,7 @@ public class VideoHelpers {
         display.getSize(size);
 
         WindowManager.LayoutParams params = Objects.requireNonNull(speedDialog.getWindow()).getAttributes();
-        params.width = (int)(size.x * 0.5);
+        params.width = (int) (size.x * 0.5);
         speedDialog.getWindow().setAttributes(params);
         speedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
@@ -153,19 +145,15 @@ public class VideoHelpers {
         return String.format("%s\u2009•\u2009%s", prefix, speed);
     }
 
-    public static String[] getListArray(Context context, String key) {
-        return Arrays.stream(context.getResources().getStringArray(identifier(key, ResourceType.ARRAY))).skip(1).toArray(String[]::new);
-    }
-
     private static void overrideSpeedBridge(final float speed) {
         overrideSpeed(speed);
         userChangedSpeed(speed);
     }
 
     private static void setClipboard(Context context, String text) {
-         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-         android.content.ClipData clip = android.content.ClipData.newPlainText("link", text);
-         clipboard.setPrimaryClip(clip);
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText("link", text);
+        clipboard.setPrimaryClip(clip);
     }
 
     public static float getCurrentSpeed() {
