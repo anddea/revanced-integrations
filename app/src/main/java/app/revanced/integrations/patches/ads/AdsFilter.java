@@ -1,7 +1,5 @@
 package app.revanced.integrations.patches.ads;
 
-import static app.revanced.integrations.adremover.AdRemoverAPI.HideViewWithLayout1dp;
-
 import android.view.View;
 
 import app.revanced.integrations.settings.SettingsEnum;
@@ -105,16 +103,6 @@ public final class AdsFilter extends Filter {
                 "paid_content_overlay"
         );
 
-        final var quickAction = new StringFilterGroup(
-                SettingsEnum.HIDE_FULLSCREEN_PANELS,
-                "quick_actions"
-        );
-
-        final var quickActions = new StringFilterGroup(
-                SettingsEnum.HIDE_QUICK_ACTIONS,
-                "quick_actions"
-        );
-
         final var selfSponsor = new StringFilterGroup(
                 SettingsEnum.AD_REMOVER_SELF_SPONSOR,
                 "cta_shelf_card"
@@ -203,8 +191,6 @@ public final class AdsFilter extends Filter {
                 merchandise,
                 movieAds,
                 paidContent,
-                quickAction,
-                quickActions,
                 selfSponsor,
                 teaser,
                 ticketShelf,
@@ -217,6 +203,19 @@ public final class AdsFilter extends Filter {
                 graySeparator,
                 carouselAd
         );
+    }
+
+    /**
+     * Hide the view, which shows ads in the homepage.
+     *
+     * @param view The view, which shows ads.
+     */
+    public static void hideAdAttributionView(View view) {
+        ReVancedUtils.hideViewBy0dpUnderCondition(SettingsEnum.AD_REMOVER_GENERAL_ADS.getBoolean(), view);
+    }
+
+    public static boolean hideGetPremium() {
+        return SettingsEnum.AD_REMOVER_GET_PREMIUM.getBoolean();
     }
 
     @Override
@@ -248,19 +247,5 @@ public final class AdsFilter extends Filter {
             this.filter = filter;
             this.message = message;
         }
-    }
-
-    /**
-     * Hide the view, which shows ads in the homepage.
-     *
-     * @param view The view, which shows ads.
-     */
-    public static void hideAdAttributionView(View view) {
-        if (!SettingsEnum.AD_REMOVER_GENERAL_ADS.getBoolean()) return;
-        HideViewWithLayout1dp(view);
-    }
-
-    public static boolean hideGetPremium() {
-        return SettingsEnum.AD_REMOVER_GET_PREMIUM.getBoolean();
     }
 }

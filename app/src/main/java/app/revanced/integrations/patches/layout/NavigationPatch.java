@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.layout;
 
+import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -36,8 +38,7 @@ public class NavigationPatch {
     }
 
     public static void hideCreateButton(View view) {
-        boolean enabled = SettingsEnum.HIDE_CREATE_BUTTON.getBoolean();
-        if (enabled) view.setVisibility(View.GONE);
+        hideViewUnderCondition(SettingsEnum.HIDE_CREATE_BUTTON.getBoolean(), view);
     }
 
     public static void hideNavigationButton(View view) {
@@ -47,7 +48,7 @@ public class NavigationPatch {
 
         for (NavigationButton button : NavigationButton.values())
             if (button.name.equals(lastPivotTab.name()))
-                if (button.enabled) view.setVisibility(View.GONE);
+                hideViewUnderCondition(button.enabled, view);
     }
 
     private static void clickLibraryButton(View view) {
@@ -64,8 +65,7 @@ public class NavigationPatch {
     }
 
     public static void hideNavigationLabel(TextView view) {
-        boolean enabled = SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean();
-        if (enabled) view.setVisibility(View.GONE);
+        hideViewUnderCondition(SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean(), view);
     }
 
     public static View hideShortsPlayerNavBar(View view) {
@@ -84,6 +84,7 @@ public class NavigationPatch {
 
         private final boolean enabled;
         private final String name;
+
         NavigationButton(String name, boolean enabled) {
             this.enabled = enabled;
             this.name = name;
