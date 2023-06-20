@@ -20,6 +20,7 @@ import java.util.Objects;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
+import app.revanced.integrations.shared.VideoState;
 import app.revanced.integrations.sponsorblock.objects.CategoryBehaviour;
 import app.revanced.integrations.sponsorblock.objects.SegmentCategory;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
@@ -49,24 +50,28 @@ public class SegmentPlaybackController {
      * Value is independent of device dpi.
      */
     private static final int HIGHLIGHT_SEGMENT_DRAW_BAR_WIDTH = 7;
-
+    /**
+     * Used to prevent re-showing a previously hidden skip button when exiting an embedded segment.
+     * Only used when {@link SettingsEnum#SB_AUTO_HIDE_SKIP_BUTTON} is enabled.
+     * <p>
+     * A collection of segments that have automatically hidden the skip button for, and all segments in this list
+     * contain the current video time.  Segment are removed when playback exits the segment.
+     */
+    private static final List<SponsorSegment> hiddenSkipSegmentsForCurrentVideoTime = new ArrayList<>();
     @Nullable
     private static String currentVideoId;
     @Nullable
     private static SponsorSegment[] segments;
-
     /**
      * Highlight segment, if one exists.
      */
     @Nullable
     private static SponsorSegment highlightSegment;
-
     /**
      * Because loading can take time, show the skip to highlight for a few seconds after the segments load.
      * This is the system time (in milliseconds) to no longer show the initial display skip to highlight.
      */
     private static long highlightSegmentInitialShowEndTime;
-
     /**
      * Currently playing (non-highlight) segment that user can manually skip.
      */
@@ -83,16 +88,6 @@ public class SegmentPlaybackController {
      */
     @Nullable
     private static SponsorSegment scheduledUpcomingSegment;
-
-    /**
-     * Used to prevent re-showing a previously hidden skip button when exiting an embedded segment.
-     * Only used when {@link SettingsEnum#SB_AUTO_HIDE_SKIP_BUTTON} is enabled.
-     * <p>
-     * A collection of segments that have automatically hidden the skip button for, and all segments in this list
-     * contain the current video time.  Segment are removed when playback exits the segment.
-     */
-    private static final List<SponsorSegment> hiddenSkipSegmentsForCurrentVideoTime = new ArrayList<>();
-
     /**
      * System time (in milliseconds) of when to hide the skip button of {@link #segmentCurrentlyPlaying}.
      * Value is zero if playback is not inside a segment ({@link #segmentCurrentlyPlaying} is null),
@@ -106,6 +101,12 @@ public class SegmentPlaybackController {
     private static int sponsorBarAbsoluteLeft;
     private static int sponsorAbsoluteBarRight;
     private static int sponsorBarThickness;
+    private static SponsorSegment lastSegmentSkipped;
+    private static long lastSegmentSkippedTime;
+    private static int toastNumberOfSegmentsSkipped;
+    @Nullable
+    private static SponsorSegment toastSegmentSkipped;
+    private static int highlightSegmentTimeBarScreenWidth = -1; // actual pixel width to use
 
     @Nullable
     static SponsorSegment[] getSegments() {
@@ -206,7 +207,7 @@ public class SegmentPlaybackController {
             if (PlayerType.getCurrent().isNoneOrHidden()) {
                 return;
             }
-            if (!ReVancedUtils.isNetworkConnected()) {
+            if (ReVancedUtils.isNetworkConnected()) {
                 return;
             }
 
@@ -232,7 +233,7 @@ public class SegmentPlaybackController {
         try {
             SponsorSegment[] segments = SBRequester.getSegments(videoId);
 
-            ReVancedUtils.runOnMainThread(()-> {
+            ReVancedUtils.runOnMainThread(() -> {
                 if (!videoId.equals(currentVideoId)) {
                     // user changed videos before get segments network call could complete
                     return;
@@ -264,8 +265,8 @@ public class SegmentPlaybackController {
     public static void setVideoTime(long millis) {
         try {
             if (!SettingsEnum.SB_ENABLED.getBoolean()
-                || PlayerType.getCurrent().isNoneOrHidden() // shorts playback
-                || segments == null || segments.length == 0) {
+                    || PlayerType.getCurrent().isNoneOrHidden() // shorts playback
+                    || segments == null || segments.length == 0) {
                 return;
             }
             updateHiddenSegments(millis);
@@ -274,15 +275,15 @@ public class SegmentPlaybackController {
             // then try manually seeking just playback reaches a skip/hide of different segments
             final long lookAheadMilliseconds = 1500; // must be larger than the average time between calls to this method
             final float playbackSpeed = VideoHelpers.getCurrentSpeed();
-            final long startTimerLookAheadThreshold = millis + (long)(playbackSpeed * lookAheadMilliseconds);
+            final long startTimerLookAheadThreshold = millis + (long) (playbackSpeed * lookAheadMilliseconds);
 
             SponsorSegment foundSegmentCurrentlyPlaying = null;
             SponsorSegment foundUpcomingSegment = null;
 
             for (final SponsorSegment segment : segments) {
                 if (segment.category.behaviour == CategoryBehaviour.SHOW_IN_SEEKBAR
-                    || segment.category.behaviour == CategoryBehaviour.IGNORE
-                    || segment.category == SegmentCategory.HIGHLIGHT) {
+                        || segment.category.behaviour == CategoryBehaviour.IGNORE
+                        || segment.category == SegmentCategory.HIGHLIGHT) {
                     continue;
                 }
                 if (segment.end <= millis) {
@@ -325,8 +326,8 @@ public class SegmentPlaybackController {
 
                 // do not schedule upcoming segment, if it is not fully contained inside the current segment
                 if ((foundSegmentCurrentlyPlaying == null || foundSegmentCurrentlyPlaying.containsSegment(segment))
-                     // use the most inner upcoming segment
-                     && (foundUpcomingSegment == null || foundUpcomingSegment.containsSegment(segment))) {
+                        // use the most inner upcoming segment
+                        && (foundUpcomingSegment == null || foundUpcomingSegment.containsSegment(segment))) {
 
                     // Only schedule, if the segment start time is not near the end time of the current segment.
                     // This check is needed to prevent scheduled hide and show from clashing with each other.
@@ -362,8 +363,8 @@ public class SegmentPlaybackController {
             // schedule a hide, only if the segment end is near
             final SponsorSegment segmentToHide =
                     (foundSegmentCurrentlyPlaying != null && foundSegmentCurrentlyPlaying.endIsNear(millis, lookAheadMilliseconds))
-                    ? foundSegmentCurrentlyPlaying
-                    : null;
+                            ? foundSegmentCurrentlyPlaying
+                            : null;
 
             if (scheduledHideSegment != segmentToHide) {
                 if (segmentToHide == null) {
@@ -452,9 +453,6 @@ public class SegmentPlaybackController {
         SponsorBlockViewController.showSkipSegmentButton(segment);
     }
 
-    private static SponsorSegment lastSegmentSkipped;
-    private static long lastSegmentSkippedTime;
-
     private static void skipSegment(@NonNull SponsorSegment segmentToSkip, boolean userManuallySkipped) {
         try {
             SponsorBlockViewController.hideSkipHighlightButton();
@@ -486,6 +484,7 @@ public class SegmentPlaybackController {
                 return;
             }
 
+            final boolean videoIsPaused = VideoState.getCurrent() == VideoState.PAUSED;
             if (!userManuallySkipped) {
                 // check for any smaller embedded segments, and count those as autoskipped
                 final boolean showSkipToast = SettingsEnum.SB_SHOW_TOAST_ON_SKIP.getBoolean();
@@ -497,7 +496,10 @@ public class SegmentPlaybackController {
                     if (otherSegment == segmentToSkip ||
                             (otherSegment.category != SegmentCategory.HIGHLIGHT && segmentToSkip.containsSegment(otherSegment))) {
                         otherSegment.didAutoSkipped = true;
-                        if (showSkipToast) {
+                        // Do not show a toast if the user is scrubbing thru a paused video.
+                        // Cannot do this video state check in setTime or earlier in this method, as the video state may not be up to date.
+                        // So instead, only hide toasts because all other skip logic done while paused causes no harm.
+                        if (showSkipToast && !videoIsPaused) {
                             showSkippedSegmentToast(otherSegment);
                         }
                     }
@@ -507,18 +509,13 @@ public class SegmentPlaybackController {
             if (segmentToSkip.category == SegmentCategory.UNSUBMITTED) {
                 removeUnsubmittedSegments();
                 SponsorBlockUtils.setNewSponsorSegmentPreviewed();
-            } else {
+            } else if (!videoIsPaused) {
                 SponsorBlockUtils.sendViewRequestAsync(segmentToSkip);
             }
         } catch (Exception ex) {
             LogHelper.printException(SegmentPlaybackController.class, "skipSegment failure", ex);
         }
     }
-
-
-    private static int toastNumberOfSegmentsSkipped;
-    @Nullable
-    private static SponsorSegment toastSegmentSkipped;
 
     private static void showSkippedSegmentToast(@NonNull SponsorSegment segment) {
         ReVancedUtils.verifyOnMainThread();
@@ -578,19 +575,13 @@ public class SegmentPlaybackController {
         }
     }
 
-    /**
-     * Injection point.
-     */
-    public static void setSponsorBarAbsoluteLeft(Rect rect) {
+    private static void setSponsorBarAbsoluteLeft(Rect rect) {
         final int left = rect.left;
         if (sponsorBarAbsoluteLeft != left)
             sponsorBarAbsoluteLeft = left;
     }
 
-    /**
-     * Injection point.
-     */
-    public static void setSponsorBarAbsoluteRight(Rect rect) {
+    private static void setSponsorBarAbsoluteRight(Rect rect) {
         final int right = rect.right;
         if (sponsorAbsoluteBarRight != right)
             sponsorAbsoluteBarRight = right;
@@ -666,7 +657,6 @@ public class SegmentPlaybackController {
         }
     }
 
-    private static int highlightSegmentTimeBarScreenWidth = -1; // actual pixel width to use
     private static int getHighlightSegmentTimeBarScreenWidth() {
         if (highlightSegmentTimeBarScreenWidth == -1) {
             highlightSegmentTimeBarScreenWidth = (int) TypedValue.applyDimension(

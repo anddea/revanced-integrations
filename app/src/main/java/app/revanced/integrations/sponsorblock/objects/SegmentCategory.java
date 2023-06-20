@@ -1,9 +1,7 @@
 package app.revanced.integrations.sponsorblock.objects;
 
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.IGNORE;
-import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.MANUAL_SKIP;
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY;
-import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY_ONCE;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.integrations.utils.StringRef.sf;
@@ -97,6 +95,84 @@ public enum SegmentCategory {
     }
 
     @NonNull
+    public final String key;
+    @NonNull
+    public final StringRef title;
+    @NonNull
+    public final StringRef description;
+    /**
+     * Skip button text, if the skip occurs in the first quarter of the video
+     */
+    @NonNull
+    public final StringRef skipButtonTextBeginning;
+    /**
+     * Skip button text, if the skip occurs in the middle half of the video
+     */
+    @NonNull
+    public final StringRef skipButtonTextMiddle;
+    /**
+     * Skip button text, if the skip occurs in the last quarter of the video
+     */
+    @NonNull
+    public final StringRef skipButtonTextEnd;
+    /**
+     * Skipped segment toast, if the skip occurred in the first quarter of the video
+     */
+    @NonNull
+    public final StringRef skippedToastBeginning;
+    /**
+     * Skipped segment toast, if the skip occurred in the middle half of the video
+     */
+    @NonNull
+    public final StringRef skippedToastMiddle;
+    /**
+     * Skipped segment toast, if the skip occurred in the last quarter of the video
+     */
+    @NonNull
+    public final StringRef skippedToastEnd;
+    @NonNull
+    public final Paint paint;
+    public final int defaultColor;
+    /**
+     * If value is changed, then also call {@link #save(SharedPreferences.Editor)}
+     */
+    public int color;
+    /**
+     * If value is changed, then also call {@link #updateEnabledCategories()}
+     */
+    @NonNull
+    public CategoryBehaviour behaviour;
+
+    SegmentCategory(String key, StringRef title, StringRef description,
+                    StringRef skipButtonText,
+                    StringRef skippedToastText,
+                    CategoryBehaviour defaultBehavior, int defaultColor) {
+        this(key, title, description,
+                skipButtonText, skipButtonText, skipButtonText,
+                skippedToastText, skippedToastText, skippedToastText,
+                defaultBehavior, defaultColor);
+    }
+
+    SegmentCategory(String key, StringRef title, StringRef description,
+                    StringRef skipButtonTextBeginning, StringRef skipButtonTextMiddle, StringRef skipButtonTextEnd,
+                    StringRef skippedToastBeginning, StringRef skippedToastMiddle, StringRef skippedToastEnd,
+                    CategoryBehaviour defaultBehavior, int defaultColor) {
+        this.key = Objects.requireNonNull(key);
+        this.title = Objects.requireNonNull(title);
+        this.description = Objects.requireNonNull(description);
+        this.skipButtonTextBeginning = Objects.requireNonNull(skipButtonTextBeginning);
+        this.skipButtonTextMiddle = Objects.requireNonNull(skipButtonTextMiddle);
+        this.skipButtonTextEnd = Objects.requireNonNull(skipButtonTextEnd);
+        this.skippedToastBeginning = Objects.requireNonNull(skippedToastBeginning);
+        this.skippedToastMiddle = Objects.requireNonNull(skippedToastMiddle);
+        this.skippedToastEnd = Objects.requireNonNull(skippedToastEnd);
+        this.behaviour = Objects.requireNonNull(defaultBehavior);
+        this.color = this.defaultColor = defaultColor;
+        this.paint = new Paint();
+        setColor(defaultColor);
+    }
+
+    @NonNull
     public static SegmentCategory[] categoriesWithoutUnsubmitted() {
         return categoriesWithoutUnsubmitted;
     }
@@ -139,83 +215,14 @@ public enum SegmentCategory {
     }
 
     @NonNull
-    public final String key;
-    @NonNull
-    public final StringRef title;
-    @NonNull
-    public final StringRef description;
-
-    /**
-     * Skip button text, if the skip occurs in the first quarter of the video
-     */
-    @NonNull
-    public final StringRef skipButtonTextBeginning;
-    /**
-     * Skip button text, if the skip occurs in the middle half of the video
-     */
-    @NonNull
-    public final StringRef skipButtonTextMiddle;
-    /**
-     * Skip button text, if the skip occurs in the last quarter of the video
-     */
-    @NonNull
-    public final StringRef skipButtonTextEnd;
-    /**
-     * Skipped segment toast, if the skip occurred in the first quarter of the video
-     */
-    @NonNull
-    public final StringRef skippedToastBeginning;
-    /**
-     * Skipped segment toast, if the skip occurred in the middle half of the video
-     */
-    @NonNull
-    public final StringRef skippedToastMiddle;
-    /**
-     * Skipped segment toast, if the skip occurred in the last quarter of the video
-     */
-    @NonNull
-    public final StringRef skippedToastEnd;
-
-    @NonNull
-    public final Paint paint;
-    public final int defaultColor;
-    /**
-     * If value is changed, then also call {@link #save(SharedPreferences.Editor)}
-     */
-    public int color;
-    /**
-     * If value is changed, then also call {@link #updateEnabledCategories()}
-     */
-    @NonNull
-    public CategoryBehaviour behaviour;
-
-    SegmentCategory(String key, StringRef title, StringRef description,
-                    StringRef skipButtonText,
-                    StringRef skippedToastText,
-                    CategoryBehaviour defaultBehavior, int defaultColor) {
-        this(key, title, description,
-                skipButtonText, skipButtonText, skipButtonText,
-                skippedToastText, skippedToastText, skippedToastText,
-                defaultBehavior, defaultColor);
+    private static String getCategoryColorDotHTML(int color) {
+        color &= 0xFFFFFF;
+        return String.format("<font color=\"#%06X\">⬤</font>", color);
     }
 
-    SegmentCategory(String key, StringRef title, StringRef description,
-                    StringRef skipButtonTextBeginning, StringRef skipButtonTextMiddle, StringRef skipButtonTextEnd,
-                    StringRef skippedToastBeginning, StringRef skippedToastMiddle, StringRef skippedToastEnd,
-                    CategoryBehaviour defaultBehavior, int defaultColor) {
-        this.key = Objects.requireNonNull(key);
-        this.title = Objects.requireNonNull(title);
-        this.description = Objects.requireNonNull(description);
-        this.skipButtonTextBeginning = Objects.requireNonNull(skipButtonTextBeginning);
-        this.skipButtonTextMiddle = Objects.requireNonNull(skipButtonTextMiddle);
-        this.skipButtonTextEnd = Objects.requireNonNull(skipButtonTextEnd);
-        this.skippedToastBeginning = Objects.requireNonNull(skippedToastBeginning);
-        this.skippedToastMiddle = Objects.requireNonNull(skippedToastMiddle);
-        this.skippedToastEnd = Objects.requireNonNull(skippedToastEnd);
-        this.behaviour = Objects.requireNonNull(defaultBehavior);
-        this.color = this.defaultColor = defaultColor;
-        this.paint = new Paint();
-        setColor(defaultColor);
+    @NonNull
+    public static Spanned getCategoryColorDot(int color) {
+        return Html.fromHtml(getCategoryColorDotHTML(color));
     }
 
     /**
@@ -269,17 +276,6 @@ public enum SegmentCategory {
         this.color = color;
         paint.setColor(color);
         paint.setAlpha(255);
-    }
-
-    @NonNull
-    private static String getCategoryColorDotHTML(int color) {
-        color &= 0xFFFFFF;
-        return String.format("<font color=\"#%06X\">⬤</font>", color);
-    }
-
-    @NonNull
-    public static Spanned getCategoryColorDot(int color) {
-        return Html.fromHtml(getCategoryColorDotHTML(color));
     }
 
     @NonNull

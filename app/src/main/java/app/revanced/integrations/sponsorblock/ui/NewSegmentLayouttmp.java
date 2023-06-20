@@ -19,10 +19,10 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ResourceType;
 
 public class NewSegmentLayouttmp extends FrameLayout {
-    private final int rippleEffectId;
     final int defaultBottomMargin;
     final int ctaBottomMargin;
     final int hiddenBottomMargin;
+    private final int rippleEffectId;
 
     public NewSegmentLayouttmp(Context context) {
         this(context, null);

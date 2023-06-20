@@ -21,11 +21,10 @@ public final class NewSegmentLayout extends FrameLayout {
             new int[][]{new int[]{android.R.attr.state_enabled}},
             new int[]{0x33ffffff} // sets the ripple color to white
     );
-    private final int rippleEffectId;
-
     final int defaultBottomMargin;
     final int ctaBottomMargin;
     final int hiddenBottomMargin;
+    private final int rippleEffectId;
 
     public NewSegmentLayout(final Context context) {
         this(context, null);

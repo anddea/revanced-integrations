@@ -24,7 +24,7 @@ public class UserStats {
     public UserStats(@NonNull JSONObject json) throws JSONException {
         publicUserId = json.getString("userID");
         userName = json.getString("userName");
-        reputation = (float)json.getDouble("reputation");
+        reputation = (float) json.getDouble("reputation");
         segmentCount = json.getInt("segmentCount");
         viewCount = json.getInt("viewCount");
         minutesSaved = json.getDouble("minutesSaved");

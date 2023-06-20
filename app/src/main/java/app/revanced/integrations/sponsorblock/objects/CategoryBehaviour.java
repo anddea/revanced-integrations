@@ -19,6 +19,10 @@ public enum CategoryBehaviour {
     // ignored categories are not exported to json, and ignore is the default behavior when importing
     IGNORE("ignore", -1, false, sf("sb_skip_ignore"));
 
+    private static String[] behaviorKeys;
+    private static String[] behaviorDescriptions;
+    private static String[] behaviorKeysWithoutSkipOnce;
+    private static String[] behaviorDescriptionsWithoutSkipOnce;
     @NonNull
     public final String key;
     public final int desktopKey;
@@ -38,7 +42,7 @@ public enum CategoryBehaviour {
 
     @Nullable
     public static CategoryBehaviour byStringKey(@NonNull String key) {
-        for (CategoryBehaviour behaviour : values()){
+        for (CategoryBehaviour behaviour : values()) {
             if (behaviour.key.equals(key)) {
                 return behaviour;
             }
@@ -55,12 +59,6 @@ public enum CategoryBehaviour {
         }
         return null;
     }
-
-    private static String[] behaviorKeys;
-    private static String[] behaviorDescriptions;
-
-    private static String[] behaviorKeysWithoutSkipOnce;
-    private static String[] behaviorDescriptionsWithoutSkipOnce;
 
     private static void createNameAndKeyArrays() {
         ReVancedUtils.verifyOnMainThread();
@@ -93,6 +91,7 @@ public enum CategoryBehaviour {
         }
         return behaviorKeys;
     }
+
     static String[] getBehaviorKeysWithoutSkipOnce() {
         if (behaviorKeysWithoutSkipOnce == null) {
             createNameAndKeyArrays();
@@ -106,6 +105,7 @@ public enum CategoryBehaviour {
         }
         return behaviorDescriptions;
     }
+
     static String[] getBehaviorDescriptionsWithoutSkipOnce() {
         if (behaviorDescriptionsWithoutSkipOnce == null) {
             createNameAndKeyArrays();

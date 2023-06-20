@@ -23,14 +23,14 @@ import app.revanced.integrations.utils.ResourceType;
 
 public class SkipSponsorButton extends FrameLayout {
     private static final boolean highContrast = true;
+    final int defaultBottomMargin;
+    final int ctaBottomMargin;
+    final int hiddenBottomMargin;
     private final LinearLayout skipSponsorBtnContainer;
     private final TextView skipSponsorTextView;
     private final Paint background;
     private final Paint border;
     private SponsorSegment segment;
-    final int defaultBottomMargin;
-    final int ctaBottomMargin;
-    final int hiddenBottomMargin;
 
     public SkipSponsorButton(Context context) {
         this(context, null);

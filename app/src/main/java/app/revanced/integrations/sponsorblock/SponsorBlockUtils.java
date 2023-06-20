@@ -39,120 +39,8 @@ public class SponsorBlockUtils {
     private static final SimpleDateFormat manualEditTimeFormatter = new SimpleDateFormat(MANUAL_EDIT_TIME_FORMAT);
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat voteSegmentTimeFormatter = new SimpleDateFormat();
-    static {
-        TimeZone utc = TimeZone.getTimeZone("UTC");
-        manualEditTimeFormatter.setTimeZone(utc);
-        voteSegmentTimeFormatter.setTimeZone(utc);
-    }
     private static final String LOCKED_COLOR = "#FFC83D";
-
-    private static long newSponsorSegmentDialogShownMillis;
-    private static long newSponsorSegmentStartMillis = -1;
-    private static long newSponsorSegmentEndMillis = -1;
-    private static boolean newSponsorSegmentPreviewed;
-    private static final DialogInterface.OnClickListener newSponsorSegmentDialogListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_NEGATIVE:
-                    // start
-                    newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
-                    break;
-                case DialogInterface.BUTTON_POSITIVE:
-                    // end
-                    newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
-                    break;
-            }
-            dialog.dismiss();
-        }
-    };
-    private static SegmentCategory newUserCreatedSegmentCategory;
-    private static final DialogInterface.OnClickListener segmentTypeListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            try {
-                SegmentCategory category = SegmentCategory.categoriesWithoutHighlights()[which];
-                final boolean enableButton;
-                if (category.behaviour == CategoryBehaviour.IGNORE) {
-                    ReVancedUtils.showToastLong(str("sb_new_segment_disabled_category"));
-                    enableButton = false;
-                } else {
-                    newUserCreatedSegmentCategory = category;
-                    enableButton = true;
-                }
-
-                ((AlertDialog) dialog)
-                        .getButton(DialogInterface.BUTTON_POSITIVE)
-                        .setEnabled(enableButton);
-            } catch (Exception ex) {
-                LogHelper.printException(SponsorBlockUtils.class, "segmentTypeListener failure", ex);
-            }
-        }
-    };
-    private static final DialogInterface.OnClickListener segmentReadyDialogButtonListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            try {
-                SponsorBlockViewController.hideNewSegmentLayout();
-                Context context = ((AlertDialog) dialog).getContext();
-                dialog.dismiss();
-
-                SegmentCategory[] categories = SegmentCategory.categoriesWithoutHighlights();
-                CharSequence[] titles = new CharSequence[categories.length];
-                for (int i = 0, length = categories.length; i < length; i++) {
-                    titles[i] = categories[i].getTitleWithColorDot();
-                }
-
-                newUserCreatedSegmentCategory = null;
-                new AlertDialog.Builder(context)
-                        .setTitle(str("sb_new_segment_choose_category"))
-                        .setSingleChoiceItems(titles, -1, segmentTypeListener)
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .setPositiveButton(android.R.string.ok, segmentCategorySelectedDialogListener)
-                        .show()
-                        .getButton(DialogInterface.BUTTON_POSITIVE)
-                        .setEnabled(false);
-            } catch (Exception ex) {
-                LogHelper.printException(SponsorBlockUtils.class, "segmentReadyDialogButtonListener failure", ex);
-            }
-        }
-    };
-    private static final DialogInterface.OnClickListener segmentCategorySelectedDialogListener = (dialog, which) -> {
-        dialog.dismiss();
-        submitNewSegment();
-    };
     private static final EditByHandSaveDialogListener editByHandSaveDialogListener = new EditByHandSaveDialogListener();
-    private static final DialogInterface.OnClickListener editByHandDialogListener = (dialog, which) -> {
-        try {
-            Context context = ((AlertDialog) dialog).getContext();
-
-            final boolean isStart = DialogInterface.BUTTON_NEGATIVE == which;
-
-            final EditText textView = new EditText(context);
-            textView.setHint(MANUAL_EDIT_TIME_FORMAT);
-            if (isStart) {
-                if (newSponsorSegmentStartMillis >= 0)
-                    textView.setText(manualEditTimeFormatter.format(new Date(newSponsorSegmentStartMillis)));
-            } else {
-                if (newSponsorSegmentEndMillis >= 0)
-                    textView.setText(manualEditTimeFormatter.format(new Date(newSponsorSegmentEndMillis)));
-            }
-
-            editByHandSaveDialogListener.settingStart = isStart;
-            editByHandSaveDialogListener.editText = new WeakReference<>(textView);
-            new AlertDialog.Builder(context)
-                    .setTitle(str(isStart ? "sb_new_segment_time_start" : "sb_new_segment_time_end"))
-                    .setView(textView)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setNeutralButton(str("sb_new_segment_now"), editByHandSaveDialogListener)
-                    .setPositiveButton(android.R.string.ok, editByHandSaveDialogListener)
-                    .show();
-
-            dialog.dismiss();
-        } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "editByHandDialogListener failure", ex);
-        }
-    };
     private static final DialogInterface.OnClickListener segmentVoteClickListener = (dialog, which) -> {
         try {
             final Context context = ((AlertDialog) dialog).getContext();
@@ -198,6 +86,118 @@ public class SponsorBlockUtils {
             LogHelper.printException(SponsorBlockUtils.class, "onPreviewClicked failure", ex);
         }
     };
+    private static long newSponsorSegmentDialogShownMillis;
+    private static long newSponsorSegmentStartMillis = -1;
+    private static long newSponsorSegmentEndMillis = -1;
+    private static final DialogInterface.OnClickListener newSponsorSegmentDialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_NEGATIVE:
+                    // start
+                    newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
+                    break;
+                case DialogInterface.BUTTON_POSITIVE:
+                    // end
+                    newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
+                    break;
+            }
+            dialog.dismiss();
+        }
+    };
+    private static final DialogInterface.OnClickListener editByHandDialogListener = (dialog, which) -> {
+        try {
+            Context context = ((AlertDialog) dialog).getContext();
+
+            final boolean isStart = DialogInterface.BUTTON_NEGATIVE == which;
+
+            final EditText textView = new EditText(context);
+            textView.setHint(MANUAL_EDIT_TIME_FORMAT);
+            if (isStart) {
+                if (newSponsorSegmentStartMillis >= 0)
+                    textView.setText(manualEditTimeFormatter.format(new Date(newSponsorSegmentStartMillis)));
+            } else {
+                if (newSponsorSegmentEndMillis >= 0)
+                    textView.setText(manualEditTimeFormatter.format(new Date(newSponsorSegmentEndMillis)));
+            }
+
+            editByHandSaveDialogListener.settingStart = isStart;
+            editByHandSaveDialogListener.editText = new WeakReference<>(textView);
+            new AlertDialog.Builder(context)
+                    .setTitle(str(isStart ? "sb_new_segment_time_start" : "sb_new_segment_time_end"))
+                    .setView(textView)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setNeutralButton(str("sb_new_segment_now"), editByHandSaveDialogListener)
+                    .setPositiveButton(android.R.string.ok, editByHandSaveDialogListener)
+                    .show();
+
+            dialog.dismiss();
+        } catch (Exception ex) {
+            LogHelper.printException(SponsorBlockUtils.class, "editByHandDialogListener failure", ex);
+        }
+    };
+    private static boolean newSponsorSegmentPreviewed;
+    private static SegmentCategory newUserCreatedSegmentCategory;
+    private static final DialogInterface.OnClickListener segmentTypeListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+                SegmentCategory category = SegmentCategory.categoriesWithoutHighlights()[which];
+                final boolean enableButton;
+                if (category.behaviour == CategoryBehaviour.IGNORE) {
+                    ReVancedUtils.showToastLong(str("sb_new_segment_disabled_category"));
+                    enableButton = false;
+                } else {
+                    newUserCreatedSegmentCategory = category;
+                    enableButton = true;
+                }
+
+                ((AlertDialog) dialog)
+                        .getButton(DialogInterface.BUTTON_POSITIVE)
+                        .setEnabled(enableButton);
+            } catch (Exception ex) {
+                LogHelper.printException(SponsorBlockUtils.class, "segmentTypeListener failure", ex);
+            }
+        }
+    };
+    private static final DialogInterface.OnClickListener segmentCategorySelectedDialogListener = (dialog, which) -> {
+        dialog.dismiss();
+        submitNewSegment();
+    };
+    private static final DialogInterface.OnClickListener segmentReadyDialogButtonListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+                SponsorBlockViewController.hideNewSegmentLayout();
+                Context context = ((AlertDialog) dialog).getContext();
+                dialog.dismiss();
+
+                SegmentCategory[] categories = SegmentCategory.categoriesWithoutHighlights();
+                CharSequence[] titles = new CharSequence[categories.length];
+                for (int i = 0, length = categories.length; i < length; i++) {
+                    titles[i] = categories[i].getTitleWithColorDot();
+                }
+
+                newUserCreatedSegmentCategory = null;
+                new AlertDialog.Builder(context)
+                        .setTitle(str("sb_new_segment_choose_category"))
+                        .setSingleChoiceItems(titles, -1, segmentTypeListener)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(android.R.string.ok, segmentCategorySelectedDialogListener)
+                        .show()
+                        .getButton(DialogInterface.BUTTON_POSITIVE)
+                        .setEnabled(false);
+            } catch (Exception ex) {
+                LogHelper.printException(SponsorBlockUtils.class, "segmentReadyDialogButtonListener failure", ex);
+            }
+        }
+    };
+
+    static {
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        manualEditTimeFormatter.setTimeZone(utc);
+        voteSegmentTimeFormatter.setTimeZone(utc);
+    }
 
     private SponsorBlockUtils() {
     }
@@ -223,7 +223,7 @@ public class SponsorBlockUtils {
             final SegmentCategory segmentCategory = newUserCreatedSegmentCategory;
 
             if (start < 0 || end < 0 || start >= end || videoLength <= 0 || videoId.isEmpty()
-                     || segmentCategory == null || uuid.isEmpty()) {
+                    || segmentCategory == null || uuid.isEmpty()) {
                 LogHelper.printException(SponsorBlockUtils.class, "invalid parameters");
                 return;
             }

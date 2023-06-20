@@ -24,6 +24,8 @@ import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class SponsorBlockSettings {
 
+    private static boolean initialized;
+
     public static void importSettings(@NonNull String json) {
         ReVancedUtils.verifyOnMainThread();
         try {
@@ -85,7 +87,7 @@ public class SponsorBlockSettings {
             SettingsEnum.SB_API_URL.saveValue(serverAddress);
 
             SettingsEnum.SB_SHOW_TIME_WITHOUT_SEGMENTS.saveValue(settingsJson.getBoolean("showTimeWithSkips"));
-            final float minDuration = (float)settingsJson.getDouble("minDuration");
+            final float minDuration = (float) settingsJson.getDouble("minDuration");
             if (minDuration < 0) {
                 throw new IllegalArgumentException("invalid minDuration: " + minDuration);
             }
@@ -102,7 +104,7 @@ public class SponsorBlockSettings {
                 if (minutesSaved < 0) {
                     throw new IllegalArgumentException("invalid minutesSaved: " + minutesSaved);
                 }
-                SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.saveValue((long)(minutesSaved * 60 * 1000));
+                SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.saveValue((long) (minutesSaved * 60 * 1000));
             } catch (JSONException ex) {
                 // ignore. values were not exported in prior versions of ReVanced
             }
@@ -177,8 +179,6 @@ public class SponsorBlockSettings {
         // but that should not be done on the main thread.
         // Instead, assume the domain exists and the user knows what they're doing.
     }
-
-    private static boolean initialized;
 
     public static void initialize() {
         if (initialized) {

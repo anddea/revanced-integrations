@@ -59,7 +59,7 @@ public class SponsorBlockViewController {
             hideAll();
 
             RelativeLayout layout = new RelativeLayout(ReVancedUtils.getContext());
-            layout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
+            layout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             LayoutInflater.from(ReVancedUtils.getContext()).inflate(identifier("inline_sponsor_overlay", ResourceType.LAYOUT), layout);
 
             inlineSponsorOverlayRef = new WeakReference<>(layout);
@@ -74,6 +74,7 @@ public class SponsorBlockViewController {
                         layout.bringToFront();
                     }
                 }
+
                 @Override
                 public void onChildViewRemoved(View parent, View child) {
                 }
@@ -117,6 +118,7 @@ public class SponsorBlockViewController {
         skipHighlight = null;
         updateSkipButton(skipHighlightButtonRef.get(), null, false);
     }
+
     public static void hideSkipSegmentButton() {
         skipSegment = null;
         updateSkipButton(skipSponsorButtonRef.get(), null, false);
@@ -188,11 +190,13 @@ public class SponsorBlockViewController {
             setLayoutMargins(layout, fullScreen, layout.defaultBottomMargin, layout.ctaBottomMargin, layout.hiddenBottomMargin);
         }
     }
+
     private static void setSkipButtonMargins(@Nullable SkipSponsorButton button, boolean fullScreen) {
         if (button != null) {
             setLayoutMargins(button, fullScreen, button.defaultBottomMargin, button.ctaBottomMargin, button.hiddenBottomMargin);
         }
     }
+
     private static void setLayoutMargins(@NonNull View view, boolean fullScreen,
                                          int defaultBottomMargin, int ctaBottomMargin, int hiddenBottomMargin) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
