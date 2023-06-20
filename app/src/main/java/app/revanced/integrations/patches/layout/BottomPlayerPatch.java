@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.shared.PlayerType;
 
 public class BottomPlayerPatch {
-    private static final List<String> generalWhiteList = List.of(
+    private static final List<String> whiteList = List.of(
             "FEhistory",
             "avatar",
             "channel_bar",
@@ -27,29 +26,46 @@ public class BottomPlayerPatch {
             "-button"
     );
 
-    public static boolean hideActionButtons(Object object, ByteBuffer buffer) {
+
+    /**
+     * Injection point.
+     */
+    public static boolean hideActionButton(Object object, ByteBuffer buffer) {
         String value = object.toString();
-        if (generalWhiteList.stream().anyMatch(value::contains) || PlayerType.getCurrent() == PlayerType.WATCH_WHILE_FULLSCREEN || (!value.contains("ContainerType|video_action_button") && !value.contains("|button.eml|"))) return false;
 
-        List<String> actionButtonsBlockList = new ArrayList<>();
+        if (whiteList.stream().anyMatch(value::contains)
+                || buffer == null
+                || (!value.contains("ContainerType|video_action_button") && !value.contains("|button.eml|")))
+            return false;
 
-        if (SettingsEnum.HIDE_LIVE_CHAT_BUTTON.getBoolean())
-            actionButtonsBlockList.add("yt_outline_message_bubble_overlap");
-        if (SettingsEnum.HIDE_SHARE_BUTTON.getBoolean())
-            actionButtonsBlockList.add("yt_outline_share");
-        if (SettingsEnum.HIDE_SHOP_BUTTON.getBoolean())
-            actionButtonsBlockList.add("yt_outline_bag");
-        if (SettingsEnum.HIDE_REPORT_BUTTON.getBoolean())
-            actionButtonsBlockList.add("yt_outline_flag");
-        if (SettingsEnum.HIDE_REMIX_BUTTON.getBoolean())
-            actionButtonsBlockList.add("yt_outline_youtube_shorts_plus");
-        if (SettingsEnum.HIDE_THANKS_BUTTON.getBoolean())
-            actionButtonsBlockList.add("yt_outline_dollar_sign_heart");
-        if (SettingsEnum.HIDE_CREATE_CLIP_BUTTON.getBoolean())
-            actionButtonsBlockList.add("yt_outline_scissors");
+        return hideActionButton(new String(buffer.array(), StandardCharsets.UTF_8));
+    }
 
-        String convertedBuffer = new String(buffer.array(), StandardCharsets.UTF_8);
+    private static boolean hideActionButton(String charset) {
+        List<String> blocklist = new ArrayList<>();
 
-        return actionButtonsBlockList.stream().anyMatch(convertedBuffer::contains);
+        for (ActionBarButton button : ActionBarButton.values())
+            if (button.settings.getBoolean())
+                blocklist.add(button.filter);
+
+        return blocklist.stream().anyMatch(charset::contains);
+    }
+
+    private enum ActionBarButton {
+        CLIP(SettingsEnum.HIDE_CREATE_CLIP_BUTTON, "yt_outline_scissors"),
+        LIVECHAT(SettingsEnum.HIDE_LIVE_CHAT_BUTTON, "yt_outline_message_bubble_overlap"),
+        REMIX(SettingsEnum.HIDE_REMIX_BUTTON, "yt_outline_youtube_shorts_plus"),
+        REPORT(SettingsEnum.HIDE_REPORT_BUTTON, "yt_outline_flag"),
+        SHARE(SettingsEnum.HIDE_SHARE_BUTTON, "yt_outline_share"),
+        SHOP(SettingsEnum.HIDE_SHOP_BUTTON, "yt_outline_bag"),
+        THANKS(SettingsEnum.HIDE_THANKS_BUTTON, "yt_outline_dollar_sign_heart");
+
+        private final SettingsEnum settings;
+        private final String filter;
+
+        ActionBarButton(SettingsEnum settings, String filter) {
+            this.settings = settings;
+            this.filter = filter;
+        }
     }
 }
