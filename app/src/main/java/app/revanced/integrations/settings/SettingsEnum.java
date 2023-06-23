@@ -30,10 +30,6 @@ public enum SettingsEnum {
     AD_REMOVER_SELF_SPONSOR("revanced_ad_remover_self_sponsor", BOOLEAN, TRUE),
     HIDE_VIDEO_ADS("revanced_video_ads_removal", BOOLEAN, TRUE, true),
     AD_REMOVER_GET_PREMIUM("revanced_ad_remover_get_premium", BOOLEAN, TRUE, true),
-    AD_REMOVER_USER_FILTER("revanced_ad_remover_user_filter", BOOLEAN, FALSE),
-    AD_REMOVER_CUSTOM_FILTER("revanced_ad_remover_custom_strings", STRING, "", true,
-            parents(AD_REMOVER_USER_FILTER)),
-
 
     // Bottom Player
     HIDE_ACTION_BUTTON("revanced_hide_action_buttons", BOOLEAN, FALSE),
@@ -101,11 +97,14 @@ public enum SettingsEnum {
 
 
     // General
+    CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
+    CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true,
+            parents(CUSTOM_FILTER)),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", BOOLEAN, FALSE, true),
     ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", BOOLEAN, FALSE, true),
     ENABLE_WIDE_SEARCHBAR("revanced_enable_wide_searchbar", BOOLEAN, FALSE, true),
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", BOOLEAN, FALSE),
-    ACCOUNT_MENU_CUSTOM_FILTER("revanced_account_menu_custom_filter", STRING, "YouTube Music\nYouTube Kids", true,
+    HIDE_ACCOUNT_MENU_CUSTOM_FILTER("revanced_hide_account_menu_custom_filter_strings", STRING, "YouTube Music\nYouTube Kids", true,
             parents(HIDE_ACCOUNT_MENU)),
     HIDE_ALBUM_CARDS("revanced_hide_album_card", BOOLEAN, TRUE),
     HIDE_AUTO_CAPTIONS("revanced_hide_auto_captions", BOOLEAN, FALSE, true),

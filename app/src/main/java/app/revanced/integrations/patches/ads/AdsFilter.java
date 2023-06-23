@@ -3,105 +3,26 @@ package app.revanced.integrations.patches.ads;
 import android.view.View;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public final class AdsFilter extends Filter {
     private final String[] exceptions;
-
-    private final CustomFilterGroup custom;
 
     public AdsFilter() {
         exceptions = new String[]{
                 "comment_thread", // skip blocking anything in the comments
                 "download_",
                 "downloads_",
+                "home_video_with_context", // Don't filter anything in the home page video component.
                 "library_recent_shelf",
                 "playlist_add",
-                "related_video_with_context",
+                "related_video_with_context", // Don't filter anything in the related video component.
                 "|comment." // skip blocking anything in the comments replies
         };
-
-        custom = new CustomFilterGroup(
-                SettingsEnum.AD_REMOVER_USER_FILTER,
-                SettingsEnum.AD_REMOVER_CUSTOM_FILTER
-        );
-
-        final var albumCard = new StringFilterGroup(
-                SettingsEnum.HIDE_ALBUM_CARDS,
-                "browsy_bar",
-                "official_card"
-        );
-
-        final var audioTrackButton = new StringFilterGroup(
-                SettingsEnum.HIDE_AUDIO_TRACK_BUTTON,
-                "multi_feed_icon_button"
-        );
 
         final var carouselAd = new StringFilterGroup(
                 SettingsEnum.AD_REMOVER_GENERAL_ADS,
                 "carousel_ad"
-        );
-
-        final var channelGuidelines = new StringFilterGroup(
-                SettingsEnum.HIDE_CHANNEL_GUIDELINES,
-                "channel_guidelines_entry_banner",
-                "community_guidelines",
-                "sponsorships_comments_upsell"
-        );
-
-        final var channelMemberShelf = new StringFilterGroup(
-                SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF,
-                "member_recognition_shelf"
-        );
-
-        final var grayDescription = new StringFilterGroup(
-                SettingsEnum.HIDE_GRAY_DESCRIPTION,
-                "endorsement_header_footer"
-        );
-
-        final var graySeparator = new StringFilterGroup(
-                SettingsEnum.HIDE_GRAY_SEPARATOR,
-                "cell_divider"
-        );
-
-        final var imageShelf = new StringFilterGroup(
-                SettingsEnum.HIDE_IMAGE_SHELF,
-                "image_shelf"
-        );
-
-        final var inFeedSurvey = new StringFilterGroup(
-                SettingsEnum.HIDE_FEED_SURVEY,
-                "in_feed_survey",
-                "slimline_survey"
-        );
-
-        final var infoPanel = new StringFilterGroup(
-                SettingsEnum.HIDE_INFO_PANEL,
-                "compact_banner",
-                "publisher_transparency_panel",
-                "single_item_information_panel"
-        );
-
-        final var joinMembership = new StringFilterGroup(
-                SettingsEnum.HIDE_CHANNEL_BAR_JOIN_BUTTON,
-                "compact_sponsor_button"
-        );
-
-        final var latestPosts = new StringFilterGroup(
-                SettingsEnum.HIDE_LATEST_POSTS,
-                "post_shelf"
-        );
-
-        final var medicalPanel = new StringFilterGroup(
-                SettingsEnum.HIDE_MEDICAL_PANEL,
-                "emergency_onebox",
-                "medical_panel"
-        );
-
-        final var merchandise = new StringFilterGroup(
-                SettingsEnum.HIDE_MERCHANDISE,
-                "product_carousel"
         );
 
         final var paidContent = new StringFilterGroup(
@@ -112,34 +33,6 @@ public final class AdsFilter extends Filter {
         final var selfSponsor = new StringFilterGroup(
                 SettingsEnum.AD_REMOVER_SELF_SPONSOR,
                 "cta_shelf_card"
-        );
-
-        final var teaser = new StringFilterGroup(
-                SettingsEnum.HIDE_TEASER,
-                "expandable_metadata"
-        );
-
-        final var ticketShelf = new StringFilterGroup(
-                SettingsEnum.HIDE_TICKET_SHELF,
-                "ticket_horizontal_shelf",
-                "ticket_shelf"
-        );
-
-        final var timedReactions = new StringFilterGroup(
-                SettingsEnum.HIDE_TIMED_REACTIONS,
-                "emoji_control_panel",
-                "timed_reaction"
-        );
-
-        final var viewProducts = new StringFilterGroup(
-                SettingsEnum.HIDE_VIEW_PRODUCTS,
-                "products_in_video",
-                "product_item"
-        );
-
-        final var webSearchPanel = new StringFilterGroup(
-                SettingsEnum.HIDE_WEB_SEARCH_PANEL,
-                "web_link_panel"
         );
 
         final var generalAds = new StringFilterGroup(
@@ -174,41 +67,13 @@ public final class AdsFilter extends Filter {
                 "|ad_"
         );
 
-        final var movieAds = new StringFilterGroup(
-                SettingsEnum.HIDE_MOVIE_SHELF,
-                "compact_movie",
-                "horizontal_movie_shelf",
-                "movie_and_show_upsell_card",
-                "compact_tvfilm_item",
-                "offer_module_root"
-        );
-
         this.pathFilterGroups.addAll(
-                albumCard,
-                audioTrackButton,
-                channelGuidelines,
-                channelMemberShelf,
                 generalAds,
-                grayDescription,
-                imageShelf,
-                inFeedSurvey,
-                infoPanel,
-                joinMembership,
-                latestPosts,
-                medicalPanel,
-                merchandise,
-                movieAds,
                 paidContent,
-                selfSponsor,
-                teaser,
-                ticketShelf,
-                timedReactions,
-                viewProducts,
-                webSearchPanel
+                selfSponsor
         );
 
         this.identifierFilterGroups.addAll(
-                graySeparator,
                 carouselAd
         );
     }
@@ -228,34 +93,9 @@ public final class AdsFilter extends Filter {
 
     @Override
     public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        FilterResult result;
+        if (ReVancedUtils.containsAny(path, exceptions))
+            return false;
 
-        if (custom.isEnabled() && custom.check(path).isFiltered())
-            result = FilterResult.CUSTOM;
-        else if (ReVancedUtils.containsAny(path, exceptions))
-            result = FilterResult.EXCEPTION;
-        else if (pathFilterGroups.contains(path) || identifierFilterGroups.contains(identifier))
-            result = FilterResult.FILTERED;
-        else
-            result = FilterResult.UNFILTERED;
-
-        LogHelper.printDebug(AdsFilter.class, String.format("%s (ID: %s): %s", result.message, identifier, path));
-
-        return result.filter;
-    }
-
-    private enum FilterResult {
-        UNFILTERED(false, "Unfiltered"),
-        EXCEPTION(false, "Exception"),
-        FILTERED(true, "Filtered"),
-        CUSTOM(true, "Custom");
-
-        final Boolean filter;
-        final String message;
-
-        FilterResult(boolean filter, String message) {
-            this.filter = filter;
-            this.message = message;
-        }
+        return super.isFiltered(path, identifier, object, _protobufBufferArray);
     }
 }

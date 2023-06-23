@@ -47,7 +47,7 @@ public class GeneralPatch {
     public static void hideAccountMenu(@NonNull Spanned span) {
         if (compactLink == null || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
 
-        String[] blockList = SettingsEnum.ACCOUNT_MENU_CUSTOM_FILTER.getString().split("\\n");
+        String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_CUSTOM_FILTER.getString().split("\\n");
 
         for (String filter : blockList) {
             hideViewBy0dpUnderCondition(

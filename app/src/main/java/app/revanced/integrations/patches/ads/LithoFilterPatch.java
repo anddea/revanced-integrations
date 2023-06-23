@@ -234,13 +234,7 @@ abstract class Filter {
 @SuppressWarnings("unused")
 public final class LithoFilterPatch {
     private static final Filter[] filters = new Filter[]{
-            new AdsFilter(),
-            new ButtonsFilter(),
-            new CommentsFilter(),
-            new CommunityPostFilter(),
-            new FlyoutPanelsFilter(),
-            new QuickActionButtonsFilter(),
-            new ShortsFilter()
+            new DummyFilter() // Replaced by patch.
     };
     public static ByteBuffer bytebuffer;
 
