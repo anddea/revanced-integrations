@@ -17,6 +17,7 @@ public enum SettingsEnum {
     ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE), // must be first value, otherwise logging during loading will not work
 
     HIDE_SCREENSHOT_POPUP("revanced_hide_screenshot_popup", BOOLEAN, TRUE),
+    ENABLE_OPEN_LINKS_EXTERNALLY("revanced_enable_open_links_externally", BOOLEAN, TRUE),
     ENABLE_SANITIZE_URL_QUERY("revanced_enable_sanitize_url_query", BOOLEAN, TRUE);
 
     @NonNull
