@@ -43,6 +43,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activity);
         setPreferenceScreen(preferenceScreen);
 
+        addPreferences(activity, preferenceScreen, SettingsStatus.screenshotPopup, SettingsEnum.HIDE_SCREENSHOT_POPUP);
         addPreferences(activity, preferenceScreen, SettingsStatus.sanitizeUrlQuery, SettingsEnum.ENABLE_SANITIZE_URL_QUERY);
     }
 
