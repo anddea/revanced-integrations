@@ -1,11 +1,13 @@
 package app.revanced.reddit.patches;
 
-import app.revanced.integrations.utils.LogHelper;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import app.revanced.reddit.settings.SettingsEnum;
+import app.revanced.reddit.utils.LogHelper;
+
 public final class SanitizeUrlQueryPatch {
+
     /**
      * Strip query parameters from a given URL string.
      *
@@ -14,12 +16,15 @@ public final class SanitizeUrlQueryPatch {
      */
     public static String stripQueryParameters(final String urlString) {
         try {
-            final var url = new URL(urlString);
+            if (!SettingsEnum.ENABLE_SANITIZE_URL_QUERY.getBoolean())
+                return urlString;
 
+            final var url = new URL(urlString);
             return url.getProtocol() + "://" + url.getHost() + url.getPath();
         } catch (MalformedURLException e) {
             LogHelper.printException(SanitizeUrlQueryPatch.class, "Can not parse URL", e);
             return urlString;
         }
     }
+
 }
