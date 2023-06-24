@@ -70,6 +70,7 @@ public final class LayoutComponentsFilter extends Filter {
 
         final var inFeedSurvey = new StringFilterGroup(
                 SettingsEnum.HIDE_FEED_SURVEY,
+                "feed_nudge",
                 "in_feed_survey",
                 "slimline_survey"
         );
