@@ -43,6 +43,16 @@ public final class LayoutComponentsFilter extends Filter {
                 "member_recognition_shelf"
         );
 
+        final var chapters = new StringFilterGroup(
+                SettingsEnum.HIDE_CHAPTERS,
+                "macro_markers_carousel"
+        );
+
+        final var expandableMetadata = new StringFilterGroup(
+                SettingsEnum.HIDE_EXPANDABLE_CHIP,
+                "inline_expander"
+        );
+
         final var grayDescription = new StringFilterGroup(
                 SettingsEnum.HIDE_GRAY_DESCRIPTION,
                 "endorsement_header_footer"
@@ -101,11 +111,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "offer_module_root"
         );
 
-        final var teaser = new StringFilterGroup(
-                SettingsEnum.HIDE_TEASER,
-                "expandable_metadata"
-        );
-
         final var ticketShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_TICKET_SHELF,
                 "ticket_horizontal_shelf",
@@ -134,6 +139,8 @@ public final class LayoutComponentsFilter extends Filter {
                 audioTrackButton,
                 channelGuidelines,
                 channelMemberShelf,
+                chapters,
+                expandableMetadata,
                 grayDescription,
                 imageShelf,
                 inFeedSurvey,
@@ -143,7 +150,6 @@ public final class LayoutComponentsFilter extends Filter {
                 medicalPanel,
                 merchandise,
                 movieShelf,
-                teaser,
                 ticketShelf,
                 timedReactions,
                 viewProducts,
