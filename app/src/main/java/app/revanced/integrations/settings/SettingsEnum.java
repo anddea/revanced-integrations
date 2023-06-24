@@ -137,7 +137,6 @@ public enum SettingsEnum {
     HIDE_OFFICIAL_HEADER("revanced_hide_official_header", BOOLEAN, FALSE),
     HIDE_SEARCH_TERMS("revanced_hide_search_terms", BOOLEAN, FALSE, true),
     HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
-    HIDE_STORIES_SHELF("revanced_hide_stories_shelf", BOOLEAN, TRUE, true),
     HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),

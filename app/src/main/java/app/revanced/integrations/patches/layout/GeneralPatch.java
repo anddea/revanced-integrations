@@ -127,8 +127,4 @@ public class GeneralPatch {
     public static boolean hideSnackBar() {
         return SettingsEnum.HIDE_SNACK_BAR.getBoolean();
     }
-
-    public static void hideStoriesShelf(View view) {
-        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_STORIES_SHELF.getBoolean(), view);
-    }
 }
