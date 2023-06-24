@@ -2,9 +2,6 @@ package app.revanced.integrations.patches.misc;
 
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
-import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
-import static app.revanced.integrations.utils.SharedPrefHelper.saveBoolean;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import androidx.annotation.NonNull;
@@ -16,27 +13,26 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 
-public class ProtobufSpoofPatch {
-    private static final String PREFERENCE_KEY = "auto_spoofing_enabled";
+public class SpoofPlayerParameterPatch {
 
     /**
-     * Target Protobuf parameters.
+     * Target player parameters.
      */
-    private static final String[] PROTOBUF_PARAMETER_WHITELIST = {
+    private static final String[] PLAYER_PARAMETER_WHITELIST = {
             "YAHI", // Autoplay in feed
             "SAFg"  // Autoplay in scrim
     };
 
     /**
-     * If you override protobuf when playing clips, the following issues arise.
+     * If you override player parameters when playing clips, the following issues arise.
      * github.com/inotia00/ReVanced_Extended/issues/999
      * <p>
-     * This is because a clip's protobuf contains important information used in the clip, such as the start time of the clip, the length of the clip, and whether or not the clip has auto-repeat.
-     * Therefore, in the clip, the PROTOBUF_PARAMETER_SHORTS parameter must be prepend while maintaining the clip's protobuf.
+     * This is because a clip's player parameters contains important information used in the clip, such as the start time of the clip, the length of the clip, and whether or not the clip has auto-repeat.
+     * Therefore, in the clip, the PLAYER_PARAMETER_SHORTS parameter must be prepend while maintaining the clip's player parameters.
      * <p>
-     * The general protobuf size does not exceed 26, but the size of the clip's protobuf exceeds 26, so we can identify whether the currently playing video is a clip or not.
+     * The general player parameters size does not exceed 26, but the size of the clip's player parameters exceeds 26, so we can identify whether the currently playing video is a clip or not.
      */
-    private static final int MAX_PROTOBUF_LENGTH = 26;
+    private static final int PLAYER_PARAMETERS_MAX_LENGTH = 26;
 
     /**
      * On app first start, the first video played usually contains a single non-default window setting value
@@ -52,16 +48,23 @@ public class ProtobufSpoofPatch {
      */
     private static final int NUMBER_OF_NON_DEFAULT_SUBTITLES_BEFORE_ENABLING_PASSTHRU = 2;
     /**
-     * Protobuf parameters used in autoplay in scrim
+     * Player parameters parameters used in autoplay in scrim
      * Prepend this parameter to mute video playback (for autoplay in feed)
      */
-    private static final String PROTOBUF_PARAMETER_SCRIM = "SAFgAXgB";
+    private static final String PLAYER_PARAMETER_SCRIM = "SAFgAXgB";
     /**
-     * Protobuf parameters used in shorts and stories.
-     * Known issue: end screen card is hidden.
-     * Known issue: offline downloads not working for YouTube Premium users.
+     * Player parameters parameters used in shorts and stories.
+     * Known issue: end screen cards are hidden.
+     * Known issue: downloading videos may not work.
      */
-    private static final String PROTOBUF_PARAMETER_SHORTS = "8AEB";
+    private static final String PLAYER_PARAMETER_SHORTS = "8AEB";
+    /**
+     * Player parameters used in incognito mode's visitor data.
+     * Known issue: ambient mode may not work.
+     * Known issue: downloading videos may not work.
+     * Known issue: seekbar thumbnails are hidden.
+     */
+    private static final String PLAYER_PARAMETER_INCOGNITO = "CgIQBg==";
     /**
      * The number of non default subtitle settings encountered for the current video.
      */
@@ -69,42 +72,55 @@ public class ProtobufSpoofPatch {
     @Nullable
     private static String currentVideoId;
 
-    public static String overrideProtobufParameter(String protobufParameter) {
-        return SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() ? setProtobufParameter(protobufParameter) : protobufParameter;
-    }
+    /**
+     * Injection point.
+     */
+    public static String overridePlayerParameter(String originalValue) {
+        if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || originalValue.startsWith(PLAYER_PARAMETER_SHORTS)) {
+            return originalValue;
+        }
 
-    public static String setProtobufParameter(String protobufParameter) {
-        if (protobufParameter.startsWith(PROTOBUF_PARAMETER_SHORTS))
-            return protobufParameter;
+        if (originalValue.length() > PLAYER_PARAMETERS_MAX_LENGTH)
+            return PLAYER_PARAMETER_SHORTS + originalValue;
 
-        if (protobufParameter.length() > MAX_PROTOBUF_LENGTH)
-            return PROTOBUF_PARAMETER_SHORTS + protobufParameter;
+        final String playerParameters = SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean()
+                ? PLAYER_PARAMETER_INCOGNITO
+                : PLAYER_PARAMETER_SHORTS;
 
-        final boolean isPlayingFeed = Arrays.stream(PROTOBUF_PARAMETER_WHITELIST).anyMatch(protobufParameter::startsWith)
+        final boolean isPlayingFeed = Arrays.stream(PLAYER_PARAMETER_WHITELIST).anyMatch(originalValue::startsWith)
                 && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
 
         return isPlayingFeed
-                ? PROTOBUF_PARAMETER_SCRIM + PROTOBUF_PARAMETER_SHORTS  // autoplay in feed should not play a sound
-                : PROTOBUF_PARAMETER_SHORTS;
+                ? PLAYER_PARAMETER_SCRIM + playerParameters  // autoplay in feed should not play a sound
+                : playerParameters;
     }
 
     /**
      * Injection point. Runs off the main thread.
      * <p>
-     * This method is called when returning a 403 response, and switches Protobuf Spoof.
+     * This method is called when returning a 403 response, and switches Spoof player parameters.
      */
-    public static void switchProtobufSpoof() {
+    public static void switchPlayerParameters() {
         try {
-            // already enabled or autoplay in the feed
-            if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() || getBoolean(YOUTUBE, PREFERENCE_KEY, false))
+            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() && !SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean()) {
+                SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.saveValue(true);
+                runOnMainThread(() -> {
+                    showToastShort(str("revanced_spoof_player_parameter_notice"));
+                    showToastShort(str("revanced_spoof_player_parameter_reload"));
+                });
+
+            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.getBoolean())
                 return;
 
-            SettingsEnum.ENABLE_PROTOBUF_SPOOF.saveValue(true);
-            saveBoolean(YOUTUBE, PREFERENCE_KEY, true);
-            runOnMainThread(() -> showToastShort(str("revanced_protobuf_spoof_notice")));
-
+            SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(true);
+            SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.saveValue(true);
+            runOnMainThread(() -> {
+                showToastShort(str("revanced_spoof_player_parameter_notice"));
+                showToastShort(str("revanced_spoof_player_parameter_reload"));
+            });
+            }
         } catch (Exception ex) {
-            LogHelper.printException(ProtobufSpoofPatch.class, "onResponse failure", ex);
+            LogHelper.printException(SpoofPlayerParameterPatch.class, "switchPlayerParameters failure", ex);
         }
     }
 
@@ -127,7 +143,7 @@ public class ProtobufSpoofPatch {
         // then this will incorrectly replace the setting.
         // But, if the video uses multiple subtitles in different screen locations, then detect the non-default values
         // and do not replace any window settings for the video (regardless if they match a shorts default).
-        if (SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden()
+        if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() && !SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden()
                 && numberOfNonDefaultSettingsObserved < NUMBER_OF_NON_DEFAULT_SUBTITLES_BEFORE_ENABLING_PASSTHRU) { // video is not a Short or Story
             for (SubtitleWindowReplacementSettings setting : SubtitleWindowReplacementSettings.values()) {
                 if (setting.match(ap, ah, av, vs, sd))
@@ -151,7 +167,7 @@ public class ProtobufSpoofPatch {
             currentVideoId = videoId;
             numberOfNonDefaultSettingsObserved = 0;
         } catch (Exception ex) {
-            LogHelper.printException(ProtobufSpoofPatch.class, "setCurrentVideoId failure", ex);
+            LogHelper.printException(SpoofPlayerParameterPatch.class, "setCurrentVideoId failure", ex);
         }
     }
 

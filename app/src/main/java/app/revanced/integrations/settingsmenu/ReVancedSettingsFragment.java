@@ -291,7 +291,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      */
     public void ProtobufSpoofPreferenceLinks() {
         enableDisablePreferences(
-                SettingsEnum.ENABLE_PROTOBUF_SPOOF.getBoolean(),
+                SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() && !SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean(),
                 SettingsEnum.HIDE_END_SCREEN_CARDS
         );
     }

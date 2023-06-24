@@ -10,6 +10,7 @@ import static app.revanced.integrations.settings.SettingsEnum.ReturnType.STRING;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.RYD;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
+import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -155,12 +156,16 @@ public enum SettingsEnum {
     DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", BOOLEAN, FALSE, true, "revanced_reboot_warning_quic"),
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, FALSE, true),
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", BOOLEAN, FALSE, true, "revanced_reboot_warning_phone"),
-    ENABLE_PROTOBUF_SPOOF("revanced_enable_protobuf_spoof", BOOLEAN, TRUE, true),
     ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", BOOLEAN, FALSE, true, "revanced_reboot_warning_tablet"),
     ENABLE_VP9_CODEC("revanced_enable_vp9_codec", BOOLEAN, FALSE, true, "revanced_reboot_warning_vp9"),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, FALSE, true),
     SPOOF_APP_VERSION_TARGET("revanced_spoof_app_version_target", STRING, "17.30.34", true,
             parents(SPOOF_APP_VERSION)),
+    SPOOF_PLAYER_PARAMETER("revanced_spoof_player_parameter", BOOLEAN, TRUE, true),
+    SPOOF_PLAYER_PARAMETER_TYPE("revanced_spoof_player_parameter_type", BOOLEAN, FALSE, true,
+            parents(SPOOF_PLAYER_PARAMETER)),
+    SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN("revanced_spoof_player_parameter_notice_shown", BOOLEAN, FALSE, YOUTUBE),
+
 
     // Navigation
     CHANGE_HOMEPAGE_TO_SUBSCRIPTION("revanced_change_homepage", BOOLEAN, FALSE, true),
