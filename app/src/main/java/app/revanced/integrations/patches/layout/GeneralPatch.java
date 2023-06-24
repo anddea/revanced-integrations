@@ -24,6 +24,10 @@ public class GeneralPatch {
     @SuppressLint("StaticFieldLeak")
     public static View compactLink;
 
+    public static boolean disableAutoCaptions() {
+        return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden();
+    }
+
     public static int enablePremiumHeader(int originalValue) {
         if (SettingsEnum.ENABLE_PREMIUM_HEADER.getBoolean())
             return identifier(PREMIUM_HEADER_NAME, ResourceType.ATTR);
@@ -55,10 +59,6 @@ public class GeneralPatch {
                     compactLink
             );
         }
-    }
-
-    public static boolean hideAutoCaptions() {
-        return SettingsEnum.HIDE_AUTO_CAPTIONS.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden();
     }
 
     public static boolean hideAutoPlayerPopupPanels() {
