@@ -74,9 +74,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     case OVERLAY_BUTTON_COPY_WITH_TIMESTAMP ->
                             CopyWithTimeStamp.refreshVisibility();
                     case OVERLAY_BUTTON_AUTO_REPEAT ->
-                            ReVancedSettingsFragment.this.AutoRepeatLinks();
-                    case ENABLE_ALWAYS_AUTO_REPEAT ->
-                            AutoRepeat.changeSelected(SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean(), true);
+                            AutoRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_DOWNLOADS -> Download.refreshVisibility();
                 }
 
@@ -164,7 +162,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     private void initializeReVancedSettings() {
-        AutoRepeatLinks();
         FullScreenPanelPreferenceLinks();
         LayoutOverrideLinks();
         NavigationPreferenceLinks();
@@ -181,16 +178,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setVideoQuality(false);
         setVideoQuality(true);
         setVideoSpeed();
-    }
-
-    /**
-     * Set interaction for AutoRepeat Preference
-     */
-    public void AutoRepeatLinks() {
-        enableDisablePreferences(
-                SettingsEnum.OVERLAY_BUTTON_AUTO_REPEAT.getBoolean(),
-                SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT
-        );
     }
 
     /**

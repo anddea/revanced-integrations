@@ -73,7 +73,7 @@ public final class VideoInformation {
     }
 
     public static boolean shouldAutoRepeat() {
-        if (SettingsEnum.ENABLE_ALWAYS_AUTO_REPEAT.getBoolean())
+        if (SettingsEnum.ALWAYS_REPEAT.getBoolean())
             return seekTo(0);
         else
             return false;

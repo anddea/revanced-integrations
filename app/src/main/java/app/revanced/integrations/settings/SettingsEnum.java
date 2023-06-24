@@ -184,7 +184,7 @@ public enum SettingsEnum {
 
 
     // Overlay Button
-    ENABLE_ALWAYS_AUTO_REPEAT("revanced_enable_always_auto_repeat", BOOLEAN, FALSE),
+    ALWAYS_REPEAT("revanced_always_repeat", BOOLEAN, FALSE),
     OVERLAY_BUTTON_AUTO_REPEAT("revanced_overlay_button_auto_repeat", BOOLEAN, FALSE),
     OVERLAY_BUTTON_COPY("revanced_overlay_button_copy_url", BOOLEAN, FALSE),
     OVERLAY_BUTTON_COPY_WITH_TIMESTAMP("revanced_overlay_button_copy_url_with_timestamp", BOOLEAN, FALSE),
