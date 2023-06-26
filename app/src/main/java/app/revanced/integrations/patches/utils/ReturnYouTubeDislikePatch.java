@@ -157,8 +157,6 @@ public class ReturnYouTubeDislikePatch {
                                                  @NonNull AtomicReference<CharSequence> textRef,
                                                  @NonNull CharSequence original) {
         try {
-            //original = ReturnYouTubeCommentUsernamePatch.onLithoTextLoaded(conversionContext, textRef, original);
-
             if (!SettingsEnum.RYD_ENABLED.getBoolean() || PlayerType.getCurrent().isNoneOrHidden()) {
                 return original;
             }
