@@ -1,5 +1,9 @@
 package app.revanced.integrations.patches.utils;
 
+import static app.revanced.integrations.patches.layout.PlayerPatch.playPauseButtonView;
+
+import android.view.View;
+
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class AlwaysRepeatPatch {
@@ -8,7 +12,11 @@ public class AlwaysRepeatPatch {
         return !SettingsEnum.ALWAYS_REPEAT.getBoolean() && original;
     }
 
-    public static boolean shouldAlwaysRepeat() {
-        return SettingsEnum.ALWAYS_REPEAT.getBoolean();
+    public static void shouldRepeatAndPause() {
+        View view = playPauseButtonView;
+        if (view == null || SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean())
+            return;
+
+        view.performClick();
     }
 }

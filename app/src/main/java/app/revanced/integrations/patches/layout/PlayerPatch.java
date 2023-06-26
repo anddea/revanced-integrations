@@ -4,6 +4,7 @@ import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderConditi
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +14,8 @@ import app.revanced.integrations.utils.ResourceHelper;
 import app.revanced.integrations.utils.ResourceType;
 
 public class PlayerPatch {
+    @SuppressLint("StaticFieldLeak")
+    public static View playPauseButtonView;
 
     public static float customSpeedOverlay(final float original) {
         try {
