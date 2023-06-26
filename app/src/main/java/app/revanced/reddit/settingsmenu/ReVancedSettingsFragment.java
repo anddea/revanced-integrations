@@ -43,10 +43,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activity);
         setPreferenceScreen(preferenceScreen);
 
-        addPreferences(activity, preferenceScreen, SettingsStatus.screenshotPopup, SettingsEnum.HIDE_SCREENSHOT_POPUP);
-        addPreferences(activity, preferenceScreen, SettingsStatus.openLinksDirectly, SettingsEnum.ENABLE_OPEN_LINKS_EXTERNALLY);
-        addPreferences(activity, preferenceScreen, SettingsStatus.openLinksExternally, SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY);
-        addPreferences(activity, preferenceScreen, SettingsStatus.sanitizeUrlQuery, SettingsEnum.ENABLE_SANITIZE_URL_QUERY);
+        addPreferences(activity, preferenceScreen, SettingsStatus.screenshotPopup, SettingsEnum.DISABLE_SCREENSHOT_POPUP);
+        addPreferences(activity, preferenceScreen, SettingsStatus.openLinksDirectly, SettingsEnum.OPEN_LINKS_DIRECTLY);
+        addPreferences(activity, preferenceScreen, SettingsStatus.openLinksExternally, SettingsEnum.OPEN_LINKS_EXTERNALLY);
+        addPreferences(activity, preferenceScreen, SettingsStatus.sanitizeUrlQuery, SettingsEnum.SANITIZE_URL_QUERY);
     }
 
     private void addPreferences(Activity activity, PreferenceScreen preferenceScreen, boolean isAvailable, SettingsEnum setting) {

@@ -15,7 +15,7 @@ public final class OpenLinksDirectlyPatch {
      */
     public static Uri parseRedirectUri(Uri uri) {
         try {
-            if (!SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.getBoolean()) return uri;
+            if (!SettingsEnum.OPEN_LINKS_DIRECTLY.getBoolean()) return uri;
 
             return Uri.parse(uri.getQueryParameter("url"));
         } catch (Exception e) {

@@ -9,7 +9,7 @@ public class LogHelper {
     private static final String LOG_PREFIX = "Extended: ";
 
     public static void printDebug(Class<?> clazz, String message) {
-        if (!SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) return;
+        if (!SettingsEnum.DEBUG_LOGGING.getBoolean()) return;
         Log.d(LOG_PREFIX + (clazz != null ? clazz.getSimpleName() : ""), message);
     }
 

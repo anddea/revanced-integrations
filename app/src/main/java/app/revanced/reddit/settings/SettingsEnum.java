@@ -14,12 +14,12 @@ import java.util.Objects;
 import app.revanced.reddit.utils.StringRef;
 
 public enum SettingsEnum {
-    ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE), // must be first value, otherwise logging during loading will not work
+    DEBUG_LOGGING("revanced_debug_logging", BOOLEAN, FALSE), // must be first value, otherwise logging during loading will not work
 
-    HIDE_SCREENSHOT_POPUP("revanced_hide_screenshot_popup", BOOLEAN, TRUE),
-    ENABLE_OPEN_LINKS_EXTERNALLY("revanced_enable_open_links_externally", BOOLEAN, TRUE),
-    ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", BOOLEAN, TRUE),
-    ENABLE_SANITIZE_URL_QUERY("revanced_enable_sanitize_url_query", BOOLEAN, TRUE);
+    DISABLE_SCREENSHOT_POPUP("revanced_disable_screenshot_popup", BOOLEAN, TRUE),
+    OPEN_LINKS_DIRECTLY("revanced_open_links_directly", BOOLEAN, TRUE),
+    OPEN_LINKS_EXTERNALLY("revanced_open_links_externally", BOOLEAN, TRUE),
+    SANITIZE_URL_QUERY("revanced_sanitize_url_query", BOOLEAN, TRUE);
 
     @NonNull
     public final String path;

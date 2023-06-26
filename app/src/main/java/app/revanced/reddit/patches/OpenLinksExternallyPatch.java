@@ -30,6 +30,6 @@ public class OpenLinksExternallyPatch {
     }
 
     public static boolean openLinksExternally() {
-        return SettingsEnum.ENABLE_OPEN_LINKS_EXTERNALLY.getBoolean();
+        return SettingsEnum.OPEN_LINKS_EXTERNALLY.getBoolean();
     }
 }

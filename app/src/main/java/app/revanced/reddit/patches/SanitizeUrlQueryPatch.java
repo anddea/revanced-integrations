@@ -16,7 +16,7 @@ public final class SanitizeUrlQueryPatch {
      */
     public static String stripQueryParameters(final String urlString) {
         try {
-            if (!SettingsEnum.ENABLE_SANITIZE_URL_QUERY.getBoolean())
+            if (!SettingsEnum.SANITIZE_URL_QUERY.getBoolean())
                 return urlString;
 
             final var url = new URL(urlString);
