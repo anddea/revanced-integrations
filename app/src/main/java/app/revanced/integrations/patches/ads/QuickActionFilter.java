@@ -5,12 +5,12 @@ import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 
-final class QuickActionButtonsFilter extends Filter {
+final class QuickActionFilter extends Filter {
     private final StringFilterGroup quickActionsRule;
 
     private final String[] exceptions;
 
-    public QuickActionButtonsFilter() {
+    public QuickActionFilter() {
         quickActionsRule = new StringFilterGroup(
                 null,
                 "quick_actions"

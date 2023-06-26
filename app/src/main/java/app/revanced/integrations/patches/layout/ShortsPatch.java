@@ -6,13 +6,30 @@ import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderConditi
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.HorizontalScrollView;
+
+import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class ShortsPatch {
+    public static Object pivotBar;
 
     public static boolean disableStartupShortsPlayer() {
         return SettingsEnum.DISABLE_STARTUP_SHORTS_PLAYER.getBoolean();
+    }
+
+    public static View hideShortsPlayerNavigationBar(View view) {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean() ? null : view;
+    }
+
+    public static void hideShortsPlayerNavigationBar() {
+        if (!SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean())
+            return;
+
+        if (pivotBar instanceof HorizontalScrollView) {
+            Objects.requireNonNull((HorizontalScrollView) pivotBar).setVisibility(View.GONE);
+        }
     }
 
     public static void hideShortsPlayerCommentsButton(View view) {

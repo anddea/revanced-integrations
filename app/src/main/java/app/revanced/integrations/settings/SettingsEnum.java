@@ -26,11 +26,16 @@ import app.revanced.integrations.utils.StringRef;
 public enum SettingsEnum {
 
     // Ads
-    AD_REMOVER_GENERAL_ADS("revanced_ad_remover_general_ads", BOOLEAN, TRUE),
-    AD_REMOVER_PAID_CONTENT("revanced_ad_remover_paid_content", BOOLEAN, TRUE),
-    AD_REMOVER_SELF_SPONSOR("revanced_ad_remover_self_sponsor", BOOLEAN, TRUE),
+    HIDE_GENERAL_ADS("revanced_hide_general_ads", BOOLEAN, TRUE),
+    HIDE_GET_PREMIUM("revanced_hide_get_premium", BOOLEAN, TRUE, true),
+    HIDE_IMAGE_SHELF("revanced_hide_image_shelf", BOOLEAN, TRUE),
+    HIDE_MERCHANDISE("revanced_hide_merchandise", BOOLEAN, TRUE),
+    HIDE_PAID_CONTENT("revanced_hide_paid_content", BOOLEAN, TRUE),
+    HIDE_SELF_SPONSOR("revanced_hide_self_sponsor", BOOLEAN, TRUE),
     HIDE_VIDEO_ADS("revanced_video_ads_removal", BOOLEAN, TRUE, true),
-    AD_REMOVER_GET_PREMIUM("revanced_ad_remover_get_premium", BOOLEAN, TRUE, true),
+    HIDE_VIEW_PRODUCTS("revanced_hide_view_products", BOOLEAN, TRUE),
+    HIDE_WEB_SEARCH_PANEL("revanced_hide_web_search_panel", BOOLEAN, TRUE),
+
 
     // Bottom Player
     HIDE_ACTION_BUTTON("revanced_hide_action_buttons", BOOLEAN, FALSE),
@@ -113,7 +118,6 @@ public enum SettingsEnum {
     HIDE_CATEGORY_BAR_IN_FEED("revanced_hide_category_bar_in_feed", BOOLEAN, FALSE, true),
     HIDE_CATEGORY_BAR_IN_RELATED_VIDEO("revanced_hide_category_bar_in_related_video", BOOLEAN, FALSE, true),
     HIDE_CATEGORY_BAR_IN_SEARCH_RESULTS("revanced_hide_category_bar_in_search_results", BOOLEAN, FALSE, true),
-    HIDE_CHANNEL_BAR_JOIN_BUTTON("revanced_hide_channelbar_join_button", BOOLEAN, TRUE),
     HIDE_CHANNEL_LIST_SUBMENU("revanced_hide_channel_list_submenu", BOOLEAN, FALSE, true),
     HIDE_CHANNEL_MEMBER_SHELF("revanced_hide_channel_member_shelf", BOOLEAN, TRUE),
     HIDE_CHAPTERS("revanced_hide_chapters", BOOLEAN, TRUE),
@@ -126,12 +130,11 @@ public enum SettingsEnum {
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", BOOLEAN, TRUE, true),
     HIDE_GRAY_DESCRIPTION("revanced_hide_gray_description", BOOLEAN, TRUE),
     HIDE_GRAY_SEPARATOR("revanced_hide_separator", BOOLEAN, TRUE),
-    HIDE_IMAGE_SHELF("revanced_hide_image_shelf", BOOLEAN, TRUE),
     HIDE_INFO_PANEL("revanced_hide_info_panel", BOOLEAN, TRUE),
+    HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
     HIDE_LATEST_POSTS("revanced_hide_latest_posts", BOOLEAN, TRUE),
     HIDE_LOAD_MORE_BUTTON("revanced_hide_load_more_button", BOOLEAN, TRUE, true),
     HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", BOOLEAN, TRUE),
-    HIDE_MERCHANDISE("revanced_hide_merchandise", BOOLEAN, TRUE),
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", BOOLEAN, FALSE),
     HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", BOOLEAN, FALSE),
     HIDE_OFFICIAL_HEADER("revanced_hide_official_header", BOOLEAN, FALSE),
@@ -140,7 +143,6 @@ public enum SettingsEnum {
     HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
-    HIDE_WEB_SEARCH_PANEL("revanced_hide_web_search_panel", BOOLEAN, TRUE),
 
 
     // Misc
@@ -178,9 +180,6 @@ public enum SettingsEnum {
     OPEN_LIBRARY_STARTUP("revanced_open_library_startup", BOOLEAN, FALSE, true),
     SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", BOOLEAN, TRUE, true),
 
-    // Experimental Flags
-    HIDE_SHORTS_NAVIGATION_BAR("revanced_hide_shorts_navigation_bar", BOOLEAN, FALSE, true),
-
 
     // Overlay Button
     ALWAYS_REPEAT("revanced_always_repeat", BOOLEAN, FALSE),
@@ -209,7 +208,6 @@ public enum SettingsEnum {
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", BOOLEAN, FALSE),
     HIDE_SEEK_MESSAGE("revanced_hide_seek_message", BOOLEAN, FALSE, true),
     HIDE_SUGGESTED_ACTION("revanced_hide_suggested_actions", BOOLEAN, TRUE, true),
-    HIDE_VIEW_PRODUCTS("revanced_hide_view_products", BOOLEAN, TRUE),
     HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", BOOLEAN, FALSE),
 
     // Experimental Flags
@@ -244,6 +242,9 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", BOOLEAN, TRUE),
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", BOOLEAN, TRUE),
+
+    // Experimental Flags
+    HIDE_SHORTS_PLAYER_NAVIGATION_BAR("revanced_hide_shorts_player_navigation_bar", BOOLEAN, FALSE, true),
 
 
     // Swipe controls
@@ -282,8 +283,8 @@ public enum SettingsEnum {
     CUSTOM_VIDEO_SPEEDS("revanced_custom_video_speeds", STRING,
             "0.25\n0.5\n0.75\n1.0\n1.25\n1.5\n1.75\n2.0\n2.25\n2.5", true,
             parents(ENABLE_CUSTOM_VIDEO_SPEED)),
-    ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, FALSE),
-    ENABLE_SAVE_VIDEO_SPEED("revanced_enable_save_video_speed", BOOLEAN, FALSE),
+    ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, TRUE),
+    ENABLE_SAVE_VIDEO_SPEED("revanced_enable_save_video_speed", BOOLEAN, TRUE),
 
 
     // Return YouTube Dislike

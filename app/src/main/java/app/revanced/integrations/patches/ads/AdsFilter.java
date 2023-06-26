@@ -21,22 +21,32 @@ public final class AdsFilter extends Filter {
         };
 
         final var carouselAd = new StringFilterGroup(
-                SettingsEnum.AD_REMOVER_GENERAL_ADS,
+                SettingsEnum.HIDE_GENERAL_ADS,
                 "carousel_ad"
         );
 
+        final var imageShelf = new StringFilterGroup(
+                SettingsEnum.HIDE_IMAGE_SHELF,
+                "image_shelf"
+        );
+
+        final var merchandise = new StringFilterGroup(
+                SettingsEnum.HIDE_MERCHANDISE,
+                "product_carousel"
+        );
+
         final var paidContent = new StringFilterGroup(
-                SettingsEnum.AD_REMOVER_PAID_CONTENT,
+                SettingsEnum.HIDE_PAID_CONTENT,
                 "paid_content_overlay"
         );
 
         final var selfSponsor = new StringFilterGroup(
-                SettingsEnum.AD_REMOVER_SELF_SPONSOR,
+                SettingsEnum.HIDE_SELF_SPONSOR,
                 "cta_shelf_card"
         );
 
         final var generalAds = new StringFilterGroup(
-                SettingsEnum.AD_REMOVER_GENERAL_ADS,
+                SettingsEnum.HIDE_GENERAL_ADS,
                 "active_view_display_container",
                 "ads_",
                 "ads_video_with_context",
@@ -67,10 +77,25 @@ public final class AdsFilter extends Filter {
                 "|ad_"
         );
 
+        final var viewProducts = new StringFilterGroup(
+                SettingsEnum.HIDE_VIEW_PRODUCTS,
+                "product_item",
+                "products_in_video"
+        );
+
+        final var webSearchPanel = new StringFilterGroup(
+                SettingsEnum.HIDE_WEB_SEARCH_PANEL,
+                "web_link_panel"
+        );
+
         this.pathFilterGroups.addAll(
                 generalAds,
+                imageShelf,
+                merchandise,
                 paidContent,
-                selfSponsor
+                selfSponsor,
+                viewProducts,
+                webSearchPanel
         );
 
         this.identifierFilterGroups.addAll(
@@ -84,11 +109,11 @@ public final class AdsFilter extends Filter {
      * @param view The view, which shows ads.
      */
     public static void hideAdAttributionView(View view) {
-        ReVancedUtils.hideViewBy0dpUnderCondition(SettingsEnum.AD_REMOVER_GENERAL_ADS.getBoolean(), view);
+        ReVancedUtils.hideViewBy0dpUnderCondition(SettingsEnum.HIDE_GENERAL_ADS.getBoolean(), view);
     }
 
     public static boolean hideGetPremium() {
-        return SettingsEnum.AD_REMOVER_GET_PREMIUM.getBoolean();
+        return SettingsEnum.HIDE_GET_PREMIUM.getBoolean();
     }
 
     @Override

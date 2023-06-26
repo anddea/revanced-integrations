@@ -5,35 +5,43 @@ import app.revanced.integrations.settings.SettingsEnum;
 final class CommentsFilter extends Filter {
 
     public CommentsFilter() {
-        var comments = new StringFilterGroup(
+        final var channelGuidelines = new StringFilterGroup(
+                SettingsEnum.HIDE_CHANNEL_GUIDELINES,
+                "channel_guidelines_entry_banner",
+                "community_guidelines",
+                "sponsorships_comments_upsell"
+        );
+
+        final var comments = new StringFilterGroup(
                 SettingsEnum.HIDE_COMMENTS_SECTION,
                 "video_metadata_carousel",
                 "_comments"
         );
 
-        var previewComment = new StringFilterGroup(
+        final var emojiPicker = new StringFilterGroup(
+                SettingsEnum.HIDE_EMOJI_PICKER,
+                "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"
+        );
+
+        final var previewComment = new StringFilterGroup(
                 SettingsEnum.HIDE_PREVIEW_COMMENT,
                 "|carousel_item",
                 "comments_entry_point_teaser",
                 "comments_entry_point_simplebox"
         );
 
-        var thanksButton = new StringFilterGroup(
+        final var thanksButton = new StringFilterGroup(
                 SettingsEnum.HIDE_COMMENTS_THANKS_BUTTON,
                 "super_thanks_button"
         );
 
-        var emojiPicker = new StringFilterGroup(
-                SettingsEnum.HIDE_EMOJI_PICKER,
-                "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"
-        );
-
 
         this.pathFilterGroups.addAll(
+                channelGuidelines,
                 comments,
+                emojiPicker,
                 previewComment,
-                thanksButton,
-                emojiPicker
+                thanksButton
         );
     }
 }

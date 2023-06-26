@@ -31,13 +31,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "multi_feed_icon_button"
         );
 
-        final var channelGuidelines = new StringFilterGroup(
-                SettingsEnum.HIDE_CHANNEL_GUIDELINES,
-                "channel_guidelines_entry_banner",
-                "community_guidelines",
-                "sponsorships_comments_upsell"
-        );
-
         final var channelMemberShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF,
                 "member_recognition_shelf"
@@ -53,6 +46,13 @@ public final class LayoutComponentsFilter extends Filter {
                 "inline_expander"
         );
 
+        final var feedSurvey = new StringFilterGroup(
+                SettingsEnum.HIDE_FEED_SURVEY,
+                "feed_nudge",
+                "in_feed_survey",
+                "slimline_survey"
+        );
+
         final var grayDescription = new StringFilterGroup(
                 SettingsEnum.HIDE_GRAY_DESCRIPTION,
                 "endorsement_header_footer"
@@ -63,18 +63,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "cell_divider"
         );
 
-        final var imageShelf = new StringFilterGroup(
-                SettingsEnum.HIDE_IMAGE_SHELF,
-                "image_shelf"
-        );
-
-        final var inFeedSurvey = new StringFilterGroup(
-                SettingsEnum.HIDE_FEED_SURVEY,
-                "feed_nudge",
-                "in_feed_survey",
-                "slimline_survey"
-        );
-
         final var infoPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_INFO_PANEL,
                 "compact_banner",
@@ -83,7 +71,7 @@ public final class LayoutComponentsFilter extends Filter {
         );
 
         final var joinMembership = new StringFilterGroup(
-                SettingsEnum.HIDE_CHANNEL_BAR_JOIN_BUTTON,
+                SettingsEnum.HIDE_JOIN_BUTTON,
                 "compact_sponsor_button"
         );
 
@@ -96,11 +84,6 @@ public final class LayoutComponentsFilter extends Filter {
                 SettingsEnum.HIDE_MEDICAL_PANEL,
                 "emergency_onebox",
                 "medical_panel"
-        );
-
-        final var merchandise = new StringFilterGroup(
-                SettingsEnum.HIDE_MERCHANDISE,
-                "product_carousel"
         );
 
         final var movieShelf = new StringFilterGroup(
@@ -130,31 +113,21 @@ public final class LayoutComponentsFilter extends Filter {
                 "product_item"
         );
 
-        final var webSearchPanel = new StringFilterGroup(
-                SettingsEnum.HIDE_WEB_SEARCH_PANEL,
-                "web_link_panel"
-        );
-
         this.pathFilterGroups.addAll(
                 albumCard,
                 audioTrackButton,
-                channelGuidelines,
                 channelMemberShelf,
                 chapters,
                 expandableMetadata,
+                feedSurvey,
                 grayDescription,
-                imageShelf,
-                inFeedSurvey,
                 infoPanel,
                 joinMembership,
                 latestPosts,
                 medicalPanel,
-                merchandise,
                 movieShelf,
                 ticketShelf,
-                timedReactions,
-                viewProducts,
-                webSearchPanel
+                timedReactions
         );
 
         this.identifierFilterGroups.addAll(
