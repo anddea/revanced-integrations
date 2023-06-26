@@ -6,14 +6,13 @@ import static app.revanced.integrations.utils.StringRef.str;
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.shared.PlayerType;
 
 public class VideoSpeedPatch {
     private static float selectedSpeed = -1.0f;
     private static String currentContentCpn;
 
     public static void newVideoStarted(final String contentCpn, final boolean isLive) {
-        if (contentCpn.isEmpty() || Objects.equals(currentContentCpn, contentCpn) || PlayerType.getCurrent().isNoneHiddenOrMinimized())
+        if (contentCpn.isEmpty() || Objects.equals(currentContentCpn, contentCpn))
             return;
 
         currentContentCpn = contentCpn;
