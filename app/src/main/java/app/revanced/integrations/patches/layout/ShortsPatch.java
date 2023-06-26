@@ -36,8 +36,16 @@ public class ShortsPatch {
         hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON.getBoolean(), view);
     }
 
+    public static boolean hideShortsPlayerDislikeButton() {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_DISLIKE_BUTTON.getBoolean();
+    }
+
     public static ViewGroup hideShortsPlayerInfoPanel(ViewGroup viewGroup) {
         return SettingsEnum.HIDE_SHORTS_PLAYER_INFO_PANEL.getBoolean() ? null : viewGroup;
+    }
+
+    public static boolean hideShortsPlayerLikeButton() {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON.getBoolean();
     }
 
     public static ViewStub hideShortsPlayerPaidContent(ViewStub viewStub) {
@@ -46,6 +54,10 @@ public class ShortsPatch {
 
     public static void hideShortsPlayerRemixButton(View view) {
         hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON.getBoolean(), view);
+    }
+
+    public static void hideShortsPlayerShareButton(View view) {
+        hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_SHARE_BUTTON.getBoolean(), view);
     }
 
     public static void hideShortsPlayerSubscriptionsButton(View view) {
