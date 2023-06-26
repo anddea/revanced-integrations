@@ -40,7 +40,7 @@ public class ByteBufferFilterPatch {
             return false;
 
         if (path.contains("library_recent_shelf")) {
-            NavBarIndexPatch.setNavBarIndex(4);
+            NavBarIndexPatch.setCurrentNavBarIndex(4);
         } else if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() && path.contains("horizontal_video_shelf")) {
             return NavBarIndexPatch.isNoneLibraryTab();
         }
