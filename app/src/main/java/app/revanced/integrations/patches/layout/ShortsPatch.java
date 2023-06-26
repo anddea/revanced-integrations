@@ -1,11 +1,13 @@
 package app.revanced.integrations.patches.layout;
 
+import static app.revanced.integrations.patches.utils.NavBarIndexPatch.isShortsTab;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.support.v7.widget.Toolbar;
 import android.widget.HorizontalScrollView;
 
 import java.util.Objects;
@@ -66,6 +68,13 @@ public class ShortsPatch {
 
     public static int hideShortsPlayerSubscriptionsButton(int original) {
         return SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() ? 0 : original;
+    }
+
+    public static void hideShortsPlayerToolBar(Toolbar toolbar) {
+        if (!SettingsEnum.HIDE_SHORTS_PLAYER_TOOLBAR.getBoolean())
+            return;
+        final int visibility = isShortsTab() ? View.GONE : View.VISIBLE;
+        toolbar.setVisibility(visibility);
     }
 
 }

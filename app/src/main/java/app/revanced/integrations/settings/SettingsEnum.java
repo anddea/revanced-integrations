@@ -248,6 +248,7 @@ public enum SettingsEnum {
 
     // Experimental Flags
     HIDE_SHORTS_PLAYER_NAVIGATION_BAR("revanced_hide_shorts_player_navigation_bar", BOOLEAN, FALSE, true),
+    HIDE_SHORTS_PLAYER_TOOLBAR("revanced_hide_shorts_player_toolbar", BOOLEAN, FALSE, true),
 
 
     // Swipe controls

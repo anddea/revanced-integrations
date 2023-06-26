@@ -20,6 +20,11 @@ public class NavBarIndexPatch {
         int collectionNavButtonIndex = 4;
         return currentNavBarIndex < collectionNavButtonIndex;
     }
+
+    public static boolean isShortsTab() {
+        int collectionNavButtonIndex = 1;
+        return currentNavBarIndex == collectionNavButtonIndex;
+    }
 }
 
 
