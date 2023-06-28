@@ -193,7 +193,6 @@ public enum SettingsEnum {
 
 
     // Player
-    CUSTOM_SPEED_OVERLAY("revanced_custom_speed_overlay_value", STRING, "2.0", true),
     HIDE_AUDIO_TRACK_BUTTON("revanced_hide_audio_track_button", BOOLEAN, TRUE),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", BOOLEAN, TRUE, true),
     HIDE_CAPTIONS_BUTTON("revanced_hide_captions_button", BOOLEAN, FALSE),
@@ -201,18 +200,18 @@ public enum SettingsEnum {
     HIDE_CHANNEL_WATERMARK("revanced_hide_channel_watermark", BOOLEAN, TRUE),
     HIDE_COLLAPSE_BUTTON("revanced_hide_collapse_button", BOOLEAN, FALSE),
     HIDE_END_SCREEN_CARDS("revanced_hide_end_screen_cards", BOOLEAN, TRUE, true),
-    HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", BOOLEAN, FALSE, true),
     HIDE_INFO_CARDS("revanced_hide_info_cards", BOOLEAN, TRUE, true),
     HIDE_LIVE_CHATS_BUTTON("revanced_hide_live_chat_button", BOOLEAN, FALSE),
     HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", BOOLEAN, FALSE, true),
     HIDE_PLAYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", BOOLEAN, FALSE, true),
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", BOOLEAN, FALSE),
     HIDE_SEEK_MESSAGE("revanced_hide_seek_message", BOOLEAN, FALSE, true),
+    HIDE_SPEED_OVERLAY("revanced_hide_speed_overlay", BOOLEAN, FALSE, true),
     HIDE_SUGGESTED_ACTION("revanced_hide_suggested_actions", BOOLEAN, TRUE, true),
     HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", BOOLEAN, FALSE),
 
     // Experimental Flags
-    HIDE_SPEED_OVERLAY("revanced_hide_speed_overlay", BOOLEAN, FALSE, true),
+    HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", BOOLEAN, FALSE, true),
 
     // Haptic Feedback
     DISABLE_HAPTIC_FEEDBACK_CHAPTERS("revanced_disable_haptic_feedback_chapters", BOOLEAN, FALSE),

@@ -1,57 +1,17 @@
 package app.revanced.integrations.patches.layout;
 
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
-import static app.revanced.integrations.utils.ResourceUtils.identifier;
-import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ResourceHelper;
-import app.revanced.integrations.utils.ResourceType;
 
 public class PlayerPatch {
     @SuppressLint("StaticFieldLeak")
     public static View playPauseButtonView;
-
-    public static float customSpeedOverlay(final float original) {
-        try {
-            final String speedValue = SettingsEnum.CUSTOM_SPEED_OVERLAY.getString();
-            final float speed = Float.parseFloat(speedValue);
-
-            if (speed == original || speed <= 0)
-                return original;
-
-            return speed;
-        } catch (Exception ignored) {
-            return original;
-        }
-    }
-
-    public static CharSequence customSpeedOverlay(TextView textView, CharSequence original) {
-        if (textView == null)
-            return original;
-
-        try {
-            final int speedMasterEduTextId = identifier("speedmaster_edu_text", ResourceType.ID);
-            final int textViewId = textView.getId();
-
-            final String speedValue = SettingsEnum.CUSTOM_SPEED_OVERLAY.getString();
-            final float speed = Float.parseFloat(speedValue);
-
-            if (speed == 2.0f || speed <= 0)
-                return original;
-
-            if (speedMasterEduTextId == textViewId)
-                return str("revanced_custom_speed_overlay_text", speedValue);
-        } catch (Exception ignored) {
-            return original;
-        }
-        return original;
-    }
 
     public static boolean disableChapterVibrate() {
         return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_CHAPTERS.getBoolean();
