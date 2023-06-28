@@ -107,7 +107,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 rebootDialog();
         }
     };
-    private PreferenceScreen downloaderPreferenceScreen;
+    private PreferenceScreen externalDownloaderPreferenceScreen;
     private PreferenceScreen miscPreferenceScreen;
 
     public ReVancedSettingsFragment() {
@@ -134,7 +134,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             enableDisablePreferences();
 
-            downloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("downloader");
+            externalDownloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("external_downloader");
             miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
 
             initializeReVancedSettings();
@@ -411,10 +411,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                         ? str("revanced_external_downloader_installed")
                         : str("revanced_external_downloader_not_installed");
 
-                Preference downloaderPreference = new Preference(activity);
-                downloaderPreference.setTitle(label);
-                downloaderPreference.setSummary(packageName);
-                downloaderPreference.setOnPreferenceClickListener(preference -> {
+                Preference externalDownloaderPreference = new Preference(activity);
+                externalDownloaderPreference.setTitle(label);
+                externalDownloaderPreference.setSummary(packageName);
+                externalDownloaderPreference.setOnPreferenceClickListener(preference -> {
                     AlertDialog.Builder builder;
                     builder = new AlertDialog.Builder(activity);
 
@@ -448,8 +448,20 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
                     return false;
                 });
-                downloaderPreferenceScreen.addPreference(downloaderPreference);
+                externalDownloaderPreferenceScreen.addPreference(externalDownloaderPreference);
             }
+
+            Preference experimentalPreference = new Preference(activity);
+            experimentalPreference.setTitle(" ");
+            experimentalPreference.setSummary(str("revanced_experimental_flag"));
+
+            SwitchPreference hookDownloadButtonPreference = new SwitchPreference(activity);
+            hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
+            hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
+            hookDownloadButtonPreference.setKey(SettingsEnum.HOOK_DOWNLOAD_BUTTON.path);
+
+            externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
+            externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setExternalDownloaderPreference" + th);
         }
