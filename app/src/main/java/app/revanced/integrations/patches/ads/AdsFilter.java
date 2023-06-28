@@ -31,17 +31,17 @@ public final class AdsFilter extends Filter {
         );
 
         final var merchandise = new StringFilterGroup(
-                SettingsEnum.HIDE_MERCHANDISE,
+                SettingsEnum.HIDE_MERCHANDISE_SHELF,
                 "product_carousel"
         );
 
         final var paidContent = new StringFilterGroup(
-                SettingsEnum.HIDE_PAID_CONTENT,
+                SettingsEnum.HIDE_PAID_PROMOTION,
                 "paid_content_overlay"
         );
 
         final var selfSponsor = new StringFilterGroup(
-                SettingsEnum.HIDE_SELF_SPONSOR,
+                SettingsEnum.HIDE_SELF_SPONSOR_CARDS,
                 "cta_shelf_card"
         );
 
@@ -84,7 +84,7 @@ public final class AdsFilter extends Filter {
         );
 
         final var webSearchPanel = new StringFilterGroup(
-                SettingsEnum.HIDE_WEB_SEARCH_PANEL,
+                SettingsEnum.HIDE_WEB_SEARCH_RESULTS,
                 "web_link_panel"
         );
 

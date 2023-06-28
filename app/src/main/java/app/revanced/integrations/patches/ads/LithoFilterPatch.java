@@ -1,7 +1,5 @@
 package app.revanced.integrations.patches.ads;
 
-import static app.revanced.integrations.patches.utils.PatchStatus.GeneralAds;
-
 import androidx.annotation.NonNull;
 
 import java.nio.ByteBuffer;
@@ -239,9 +237,18 @@ public final class LithoFilterPatch {
     public static ByteBuffer bytebuffer;
 
     private static boolean filter(final String path, final String identifier, final String value, final byte[] bufferArray) {
-        // check if any filter-group
-        for (var filter : filters)
-            if (filter.isFiltered(path, identifier, value, bufferArray)) return true;
+        LogHelper.printDebug(LithoFilterPatch.class, String.format(
+                "Searching (ID: %s): %s",
+                identifier, path));
+
+        for (var filter : filters) {
+            var filtered = filter.isFiltered(path, identifier, value, bufferArray);
+
+            LogHelper.printDebug(LithoFilterPatch.class, String.format("%s (ID: %s): %s", filtered ? "Filtered" : "Unfiltered", identifier, path));
+
+            if (filtered)
+                return true;
+        }
 
         return false;
     }
@@ -260,6 +267,6 @@ public final class LithoFilterPatch {
         // Log.d("RVXCharset", charset);
         // Log.d("RVXValue", object.toString());
 
-        return ByteBufferFilterPatch.filter(path, value) || (GeneralAds() && filter(path, identifier, value, bufferArray));
+        return LowLevelFilter.filter(path, value) || filter(path, identifier, value, bufferArray);
     }
 }

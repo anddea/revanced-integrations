@@ -12,13 +12,14 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 
 
-public class ByteBufferFilterPatch {
+public class LowLevelFilter {
     private static final List<String> ignoredList = Arrays.asList(
             "ContainerType|video_action_button",
             "avatar",
             "compact_channel",
             "description",
             "grid_video",
+            "inline_expander",
             "metadata",
             "thumbnail",
             "_menu",
@@ -27,13 +28,7 @@ public class ByteBufferFilterPatch {
             "-space"
     );
 
-    private static final List<String> header = Arrays.asList(
-            "YTSans-SemiBold",
-            "sans-serif-medium",
-            "shelf_header"
-    );
-
-    public static ByteBuffer bytebuffer;
+    public static ByteBuffer byteBuffer;
 
     public static boolean filter(String path, String value) {
         if (ignoredList.stream().anyMatch(path::contains))
@@ -45,12 +40,18 @@ public class ByteBufferFilterPatch {
             return NavBarIndexPatch.isNoneLibraryTab();
         }
 
-        final String charset = new String(bytebuffer.array(), StandardCharsets.UTF_8);
+        final String charset = new String(byteBuffer.array(), StandardCharsets.UTF_8);
         int count = 0;
 
-        if (PatchStatus.GeneralAds()) {
+        if (PatchStatus.LayoutComponent()) {
+            if (SettingsEnum.HIDE_CHAPTERS.getBoolean() &&
+                    path.contains("macro_markers_carousel.")) count++;
+
             if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
                     value.contains("_survey")) count++;
+
+            if (SettingsEnum.HIDE_GRAY_DESCRIPTION.getBoolean() &&
+                    path.contains("endorsement_header_footer")) count++;
 
             if (SettingsEnum.HIDE_OFFICIAL_HEADER.getBoolean() &&
                     Stream.of("shelf_header")

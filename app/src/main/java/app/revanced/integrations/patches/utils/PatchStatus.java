@@ -2,8 +2,8 @@ package app.revanced.integrations.patches.utils;
 
 public class PatchStatus {
 
-    public static boolean GeneralAds() {
-        // Replace this with true if the Hide General Ads patch succeeds
+    public static boolean LayoutComponent() {
+        // Replace this with true if the Hide Layout Component patch succeeds
         return false;
     }
 

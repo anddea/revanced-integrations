@@ -50,8 +50,8 @@ public class ShortsPatch {
         return SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON.getBoolean();
     }
 
-    public static ViewStub hideShortsPlayerPaidContent(ViewStub viewStub) {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_PAID_CONTENT.getBoolean() ? null : viewStub;
+    public static ViewStub hideShortsPlayerPaidPromotionBanner(ViewStub viewStub) {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_PAID_PROMOTION.getBoolean() ? null : viewStub;
     }
 
     public static void hideShortsPlayerRemixButton(View view) {

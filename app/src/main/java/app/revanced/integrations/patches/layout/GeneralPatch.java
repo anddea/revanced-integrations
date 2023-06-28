@@ -39,8 +39,8 @@ public class GeneralPatch {
         return SettingsEnum.ENABLE_TABLET_MINI_PLAYER.getBoolean() || original;
     }
 
-    public static boolean enableWideSearchbar() {
-        return SettingsEnum.ENABLE_WIDE_SEARCHBAR.getBoolean();
+    public static boolean enableWideSearchBar() {
+        return SettingsEnum.ENABLE_WIDE_SEARCH_BAR.getBoolean();
     }
 
     private static boolean isSpoofingOldVersionWithHorizontalCardListWatchHistory() {

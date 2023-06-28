@@ -29,12 +29,12 @@ public enum SettingsEnum {
     HIDE_GENERAL_ADS("revanced_hide_general_ads", BOOLEAN, TRUE),
     HIDE_GET_PREMIUM("revanced_hide_get_premium", BOOLEAN, TRUE, true),
     HIDE_IMAGE_SHELF("revanced_hide_image_shelf", BOOLEAN, TRUE),
-    HIDE_MERCHANDISE("revanced_hide_merchandise", BOOLEAN, TRUE),
-    HIDE_PAID_CONTENT("revanced_hide_paid_content", BOOLEAN, TRUE),
-    HIDE_SELF_SPONSOR("revanced_hide_self_sponsor", BOOLEAN, TRUE),
-    HIDE_VIDEO_ADS("revanced_video_ads_removal", BOOLEAN, TRUE, true),
+    HIDE_MERCHANDISE_SHELF("revanced_hide_merchandise_shelf", BOOLEAN, TRUE),
+    HIDE_PAID_PROMOTION("revanced_hide_paid_promotion_banner", BOOLEAN, TRUE),
+    HIDE_SELF_SPONSOR_CARDS("revanced_hide_self_sponsor_cards", BOOLEAN, TRUE),
+    HIDE_VIDEO_ADS("revanced_hide_video_ads", BOOLEAN, TRUE, true),
     HIDE_VIEW_PRODUCTS("revanced_hide_view_products", BOOLEAN, TRUE),
-    HIDE_WEB_SEARCH_PANEL("revanced_hide_web_search_panel", BOOLEAN, TRUE),
+    HIDE_WEB_SEARCH_RESULTS("revanced_hide_web_search_results", BOOLEAN, TRUE),
 
 
     // Bottom Player
@@ -63,20 +63,22 @@ public enum SettingsEnum {
 
 
     // Flyout Panel
+
+    // Player Flyout Panel
     ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_old_quality_layout", BOOLEAN, TRUE),
-    HIDE_AMBIENT_MENU("revanced_hide_menu_ambient_mode", BOOLEAN, FALSE),
-    HIDE_AUDIO_TRACK_MENU("revanced_hide_menu_audio_track", BOOLEAN, FALSE),
-    HIDE_CAPTIONS_MENU("revanced_hide_menu_captions", BOOLEAN, FALSE),
-    HIDE_HELP_MENU("revanced_hide_menu_help", BOOLEAN, FALSE),
-    HIDE_LISTENING_CONTROLS_MENU("revanced_hide_menu_listening_controls", BOOLEAN, FALSE),
-    HIDE_LOOP_MENU("revanced_hide_menu_loop_video", BOOLEAN, FALSE),
-    HIDE_MORE_MENU("revanced_hide_menu_more_info", BOOLEAN, FALSE),
-    HIDE_NERDS_MENU("revanced_hide_menu_stats_for_nerds", BOOLEAN, FALSE),
-    HIDE_QUALITY_MENU("revanced_hide_menu_qualities", BOOLEAN, FALSE),
-    HIDE_REPORT_MENU("revanced_hide_menu_report", BOOLEAN, FALSE),
-    HIDE_SPEED_MENU("revanced_hide_menu_speed", BOOLEAN, FALSE),
-    HIDE_WATCH_IN_VR_MENU("revanced_hide_menu_watch_in_vr", BOOLEAN, FALSE),
-    HIDE_YT_MUSIC_MENU("revanced_hide_menu_listen_with_youtube_music", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_AMBIENT("revanced_hide_player_flyout_panel_ambient_mode", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_AUDIO_TRACK("revanced_hide_player_flyout_panel_audio_track", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS("revanced_hide_player_flyout_panel_captions", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_HELP("revanced_hide_player_flyout_panel_help", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_LISTENING_CONTROLS("revanced_hide_player_flyout_panel_listening_controls", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_LOOP("revanced_hide_player_flyout_panel_loop_video", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_MORE("revanced_hide_player_flyout_panel_more_info", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_NERDS("revanced_hide_player_flyout_panel_stats_for_nerds", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_QUALITY("revanced_hide_player_flyout_panel_qualities", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_REPORT("revanced_hide_player_flyout_panel_report", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_SPEED("revanced_hide_player_flyout_panel_speed", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR("revanced_hide_player_flyout_panel_watch_in_vr", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC("revanced_hide_player_flyout_panel_listen_with_youtube_music", BOOLEAN, FALSE),
 
 
     // Fullscreen
@@ -109,7 +111,7 @@ public enum SettingsEnum {
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", BOOLEAN, FALSE, true),
     ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", BOOLEAN, FALSE, true),
-    ENABLE_WIDE_SEARCHBAR("revanced_enable_wide_searchbar", BOOLEAN, FALSE, true),
+    ENABLE_WIDE_SEARCH_BAR("revanced_enable_wide_search_bar", BOOLEAN, FALSE, true),
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", BOOLEAN, FALSE),
     HIDE_ACCOUNT_MENU_CUSTOM_FILTER("revanced_hide_account_menu_custom_filter_strings", STRING, "YouTube Music\nYouTube Kids", true,
             parents(HIDE_ACCOUNT_MENU)),
@@ -129,7 +131,7 @@ public enum SettingsEnum {
     HIDE_FEED_SURVEY("revanced_hide_feed_survey", BOOLEAN, TRUE),
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", BOOLEAN, TRUE, true),
     HIDE_GRAY_DESCRIPTION("revanced_hide_gray_description", BOOLEAN, TRUE),
-    HIDE_GRAY_SEPARATOR("revanced_hide_separator", BOOLEAN, TRUE),
+    HIDE_GRAY_SEPARATOR("revanced_hide_gray_separator", BOOLEAN, TRUE),
     HIDE_INFO_PANEL("revanced_hide_info_panel", BOOLEAN, TRUE),
     HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
     HIDE_LATEST_POSTS("revanced_hide_latest_posts", BOOLEAN, TRUE),
@@ -239,7 +241,7 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_INFO_PANEL("revanced_hide_shorts_player_info_panel", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_JOIN_BUTTON("revanced_hide_shorts_player_join_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_LIKE_BUTTON("revanced_hide_shorts_player_like_button", BOOLEAN, FALSE),
-    HIDE_SHORTS_PLAYER_PAID_CONTENT("revanced_hide_shorts_player_paid_content", BOOLEAN, TRUE),
+    HIDE_SHORTS_PLAYER_PAID_PROMOTION("revanced_hide_shorts_player_paid_promotion_banner", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_REMIX_BUTTON("revanced_hide_shorts_player_remix_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_SHARE_BUTTON("revanced_hide_shorts_player_share_button", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", BOOLEAN, TRUE),

@@ -10,9 +10,11 @@ public final class LayoutComponentsFilter extends Filter {
 
     public LayoutComponentsFilter() {
         exceptions = new String[]{
-                "comment_thread", // skip blocking anything in the comments
+                "home_video_with_context",
                 "related_video_with_context",
-                "|comment." // skip blocking anything in the comments replies
+                "comment_thread", // skip blocking anything in the comments
+                "|comment.", // skip blocking anything in the comments replies
+                "library_recent_shelf"
         };
 
         custom = new CustomFilterGroup(
@@ -36,14 +38,8 @@ public final class LayoutComponentsFilter extends Filter {
                 "member_recognition_shelf"
         );
 
-        final var chapters = new StringFilterGroup(
-                SettingsEnum.HIDE_CHAPTERS,
-                "macro_markers_carousel"
-        );
-
         final var expandableMetadata = new StringFilterGroup(
                 SettingsEnum.HIDE_EXPANDABLE_CHIP,
-                "expandable_metadata",
                 "inline_expander"
         );
 
@@ -52,11 +48,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "feed_nudge",
                 "in_feed_survey",
                 "slimline_survey"
-        );
-
-        final var grayDescription = new StringFilterGroup(
-                SettingsEnum.HIDE_GRAY_DESCRIPTION,
-                "endorsement_header_footer"
         );
 
         final var graySeparator = new StringFilterGroup(
@@ -108,20 +99,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "timed_reaction"
         );
 
-        final var viewProducts = new StringFilterGroup(
-                SettingsEnum.HIDE_VIEW_PRODUCTS,
-                "products_in_video",
-                "product_item"
-        );
-
         this.pathFilterGroups.addAll(
                 albumCard,
                 audioTrackButton,
                 channelMemberShelf,
-                chapters,
                 expandableMetadata,
-                feedSurvey,
-                grayDescription,
                 infoPanel,
                 joinMembership,
                 latestPosts,
@@ -132,6 +114,7 @@ public final class LayoutComponentsFilter extends Filter {
         );
 
         this.identifierFilterGroups.addAll(
+                feedSurvey,
                 graySeparator
         );
     }
