@@ -64,6 +64,11 @@ public enum SettingsEnum {
 
     // Flyout Panel
 
+    // Feed Flyout Panel
+    HIDE_FEED_FLYOUT_PANEL("revanced_hide_feed_flyout_panel", BOOLEAN, FALSE),
+    HIDE_FEED_FLYOUT_PANEL_CUSTOM_FILTER("revanced_hide_feed_flyout_panel_custom_filter_strings", STRING, "", true,
+            parents(HIDE_FEED_FLYOUT_PANEL)),
+
     // Player Flyout Panel
     ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_old_quality_layout", BOOLEAN, TRUE),
     HIDE_PLAYER_FLYOUT_PANEL_AMBIENT("revanced_hide_player_flyout_panel_ambient_mode", BOOLEAN, FALSE),
