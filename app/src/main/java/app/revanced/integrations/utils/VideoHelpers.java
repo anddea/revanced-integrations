@@ -2,8 +2,9 @@ package app.revanced.integrations.utils;
 
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
 import static app.revanced.integrations.patches.video.VideoSpeedPatch.userChangedSpeed;
+import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
+import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
-import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
@@ -11,7 +12,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -58,52 +58,48 @@ public class VideoHelpers {
             @SuppressLint("DefaultLocale") String timeStamp = h > 0 ? String.format("%02d:%02d:%02d", h, m, s) : String.format("%02d:%02d", m, s);
 
             setClipboard(context, timeStamp);
-            showToastShort(context, str("revanced_copytimestamp_success") + ": " + timeStamp);
+            showToastShort(context, str("revanced_copy_video_timestamp_success") + ": " + timeStamp);
         } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Couldn't generate video url", ex);
+            LogHelper.printException(VideoHelpers.class, "Failed to generate video url", ex);
         }
     }
 
     public static void download(Context context) {
         try {
-            var downloaderPackageName = SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString();
-            if (downloaderPackageName.equals("")) downloaderPackageName = "org.schabi.newpipe";
+            var packageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString();
 
-            boolean packageEnabled = false;
-            try {
-                assert context != null;
-                packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
-            } catch (PackageManager.NameNotFoundException error) {
-                showToastShort(getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
+            if (packageName.isEmpty()) {
+                final String defaultValue = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.defaultValue.toString();
+                SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(defaultValue);
+                packageName = defaultValue;
             }
 
-            if (!packageEnabled) {
-                showToastShort(getDownloaderName(context, downloaderPackageName) + " " + str("revanced_downloader_not_installed"));
+            if (!isPackageEnabled(context, packageName)) {
+                showToastShort(str("revanced_external_downloader_not_installed_warning", getExternalDownloaderName(context, packageName)));
                 return;
             }
-            var content = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
 
-            startDownloaderActivity(context, downloaderPackageName, content);
+            startDownloaderActivity(context, packageName, String.format("https://youtu.be/%s", VideoInformation.getVideoId()));
         } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Failed to launch the downloader intent", ex);
+            LogHelper.printException(VideoHelpers.class, "Failed to launch the intent: ", ex);
         }
     }
 
-    private static String getDownloaderName(Context context, String downloaderPackageName) {
+    private static String getExternalDownloaderName(Context context, String packageName) {
         try {
-            final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
-            final var DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_downloader_package_name";
+            final var EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_external_downloader_label";
+            final var EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_external_downloader_package_name";
 
-            String[] labelArray = context.getResources().getStringArray(identifier(DOWNLOADER_LABEL_PREFERENCE_KEY, ResourceType.ARRAY));
-            String[] packageNameArray = context.getResources().getStringArray(identifier(DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY, ResourceType.ARRAY));
+            String[] labelArray = getStringArray(context, EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY);
+            String[] packageNameArray = getStringArray(context, EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY);
 
-            int findIndex = Arrays.binarySearch(packageNameArray, downloaderPackageName);
+            int findIndex = Arrays.binarySearch(packageNameArray, packageName);
 
-            return findIndex >= 0 ? labelArray[findIndex] : downloaderPackageName;
+            return findIndex >= 0 ? labelArray[findIndex] : packageName;
         } catch (Exception e) {
-            LogHelper.printException(VideoHelpers.class, "Unable to set DownloaderName", e);
+            LogHelper.printException(VideoHelpers.class, "Failed to set ExternalDownloaderName", e);
         }
-        return downloaderPackageName;
+        return packageName;
     }
 
     public static void startDownloaderActivity(Context context, String downloaderPackageName, String content) {
@@ -112,6 +108,7 @@ public class VideoHelpers {
             intent.setType("text/plain");
             intent.setPackage(downloaderPackageName);
             intent.putExtra("android.intent.extra.TEXT", content);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } catch (Exception e) {
             LogHelper.printException(VideoHelpers.class, "Unable to start DownloaderActivity", e);

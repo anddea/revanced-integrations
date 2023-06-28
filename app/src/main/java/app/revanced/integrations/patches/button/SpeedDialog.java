@@ -1,14 +1,13 @@
 package app.revanced.integrations.patches.button;
 
+import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
+import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
+import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,11 +17,11 @@ import java.lang.ref.WeakReference;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.VideoHelpers;
 
-public class AutoRepeat {
+public class SpeedDialog {
     public static boolean isButtonEnabled;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
-    static ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#fffffc79"), PorterDuff.Mode.SRC_ATOP);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
     static int fadeDurationFast;
@@ -36,15 +35,15 @@ public class AutoRepeat {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(AutoRepeat.class, constraintLayout, "autoreplay_button");
-            imageView.setSelected(SettingsEnum.ALWAYS_REPEAT.getBoolean());
-            imageView.setOnClickListener(view -> AutoRepeat.changeSelected(!view.isSelected(), false));
+            ImageView imageView = findView(SpeedDialog.class, constraintLayout, "speed_dialog_button");
+
+            imageView.setOnClickListener(view -> VideoHelpers.videoSpeedDialogListener(view.getContext()));
             imageView.setOnLongClickListener(view -> {
-                AutoRepeat.changeColorFilter();
+                overrideSpeed(1.0f);
+                showToastShort(view.getContext(), str("revanced_overlay_button_speed_dialog_reset"));
                 return true;
             });
             buttonView = new WeakReference<>(imageView);
-            AutoRepeat.setColorFilter(SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean());
 
             fadeDurationFast = integer("fade_duration_fast");
             fadeDurationScheduled = integer("fade_duration_scheduled");
@@ -60,7 +59,7 @@ public class AutoRepeat {
             changeVisibility(false);
 
         } catch (Exception ex) {
-            LogHelper.printException(AutoRepeat.class, "Unable to set FrameLayout", ex);
+            LogHelper.printException(SpeedDialog.class, "Unable to set FrameLayout", ex);
         }
     }
 
@@ -96,41 +95,11 @@ public class AutoRepeat {
         imageView.setVisibility(View.GONE);
     }
 
-    public static void changeSelected(boolean selected, boolean onlyView) {
-        ImageView imageView = buttonView.get();
-        if (constraintLayout == null || imageView == null || imageView.getColorFilter() == cf) return;
-
-        imageView.setSelected(selected);
-        if (!onlyView) SettingsEnum.ALWAYS_REPEAT.saveValue(selected);
-    }
-
-    private static void changeColorFilter() {
-        ImageView imageView = buttonView.get();
-        if (constraintLayout == null || imageView == null) return;
-
-        imageView.setSelected(true);
-        SettingsEnum.ALWAYS_REPEAT.saveValue(true);
-
-        final boolean newValue = !SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean();
-        SettingsEnum.ALWAYS_REPEAT_PAUSE.saveValue(newValue);
-        setColorFilter(newValue);
-    }
-
     public static void refreshVisibility() {
         isButtonEnabled = setValue();
     }
 
-    private static void setColorFilter(boolean selected) {
-        ImageView imageView = buttonView.get();
-        if (constraintLayout == null || imageView == null) return;
-
-        if (selected)
-            imageView.clearColorFilter();
-        else
-            imageView.setColorFilter(cf);
-    }
-
     private static boolean setValue() {
-        return SettingsEnum.OVERLAY_BUTTON_AUTO_REPEAT.getBoolean();
+        return SettingsEnum.OVERLAY_BUTTON_SPEED_DIALOG.getBoolean();
     }
 }

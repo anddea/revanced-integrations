@@ -1,5 +1,8 @@
 package app.revanced.integrations.utils;
 
+import static app.revanced.integrations.utils.ResourceUtils.identifier;
+
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -56,6 +59,21 @@ public class ReVancedHelper {
         return packageInfo == null
                 ? DEFAULT_VERSION_NAME
                 : packageInfo.versionName;
+    }
+
+    public static String[] getStringArray(Context context, String key) {
+        return context.getResources().getStringArray(identifier(key, ResourceType.ARRAY));
+    }
+
+    public static boolean isPackageEnabled(Context context, String packageName) {
+        boolean packageEnabled = false;
+
+        try {
+            assert context != null;
+            packageEnabled = context.getPackageManager().getApplicationInfo(packageName, 0).enabled;
+        } catch (PackageManager.NameNotFoundException ignored) {}
+
+        return packageEnabled;
     }
 
     public static boolean isFullscreenHidden() {

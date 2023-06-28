@@ -14,7 +14,7 @@ public class AlwaysRepeatPatch {
 
     public static void shouldRepeatAndPause() {
         View view = playPauseButtonView;
-        if (view == null || SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean())
+        if (view == null || !SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean())
             return;
 
         view.performClick();

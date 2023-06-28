@@ -1,10 +1,11 @@
 package app.revanced.integrations.settingsmenu;
 
+import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
+import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
-import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
@@ -14,6 +15,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -25,6 +29,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
+import android.view.Display;
+import android.view.WindowManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,13 +42,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import app.revanced.integrations.BuildConfig;
-import app.revanced.integrations.patches.button.AutoRepeat;
-import app.revanced.integrations.patches.button.Copy;
-import app.revanced.integrations.patches.button.CopyWithTimeStamp;
-import app.revanced.integrations.patches.button.Download;
-import app.revanced.integrations.patches.button.Speed;
+import app.revanced.integrations.patches.button.AlwaysRepeat;
+import app.revanced.integrations.patches.button.CopyVideoUrl;
+import app.revanced.integrations.patches.button.CopyVideoUrlTimestamp;
+import app.revanced.integrations.patches.button.ExternalDownload;
+import app.revanced.integrations.patches.button.SpeedDialog;
 import app.revanced.integrations.patches.video.CustomVideoSpeedPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
@@ -69,22 +76,16 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.setValue(setting, switchPref.isChecked());
 
                 switch (setting) {
-                    case OVERLAY_BUTTON_SPEED -> Speed.refreshVisibility();
-                    case OVERLAY_BUTTON_COPY -> Copy.refreshVisibility();
-                    case OVERLAY_BUTTON_COPY_WITH_TIMESTAMP ->
-                            CopyWithTimeStamp.refreshVisibility();
-                    case OVERLAY_BUTTON_AUTO_REPEAT ->
-                            AutoRepeat.refreshVisibility();
-                    case OVERLAY_BUTTON_DOWNLOADS -> Download.refreshVisibility();
+                    case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
+                    case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();
+                    case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP -> CopyVideoUrlTimestamp.refreshVisibility();
+                    case OVERLAY_BUTTON_EXTERNAL_DOWNLOADER -> ExternalDownload.refreshVisibility();
+                    case OVERLAY_BUTTON_SPEED_DIALOG -> SpeedDialog.refreshVisibility();
                 }
 
             } else if (pref instanceof EditTextPreference) {
                 EditTextPreference editPreference = (EditTextPreference) pref;
                 SettingsEnum.setValue(setting, editPreference.getText());
-
-                if (setting.equals(SettingsEnum.DOWNLOADER_PACKAGE_NAME) && SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString() != null) {
-                    editPreference.setSummary(SettingsEnum.DOWNLOADER_PACKAGE_NAME.getString());
-                }
             } else if (pref instanceof ListPreference) {
                 switch (setting) {
                     case DEFAULT_VIDEO_SPEED -> setVideoSpeed();
@@ -170,7 +171,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         TabletLayoutLinks();
         setBackupRestorePreference();
         setDoubleBackTimeout();
-        setDownloaderPreference();
+        setExternalDownloaderPreference();
         setOpenSettingsPreference();
         setPatchesInformation();
         setSpoofAppVersionTarget();
@@ -381,31 +382,30 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     /**
-     * Add Preference to Downloader settings submenu
+     * Add Preference to External downloader settings submenu
      */
-    private void setDownloaderPreference() {
+    private void setExternalDownloaderPreference() {
         try {
-            final var DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_downloader_label";
-            final var DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_downloader_package_name";
-            final var DOWNLOADER_WEBSITE_PREFERENCE_KEY = "revanced_downloader_website";
+            final var EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_external_downloader_label";
+            final var EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_external_downloader_package_name";
+            final var EXTERNAL_DOWNLOADER_WEBSITE_PREFERENCE_KEY = "revanced_external_downloader_website";
 
             Activity activity = getActivity();
 
-            String[] labelArray = activity.getResources().getStringArray(identifier(DOWNLOADER_LABEL_PREFERENCE_KEY, ResourceType.ARRAY));
-            String[] packageNameArray = activity.getResources().getStringArray(identifier(DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY, ResourceType.ARRAY));
-            String[] websiteArray = activity.getResources().getStringArray(identifier(DOWNLOADER_WEBSITE_PREFERENCE_KEY, ResourceType.ARRAY));
+            String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY);
+            String[] packageNameArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY);
+            String[] websiteArray = getStringArray(activity, EXTERNAL_DOWNLOADER_WEBSITE_PREFERENCE_KEY);
 
             for (int index = 0; index < labelArray.length; index++) {
                 final int finalIndex = index;
-                final var label = labelArray[index];
-                final var packageName = packageNameArray[index];
+                final var label = labelArray[finalIndex];
+                final var packageName = packageNameArray[finalIndex];
                 final var uri = Uri.parse(websiteArray[finalIndex]);
+                final boolean isInstalled = isPackageEnabled(activity, packageName);
 
-                final var msg = "\n" +
-                        str("accessibility_share_target") + "\n==" + "\n" +
-                        label + "\n\n" +
-                        str("revanced_downloader_package_name_title") + "\n==" + "\n" +
-                        packageName + "\n             ";
+                final var msg = isInstalled
+                        ? str("revanced_external_downloader_installed")
+                        : str("revanced_external_downloader_not_installed");
 
                 Preference downloaderPreference = new Preference(activity);
                 downloaderPreference.setTitle(label);
@@ -417,13 +417,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     builder.setTitle(label);
                     builder.setMessage(msg);
                     builder.setNegativeButton(str("playback_control_close"), null);
-                    builder.setPositiveButton(str("save_metadata_menu"),
-                            (dialog, id) -> {
-                                saveString(REVANCED, "revanced_downloader_package_name", packageName + "");
-                                rebootDialog();
-                                dialog.dismiss();
-                            });
                     builder.setNeutralButton(str("common_google_play_services_install_button"), null);
+                    builder.setPositiveButton(str("save_metadata_menu"), null);
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -431,12 +426,28 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                         var intent = new Intent(Intent.ACTION_VIEW, uri);
                         activity.startActivity(intent);
                     });
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+                        runOnMainThreadDelayed(() -> {
+                            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(packageName);
+                            if (!isInstalled) showToastShort(str("revanced_external_downloader_not_installed_warning", label));
+                        }, 0L);
+                    });
+
+                    Display display = activity.getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+
+                    WindowManager.LayoutParams params = Objects.requireNonNull(dialog.getWindow()).getAttributes();
+                    params.width = (int) (size.x * 0.8);
+                    dialog.getWindow().setAttributes(params);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
                     return false;
                 });
                 downloaderPreferenceScreen.addPreference(downloaderPreference);
             }
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setDownloaderPreference" + th);
+            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setExternalDownloaderPreference" + th);
         }
     }
 

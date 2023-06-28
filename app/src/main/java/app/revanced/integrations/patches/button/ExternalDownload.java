@@ -1,11 +1,8 @@
 package app.revanced.integrations.patches.button;
 
-import static app.revanced.integrations.patches.video.VideoSpeedPatch.overrideSpeed;
-import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
-import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
 import android.support.constraint.ConstraintLayout;
@@ -19,7 +16,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.VideoHelpers;
 
-public class Speed {
+public class ExternalDownload {
     public static boolean isButtonEnabled;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
@@ -35,14 +32,9 @@ public class Speed {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(Speed.class, constraintLayout, "speed_button");
+            ImageView imageView = findView(ExternalDownload.class, constraintLayout, "external_download_button");
 
-            imageView.setOnClickListener(view -> VideoHelpers.videoSpeedDialogListener(view.getContext()));
-            imageView.setOnLongClickListener(view -> {
-                overrideSpeed(1.0f);
-                showToastShort(view.getContext(), str("revanced_overlay_button_speed_reset"));
-                return true;
-            });
+            imageView.setOnClickListener(view -> VideoHelpers.download(view.getContext()));
             buttonView = new WeakReference<>(imageView);
 
             fadeDurationFast = integer("fade_duration_fast");
@@ -58,8 +50,8 @@ public class Speed {
             isScrubbed = false;
             changeVisibility(false);
 
-        } catch (Exception ex) {
-            LogHelper.printException(Speed.class, "Unable to set FrameLayout", ex);
+        } catch (Exception e) {
+            LogHelper.printException(ExternalDownload.class, "Unable to set FrameLayout", e);
         }
     }
 
@@ -100,6 +92,7 @@ public class Speed {
     }
 
     private static boolean setValue() {
-        return SettingsEnum.OVERLAY_BUTTON_SPEED.getBoolean();
+        return SettingsEnum.OVERLAY_BUTTON_EXTERNAL_DOWNLOADER.getBoolean();
     }
 }
+

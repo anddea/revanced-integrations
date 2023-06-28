@@ -184,12 +184,12 @@ public enum SettingsEnum {
     // Overlay Button
     ALWAYS_REPEAT("revanced_always_repeat", BOOLEAN, FALSE),
     ALWAYS_REPEAT_PAUSE("revanced_always_repeat_pause", BOOLEAN, FALSE),
-    OVERLAY_BUTTON_AUTO_REPEAT("revanced_overlay_button_auto_repeat", BOOLEAN, FALSE),
-    OVERLAY_BUTTON_COPY("revanced_overlay_button_copy_url", BOOLEAN, FALSE),
-    OVERLAY_BUTTON_COPY_WITH_TIMESTAMP("revanced_overlay_button_copy_url_with_timestamp", BOOLEAN, FALSE),
-    OVERLAY_BUTTON_DOWNLOADS("revanced_overlay_button_downloads", BOOLEAN, TRUE),
-    DOWNLOADER_PACKAGE_NAME("revanced_downloader_package_name", STRING, "", true),
-    OVERLAY_BUTTON_SPEED("revanced_overlay_button_speed", BOOLEAN, TRUE),
+    OVERLAY_BUTTON_ALWAYS_REPEAT("revanced_overlay_button_always_repeat", BOOLEAN, TRUE),
+    OVERLAY_BUTTON_COPY_VIDEO_URL("revanced_overlay_button_copy_video_url", BOOLEAN, TRUE),
+    OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP("revanced_overlay_button_copy_video_url_timestamp", BOOLEAN, FALSE),
+    OVERLAY_BUTTON_EXTERNAL_DOWNLOADER("revanced_overlay_button_external_downloader", BOOLEAN, FALSE),
+    OVERLAY_BUTTON_SPEED_DIALOG("revanced_overlay_button_speed_dialog", BOOLEAN, TRUE),
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_name", STRING, "com.deniscerri.ytdl", true),
 
 
     // Player

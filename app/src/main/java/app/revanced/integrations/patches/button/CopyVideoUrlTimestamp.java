@@ -16,7 +16,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.VideoHelpers;
 
-public class Copy {
+public class CopyVideoUrlTimestamp {
     public static boolean isButtonEnabled;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
@@ -32,11 +32,11 @@ public class Copy {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(Copy.class, constraintLayout, "copy_button");
+            ImageView imageView = findView(CopyVideoUrlTimestamp.class, constraintLayout, "copy_video_url_timestamp_button");
 
-            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), false));
+            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), true));
             imageView.setOnLongClickListener(view -> {
-                VideoHelpers.copyUrl(view.getContext(), true);
+                VideoHelpers.copyTimeStamp(view.getContext());
                 return true;
             });
             buttonView = new WeakReference<>(imageView);
@@ -54,8 +54,8 @@ public class Copy {
             isScrubbed = false;
             changeVisibility(false);
 
-        } catch (Exception ex) {
-            LogHelper.printException(Copy.class, "Unable to set FrameLayout", ex);
+        } catch (Exception e) {
+            LogHelper.printException(CopyVideoUrlTimestamp.class, "Unable to set FrameLayout", e);
         }
     }
 
@@ -96,6 +96,6 @@ public class Copy {
     }
 
     private static boolean setValue() {
-        return SettingsEnum.OVERLAY_BUTTON_COPY.getBoolean();
+        return SettingsEnum.OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP.getBoolean();
     }
 }

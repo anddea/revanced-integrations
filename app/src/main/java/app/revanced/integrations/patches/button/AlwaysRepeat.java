@@ -5,6 +5,10 @@ import static app.revanced.integrations.utils.ResourceUtils.findView;
 import static app.revanced.integrations.utils.ResourceUtils.integer;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
@@ -14,11 +18,11 @@ import java.lang.ref.WeakReference;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.VideoHelpers;
 
-public class Download {
+public class AlwaysRepeat {
     public static boolean isButtonEnabled;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
+    static ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#fffffc79"), PorterDuff.Mode.SRC_ATOP);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
     static int fadeDurationFast;
@@ -32,10 +36,15 @@ public class Download {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(Download.class, constraintLayout, "download_button");
-
-            imageView.setOnClickListener(view -> VideoHelpers.download(view.getContext()));
+            ImageView imageView = findView(AlwaysRepeat.class, constraintLayout, "always_repeat_button");
+            imageView.setSelected(SettingsEnum.ALWAYS_REPEAT.getBoolean());
+            imageView.setOnClickListener(view -> AlwaysRepeat.changeSelected(!view.isSelected(), false));
+            imageView.setOnLongClickListener(view -> {
+                AlwaysRepeat.changeColorFilter();
+                return true;
+            });
             buttonView = new WeakReference<>(imageView);
+            AlwaysRepeat.setColorFilter(SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean());
 
             fadeDurationFast = integer("fade_duration_fast");
             fadeDurationScheduled = integer("fade_duration_scheduled");
@@ -50,8 +59,8 @@ public class Download {
             isScrubbed = false;
             changeVisibility(false);
 
-        } catch (Exception e) {
-            LogHelper.printException(Download.class, "Unable to set FrameLayout", e);
+        } catch (Exception ex) {
+            LogHelper.printException(AlwaysRepeat.class, "Unable to set FrameLayout", ex);
         }
     }
 
@@ -87,12 +96,41 @@ public class Download {
         imageView.setVisibility(View.GONE);
     }
 
+    public static void changeSelected(boolean selected, boolean onlyView) {
+        ImageView imageView = buttonView.get();
+        if (constraintLayout == null || imageView == null || imageView.getColorFilter() == cf) return;
+
+        imageView.setSelected(selected);
+        if (!onlyView) SettingsEnum.ALWAYS_REPEAT.saveValue(selected);
+    }
+
+    private static void changeColorFilter() {
+        ImageView imageView = buttonView.get();
+        if (constraintLayout == null || imageView == null) return;
+
+        imageView.setSelected(true);
+        SettingsEnum.ALWAYS_REPEAT.saveValue(true);
+
+        final boolean newValue = !SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean();
+        SettingsEnum.ALWAYS_REPEAT_PAUSE.saveValue(newValue);
+        setColorFilter(newValue);
+    }
+
     public static void refreshVisibility() {
         isButtonEnabled = setValue();
     }
 
+    private static void setColorFilter(boolean selected) {
+        ImageView imageView = buttonView.get();
+        if (constraintLayout == null || imageView == null) return;
+
+        if (selected)
+            imageView.setColorFilter(cf);
+        else
+            imageView.clearColorFilter();
+    }
+
     private static boolean setValue() {
-        return SettingsEnum.OVERLAY_BUTTON_DOWNLOADS.getBoolean();
+        return SettingsEnum.OVERLAY_BUTTON_ALWAYS_REPEAT.getBoolean();
     }
 }
-

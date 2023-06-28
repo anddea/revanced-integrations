@@ -72,7 +72,7 @@ public final class VideoInformation {
         seekTo(videoTime + millisecondsRelative);
     }
 
-    public static boolean shouldAutoRepeat() {
+    public static boolean shouldAlwaysRepeat() {
         if (SettingsEnum.ALWAYS_REPEAT.getBoolean())
             return seekTo(0);
         else
