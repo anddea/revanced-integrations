@@ -15,11 +15,12 @@ public class HookShareButtonPatch {
         return SettingsEnum.HOOK_SHARE_BUTTON.getBoolean() ? null : appContext;
     }
 
-    public static boolean overrideSharePanel() {
-        final boolean shouldHook = SettingsEnum.HOOK_SHARE_BUTTON.getBoolean();
-        if (shouldHook)
-            downloadMusic();
-
-        return shouldHook;
+    public static boolean shouldHookShareButton() {
+        return SettingsEnum.HOOK_SHARE_BUTTON.getBoolean();
     }
+
+    public static void startDownloadActivity() {
+        downloadMusic(context);
+    }
+
 }

@@ -1,5 +1,6 @@
 package app.revanced.music.settingsmenu;
 
+import static app.revanced.music.settings.SettingsEnum.*;
 import static app.revanced.music.utils.SharedPrefHelper.saveString;
 import static app.revanced.music.utils.StringRef.str;
 
@@ -27,7 +28,7 @@ public class SharedPreferenceChangeListener {
     }
 
     public static void onPreferenceChanged(@Nullable String key, boolean newValue) {
-        for (SettingsEnum setting : SettingsEnum.values()) {
+        for (SettingsEnum setting : values()) {
             if (!setting.path.equals(key) && key != null)
                 continue;
 
@@ -40,17 +41,15 @@ public class SharedPreferenceChangeListener {
     public static void initializeSettings(@NonNull Activity base) {
 
         String dataString = Objects.requireNonNull(base.getIntent()).getDataString();
-        for (SettingsEnum setting : SettingsEnum.values()) {
-            if (!setting.path.equals(dataString) && setting.returnType != SettingsEnum.ReturnType.STRING && activity == null)
-                continue;
 
-            editTextDialogBuilder(setting, base);
-        }
+        assert dataString != null;
+        if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path))
+            editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, base);
     }
 
     private static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base) {
         try {
-            if (setting.returnType != SettingsEnum.ReturnType.STRING) return;
+            if (setting.returnType != ReturnType.STRING) return;
             final EditText textView = new EditText(base);
             textView.setHint(setting.getString());
             textView.setText(setting.getString());

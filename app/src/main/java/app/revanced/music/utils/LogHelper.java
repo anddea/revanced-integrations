@@ -21,7 +21,7 @@ public class LogHelper {
     }
 
     public static void printDebug(Class clazz, @NonNull String message) {
-        if (SettingsEnum.ENABLE_DEBUG.getBoolean()) {
+        if (SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) {
             Log.d(LOG_PREFIX + (clazz != null ? clazz.getSimpleName() : ""), message);
         }
     }

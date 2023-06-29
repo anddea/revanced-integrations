@@ -14,8 +14,8 @@ public class LayoutPatch {
         return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() || original;
     }
 
-    public static int enableBlackNavbar() {
-        return SettingsEnum.ENABLE_BLACK_NAVBAR.getBoolean() ? -16777216 : -14869219;
+    public static int enableBlackNavigationBar() {
+        return SettingsEnum.ENABLE_BLACK_NAVIGATION_BAR.getBoolean() ? -16777216 : -14869219;
     }
 
     public static boolean enableColorMatchPlayer() {
