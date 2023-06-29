@@ -2,6 +2,7 @@ package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
+import static app.revanced.integrations.utils.ReVancedHelper.isSpoofedTargetVersionLez;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
@@ -171,6 +172,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         FullScreenPanelPreferenceLinks();
         LayoutOverrideLinks();
         NavigationPreferenceLinks();
+        NewFlyoutPanelPreferenceLinks();
         ProtobufSpoofPreferenceLinks();
         QuickActionsPreferenceLinks();
         TabletLayoutLinks();
@@ -276,6 +278,18 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         enableDisablePreferences(
                 SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean(),
                 SettingsEnum.HIDE_CREATE_BUTTON
+        );
+    }
+
+    /**
+     * Enable/Disable Preference related to New Flyout Panels settings
+     */
+    public void NewFlyoutPanelPreferenceLinks() {
+        final boolean isEnabled = SettingsEnum.NEW_PLAYER_FLYOUT_PANEL_DETECTED.getBoolean() && !isSpoofedTargetVersionLez("18.22.00");
+
+        enableDisablePreferences(
+                isEnabled,
+                SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT
         );
     }
 

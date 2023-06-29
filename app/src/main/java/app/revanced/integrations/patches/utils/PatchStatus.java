@@ -2,8 +2,18 @@ package app.revanced.integrations.patches.utils;
 
 public class PatchStatus {
 
+    public static boolean CustomVideoSpeed() {
+        // Replace this with true if the Custom Video Speed patch succeeds
+        return false;
+    }
+
     public static boolean LayoutComponent() {
-        // Replace this with true if the Hide Layout Component patch succeeds
+        // Replace this with true if the Layout Component patch succeeds
+        return false;
+    }
+
+    public static boolean OldQualityLayout() {
+        // Replace this with true if the Old Quality Layout patch succeeds
         return false;
     }
 
