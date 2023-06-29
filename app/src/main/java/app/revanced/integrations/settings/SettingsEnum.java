@@ -127,7 +127,6 @@ public enum SettingsEnum {
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", BOOLEAN, TRUE, true),
     HIDE_LOAD_MORE_BUTTON("revanced_hide_load_more_button", BOOLEAN, TRUE, true),
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", BOOLEAN, FALSE),
-    HIDE_SEARCH_TERMS("revanced_hide_search_terms", BOOLEAN, FALSE, true),
     HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
     HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
 

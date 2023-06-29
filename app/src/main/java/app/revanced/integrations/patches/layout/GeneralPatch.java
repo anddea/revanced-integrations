@@ -19,7 +19,6 @@ import app.revanced.integrations.utils.ResourceType;
 public class GeneralPatch {
     private static final String PREMIUM_HEADER_NAME = "ytPremiumWordmarkHeader";
     public static boolean captionsButtonStatus;
-    public static boolean isSearchWordEmpty;
 
     @SuppressLint("StaticFieldLeak")
     public static View compactLink;
@@ -114,14 +113,6 @@ public class GeneralPatch {
 
     public static void hideMixPlaylists(View view) {
         hideViewBy0dpUnderCondition(SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean(), view);
-    }
-
-    public static void hideSearchTerms(View view) {
-        if (SettingsEnum.HIDE_SEARCH_TERMS.getBoolean() && isSearchWordEmpty)
-            view.setVisibility(View.GONE);
-        else
-            view.setVisibility(View.VISIBLE);
-
     }
 
     public static boolean hideSnackBar() {
