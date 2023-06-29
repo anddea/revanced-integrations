@@ -15,6 +15,7 @@ public class ReVancedHelper {
     private static final String DEFAULT_APP_NAME = "ReVanced_Extended";
     private static final int DEFAULT_VERSION_CODE = 1537729984; // 18.19.36
     private static final String DEFAULT_VERSION_NAME = "18.19.36";
+    private static final int HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE = 1538379200; // 18.24.33
     private static final int SPLASH_ANIMATION_TARGET_VERSION_CODE = 1538115008; // 18.22.32
 
     private ReVancedHelper() {
@@ -102,6 +103,10 @@ public class ReVancedHelper {
         final int spoofedVersion = Integer.parseInt(SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().replaceAll("\\.", ""));
         final int targetVersion = Integer.parseInt(versionName.replaceAll("\\.", ""));
         return spoofedVersion <= targetVersion;
+    }
+
+    public static boolean isSupportHookDownloadButton() {
+        return isSpoofedTargetVersionGez("18.24.00") || getVersionCode() >= HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE;
     }
 
     public static boolean isSupportSplashAnimation() {

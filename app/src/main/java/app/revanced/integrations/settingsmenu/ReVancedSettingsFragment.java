@@ -3,6 +3,7 @@ package app.revanced.integrations.settingsmenu;
 import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
 import static app.revanced.integrations.utils.ReVancedHelper.isSpoofedTargetVersionLez;
+import static app.revanced.integrations.utils.ReVancedHelper.isSupportHookDownloadButton;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
@@ -475,6 +476,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
             hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
             hookDownloadButtonPreference.setKey(SettingsEnum.HOOK_DOWNLOAD_BUTTON.path);
+
+            hookDownloadButtonPreference.setEnabled(isSupportHookDownloadButton());
 
             externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
             externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
