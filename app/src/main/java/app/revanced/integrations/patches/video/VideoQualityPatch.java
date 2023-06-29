@@ -115,6 +115,15 @@ public class VideoQualityPatch {
         userChangedDefaultQuality = true;
     }
 
+    public static void userChangedQualityInNewFlyoutPanels(int selectedQuality) {
+        if (!SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean()) return;
+
+        userSelectedQualityIndex = selectedQuality;
+        userChangedDefaultQuality = true;
+
+        changeDefaultQuality(selectedQuality);
+    }
+
     public static void newVideoStarted(final String contentCpn, final boolean isLive) {
         if (contentCpn.isEmpty() || Objects.equals(currentContentCpn, contentCpn))
             return;
