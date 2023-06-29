@@ -129,6 +129,7 @@ public enum SettingsEnum {
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", BOOLEAN, FALSE),
     HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
     HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
+    HIDE_TRENDING_SEARCHES("revanced_hide_trending_searches", BOOLEAN, TRUE),
 
     // Layout
     CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),

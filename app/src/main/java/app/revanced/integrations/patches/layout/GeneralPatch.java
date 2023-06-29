@@ -7,6 +7,7 @@ import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import android.annotation.SuppressLint;
 import android.text.Spanned;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
@@ -117,5 +118,15 @@ public class GeneralPatch {
 
     public static boolean hideSnackBar() {
         return SettingsEnum.HIDE_SNACK_BAR.getBoolean();
+    }
+
+    public static void hideTrendingSearches(ImageView imageView, boolean isTrendingSearches) {
+        View parent = (View) imageView.getParent();
+
+        if (SettingsEnum.HIDE_TRENDING_SEARCHES.getBoolean() && isTrendingSearches)
+            parent.setVisibility(View.GONE);
+        else
+            parent.setVisibility(View.VISIBLE);
+
     }
 }
