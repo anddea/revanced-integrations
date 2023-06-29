@@ -66,7 +66,7 @@ public enum SettingsEnum {
 
     // Feed Flyout Panel
     HIDE_FEED_FLYOUT_PANEL("revanced_hide_feed_flyout_panel", BOOLEAN, FALSE),
-    HIDE_FEED_FLYOUT_PANEL_CUSTOM_FILTER("revanced_hide_feed_flyout_panel_custom_filter_strings", STRING, "", true,
+    HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS("revanced_hide_feed_flyout_panel_filter_strings", STRING, "", true,
             parents(HIDE_FEED_FLYOUT_PANEL)),
 
     // Player Flyout Panel
@@ -110,44 +110,46 @@ public enum SettingsEnum {
 
 
     // General
-    CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
-    CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true,
-            parents(CUSTOM_FILTER)),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", BOOLEAN, FALSE, true),
     ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", BOOLEAN, FALSE, true),
     ENABLE_WIDE_SEARCH_BAR("revanced_enable_wide_search_bar", BOOLEAN, FALSE, true),
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", BOOLEAN, FALSE),
-    HIDE_ACCOUNT_MENU_CUSTOM_FILTER("revanced_hide_account_menu_custom_filter_strings", STRING, "YouTube Music\nYouTube Kids", true,
+    HIDE_ACCOUNT_MENU_FILTER_STRINGS("revanced_hide_account_menu_filter_strings", STRING, "YouTube Music\nYouTube Kids", true,
             parents(HIDE_ACCOUNT_MENU)),
-    HIDE_ALBUM_CARDS("revanced_hide_album_card", BOOLEAN, TRUE),
     HIDE_AUTO_PLAYER_POPUP_PANELS("revanced_hide_auto_player_popup_panels", BOOLEAN, TRUE, true),
     HIDE_CATEGORY_BAR_IN_FEED("revanced_hide_category_bar_in_feed", BOOLEAN, FALSE, true),
     HIDE_CATEGORY_BAR_IN_RELATED_VIDEO("revanced_hide_category_bar_in_related_video", BOOLEAN, FALSE, true),
     HIDE_CATEGORY_BAR_IN_SEARCH_RESULTS("revanced_hide_category_bar_in_search_results", BOOLEAN, FALSE, true),
     HIDE_CHANNEL_LIST_SUBMENU("revanced_hide_channel_list_submenu", BOOLEAN, FALSE, true),
+    HIDE_CROWDFUNDING_BOX("revanced_hide_crowdfunding_box", BOOLEAN, TRUE, true),
+    HIDE_EMAIL_ADDRESS("revanced_hide_email_address", BOOLEAN, TRUE, true),
+    HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", BOOLEAN, TRUE, true),
+    HIDE_LOAD_MORE_BUTTON("revanced_hide_load_more_button", BOOLEAN, TRUE, true),
+    HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", BOOLEAN, FALSE),
+    HIDE_SEARCH_TERMS("revanced_hide_search_terms", BOOLEAN, FALSE, true),
+    HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
+    HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
+
+    // Layout
+    CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
+    CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true,
+            parents(CUSTOM_FILTER)),
+    HIDE_ALBUM_CARDS("revanced_hide_album_card", BOOLEAN, TRUE),
     HIDE_CHANNEL_MEMBER_SHELF("revanced_hide_channel_member_shelf", BOOLEAN, TRUE),
     HIDE_CHAPTERS("revanced_hide_chapters", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_HOME("revanced_hide_community_posts_home", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_hide_community_posts_subscriptions", BOOLEAN, FALSE),
-    HIDE_CROWDFUNDING_BOX("revanced_hide_crowdfunding_box", BOOLEAN, TRUE, true),
-    HIDE_EMAIL_ADDRESS("revanced_hide_email_address", BOOLEAN, TRUE, true),
     HIDE_EXPANDABLE_CHIP("revanced_hide_expandable_chip", BOOLEAN, TRUE),
     HIDE_FEED_SURVEY("revanced_hide_feed_survey", BOOLEAN, TRUE),
-    HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", BOOLEAN, TRUE, true),
     HIDE_GRAY_DESCRIPTION("revanced_hide_gray_description", BOOLEAN, TRUE),
     HIDE_GRAY_SEPARATOR("revanced_hide_gray_separator", BOOLEAN, TRUE),
     HIDE_INFO_PANEL("revanced_hide_info_panel", BOOLEAN, TRUE),
     HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
     HIDE_LATEST_POSTS("revanced_hide_latest_posts", BOOLEAN, TRUE),
-    HIDE_LOAD_MORE_BUTTON("revanced_hide_load_more_button", BOOLEAN, TRUE, true),
     HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", BOOLEAN, TRUE),
-    HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", BOOLEAN, FALSE),
     HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", BOOLEAN, FALSE),
     HIDE_OFFICIAL_HEADER("revanced_hide_official_header", BOOLEAN, FALSE),
-    HIDE_SEARCH_TERMS("revanced_hide_search_terms", BOOLEAN, FALSE, true),
-    HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
-    HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
 
@@ -196,7 +198,7 @@ public enum SettingsEnum {
     OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP("revanced_overlay_button_copy_video_url_timestamp", BOOLEAN, FALSE),
     OVERLAY_BUTTON_EXTERNAL_DOWNLOADER("revanced_overlay_button_external_downloader", BOOLEAN, TRUE),
     OVERLAY_BUTTON_SPEED_DIALOG("revanced_overlay_button_speed_dialog", BOOLEAN, TRUE),
-    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_name", STRING, "com.deniscerri.ytdl", true),
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
 
     // Experimental Flags
     HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, FALSE, true),

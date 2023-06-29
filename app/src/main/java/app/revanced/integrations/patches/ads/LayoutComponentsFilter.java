@@ -10,7 +10,6 @@ public final class LayoutComponentsFilter extends Filter {
 
     public LayoutComponentsFilter() {
         exceptions = new String[]{
-                "home_video_with_context",
                 "related_video_with_context",
                 "comment_thread", // skip blocking anything in the comments
                 "|comment.", // skip blocking anything in the comments replies

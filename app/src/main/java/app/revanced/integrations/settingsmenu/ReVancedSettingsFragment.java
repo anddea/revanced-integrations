@@ -77,8 +77,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
                 switch (setting) {
                     case HIDE_FEED_FLYOUT_PANEL -> {
-                        if (SettingsEnum.HIDE_FEED_FLYOUT_PANEL_CUSTOM_FILTER.getString().isEmpty())
-                            SettingsEnum.HIDE_FEED_FLYOUT_PANEL_CUSTOM_FILTER.saveValue(str("report_button") + "\n" + str("share"));
+                        if (SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.getString().isEmpty())
+                            SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.saveValue(str("report_button") + "\n" + str("share"));
                     }
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();

@@ -20,7 +20,7 @@ public class FlyoutPanelPatch {
     public static CharSequence hideFeedFlyoutPanel(CharSequence charSequence) {
         if (charSequence == null || !SettingsEnum.HIDE_FEED_FLYOUT_PANEL.getBoolean()) return charSequence;
 
-        String[] blockList = SettingsEnum.HIDE_FEED_FLYOUT_PANEL_CUSTOM_FILTER.getString().split("\\n");
+        String[] blockList = SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.getString().split("\\n");
 
         for (String filter : blockList) {
             if (charSequence.toString().contains(filter) && !filter.isEmpty())
