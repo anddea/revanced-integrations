@@ -45,6 +45,8 @@ public class SharedPreferenceChangeListener {
         assert dataString != null;
         if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path))
             editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, base);
+        else if (dataString.equals(CUSTOM_FILTER_STRINGS.path))
+            editTextDialogBuilder(CUSTOM_FILTER_STRINGS, base);
     }
 
     private static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base) {

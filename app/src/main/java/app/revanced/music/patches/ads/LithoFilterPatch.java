@@ -1,77 +1,120 @@
 package app.revanced.music.patches.ads;
 
+import android.os.Build;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
-class BlockRule {
+abstract class FilterGroup<T> {
+    final static class FilterGroupResult {
+        private final boolean filtered;
+        private final SettingsEnum setting;
+
+        public FilterGroupResult(final SettingsEnum setting, final boolean filtered) {
+            this.setting = setting;
+            this.filtered = filtered;
+        }
+
+        public SettingsEnum getSetting() {
+            return setting;
+        }
+
+        public boolean isFiltered() {
+            return filtered;
+        }
+    }
+
     protected final SettingsEnum setting;
-    private final String[] blocks;
+    protected final T[] filters;
 
     /**
-     * Initialize a new rule for components.
+     * Initialize a new filter group.
      *
-     * @param setting The setting which controls the blocking of this component.
-     * @param blocks  The rules to block the component on.
+     * @param setting The associated setting.
+     * @param filters The filters.
      */
-    public BlockRule(final SettingsEnum setting, final String... blocks) {
+    @SafeVarargs
+    public FilterGroup(final SettingsEnum setting, final T... filters) {
         this.setting = setting;
-        this.blocks = blocks;
+        this.filters = filters;
     }
 
     public boolean isEnabled() {
         return setting.getBoolean();
     }
 
-    public BlockResult check(final String string) {
-        return new BlockResult(string != null && ReVancedUtils.containsAny(string, blocks));
+    public abstract FilterGroupResult check(final T stack);
+}
+
+class StringFilterGroup extends FilterGroup<String> {
+
+    /**
+     * {@link FilterGroup#FilterGroup(SettingsEnum, Object[])}
+     */
+    public StringFilterGroup(final SettingsEnum setting, final String... filters) {
+        super(setting, filters);
     }
 
-    final static class BlockResult {
-        private final boolean blocked;
-
-        public BlockResult(final boolean blocked) {
-            this.blocked = blocked;
-        }
-
-        public boolean isBlocked() {
-            return blocked;
-        }
+    @Override
+    public FilterGroupResult check(final String string) {
+        return new FilterGroupResult(setting, string != null && ReVancedUtils.containsAny(string, filters));
     }
 }
 
-abstract class Filter {
-    final protected LithoBlockRegisters pathRegister = new LithoBlockRegisters();
-    final protected LithoBlockRegisters identifierRegister = new LithoBlockRegisters();
+final class CustomFilterGroup extends StringFilterGroup {
 
-    abstract boolean filter(final String path, final String identifier);
+    /**
+     * {@link FilterGroup#FilterGroup(SettingsEnum, Object[])}
+     */
+    public CustomFilterGroup(final SettingsEnum setting, final SettingsEnum filter) {
+        super(setting, filter.getString().split(","));
+    }
 }
 
-final class LithoBlockRegisters implements Iterable<BlockRule> {
-    private final ArrayList<BlockRule> blocks = new ArrayList<>();
+abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<T> {
+    private final ArrayList<T> filterGroups = new ArrayList<>();
 
-    public void registerAll(BlockRule... blocks) {
-        this.blocks.addAll(Arrays.asList(blocks));
+    @SafeVarargs
+    protected final void addAll(final T... filterGroups) {
+        this.filterGroups.addAll(Arrays.asList(filterGroups));
     }
 
     @NonNull
     @Override
-    public Iterator<BlockRule> iterator() {
-        return blocks.iterator();
+    public Iterator<T> iterator() {
+        return filterGroups.iterator();
     }
 
-    public boolean contains(String path) {
-        for (var rule : this) {
-            if (!rule.isEnabled()) continue;
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void forEach(@NonNull Consumer<? super T> action) {
+        filterGroups.forEach(action);
+    }
 
-            var result = rule.check(path);
-            if (result.isBlocked()) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @NonNull
+    @Override
+    public Spliterator<T> spliterator() {
+        return filterGroups.spliterator();
+    }
+
+    protected boolean contains(final V stack) {
+        for (T filterGroup : this) {
+            if (!filterGroup.isEnabled())
+                continue;
+
+            var result = filterGroup.check(stack);
+            if (result.isFiltered()) {
                 return true;
             }
         }
@@ -80,21 +123,65 @@ final class LithoBlockRegisters implements Iterable<BlockRule> {
     }
 }
 
-public final class LithoFilterPatch {
+final class StringFilterGroupList extends FilterGroupList<String, StringFilterGroup> {
+}
 
-    private static final Filter[] filters = new Filter[]{
-            new GeneralAdsPatch()
+abstract class Filter {
+    final protected StringFilterGroupList pathFilterGroups = new StringFilterGroupList();
+    final protected StringFilterGroupList identifierFilterGroups = new StringFilterGroupList();
+
+    /**
+     * Check if the given path, identifier or protobuf buffer is filtered by any
+     * {@link FilterGroup}.
+     *
+     * @return True if filtered, false otherwise.
+     */
+    boolean isFiltered(final String path, final String identifier) {
+        if (pathFilterGroups.contains(path)) {
+            LogHelper.printDebug(LithoFilterPatch.class, String.format("Filtered path: %s", path));
+            return true;
+        }
+
+        if (identifierFilterGroups.contains(identifier)) {
+            LogHelper.printDebug(LithoFilterPatch.class, String.format("Filtered identifier: %s", identifier));
+            return true;
+        }
+
+        return false;
+    }
+}
+
+@RequiresApi(api = Build.VERSION_CODES.N)
+@SuppressWarnings("unused")
+public final class LithoFilterPatch {
+    private static final Filter[] filters = new Filter[] {
+            new DummyFilter() // Replaced by patch.
     };
 
-    public static boolean filter(StringBuilder pathBuilder, String identifier) {
+    @SuppressWarnings("unused")
+    public static boolean filter(final StringBuilder pathBuilder, final String identifier) {
+        // TODO: Maybe this can be moved to the Filter class, to prevent unnecessary
+        // string creation
+        // because some filters might not need the path.
         var path = pathBuilder.toString();
-        if (path.isEmpty()) return false;
 
-        LogHelper.printDebug(LithoFilterPatch.class, String.format("Searching (ID: %s): %s", identifier, path));
+        // It is assumed that protobufBuffer is empty as well in this case.
+        if (path.isEmpty())
+            return false;
+
+        LogHelper.printDebug(LithoFilterPatch.class, String.format(
+                "Searching (ID: %s): %s",
+                identifier, path));
 
         for (var filter : filters) {
-            if (filter.filter(path, identifier)) return true;
+            var filtered = filter.isFiltered(path, identifier);
+
+            LogHelper.printDebug(LithoFilterPatch.class, String.format("%s (ID: %s): %s", filtered ? "Filtered" : "Unfiltered", identifier, path));
+
+            if (filtered)
+                return true;
         }
+
         return false;
     }
 }

@@ -21,6 +21,8 @@ public enum SettingsEnum {
 
 
     // Layout
+    CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
+    CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE),
     ENABLE_BLACK_NAVIGATION_BAR("revanced_enable_black_navigation_bar", BOOLEAN, TRUE),
     ENABLE_COLOR_MATCH_PLAYER("revanced_enable_color_match_player", BOOLEAN, TRUE),
