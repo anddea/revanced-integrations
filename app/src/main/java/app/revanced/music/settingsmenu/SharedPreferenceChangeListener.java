@@ -1,6 +1,9 @@
 package app.revanced.music.settingsmenu;
 
-import static app.revanced.music.settings.SettingsEnum.*;
+import static app.revanced.music.settings.SettingsEnum.CUSTOM_FILTER_STRINGS;
+import static app.revanced.music.settings.SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME;
+import static app.revanced.music.settings.SettingsEnum.ReturnType;
+import static app.revanced.music.settings.SettingsEnum.values;
 import static app.revanced.music.utils.SharedPrefHelper.saveString;
 import static app.revanced.music.utils.StringRef.str;
 

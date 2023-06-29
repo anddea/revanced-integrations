@@ -162,7 +162,7 @@ public enum SettingsEnum {
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", BOOLEAN, TRUE),
     DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", INTEGER, 2, true),
 
-    //Experimental Flags
+    // Experimental Flags
     DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", BOOLEAN, FALSE, true, "revanced_reboot_warning_quic"),
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, FALSE, true),
     ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", BOOLEAN, FALSE, true, "revanced_reboot_warning_phone"),

@@ -1,3 +1,4 @@
 package app.revanced.music.patches.ads;
 
-final class DummyFilter extends Filter { }
+final class DummyFilter extends Filter {
+}

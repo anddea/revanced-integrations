@@ -9,12 +9,15 @@ public class SettingsStatus {
     public static void OpenLinksDirectly() {
         openLinksDirectly = true;
     }
+
     public static void OpenLinksExternally() {
         openLinksExternally = true;
     }
+
     public static void SanitizeUrlQuery() {
         sanitizeUrlQuery = true;
     }
+
     public static void ScreenshotPopup() {
         screenshotPopup = true;
     }

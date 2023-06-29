@@ -1,5 +1,6 @@
 package app.revanced.integrations.patches.layout;
 
+import static app.revanced.integrations.utils.ReVancedHelper.isSpoofedTargetVersionLez;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
@@ -43,11 +44,6 @@ public class GeneralPatch {
         return SettingsEnum.ENABLE_WIDE_SEARCH_BAR.getBoolean();
     }
 
-    private static boolean isSpoofingOldVersionWithHorizontalCardListWatchHistory() {
-        return SettingsEnum.SPOOF_APP_VERSION.getBoolean()
-                && SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().compareTo("17.30.35") < 0;
-    }
-
     public static void hideAccountMenu(@NonNull Spanned span) {
         if (compactLink == null || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
 
@@ -68,7 +64,7 @@ public class GeneralPatch {
     public static void hideBreakingNewsShelf(View view) {
         hideViewBy0dpUnderCondition(
                 SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean()
-                        && !isSpoofingOldVersionWithHorizontalCardListWatchHistory(),
+                        && !isSpoofedTargetVersionLez("17.31.00"),
                 view
         );
     }

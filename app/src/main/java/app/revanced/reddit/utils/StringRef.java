@@ -11,11 +11,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StringRef {
-    private static Resources resources;
-    private static String packageName;
-
+    /**
+     * Shorthand for <code>constant("")</code>
+     * Its value always resolves to empty string
+     */
+    @NonNull
+    public static final StringRef empty = constant("");
     // must use a thread safe map, as this class is used both on and off the main thread
     private static final Map<String, StringRef> strings = Collections.synchronizedMap(new HashMap<>());
+    private static Resources resources;
+    private static String packageName;
+    @NonNull
+    private String value;
+    private boolean resolved;
+
+    public StringRef(@NonNull String resName) {
+        this.value = resName;
+    }
 
     /**
      * Returns a cached instance.
@@ -81,21 +93,6 @@ public class StringRef {
         final StringRef ref = new StringRef(value);
         ref.resolved = true;
         return ref;
-    }
-
-    /**
-     * Shorthand for <code>constant("")</code>
-     * Its value always resolves to empty string
-     */
-    @NonNull
-    public static final StringRef empty = constant("");
-
-    @NonNull
-    private String value;
-    private boolean resolved;
-
-    public StringRef(@NonNull String resName) {
-        this.value = resName;
     }
 
     @Override

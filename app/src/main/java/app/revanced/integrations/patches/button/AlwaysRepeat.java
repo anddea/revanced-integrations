@@ -98,7 +98,8 @@ public class AlwaysRepeat {
 
     public static void changeSelected(boolean selected, boolean onlyView) {
         ImageView imageView = buttonView.get();
-        if (constraintLayout == null || imageView == null || imageView.getColorFilter() == cf) return;
+        if (constraintLayout == null || imageView == null || imageView.getColorFilter() == cf)
+            return;
 
         imageView.setSelected(selected);
         if (!onlyView) SettingsEnum.ALWAYS_REPEAT.saveValue(selected);

@@ -34,7 +34,7 @@ public final class ButtonShelfFilter extends Filter {
     @Override
     public boolean isFiltered(final String path, final String identifier) {
         if (ReVancedUtils.containsAny(path, exceptions))
-           return false;
+            return false;
 
         return super.isFiltered(path, identifier);
     }

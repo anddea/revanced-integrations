@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.widget.TextView;
 
 import java.util.Objects;
 
@@ -16,14 +15,10 @@ public class ReVancedHelper {
     private static final String DEFAULT_APP_NAME = "ReVanced_Extended";
     private static final int DEFAULT_VERSION_CODE = 1537729984; // 18.19.36
     private static final String DEFAULT_VERSION_NAME = "18.19.36";
-    private static final int TARGET_VERSION_CODE = 1538115008; // 18.22.32
+    private static final int SPLASH_ANIMATION_TARGET_VERSION_CODE = 1538115008; // 18.22.32
 
     private ReVancedHelper() {
     } // utility class
-
-    public static void test(TextView textview) {
-        var id = textview.getId();
-    }
 
     public static String getAppName() {
         var packageInfo = getPackageInfo();
@@ -65,17 +60,6 @@ public class ReVancedHelper {
         return context.getResources().getStringArray(identifier(key, ResourceType.ARRAY));
     }
 
-    public static boolean isPackageEnabled(Context context, String packageName) {
-        boolean packageEnabled = false;
-
-        try {
-            assert context != null;
-            packageEnabled = context.getPackageManager().getApplicationInfo(packageName, 0).enabled;
-        } catch (PackageManager.NameNotFoundException ignored) {}
-
-        return packageEnabled;
-    }
-
     public static boolean isFullscreenHidden() {
         boolean isFullscreenHidden = isTablet() &&
                 !SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
@@ -90,10 +74,40 @@ public class ReVancedHelper {
         return isFullscreenHidden;
     }
 
+    public static boolean isPackageEnabled(Context context, String packageName) {
+        boolean packageEnabled = false;
+
+        try {
+            assert context != null;
+            packageEnabled = context.getPackageManager().getApplicationInfo(packageName, 0).enabled;
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+
+        return packageEnabled;
+    }
+
+    public static boolean isSpoofedTargetVersionGez(String versionName) {
+        if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
+            return false;
+
+        final int spoofedVersion = Integer.parseInt(SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().replaceAll("\\.", ""));
+        final int targetVersion = Integer.parseInt(versionName.replaceAll("\\.", ""));
+        return spoofedVersion >= targetVersion;
+    }
+
+    public static boolean isSpoofedTargetVersionLez(String versionName) {
+        if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
+            return false;
+
+        final int spoofedVersion = Integer.parseInt(SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().replaceAll("\\.", ""));
+        final int targetVersion = Integer.parseInt(versionName.replaceAll("\\.", ""));
+        return spoofedVersion <= targetVersion;
+    }
+
     public static boolean isSupportSplashAnimation() {
         final boolean aboveAndroidS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
 
-        return aboveAndroidS || getVersionCode() >= TARGET_VERSION_CODE;
+        return aboveAndroidS || getVersionCode() >= SPLASH_ANIMATION_TARGET_VERSION_CODE;
     }
 
     public static boolean isTablet() {

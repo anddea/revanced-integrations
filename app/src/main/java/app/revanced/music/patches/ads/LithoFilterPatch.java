@@ -16,27 +16,8 @@ import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
 abstract class FilterGroup<T> {
-    final static class FilterGroupResult {
-        private final boolean filtered;
-        private final SettingsEnum setting;
-
-        public FilterGroupResult(final SettingsEnum setting, final boolean filtered) {
-            this.setting = setting;
-            this.filtered = filtered;
-        }
-
-        public SettingsEnum getSetting() {
-            return setting;
-        }
-
-        public boolean isFiltered() {
-            return filtered;
-        }
-    }
-
     protected final SettingsEnum setting;
     protected final T[] filters;
-
     /**
      * Initialize a new filter group.
      *
@@ -54,6 +35,24 @@ abstract class FilterGroup<T> {
     }
 
     public abstract FilterGroupResult check(final T stack);
+
+    final static class FilterGroupResult {
+        private final boolean filtered;
+        private final SettingsEnum setting;
+
+        public FilterGroupResult(final SettingsEnum setting, final boolean filtered) {
+            this.setting = setting;
+            this.filtered = filtered;
+        }
+
+        public SettingsEnum getSetting() {
+            return setting;
+        }
+
+        public boolean isFiltered() {
+            return filtered;
+        }
+    }
 }
 
 class StringFilterGroup extends FilterGroup<String> {
@@ -154,7 +153,7 @@ abstract class Filter {
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressWarnings("unused")
 public final class LithoFilterPatch {
-    private static final Filter[] filters = new Filter[] {
+    private static final Filter[] filters = new Filter[]{
             new DummyFilter() // Replaced by patch.
     };
 

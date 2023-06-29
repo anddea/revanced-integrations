@@ -4,10 +4,10 @@ import static app.revanced.integrations.patches.utils.NavBarIndexPatch.isShortsT
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.support.v7.widget.Toolbar;
 import android.widget.HorizontalScrollView;
 
 import java.util.Objects;

@@ -82,7 +82,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     }
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();
-                    case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP -> CopyVideoUrlTimestamp.refreshVisibility();
+                    case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP ->
+                            CopyVideoUrlTimestamp.refreshVisibility();
                     case OVERLAY_BUTTON_EXTERNAL_DOWNLOADER -> ExternalDownload.refreshVisibility();
                     case OVERLAY_BUTTON_SPEED_DIALOG -> SpeedDialog.refreshVisibility();
                 }
@@ -433,7 +434,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
                         runOnMainThreadDelayed(() -> {
                             SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(packageName);
-                            if (!isInstalled) showToastShort(str("revanced_external_downloader_not_installed_warning", label));
+                            if (!isInstalled)
+                                showToastShort(str("revanced_external_downloader_not_installed_warning", label));
                         }, 0L);
                     });
 

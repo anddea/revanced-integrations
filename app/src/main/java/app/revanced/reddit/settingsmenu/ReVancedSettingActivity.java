@@ -7,7 +7,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 
-/** @noinspection ALL*/
+/**
+ * @noinspection ALL
+ */
 public class ReVancedSettingActivity {
     public static void initializeSettings(Activity activity) {
         SettingsStatus.load();

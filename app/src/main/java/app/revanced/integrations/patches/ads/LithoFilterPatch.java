@@ -93,9 +93,10 @@ class ByteArrayFilterGroup extends FilterGroup<byte[]> {
 
     // Modified implementation from https://stackoverflow.com/a/1507813
     public static int indexOf(final byte[] data, final byte[] pattern) {
+        if (data.length == 0)
+            return -1;
         // Computes the failure function using a boot-strapping process,
         // where the pattern is matched against itself.
-
         final int[] failure = new int[pattern.length];
 
         int j = 0;
@@ -113,7 +114,6 @@ class ByteArrayFilterGroup extends FilterGroup<byte[]> {
         // KNP matching algorithm.
 
         j = 0;
-        if (data.length == 0) return -1;
 
         for (int i = 0; i < data.length; i++) {
             while (j > 0 && pattern[j] != data[i]) {
@@ -133,7 +133,8 @@ class ByteArrayFilterGroup extends FilterGroup<byte[]> {
     public FilterGroupResult check(final byte[] bytes) {
         var matched = false;
         for (byte[] filter : filters) {
-            if (indexOf(bytes, filter) == -1) continue;
+            if (indexOf(bytes, filter) == -1)
+                continue;
 
             matched = true;
             break;
@@ -181,7 +182,8 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
 
     protected boolean contains(final V stack) {
         for (T filterGroup : this) {
-            if (!filterGroup.isEnabled()) continue;
+            if (!filterGroup.isEnabled())
+                continue;
 
             var result = filterGroup.check(stack);
             if (result.isFiltered()) {
@@ -205,7 +207,8 @@ abstract class Filter {
     final protected ByteArrayFilterGroupList protobufBufferFilterGroups = new ByteArrayFilterGroupList();
 
     /**
-     * Check if the given path, identifier or protobuf buffer is filtered by any {@link FilterGroup}.
+     * Check if the given path, identifier or protobuf buffer is filtered by any
+     * {@link FilterGroup}.
      *
      * @return True if filtered, false otherwise.
      */
@@ -231,12 +234,14 @@ abstract class Filter {
 
 @SuppressWarnings("unused")
 public final class LithoFilterPatch {
-    private static final Filter[] filters = new Filter[]{
+    private static final Filter[] filters = new Filter[] {
             new DummyFilter() // Replaced by patch.
     };
     public static ByteBuffer bytebuffer;
 
-    private static boolean filter(final String path, final String identifier, final String value, final byte[] bufferArray) {
+    private static boolean filter(final String path, final String identifier, final String value,
+                                  final byte[] bufferArray) {
+
         LogHelper.printDebug(LithoFilterPatch.class, String.format(
                 "Searching (ID: %s): %s",
                 identifier, path));
@@ -260,13 +265,9 @@ public final class LithoFilterPatch {
         var path = pathBuilder.toString();
         var value = object.toString();
 
-        if (path.isEmpty() || value.isEmpty() || protobufBuffer == null) return false;
+        if (path.isEmpty() || value.isEmpty() || protobufBuffer == null)
+            return false;
 
-        var bufferArray = protobufBuffer.array();
-
-        // Log.d("RVXCharset", charset);
-        // Log.d("RVXValue", object.toString());
-
-        return LowLevelFilter.filter(path, value) || filter(path, identifier, value, bufferArray);
+        return LowLevelFilter.filter(path, value) || filter(path, identifier, value, protobufBuffer.array());
     }
 }

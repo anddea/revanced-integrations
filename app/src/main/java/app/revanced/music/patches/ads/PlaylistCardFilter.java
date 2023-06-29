@@ -35,7 +35,7 @@ public final class PlaylistCardFilter extends Filter {
     @Override
     public boolean isFiltered(final String path, final String identifier) {
         if (ReVancedUtils.containsAny(path, exceptions))
-           return false;
+            return false;
 
         return super.isFiltered(path, identifier);
     }

@@ -109,15 +109,15 @@ public class SpoofPlayerParameterPatch {
                     showToastShort(str("revanced_spoof_player_parameter_reload"));
                 });
 
-            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.getBoolean())
-                return;
+                if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.getBoolean())
+                    return;
 
-            SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(true);
-            SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.saveValue(true);
-            runOnMainThread(() -> {
-                showToastShort(str("revanced_spoof_player_parameter_notice"));
-                showToastShort(str("revanced_spoof_player_parameter_reload"));
-            });
+                SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(true);
+                SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.saveValue(true);
+                runOnMainThread(() -> {
+                    showToastShort(str("revanced_spoof_player_parameter_notice"));
+                    showToastShort(str("revanced_spoof_player_parameter_reload"));
+                });
             }
         } catch (Exception ex) {
             LogHelper.printException(SpoofPlayerParameterPatch.class, "switchPlayerParameters failure", ex);

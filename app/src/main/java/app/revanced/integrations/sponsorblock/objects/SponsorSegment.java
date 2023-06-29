@@ -100,8 +100,7 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SponsorSegment)) return false;
-        SponsorSegment other = (SponsorSegment) o;
+        if (!(o instanceof SponsorSegment other)) return false;
         return Objects.equals(UUID, other.UUID)
                 && category == other.category
                 && start == other.start

@@ -21,9 +21,18 @@ public enum SettingsEnum {
     OPEN_LINKS_EXTERNALLY("revanced_open_links_externally", BOOLEAN, TRUE),
     SANITIZE_URL_QUERY("revanced_sanitize_url_query", BOOLEAN, TRUE);
 
+    private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
+
+    static {
+        loadAllSettings();
+
+        for (SettingsEnum setting : values()) {
+            pathToSetting.put(setting.path, setting);
+        }
+    }
+
     @NonNull
     public final String path;
-
     @NonNull
     public final Object defaultValue;
     @NonNull
@@ -34,13 +43,10 @@ public enum SettingsEnum {
      * If the app should be rebooted, if this setting is changed
      */
     public final boolean rebootApp;
-
     @Nullable
     public final StringRef title;
-
     @Nullable
     public final StringRef summary;
-
     // Must be volatile, as some settings are read/write from different threads.
     // Of note, the object value is persistently stored using SharedPreferences (which is thread safe).
     @NonNull
@@ -62,16 +68,6 @@ public enum SettingsEnum {
         this.rebootApp = rebootApp;
         this.title = new StringRef(path + "_title");
         this.summary = new StringRef(path + "_summary");
-    }
-
-    private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2* values().length);
-
-    static {
-        loadAllSettings();
-
-        for (SettingsEnum setting : values()) {
-            pathToSetting.put(setting.path, setting);
-        }
     }
 
     @Nullable

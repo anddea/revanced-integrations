@@ -16,7 +16,9 @@ import app.revanced.reddit.settings.SettingsEnum;
 import app.revanced.reddit.settings.SharedPrefCategory;
 import app.revanced.reddit.utils.LogHelper;
 
-/** @noinspection ALL*/
+/**
+ * @noinspection ALL
+ */
 public class ReVancedSettingsFragment extends PreferenceFragment {
 
     SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
@@ -32,6 +34,14 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             LogHelper.printException(ReVancedSettingsFragment.class, "OnSharedPreferenceChangeListener failure", ex);
         }
     };
+
+    private static void reboot(@NonNull Activity activity) {
+        Intent restartIntent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
+
+        activity.finishAffinity();
+        activity.startActivity(restartIntent);
+        Runtime.getRuntime().exit(0);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,14 +77,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void onDestroy() {
         getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
         super.onDestroy();
-    }
-
-    private static void reboot(@NonNull Activity activity) {
-        Intent restartIntent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
-
-        activity.finishAffinity();
-        activity.startActivity(restartIntent);
-        Runtime.getRuntime().exit(0);
     }
 
     private void rebootDialog(@NonNull Activity activity) {
