@@ -488,19 +488,19 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 externalDownloaderPreferenceScreen.addPreference(externalDownloaderPreference);
             }
 
-            Preference experimentalPreference = new Preference(activity);
-            experimentalPreference.setTitle(" ");
-            experimentalPreference.setSummary(str("revanced_experimental_flag"));
+            if (isSupportHookDownloadButton()) {
+                Preference experimentalPreference = new Preference(activity);
+                experimentalPreference.setTitle(" ");
+                experimentalPreference.setSummary(str("revanced_experimental_flag"));
 
-            SwitchPreference hookDownloadButtonPreference = new SwitchPreference(activity);
-            hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
-            hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
-            hookDownloadButtonPreference.setKey(SettingsEnum.HOOK_DOWNLOAD_BUTTON.path);
+                SwitchPreference hookDownloadButtonPreference = new SwitchPreference(activity);
+                hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
+                hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
+                hookDownloadButtonPreference.setKey(SettingsEnum.HOOK_DOWNLOAD_BUTTON.path);
 
-            hookDownloadButtonPreference.setEnabled(isSupportHookDownloadButton());
-
-            externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
-            externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
+                externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
+                externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
+            }
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setExternalDownloaderPreference" + th);
         }
