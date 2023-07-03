@@ -315,6 +315,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             speedSetting.saveValue(Float.valueOf(value));
 
             ListPreference speedListPreference = (ListPreference) findPreference(speedSetting.path);
+
+            if (speedListPreference == null)
+                return;
+
             speedListPreference.setEntries(CustomVideoSpeedPatch.getListEntries());
             speedListPreference.setEntryValues(CustomVideoSpeedPatch.getListEntryValues());
 
@@ -337,6 +341,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             qualitySetting.saveValue(Integer.parseInt(value));
 
             ListPreference qualityListPreference = (ListPreference) findPreference(qualitySetting.path);
+
+            if (qualityListPreference == null)
+                return;
+
             CharSequence[] entries = qualityListPreference.getEntries();
             int entryIndex = qualityListPreference.findIndexOfValue(value);
             qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
@@ -356,12 +364,16 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             settingsEnum.saveValue(value);
 
             Preference preference = findPreference(settingsEnum.path);
-            if (preference instanceof ListPreference) {
-                ListPreference listPreference = (ListPreference) preference;
-                CharSequence[] entries = listPreference.getEntries();
-                int entryIndex = listPreference.findIndexOfValue(value);
-                listPreference.setSummary(entryIndex < 0 ? str("pref_offline_smart_downloads_custom_storage_title") : entries[entryIndex]);
-            }
+
+            if (preference == null)
+                return;
+
+            if (!(preference instanceof ListPreference listPreference))
+                return;
+
+            CharSequence[] entries = listPreference.getEntries();
+            int entryIndex = listPreference.findIndexOfValue(value);
+            listPreference.setSummary(entryIndex < 0 ? str("pref_offline_smart_downloads_custom_storage_title") : entries[entryIndex]);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setSpoofAppVersionTarget" + th);
         }
