@@ -13,6 +13,12 @@ import app.revanced.integrations.shared.PlayerType;
 
 
 public class LowLevelFilter {
+
+    /**
+     * If [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
+     */
+    public static boolean isQuickQualityBottomSheet;
+
     private static final List<String> ignoredList = Arrays.asList(
             "inline_expander",
             "_menu",
@@ -27,20 +33,28 @@ public class LowLevelFilter {
         if (ignoredList.stream().anyMatch(path::contains))
             return false;
 
+        // Hide suggestions shelf
         if (path.contains("library_recent_shelf")) {
+            // If the library shelf is detected, set the current navbar index to 4
             NavBarIndexPatch.setCurrentNavBarIndex(4);
         } else if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() && path.contains("horizontal_video_shelf")) {
+            // When the library shelf is not detected, but the suggestions shelf is detected
+            // Block if the current navbar index is not 4
             return NavBarIndexPatch.isNoneLibraryTab();
         }
 
         int count = 0;
         if (PatchStatus.LayoutComponent()) {
+            // Survey banners are shown everywhere, so we handle them in low-level filters
+            // e.g. Home Feed, Search Results, Related Videos, Comments, and Shorts
             if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
                     value.contains("_survey")) count++;
 
+            // Descriptions banner at the bottom of thumbnails are also shown in various places
             if (SettingsEnum.HIDE_GRAY_DESCRIPTION.getBoolean() &&
                     path.contains("endorsement_header_footer")) count++;
 
+            // Official header of the search results can be identified through another byteBuffer
             if (SettingsEnum.HIDE_OFFICIAL_HEADER.getBoolean() &&
                     Stream.of("shelf_header")
                             .allMatch(value::contains) &&
@@ -49,11 +63,18 @@ public class LowLevelFilter {
         }
 
         if (PatchStatus.DescriptionComponent()) {
+            // As a limitation of the implementation of RVX patches, this too must be filtered in a low-level filter
             if (SettingsEnum.HIDE_CHAPTERS.getBoolean() &&
                     path.contains("macro_markers_carousel.")) count++;
         }
 
+        if (PatchStatus.OldQualityLayout() && SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) {
+            // Check if [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is loaded.
+            isQuickQualityBottomSheet = path.contains("quick_quality_sheet_content.eml-js");
+        }
+
         if (PatchStatus.SuggestedActions() && !PlayerType.getCurrent().isNoneOrHidden()) {
+            // It is a single filter to separate into independent patches
             if (SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean() &&
                     value.contains("suggested_action")) count++;
         }
