@@ -14,14 +14,7 @@ import app.revanced.integrations.shared.PlayerType;
 
 public class LowLevelFilter {
     private static final List<String> ignoredList = Arrays.asList(
-            "ContainerType|video_action_button",
-            "avatar",
-            "compact_channel",
-            "description",
-            "grid_video",
             "inline_expander",
-            "metadata",
-            "thumbnail",
             "_menu",
             "-button",
             "-count",
@@ -40,13 +33,8 @@ public class LowLevelFilter {
             return NavBarIndexPatch.isNoneLibraryTab();
         }
 
-        final String charset = new String(byteBuffer.array(), StandardCharsets.UTF_8);
         int count = 0;
-
         if (PatchStatus.LayoutComponent()) {
-            if (SettingsEnum.HIDE_CHAPTERS.getBoolean() &&
-                    path.contains("macro_markers_carousel.")) count++;
-
             if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
                     value.contains("_survey")) count++;
 
@@ -57,7 +45,12 @@ public class LowLevelFilter {
                     Stream.of("shelf_header")
                             .allMatch(value::contains) &&
                     Stream.of("YTSans-SemiBold", "sans-serif-medium")
-                            .allMatch(charset::contains)) count++;
+                            .allMatch(new String(byteBuffer.array(), StandardCharsets.UTF_8)::contains)) count++;
+        }
+
+        if (PatchStatus.DescriptionComponent()) {
+            if (SettingsEnum.HIDE_CHAPTERS.getBoolean() &&
+                    path.contains("macro_markers_carousel.")) count++;
         }
 
         if (PatchStatus.SuggestedActions() && !PlayerType.getCurrent().isNoneOrHidden()) {

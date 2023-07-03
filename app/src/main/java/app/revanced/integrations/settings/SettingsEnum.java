@@ -139,7 +139,6 @@ public enum SettingsEnum {
             parents(CUSTOM_FILTER)),
     HIDE_ALBUM_CARDS("revanced_hide_album_card", BOOLEAN, TRUE),
     HIDE_CHANNEL_MEMBER_SHELF("revanced_hide_channel_member_shelf", BOOLEAN, TRUE),
-    HIDE_CHAPTERS("revanced_hide_chapters", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_HOME("revanced_hide_community_posts_home", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_hide_community_posts_subscriptions", BOOLEAN, FALSE),
     HIDE_EXPANDABLE_CHIP("revanced_hide_expandable_chip", BOOLEAN, TRUE),
@@ -154,6 +153,12 @@ public enum SettingsEnum {
     HIDE_OFFICIAL_HEADER("revanced_hide_official_header", BOOLEAN, FALSE),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
+
+    // Description
+    HIDE_CHAPTERS("revanced_hide_chapters", BOOLEAN, FALSE),
+    HIDE_MUSIC_SECTION("revanced_hide_music_section", BOOLEAN, FALSE),
+    HIDE_PLACE_SECTION("revanced_hide_place_section", BOOLEAN, FALSE),
+    HIDE_TRANSCIPT_SECTION("revanced_hide_transcript_section", BOOLEAN, FALSE),
 
 
     // Misc
