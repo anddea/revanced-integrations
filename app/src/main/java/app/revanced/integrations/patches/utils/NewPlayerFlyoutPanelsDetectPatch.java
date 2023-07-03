@@ -21,7 +21,7 @@ import java.util.Objects;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class NewPlayerFlyoutPanelsDetectPatch {
-    private static final String TARGET_VERSION_NAME = "18.18.39";
+    private static final String TARGET_VERSION_NAME = "18.20.39";
     private static String getMessage() {
         StringBuilder sb = new StringBuilder();
         sb.append(str("revanced_new_player_flyout_panel_alert_dialog_message_header"));
