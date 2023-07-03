@@ -286,12 +286,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      * Enable/Disable Preference related to New Flyout Panels settings
      */
     public void NewFlyoutPanelPreferenceLinks() {
-        final boolean isEnabled = SettingsEnum.NEW_PLAYER_FLYOUT_PANEL_DETECTED.getBoolean() && !isSpoofedTargetVersionLez("18.22.00");
+        final boolean isNewFlyoutPanelEnabled = SettingsEnum.NEW_PLAYER_FLYOUT_PANEL_DETECTED.getBoolean() && !isSpoofedTargetVersionLez("18.22.00");
 
-        enableDisablePreferences(
-                isEnabled,
-                SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT
-        );
+        if (!isNewFlyoutPanelEnabled)
+            return;
     }
 
     /**

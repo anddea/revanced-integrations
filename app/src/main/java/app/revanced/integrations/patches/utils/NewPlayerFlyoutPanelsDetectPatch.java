@@ -33,12 +33,6 @@ public class NewPlayerFlyoutPanelsDetectPatch {
             sb.append("\n");
         }
 
-        if (PatchStatus.OldQualityLayout()) {
-            sb.append("• ");
-            sb.append(str("revanced_enable_old_quality_layout_title"));
-            sb.append("\n");
-        }
-
         sb.append("\n");
         sb.append(str("revanced_new_player_flyout_panel_alert_dialog_message_footer", TARGET_VERSION_NAME, TARGET_VERSION_NAME));
 
