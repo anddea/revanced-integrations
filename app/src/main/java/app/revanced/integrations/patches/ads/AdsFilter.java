@@ -32,6 +32,7 @@ public final class AdsFilter extends Filter {
 
         final var merchandise = new StringFilterGroup(
                 SettingsEnum.HIDE_MERCHANDISE_SHELF,
+                "expandable_list_inner",
                 "product_carousel"
         );
 
