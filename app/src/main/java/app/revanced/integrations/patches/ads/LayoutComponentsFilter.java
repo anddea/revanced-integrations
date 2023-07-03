@@ -103,6 +103,7 @@ public final class LayoutComponentsFilter extends Filter {
                 audioTrackButton,
                 channelMemberShelf,
                 expandableMetadata,
+                feedSurvey,
                 infoPanel,
                 joinMembership,
                 latestPosts,
@@ -113,7 +114,6 @@ public final class LayoutComponentsFilter extends Filter {
         );
 
         this.identifierFilterGroups.addAll(
-                feedSurvey,
                 graySeparator
         );
     }
