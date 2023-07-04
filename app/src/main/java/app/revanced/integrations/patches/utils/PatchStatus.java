@@ -17,6 +17,11 @@ public class PatchStatus {
         return false;
     }
 
+    public static boolean OldSpeedLayout() {
+        // Replace this with true if the Old Speed Layout patch succeeds
+        return false;
+    }
+
     public static boolean OldQualityLayout() {
         // Replace this with true if the Old Quality Layout patch succeeds
         return false;

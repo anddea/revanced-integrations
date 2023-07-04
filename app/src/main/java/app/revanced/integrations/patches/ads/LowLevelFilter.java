@@ -15,9 +15,14 @@ import app.revanced.integrations.shared.PlayerType;
 public class LowLevelFilter {
 
     /**
+     * If [PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
+     */
+    public static boolean isPlaybackRateMenuLoaded = false;
+
+    /**
      * If [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
      */
-    public static boolean isQuickQualityBottomSheet;
+    public static boolean isVideoQualitiesQuickMenuLoaded = false;
 
     private static final List<String> ignoredList = Arrays.asList(
             "inline_expander",
@@ -68,9 +73,14 @@ public class LowLevelFilter {
                     path.contains("macro_markers_carousel.")) count++;
         }
 
+        if (PatchStatus.OldSpeedLayout() && SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean()) {
+            // Check if ["PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT"] is loaded.
+            isPlaybackRateMenuLoaded = path.contains("playback_speed_sheet_content.eml-js");
+        }
+
         if (PatchStatus.OldQualityLayout() && SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) {
             // Check if [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is loaded.
-            isQuickQualityBottomSheet = path.contains("quick_quality_sheet_content.eml-js");
+            isVideoQualitiesQuickMenuLoaded = path.contains("quick_quality_sheet_content.eml-js");
         }
 
         if (PatchStatus.SuggestedActions() && !PlayerType.getCurrent().isNoneOrHidden()) {
