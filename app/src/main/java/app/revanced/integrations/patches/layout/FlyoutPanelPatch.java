@@ -31,7 +31,6 @@ public class FlyoutPanelPatch {
                         listView.performItemClick(null, 4, 0),
                 1
         );
-        SettingsEnum.NEW_PLAYER_FLYOUT_PANEL_DETECTED.saveValue(false);
     }
 
     /**

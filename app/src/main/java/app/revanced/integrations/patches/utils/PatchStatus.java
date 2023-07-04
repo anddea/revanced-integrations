@@ -2,11 +2,6 @@ package app.revanced.integrations.patches.utils;
 
 public class PatchStatus {
 
-    public static boolean CustomVideoSpeed() {
-        // Replace this with true if the Custom Video Speed patch succeeds
-        return false;
-    }
-
     public static boolean DescriptionComponent() {
         // Replace this with true if the Description Component patch succeeds
         return false;

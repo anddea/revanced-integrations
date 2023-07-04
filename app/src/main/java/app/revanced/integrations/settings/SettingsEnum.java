@@ -84,8 +84,6 @@ public enum SettingsEnum {
     HIDE_PLAYER_FLYOUT_PANEL_SPEED("revanced_hide_player_flyout_panel_speed", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR("revanced_hide_player_flyout_panel_watch_in_vr", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC("revanced_hide_player_flyout_panel_listen_with_youtube_music", BOOLEAN, FALSE),
-    NEW_PLAYER_FLYOUT_PANEL_DETECTED("revanced_new_player_flyout_panel_detected", BOOLEAN, FALSE, YOUTUBE),
-    NEW_PLAYER_FLYOUT_PANEL_DIALOG_SHOWN("revanced_new_player_flyout_panel_dialog_shown", BOOLEAN, FALSE, YOUTUBE),
 
 
     // Fullscreen

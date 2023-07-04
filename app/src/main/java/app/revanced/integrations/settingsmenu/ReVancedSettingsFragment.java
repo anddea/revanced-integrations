@@ -173,7 +173,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         FullScreenPanelPreferenceLinks();
         LayoutOverrideLinks();
         NavigationPreferenceLinks();
-        NewFlyoutPanelPreferenceLinks();
         ProtobufSpoofPreferenceLinks();
         QuickActionsPreferenceLinks();
         TabletLayoutLinks();
@@ -280,26 +279,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean(),
                 SettingsEnum.HIDE_CREATE_BUTTON
         );
-    }
-
-    /**
-     * Set Summary to New Flyout Panels related Preference
-     */
-    public void NewFlyoutPanelPreferenceLinks() {
-        final boolean isNewFlyoutPanelEnabled = SettingsEnum.NEW_PLAYER_FLYOUT_PANEL_DETECTED.getBoolean() && !isSpoofedTargetVersionLez("18.22.00");
-
-        if (!isNewFlyoutPanelEnabled)
-            return;
-
-        final String suammry = str("revanced_new_player_flyout_panel_notice");
-
-        SwitchPreference qualityListPreference = (SwitchPreference) findPreference(SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.path);
-
-        if (qualityListPreference == null)
-            return;
-
-        qualityListPreference.setSummaryOff(suammry);
-        qualityListPreference.setSummaryOn(suammry);
     }
 
     /**
