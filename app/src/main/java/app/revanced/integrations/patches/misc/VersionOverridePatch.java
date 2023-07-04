@@ -16,7 +16,7 @@ public class VersionOverridePatch {
 
         try {
             return getBoolean(REVANCED, "revanced_spoof_app_version", false)
-                    ? getString(REVANCED, "revanced_spoof_app_version_target", "17.30.34")
+                    ? getString(REVANCED, "revanced_spoof_app_version_target", "18.20.39")
                     : version;
         } catch (Exception ex) {
             LogHelper.printException(VersionOverridePatch.class, "Failed to load getVersionOverride", ex);
