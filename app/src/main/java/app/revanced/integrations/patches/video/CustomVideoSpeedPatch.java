@@ -63,8 +63,7 @@ public class CustomVideoSpeedPatch {
                     throw new IllegalArgumentException();
                 }
                 if (speed >= MAXIMUM_PLAYBACK_SPEED) {
-                    resetCustomSpeeds("Custom speeds must be less than " + MAXIMUM_PLAYBACK_SPEED
-                            + ".  Using default values.");
+                    resetCustomSpeeds(str("revanced_custom_video_speeds_warning", MAXIMUM_PLAYBACK_SPEED + ""));
                     loadSpeeds();
                     return;
                 }
@@ -89,13 +88,9 @@ public class CustomVideoSpeedPatch {
             }
         } catch (Exception ex) {
             LogHelper.printException(CustomVideoSpeedPatch.class, "parse error", ex);
-            resetCustomSpeeds("Invalid custom video speeds. Using default values.");
+            resetCustomSpeeds(str("revanced_custom_video_speeds_error"));
             loadSpeeds();
         }
-    }
-
-    private static boolean isCustomVideoSpeedEnabled() {
-        return SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
     }
 
     private static boolean arrayContains(float[] array, float value) {
@@ -115,6 +110,10 @@ public class CustomVideoSpeedPatch {
         return isCustomVideoSpeedEnabled()
                 ? customSpeedEntryValues
                 : defaultSpeedEntryValues;
+    }
+
+    private static boolean isCustomVideoSpeedEnabled() {
+        return SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED.getBoolean();
     }
 
 }
