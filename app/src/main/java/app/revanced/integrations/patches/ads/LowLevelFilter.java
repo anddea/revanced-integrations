@@ -25,7 +25,16 @@ public class LowLevelFilter {
     public static boolean isVideoQualitiesQuickMenuLoaded = false;
 
     private static final List<String> ignoredList = Arrays.asList(
+            "avatar",
+            "compact_channel",
+            "description",
+            "grid_video",
             "inline_expander",
+            "metadata",
+            "shorts",
+            "thumbnail",
+            "video_action_bar",
+            "video_action_button",
             "_menu",
             "-button",
             "-count",
