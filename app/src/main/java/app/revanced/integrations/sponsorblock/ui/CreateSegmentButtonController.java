@@ -15,7 +15,6 @@ import java.util.Objects;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ResourceType;
 
 public class CreateSegmentButtonController {
@@ -104,18 +103,5 @@ public class CreateSegmentButtonController {
     private static boolean shouldBeShown() {
         return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_CREATE_NEW_SEGMENT_ENABLED.getBoolean()
                 && !VideoInformation.isAtEndOfVideo();
-    }
-
-    public static void hide() {
-        if (!isShowing) {
-            return;
-        }
-        ReVancedUtils.verifyOnMainThread();
-        View v = buttonReference.get();
-        if (v == null) {
-            return;
-        }
-        v.setVisibility(View.GONE);
-        isShowing = false;
     }
 }

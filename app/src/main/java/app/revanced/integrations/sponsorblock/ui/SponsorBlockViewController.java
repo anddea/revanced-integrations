@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
-import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.utils.LogHelper;
@@ -207,22 +206,5 @@ public class SponsorBlockViewController {
         params.bottomMargin = fullScreen ? (isFullscreenHidden() ? hiddenBottomMargin : ctaBottomMargin) : defaultBottomMargin;
 
         view.setLayoutParams(params);
-    }
-
-    /**
-     * Injection point.
-     */
-    public static void endOfVideoReached() {
-        try {
-            // the buttons automatically set themselves to visible when appropriate,
-            // but if buttons are showing when the end of the video is reached then they need
-            // to be forcefully hidden
-            if (!SettingsEnum.ALWAYS_REPEAT.getBoolean()) {
-                CreateSegmentButtonController.hide();
-                VotingButtonController.hide();
-            }
-        } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockViewController.class, "endOfVideoReached failure", ex);
-        }
     }
 }
