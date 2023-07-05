@@ -54,6 +54,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setPreferenceScreen(preferenceScreen);
 
         addPreferences(activity, preferenceScreen, SettingsStatus.screenshotPopup, SettingsEnum.DISABLE_SCREENSHOT_POPUP);
+        addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_CHAT_BUTTON);
+        addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_CREATE_BUTTON);
+        addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_DISCOVER_BUTTON);
         addPreferences(activity, preferenceScreen, SettingsStatus.openLinksDirectly, SettingsEnum.OPEN_LINKS_DIRECTLY);
         addPreferences(activity, preferenceScreen, SettingsStatus.openLinksExternally, SettingsEnum.OPEN_LINKS_EXTERNALLY);
         addPreferences(activity, preferenceScreen, SettingsStatus.sanitizeUrlQuery, SettingsEnum.SANITIZE_URL_QUERY);

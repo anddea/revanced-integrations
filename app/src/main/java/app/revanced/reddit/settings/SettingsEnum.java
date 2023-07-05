@@ -17,6 +17,9 @@ public enum SettingsEnum {
     DEBUG_LOGGING("revanced_debug_logging", BOOLEAN, FALSE), // must be first value, otherwise logging during loading will not work
 
     DISABLE_SCREENSHOT_POPUP("revanced_disable_screenshot_popup", BOOLEAN, TRUE),
+    HIDE_CHAT_BUTTON("revanced_hide_chat_button", BOOLEAN, FALSE, true),
+    HIDE_CREATE_BUTTON("revanced_hide_create_button", BOOLEAN, TRUE, true),
+    HIDE_DISCOVER_BUTTON("revanced_hide_discover_button", BOOLEAN, TRUE, true),
     OPEN_LINKS_DIRECTLY("revanced_open_links_directly", BOOLEAN, TRUE),
     OPEN_LINKS_EXTERNALLY("revanced_open_links_externally", BOOLEAN, TRUE),
     SANITIZE_URL_QUERY("revanced_sanitize_url_query", BOOLEAN, TRUE);
