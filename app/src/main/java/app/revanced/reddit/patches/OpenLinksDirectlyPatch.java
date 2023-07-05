@@ -16,8 +16,11 @@ public final class OpenLinksDirectlyPatch {
     public static Uri parseRedirectUri(Uri uri) {
         try {
             if (!SettingsEnum.OPEN_LINKS_DIRECTLY.getBoolean()) return uri;
+            var parsedUri = uri.getQueryParameter("url");
+            if (parsedUri == null)
+                return uri;
 
-            return Uri.parse(uri.getQueryParameter("url"));
+            return Uri.parse(parsedUri);
         } catch (Exception e) {
             LogHelper.printException(OpenLinksDirectlyPatch.class, "Can not parse URL", e);
             return uri;
