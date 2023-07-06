@@ -102,7 +102,11 @@ public class SpoofPlayerParameterPatch {
      */
     public static void switchPlayerParameters() {
         try {
-            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() && !SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean()) {
+            PlayerType playerType = PlayerType.getCurrent();
+
+            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()
+                    && !SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean()
+                    && (playerType == PlayerType.WATCH_WHILE_MAXIMIZED || playerType == PlayerType.WATCH_WHILE_FULLSCREEN)) {
                 SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.saveValue(true);
                 runOnMainThread(() -> {
                     showToastShort(str("revanced_spoof_player_parameter_notice"));
