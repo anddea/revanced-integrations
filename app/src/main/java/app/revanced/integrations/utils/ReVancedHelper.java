@@ -16,6 +16,7 @@ public class ReVancedHelper {
     private static final int DEFAULT_VERSION_CODE = 1537867200; // 18.20.39
     private static final String DEFAULT_VERSION_NAME = "18.20.39";
     private static final int HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE = 1538379200; // 18.24.33
+    private static final int NEW_PLAYER_FLYOUT_PANEL_APPLIED = 1538115008; // 18.22.32
     private static final int SPLASH_ANIMATION_TARGET_VERSION_CODE = 1538115008; // 18.22.32
 
     private ReVancedHelper() {
@@ -73,6 +74,10 @@ public class ReVancedHelper {
             isFullscreenHidden |= s.getBoolean();
         }
         return isFullscreenHidden;
+    }
+
+    public static boolean isOldPlayerFlyoutPanelAvailable() {
+        return isSpoofedTargetVersionLez("18.22.00") || getVersionCode() < NEW_PLAYER_FLYOUT_PANEL_APPLIED || !isTablet();
     }
 
     public static boolean isPackageEnabled(Context context, String packageName) {

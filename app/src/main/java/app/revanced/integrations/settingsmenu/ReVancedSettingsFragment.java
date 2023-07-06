@@ -1,6 +1,7 @@
 package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
+import static app.revanced.integrations.utils.ReVancedHelper.isOldPlayerFlyoutPanelAvailable;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
 import static app.revanced.integrations.utils.ReVancedHelper.isSpoofedTargetVersionLez;
 import static app.revanced.integrations.utils.ReVancedHelper.isSupportHookDownloadButton;
@@ -173,6 +174,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         FullScreenPanelPreferenceLinks();
         LayoutOverrideLinks();
         NavigationPreferenceLinks();
+        NewPlayerFlyoutPanelLinks();
         ProtobufSpoofPreferenceLinks();
         QuickActionsPreferenceLinks();
         TabletLayoutLinks();
@@ -278,6 +280,18 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         enableDisablePreferences(
                 SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean(),
                 SettingsEnum.HIDE_CREATE_BUTTON
+        );
+    }
+
+    /**
+     * Enable/Disable Preference for New Player Flyout Panel
+     */
+    public void NewPlayerFlyoutPanelLinks() {
+
+        enableDisablePreferences(
+                !isOldPlayerFlyoutPanelAvailable(),
+                SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT,
+                SettingsEnum.ENABLE_CUSTOM_VIDEO_SPEED
         );
     }
 
