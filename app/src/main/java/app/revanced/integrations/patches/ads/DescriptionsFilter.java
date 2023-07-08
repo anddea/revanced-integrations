@@ -5,6 +5,16 @@ import app.revanced.integrations.settings.SettingsEnum;
 final class DescriptionsFilter extends Filter {
 
     public DescriptionsFilter() {
+        final var infoCardsSection = new StringFilterGroup(
+                SettingsEnum.HIDE_INFO_CARDS_SECTION,
+                "infocards_section"
+        );
+
+        final var gameSection = new StringFilterGroup(
+                SettingsEnum.HIDE_GAME_SECTION,
+                "gaming_section"
+        );
+
         final var musicSection = new StringFilterGroup(
                 SettingsEnum.HIDE_MUSIC_SECTION,
                 "music_section"
@@ -22,6 +32,8 @@ final class DescriptionsFilter extends Filter {
 
 
         this.pathFilterGroups.addAll(
+                infoCardsSection,
+                gameSection,
                 musicSection,
                 placeSection,
                 transcriptSection
