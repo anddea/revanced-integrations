@@ -14,16 +14,6 @@ import app.revanced.integrations.shared.PlayerType;
 
 public class LowLevelFilter {
 
-    /**
-     * If [PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
-     */
-    public static boolean isPlaybackRateMenuLoaded = false;
-
-    /**
-     * If [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
-     */
-    public static boolean isVideoQualitiesQuickMenuLoaded = false;
-
     private static final List<String> ignoredList = Arrays.asList(
             "avatar",
             "compact_channel",
@@ -40,7 +30,26 @@ public class LowLevelFilter {
             "-count",
             "-space"
     );
-
+    private static final List<String> browseButtonPhone = Arrays.asList(
+            "channel_profile_phone.eml",
+            "channel_action_buttons_phone.eml",
+            "|ContainerType|button.eml|"
+    );
+    private static final List<String> joinButtonPhone = List.of(
+            "|ContainerType|ContainerType|ContainerType|button.eml|"
+    );
+    private static final List<String> browseButtonTablet = Arrays.asList(
+            "channel_profile_tablet.eml",
+            "|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|button.eml|"
+    );
+    /**
+     * If [PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
+     */
+    public static boolean isPlaybackRateMenuLoaded = false;
+    /**
+     * If [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
+     */
+    public static boolean isVideoQualitiesQuickMenuLoaded = false;
     public static ByteBuffer byteBuffer;
 
     public static boolean filter(String path, String value) {
@@ -59,6 +68,13 @@ public class LowLevelFilter {
 
         int count = 0;
         if (PatchStatus.LayoutComponent()) {
+            // Browse store button needs a bit of a tricky filter
+            if (SettingsEnum.HIDE_BROWSE_STORE_BUTTON.getBoolean() &&
+                    ((browseButtonPhone.stream().allMatch(path::contains) &&
+                            joinButtonPhone.stream().noneMatch(path::contains)) ||
+                            browseButtonTablet.stream().allMatch(path::contains)))
+                count++;
+
             // Survey banners are shown everywhere, so we handle them in low-level filters
             // e.g. Home Feed, Search Results, Related Videos, Comments, and Shorts
             if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
@@ -73,7 +89,8 @@ public class LowLevelFilter {
                     Stream.of("shelf_header")
                             .allMatch(value::contains) &&
                     Stream.of("YTSans-SemiBold", "sans-serif-medium")
-                            .allMatch(new String(byteBuffer.array(), StandardCharsets.UTF_8)::contains)) count++;
+                            .allMatch(new String(byteBuffer.array(), StandardCharsets.UTF_8)::contains))
+                count++;
         }
 
         if (PatchStatus.DescriptionComponent()) {
