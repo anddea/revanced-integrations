@@ -21,6 +21,10 @@ public class ShortsPatch {
         return SettingsEnum.DISABLE_STARTUP_SHORTS_PLAYER.getBoolean();
     }
 
+    public static boolean enableNewCommentPopupPanels() {
+        return SettingsEnum.ENABLE_NEW_COMMENT_POPUP_PANELS.getBoolean();
+    }
+
     public static View hideShortsPlayerNavigationBar(View view) {
         return SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean() ? null : view;
     }
