@@ -8,6 +8,9 @@ import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import android.annotation.SuppressLint;
 import android.text.Spanned;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -45,15 +48,15 @@ public class GeneralPatch {
     }
 
     public static void hideAccountMenu(@NonNull Spanned span) {
-        if (compactLink == null || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
+        if (!(compactLink instanceof ViewGroup viewGroup) || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
 
         String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS.getString().split("\\n");
 
         for (String filter : blockList) {
-            hideViewBy0dpUnderCondition(
-                    span.toString().contains(filter) && !filter.isEmpty(),
-                    compactLink
-            );
+            if (span.toString().contains(filter) && !filter.isEmpty()) {
+                if (!(viewGroup.getLayoutParams() instanceof MarginLayoutParams))
+                    viewGroup.setLayoutParams(new LayoutParams(0, 0));
+            }
         }
     }
 
