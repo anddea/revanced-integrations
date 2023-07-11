@@ -143,9 +143,10 @@ public class FlyoutPanelPatch {
             return charSequence;
 
         String[] blockList = SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.getString().split("\\n");
+        String targetString = charSequence.toString();
 
         for (String filter : blockList) {
-            if (charSequence.toString().contains(filter) && !filter.isEmpty())
+            if (targetString.equals(filter) && !filter.isEmpty())
                 return null;
         }
 
