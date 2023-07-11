@@ -46,6 +46,14 @@ public enum SettingsEnum {
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", BOOLEAN, FALSE),
     HIDE_REWARDS_BUTTON("revanced_hide_button_rewards", BOOLEAN, FALSE),
 
+    // Experimental Flags
+    HIDE_LIVE_CHAT_BUTTON("revanced_hide_button_live_chat", BOOLEAN, FALSE),
+    HIDE_REMIX_BUTTON("revanced_hide_button_remix", BOOLEAN, FALSE),
+    HIDE_REPORT_BUTTON("revanced_hide_button_report", BOOLEAN, FALSE),
+    HIDE_SHARE_BUTTON("revanced_hide_button_share", BOOLEAN, FALSE),
+    HIDE_SHOP_BUTTON("revanced_hide_button_shop", BOOLEAN, FALSE),
+    HIDE_THANKS_BUTTON("revanced_hide_button_thanks", BOOLEAN, FALSE),
+
 
     // Comments
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
