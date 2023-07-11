@@ -4,6 +4,10 @@ import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -54,6 +58,7 @@ public class SpoofPlayerParameterPatch {
     private static final String PLAYER_PARAMETER_SCRIM = "SAFgAXgB";
     /**
      * Player parameters parameters used in shorts and stories.
+     * Known issue: channel watermark is hidden.
      * Known issue: end screen cards are hidden.
      * Known issue: downloading videos may not work.
      */
@@ -93,6 +98,36 @@ public class SpoofPlayerParameterPatch {
         return isPlayingFeed
                 ? PLAYER_PARAMETER_SCRIM + playerParameters  // autoplay in feed should not play a sound
                 : playerParameters;
+    }
+
+
+    /**
+     * When the player parameter is spoofed in incognito mode, this value will always be false
+     * When this value is true, the timestamp and chapter are showned when tapping the seekbar.
+     *
+     * @param original The original value to be output when the switch is off
+     * @return true when the switch is on, otherwise original
+     */
+    public static boolean getSeekbarThumbnailOverrideValue(boolean original) {
+        return (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() && SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean()) || original;
+    }
+
+    /**
+     * Injection point.
+     *
+     * @param view seekbar thumbnail view.  Includes both shorts and regular videos.
+     */
+    public static void seekbarImageViewCreated(ImageView view) {
+        try {
+            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() && SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean()) {
+                view.setVisibility(View.GONE);
+                // Also hide the white border around the thumbnail (otherwise a 1 pixel wide bordered frame is visible).
+                ViewGroup parentLayout = (ViewGroup) view.getParent();
+                parentLayout.setPadding(0, 0, 0, 0);
+            }
+        } catch (Exception ex) {
+            LogHelper.printException(SpoofPlayerParameterPatch.class, "seekbarImageViewCreated failure", ex);
+        }
     }
 
     /**
