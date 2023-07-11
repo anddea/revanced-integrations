@@ -214,7 +214,6 @@ public enum SettingsEnum {
     HIDE_COLLAPSE_BUTTON("revanced_hide_collapse_button", BOOLEAN, FALSE),
     HIDE_END_SCREEN_CARDS("revanced_hide_end_screen_cards", BOOLEAN, TRUE, true),
     HIDE_INFO_CARDS("revanced_hide_info_cards", BOOLEAN, TRUE, true),
-    HIDE_LIVE_CHATS_BUTTON("revanced_hide_live_chat_button", BOOLEAN, FALSE),
     HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", BOOLEAN, FALSE, true),
     HIDE_PLAYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", BOOLEAN, FALSE, true),
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", BOOLEAN, FALSE),

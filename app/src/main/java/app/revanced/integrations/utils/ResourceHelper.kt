@@ -40,7 +40,6 @@ object ResourceHelper {
     fun hidePlayerButton(view: View, original: Int): Int {
         arrayOf(
             PlayerButton.COLLAPSE,
-            PlayerButton.LIVE_CHAT,
             PlayerButton.PREVIOUS_NEXT
         ).forEach {
             if (it.settings.boolean) {
@@ -67,10 +66,6 @@ private enum class PlayerButton(
     COLLAPSE(
         SettingsEnum.HIDE_COLLAPSE_BUTTON,
         listOf("player_collapse_button")
-    ),
-    LIVE_CHAT(
-        SettingsEnum.HIDE_LIVE_CHATS_BUTTON,
-        listOf("live_chat_overlay_button")
     ),
     PLAYER(
         SettingsEnum.HIDE_PLAYER_BUTTON_BACKGROUND,
