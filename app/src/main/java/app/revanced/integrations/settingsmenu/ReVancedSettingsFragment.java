@@ -182,11 +182,11 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setExternalDownloaderPreference();
         setOpenSettingsPreference();
         setPatchesInformation();
+        setPlaybackSpeed();
         setSpoofAppVersionTarget();
         setSplashAnimationPreference();
         setVideoQuality(false);
         setVideoQuality(true);
-        setPlaybackSpeed();
     }
 
     /**
