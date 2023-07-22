@@ -4,7 +4,9 @@ import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderConditi
 
 import android.annotation.SuppressLint;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ResourceHelper;
@@ -82,5 +84,27 @@ public class PlayerPatch {
 
     public static void hideSuggestedActions(View view) {
         hideViewUnderCondition(SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean(), view);
+    }
+
+    public static void hideSuggestedVideoOverlay(ViewGroup viewGroup) {
+        if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean())
+            return;
+
+        viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+
+            // Text Container View [R.id.text_container] is placed on the 1st ChildView.
+            if (viewGroup.getChildCount() < 1 || !(viewGroup.getChildAt(0) instanceof LinearLayout textContainer))
+                return;
+
+            // Close Button [R.id.close_button] is placed on the 2nd ChildView.
+            if (textContainer.getChildCount() < 2 || !(textContainer.getChildAt(1) instanceof ImageView imageView))
+                return;
+
+            // Click the Close Button.
+            imageView.performClick();
+
+            // Since it should work in various situations,
+            // We should not remove the onLayoutChangeListener registered in the [viewGroup]
+        });
     }
 }

@@ -232,6 +232,7 @@ public enum SettingsEnum {
 
     // Experimental Flags
     HIDE_FILMSTRIP_OVERLAY("revanced_hide_filmstrip_overlay", BOOLEAN, FALSE, true),
+    HIDE_SUGGESTED_VIDEO_OVERLAY("revanced_hide_suggested_video_overlay", BOOLEAN, FALSE),
 
     // Haptic Feedback
     DISABLE_HAPTIC_FEEDBACK_CHAPTERS("revanced_disable_haptic_feedback_chapters", BOOLEAN, FALSE),
