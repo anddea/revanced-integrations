@@ -63,7 +63,7 @@ public class LowLevelFilter {
         } else if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() && path.contains("horizontal_video_shelf")) {
             // When the library shelf is not detected, but the suggestions shelf is detected
             // Block if the current navbar index is not 4
-            return NavBarIndexPatch.isNoneLibraryTab();
+            return NavBarIndexPatch.isNotLibraryTab();
         }
 
         int count = 0;

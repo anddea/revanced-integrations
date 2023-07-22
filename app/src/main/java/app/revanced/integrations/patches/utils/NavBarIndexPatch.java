@@ -16,7 +16,7 @@ public class NavBarIndexPatch {
         currentNavBarIndex = lastNavBarIndex;
     }
 
-    public static boolean isNoneLibraryTab() {
+    public static boolean isNotLibraryTab() {
         int collectionNavButtonIndex = 4;
         return currentNavBarIndex < collectionNavButtonIndex;
     }

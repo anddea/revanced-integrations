@@ -251,7 +251,7 @@ public class SegmentPlaybackController {
                             return;
                         }
                         highlightSegmentInitialShowEndTime = System.currentTimeMillis() + Math.min(
-                                (long) (timeUntilHighlight / VideoInformation.getPlaybackSpeed()),
+                                (long) (timeUntilHighlight / VideoHelpers.getCurrentSpeed()),
                                 DURATION_TO_SHOW_SKIP_BUTTON);
                     }
                 }
