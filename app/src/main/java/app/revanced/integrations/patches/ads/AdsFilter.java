@@ -65,6 +65,7 @@ public final class AdsFilter extends Filter {
                 "product_details",
                 "square_image_layout",
                 "statement_banner",
+                "text_image_button_group_layout",
                 "text_image_button_layout",
                 "video_display_button_group_layout",
                 "video_display_carousel_buttoned_layout",
