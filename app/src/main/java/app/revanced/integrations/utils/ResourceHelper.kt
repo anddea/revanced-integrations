@@ -4,7 +4,6 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
-import app.revanced.integrations.patches.layout.PlayerPatch.playPauseButtonView
 import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.utils.ResourceUtils.identifier
 import app.revanced.integrations.utils.ThemeHelper.dayNightTheme
@@ -12,7 +11,6 @@ import app.revanced.integrations.utils.ThemeHelper.dayNightTheme
 object ResourceHelper {
     private const val ARROW_BLACK_ICON = "yt_outline_arrow_left_black_24"
     private const val ARROW_WHITE_ICON = "yt_outline_arrow_left_white_24"
-    private const val PLAY_PAUSE_BUTTON = "player_control_play_pause_replay_button"
 
     @JvmStatic
     val resources: Resources get() = ReVancedUtils.getContext().resources
@@ -50,12 +48,6 @@ object ResourceHelper {
             }
         }
         return original
-    }
-
-    @JvmStatic
-    fun setPlayPauseButton(view: View) {
-        if (view.id == identifier(PLAY_PAUSE_BUTTON, ResourceType.ID))
-            playPauseButtonView = view
     }
 }
 

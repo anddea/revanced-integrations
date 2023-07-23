@@ -12,8 +12,6 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ResourceHelper;
 
 public class PlayerPatch {
-    @SuppressLint("StaticFieldLeak")
-    public static View playPauseButtonView;
 
     public static boolean disableChapterVibrate() {
         return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_CHAPTERS.getBoolean();

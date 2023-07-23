@@ -1,10 +1,10 @@
 package app.revanced.integrations.patches.utils;
 
-import static app.revanced.integrations.patches.layout.PlayerPatch.playPauseButtonView;
-
-import android.view.View;
+import android.content.Context;
+import android.media.AudioManager;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.ReVancedUtils;
 
 public class AlwaysRepeatPatch {
 
@@ -13,10 +13,16 @@ public class AlwaysRepeatPatch {
     }
 
     public static void shouldRepeatAndPause() {
-        View view = playPauseButtonView;
-        if (view == null || !SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean())
+        Context context = ReVancedUtils.getContext();
+        if (context == null)
             return;
 
-        view.performClick();
+        AudioManager audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+        if (audioManager == null)
+            return;
+
+        //noinspection deprecation
+        audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 }
