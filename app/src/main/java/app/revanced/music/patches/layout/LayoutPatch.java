@@ -26,10 +26,6 @@ public class LayoutPatch {
         return SettingsEnum.ENABLE_COMPACT_DIALOG.getBoolean() && original < 600 ? 600 : original;
     }
 
-    public static boolean enableDismissQueue(boolean original) {
-        return SettingsEnum.ENABLE_DISMISS_QUEUE.getBoolean() || original;
-    }
-
     public static boolean enableForceMinimizedPlayer(boolean original) {
         return SettingsEnum.ENABLE_FORCE_MINIMIZED_PLAYER.getBoolean() || original;
     }

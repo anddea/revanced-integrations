@@ -27,7 +27,6 @@ public enum SettingsEnum {
     ENABLE_BLACK_NAVIGATION_BAR("revanced_enable_black_navigation_bar", BOOLEAN, TRUE),
     ENABLE_COLOR_MATCH_PLAYER("revanced_enable_color_match_player", BOOLEAN, TRUE),
     ENABLE_COMPACT_DIALOG("revanced_enable_compact_dialog", BOOLEAN, TRUE),
-    ENABLE_DISMISS_QUEUE("revanced_enable_dismiss_queue", BOOLEAN, TRUE, true),
     ENABLE_FORCE_MINIMIZED_PLAYER("revanced_enable_force_minimized_player", BOOLEAN, TRUE),
     ENABLE_LANDSCAPE_MODE("revanced_enable_landscape_mode", BOOLEAN, TRUE, true),
     ENABLE_NEW_LAYOUT("revanced_enable_new_layout", BOOLEAN, FALSE, true),
