@@ -1,21 +1,21 @@
 package app.revanced.reddit.patches;
 
-import java.util.List;
+import android.view.View;
+import android.view.ViewGroup;
 
 import app.revanced.reddit.settings.SettingsEnum;
 import app.revanced.reddit.utils.LogHelper;
 
 public final class NavigationButtonsPatch {
 
-    public static List hideNavigationButtons(List list) {
+    public static void hideNavigationButtons(ViewGroup viewGroup) {
         try {
             for (NavigationButton button : NavigationButton.values())
-                if (button.enabled && list.size() > button.index)
-                    list.remove(button.index);
+                if (button.enabled && viewGroup.getChildCount() > button.index)
+                    viewGroup.getChildAt(button.index).setVisibility(View.GONE);
         } catch (Exception exception) {
             LogHelper.printException(NavigationButtonsPatch.class, "Failed to remove button view", exception);
         }
-        return list;
     }
 
     private enum NavigationButton {
