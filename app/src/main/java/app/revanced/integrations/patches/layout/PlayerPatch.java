@@ -12,6 +12,8 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ResourceHelper;
 
 public class PlayerPatch {
+    @SuppressLint("StaticFieldLeak")
+    private static ViewGroup coreContainer;
 
     public static boolean disableChapterVibrate() {
         return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_CHAPTERS.getBoolean();
@@ -88,6 +90,9 @@ public class PlayerPatch {
         if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean())
             return;
 
+        if (coreContainer != viewGroup)
+            coreContainer = viewGroup;
+
         viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
 
             // Text Container View [R.id.text_container] is placed on the 1st ChildView.
@@ -100,9 +105,15 @@ public class PlayerPatch {
 
             // Click the Close Button.
             imageView.performClick();
-
-            // Since it should work in various situations,
-            // We should not remove the onLayoutChangeListener registered in the [viewGroup]
         });
+    }
+
+    public static void hideSuggestedVideoOverlay() {
+        if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || coreContainer == null)
+            return;
+
+        try {
+            ((LinearLayout) coreContainer.getChildAt(0)).getChildAt(1).performClick();
+        } catch (Exception ignored) {}
     }
 }

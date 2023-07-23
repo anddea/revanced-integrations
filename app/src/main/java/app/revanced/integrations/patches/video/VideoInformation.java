@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import app.revanced.integrations.patches.layout.PlayerPatch;
 import app.revanced.integrations.patches.utils.AlwaysRepeatPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.VideoState;
@@ -78,6 +79,7 @@ public final class VideoInformation {
             return seekResult;
         }
 
+        PlayerPatch.hideSuggestedVideoOverlay();
         return false;
     }
 
