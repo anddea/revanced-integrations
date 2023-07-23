@@ -19,6 +19,7 @@ public final class NavigationButtonsPatch {
     }
 
     private enum NavigationButton {
+        CHAT(SettingsEnum.HIDE_CHAT_BUTTON.getBoolean(), 3),
         CREATE(SettingsEnum.HIDE_CREATE_BUTTON.getBoolean(), 2),
         DISCOVER(SettingsEnum.HIDE_DISCOVER_BUTTON.getBoolean(), 1);
         private final boolean enabled;

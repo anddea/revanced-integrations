@@ -11,17 +11,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import app.revanced.reddit.utils.StringRef;
-
 public enum SettingsEnum {
     DEBUG_LOGGING("revanced_debug_logging", BOOLEAN, FALSE), // must be first value, otherwise logging during loading will not work
 
-    DISABLE_SCREENSHOT_POPUP("revanced_disable_screenshot_popup", BOOLEAN, TRUE),
-    HIDE_CREATE_BUTTON("revanced_hide_create_button", BOOLEAN, TRUE, true),
-    HIDE_DISCOVER_BUTTON("revanced_hide_discover_button", BOOLEAN, TRUE, true),
-    OPEN_LINKS_DIRECTLY("revanced_open_links_directly", BOOLEAN, TRUE),
-    OPEN_LINKS_EXTERNALLY("revanced_open_links_externally", BOOLEAN, TRUE),
-    SANITIZE_URL_QUERY("revanced_sanitize_url_query", BOOLEAN, TRUE);
+    DISABLE_SCREENSHOT_POPUP("revanced_disable_screenshot_popup", BOOLEAN, TRUE,
+            "Disable screenshot popup",
+            "Disables the popup that shows up when taking a screenshot"),
+    HIDE_CHAT_BUTTON("revanced_hide_chat_button", BOOLEAN, FALSE, true,
+            "Hide chat button",
+            "Hide chat button in navigation"),
+    HIDE_CREATE_BUTTON("revanced_hide_create_button", BOOLEAN, FALSE, true,
+            "Hide create button",
+            "Hide create button in navigation"),
+    HIDE_DISCOVER_BUTTON("revanced_hide_discover_button", BOOLEAN, FALSE, true,
+            "Hide discover / community button",
+            "Hide discover button or communities button in navigation"),
+    OPEN_LINKS_DIRECTLY("revanced_open_links_directly", BOOLEAN, TRUE,
+            "Open links directly",
+            "Skips over redirection URLs to external links"),
+    OPEN_LINKS_EXTERNALLY("revanced_open_links_externally", BOOLEAN, TRUE,
+            "Open links externally",
+            "Open links outside of the app directly in your browser"),
+    SANITIZE_URL_QUERY("revanced_sanitize_url_query", BOOLEAN, TRUE,
+            "Sanitize sharing links",
+            "Removes (tracking) query parameters from the URLs when sharing links");
 
     private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
 
@@ -45,31 +58,34 @@ public enum SettingsEnum {
      * If the app should be rebooted, if this setting is changed
      */
     public final boolean rebootApp;
-    @Nullable
-    public final StringRef title;
-    @Nullable
-    public final StringRef summary;
+    @NonNull
+    public final String title;
+    @NonNull
+    public final String summary;
     // Must be volatile, as some settings are read/write from different threads.
     // Of note, the object value is persistently stored using SharedPreferences (which is thread safe).
     @NonNull
     private Object value;
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue) {
-        this(path, returnType, defaultValue, SharedPrefCategory.REDDIT, false);
+        this(path, returnType, defaultValue, SharedPrefCategory.REDDIT, false, "", "");
+    }
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, String title, String summary) {
+        this(path, returnType, defaultValue, SharedPrefCategory.REDDIT, false, title, summary);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue, boolean rebootApp) {
-        this(path, returnType, defaultValue, SharedPrefCategory.REDDIT, rebootApp);
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, boolean rebootApp, String title, String summary) {
+        this(path, returnType, defaultValue, SharedPrefCategory.REDDIT, rebootApp, title, summary);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName, boolean rebootApp) {
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName, boolean rebootApp, @NonNull String title, @NonNull String summary) {
         this.path = Objects.requireNonNull(path);
         this.returnType = Objects.requireNonNull(returnType);
         this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
         this.sharedPref = Objects.requireNonNull(prefName);
         this.rebootApp = rebootApp;
-        this.title = new StringRef(path + "_title");
-        this.summary = new StringRef(path + "_summary");
+        this.title = title;
+        this.summary = summary;
     }
 
     @Nullable
@@ -133,16 +149,12 @@ public enum SettingsEnum {
 
     @NonNull
     public String getSummary() {
-        if (summary == null)
-            return "";
-        return summary.toString();
+        return summary;
     }
 
     @NonNull
     public String getTitle() {
-        if (title == null)
-            return "";
-        return title.toString();
+        return title;
     }
 
     /**
