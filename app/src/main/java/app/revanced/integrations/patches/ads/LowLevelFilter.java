@@ -42,14 +42,6 @@ public class LowLevelFilter {
             "channel_profile_tablet.eml",
             "|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|button.eml|"
     );
-    /**
-     * If [PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
-     */
-    public static boolean isPlaybackRateMenuLoaded = false;
-    /**
-     * If [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is  loaded.
-     */
-    public static boolean isVideoQualitiesQuickMenuLoaded = false;
     public static ByteBuffer byteBuffer;
 
     public static boolean filter(String path, String value) {
@@ -97,16 +89,6 @@ public class LowLevelFilter {
             // As a limitation of the implementation of RVX patches, this too must be filtered in a low-level filter
             if (SettingsEnum.HIDE_CHAPTERS.getBoolean() &&
                     path.contains("macro_markers_carousel.")) count++;
-        }
-
-        if (PatchStatus.OldSpeedLayout() && SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean()) {
-            // Check if ["PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT"] is loaded.
-            isPlaybackRateMenuLoaded = path.contains("playback_speed_sheet_content.eml-js");
-        }
-
-        if (PatchStatus.OldQualityLayout() && SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) {
-            // Check if [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is loaded.
-            isVideoQualitiesQuickMenuLoaded = path.contains("quick_quality_sheet_content.eml-js");
         }
 
         if (PatchStatus.SuggestedActions() && !PlayerType.getCurrent().isNoneOrHidden()) {

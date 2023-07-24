@@ -1,8 +1,5 @@
 package app.revanced.integrations.patches.layout;
 
-import static app.revanced.integrations.patches.ads.LowLevelFilter.isPlaybackRateMenuLoaded;
-import static app.revanced.integrations.patches.ads.LowLevelFilter.isVideoQualitiesQuickMenuLoaded;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +9,8 @@ import android.widget.ListView;
 
 import com.facebook.litho.ComponentHost;
 
+import app.revanced.integrations.patches.ads.PlaybackSpeedMenuFilter;
+import app.revanced.integrations.patches.ads.VideoQualityMenuFilter;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 
@@ -60,7 +59,7 @@ public class FlyoutPanelPatch {
                         // Check if [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is loaded.
                         // Since ViewTreeObserver is activated even when [VIDEO_QUALITIES_MENU_BOTTOM_SHEET_FRAGMENT] or [SUBTITLE_MENU_BOTTOM_SHEET_FRAGMENT] are loaded,
                         // So this check process is absolutely necessary.
-                        if (!isVideoQualitiesQuickMenuLoaded)
+                        if (!VideoQualityMenuFilter.isVideoQualityMenuVisible)
                             return;
 
                         // ComponentHost is placed on the 1st ChildView.
@@ -120,7 +119,7 @@ public class FlyoutPanelPatch {
                         // Check if [PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT] is loaded.
                         // Since ViewTreeObserver is activated even when [SUBTITLE_MENU_BOTTOM_SHEET_FRAGMENT] are loaded,
                         // So this check process is absolutely necessary.
-                        if (!isPlaybackRateMenuLoaded)
+                        if (!PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible)
                             return;
 
                         // Hide [BOTTOM_SHEET_FRAGMENT].
