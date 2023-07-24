@@ -12,11 +12,6 @@ public class PatchStatus {
         return false;
     }
 
-    public static boolean ShortsComponent() {
-        // Replace this with true if the Shorts Component patch succeeds
-        return false;
-    }
-
     public static boolean SuggestedActions() {
         // Replace this with true if the Suggested Actions patch succeeds
         return false;

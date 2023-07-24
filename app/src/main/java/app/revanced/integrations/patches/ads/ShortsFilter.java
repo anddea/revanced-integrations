@@ -1,8 +1,5 @@
 package app.revanced.integrations.patches.ads;
 
-import static app.revanced.integrations.patches.utils.PatchStatus.ShortsComponent;
-
-import app.revanced.integrations.patches.utils.NavBarIndexPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public final class ShortsFilter extends Filter {
@@ -30,7 +27,6 @@ public final class ShortsFilter extends Filter {
 
         final var shorts = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_SHELF,
-                "shelf_header", // shorts shelf header is not blocked in the 'shorts_video_cell'
                 "shorts_shelf",
                 "inline_shorts",
                 "shorts_grid",
@@ -43,10 +39,6 @@ public final class ShortsFilter extends Filter {
 
     @Override
     boolean isFiltered(final String path, final String identifier, final String object, final byte[] protobufBufferArray) {
-        // 'shelf_header' is also used in the library tab, so use [NavBarIndexPatch] to identify it
-        if (!ShortsComponent() || !NavBarIndexPatch.isNotLibraryTab())
-            return false;
-
         if (reelChannelBar.check(path).isFiltered())
             if (this.pathFilterGroups.contains(path))
                 return true;
