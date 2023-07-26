@@ -53,7 +53,7 @@ final class QuickActionFilter extends Filter {
 
     @Override
     public boolean isFiltered(final String path, final String identifier, final String allValue, final byte[] _protobufBufferArray) {
-        if (identifier != null && identifier.startsWith("quick_actions.eml|"))
+        if (path.startsWith("quick_actions.eml|"))
             return super.isFiltered(path, identifier, allValue, _protobufBufferArray);
 
         return false;
