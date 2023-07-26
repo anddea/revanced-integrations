@@ -52,6 +52,7 @@ public class FirstRun {
 
         if (integrationVersion != null) return;
 
+        // show dialog
         Activity activity = (Activity) context;
 
         new AlertDialog.Builder(activity)
@@ -66,6 +67,8 @@ public class FirstRun {
                 .setNegativeButton(str("sign_in_cancel"), null)
                 .setCancelable(false)
                 .show();
-    }
 
+        // set spoof player parameter default value
+        SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!activity.getPackageName().equals("com.google.android.youtube"));
+    }
 }
