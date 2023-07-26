@@ -14,6 +14,10 @@ final class PlayerFlyoutPanelsFilter extends Filter {
                         "closed_caption"
                 ),
                 new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LOCK_SCREEN,
+                        "yt_outline_lock"
+                ),
+                new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LOOP,
                         "yt_outline_arrow_repeat_1_"
                 ),
