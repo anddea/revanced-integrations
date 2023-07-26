@@ -14,6 +14,16 @@ import java.util.Objects;
 public enum SettingsEnum {
     DEBUG_LOGGING("revanced_debug_logging", BOOLEAN, FALSE), // must be first value, otherwise logging during loading will not work
 
+    HIDE_COMMENT_ADS("revanced_hide_comment_ads", BOOLEAN, TRUE, true,
+            "Hide comment ads",
+            "Hides comment ads"),
+    HIDE_OLD_POST_ADS("revanced_hide_old_post_ads", BOOLEAN, TRUE, true,
+            "Hide post ads",
+            "Hides post ads / old method"),
+    HIDE_NEW_POST_ADS("revanced_hide_new_post_ads", BOOLEAN, TRUE, true,
+            "Hide post ads",
+            "Hides post ads / new method"),
+
     DISABLE_SCREENSHOT_POPUP("revanced_disable_screenshot_popup", BOOLEAN, TRUE,
             "Disable screenshot popup",
             "Disables the popup that shows up when taking a screenshot"),

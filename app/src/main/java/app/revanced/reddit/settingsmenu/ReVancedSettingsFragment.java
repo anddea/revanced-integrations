@@ -53,6 +53,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activity);
         setPreferenceScreen(preferenceScreen);
 
+        addPreferences(activity, preferenceScreen, SettingsStatus.generalAds, SettingsEnum.HIDE_COMMENT_ADS);
+        addPreferences(activity, preferenceScreen, SettingsStatus.generalAds, SettingsEnum.HIDE_OLD_POST_ADS);
+        addPreferences(activity, preferenceScreen, SettingsStatus.generalAds, SettingsEnum.HIDE_NEW_POST_ADS);
         addPreferences(activity, preferenceScreen, SettingsStatus.screenshotPopup, SettingsEnum.DISABLE_SCREENSHOT_POPUP);
         addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_CHAT_BUTTON);
         addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_CREATE_BUTTON);
