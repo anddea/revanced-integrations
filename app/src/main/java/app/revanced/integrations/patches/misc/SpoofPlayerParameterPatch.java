@@ -1,9 +1,5 @@
 package app.revanced.integrations.patches.misc;
 
-import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThread;
-import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
-import static app.revanced.integrations.utils.StringRef.str;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -129,40 +125,6 @@ public class SpoofPlayerParameterPatch {
             LogHelper.printException(SpoofPlayerParameterPatch.class, "seekbarImageViewCreated failure", ex);
         }
     }
-
-    /**
-     * Injection point. Runs off the main thread.
-     * <p>
-     * This method is called when returning a 403 response, and switches Spoof player parameters.
-     */
-    public static void switchPlayerParameters() {
-        try {
-            PlayerType playerType = PlayerType.getCurrent();
-
-            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()
-                    && !SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.getBoolean()
-                    && (playerType == PlayerType.WATCH_WHILE_MAXIMIZED || playerType == PlayerType.WATCH_WHILE_FULLSCREEN)) {
-                SettingsEnum.SPOOF_PLAYER_PARAMETER_TYPE.saveValue(true);
-                runOnMainThread(() -> {
-                    showToastShort(str("revanced_spoof_player_parameter_notice"));
-                    showToastShort(str("revanced_spoof_player_parameter_reload"));
-                });
-
-                if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.getBoolean())
-                    return;
-
-                SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(true);
-                SettingsEnum.SPOOF_PLAYER_PARAMETER_NOTICE_SHOWN.saveValue(true);
-                runOnMainThread(() -> {
-                    showToastShort(str("revanced_spoof_player_parameter_notice"));
-                    showToastShort(str("revanced_spoof_player_parameter_reload"));
-                });
-            }
-        } catch (Exception ex) {
-            LogHelper.printException(SpoofPlayerParameterPatch.class, "switchPlayerParameters failure", ex);
-        }
-    }
-
 
     /**
      * Injection point.  Overrides values passed into SubtitleWindowSettings constructor.
