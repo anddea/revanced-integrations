@@ -1,29 +1,9 @@
 package app.revanced.integrations.patches.ads;
 
-import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
-
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.shared.PlayerType;
 
 final class QuickActionFilter extends Filter {
-    private final StringFilterGroup quickActionsRule;
-
-    private final String[] exceptions;
-
     public QuickActionFilter() {
-        quickActionsRule = new StringFilterGroup(
-                null,
-                "quick_actions"
-        );
-
-        exceptions = new String[]{
-                "comment",
-                "horizontal_video_shelf",
-                "library_recent_shelf",
-                "playlist_add",
-                "video_with_context"
-        };
-
         pathFilterGroups.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
@@ -71,26 +51,11 @@ final class QuickActionFilter extends Filter {
         );
     }
 
-    private boolean isEveryFilterGroupEnabled() {
-        for (StringFilterGroup rule : pathFilterGroups)
-            if (!rule.isEnabled()) return false;
-
-        for (ByteArrayFilterGroup rule : protobufBufferFilterGroups)
-            if (!rule.isEnabled()) return false;
-
-        return true;
-    }
-
     @Override
-    public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        if (containsAny(path, exceptions)
-                || containsAny(object, exceptions)
-                || !containsAny(object, "quick_actions")
-                || PlayerType.getCurrent() != PlayerType.WATCH_WHILE_FULLSCREEN) return false;
+    public boolean isFiltered(final String path, final String identifier, final String allValue, final byte[] _protobufBufferArray) {
+        if (identifier != null && identifier.startsWith("quick_actions.eml|"))
+            return super.isFiltered(path, identifier, allValue, _protobufBufferArray);
 
-        if (isEveryFilterGroupEnabled())
-            if (quickActionsRule.check(identifier).isFiltered()) return true;
-
-        return super.isFiltered(path, identifier, object, _protobufBufferArray);
+        return false;
     }
 }

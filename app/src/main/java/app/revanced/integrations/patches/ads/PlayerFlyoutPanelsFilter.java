@@ -1,27 +1,9 @@
 package app.revanced.integrations.patches.ads;
 
-import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
-
 import app.revanced.integrations.settings.SettingsEnum;
 
 final class PlayerFlyoutPanelsFilter extends Filter {
-    private final StringFilterGroup flyoutPanelRule;
-    private final String[] exceptions;
-
     public PlayerFlyoutPanelsFilter() {
-        flyoutPanelRule = new StringFilterGroup(
-                null,
-                "overflow_menu_item"
-        );
-
-        exceptions = new String[]{
-                "comment",
-                "horizontal_video_shelf",
-                "library_recent_shelf",
-                "playlist_add",
-                "video_with_context"
-        };
-
         protobufBufferFilterGroups.addAll(
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY,
@@ -29,7 +11,7 @@ final class PlayerFlyoutPanelsFilter extends Filter {
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS,
-                        "yt_outline_closed_caption"
+                        "closed_caption"
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LOOP,
@@ -78,21 +60,11 @@ final class PlayerFlyoutPanelsFilter extends Filter {
         );
     }
 
-    private boolean isEveryFilterGroupEnabled() {
-        for (ByteArrayFilterGroup rule : protobufBufferFilterGroups)
-            if (!rule.isEnabled()) return false;
-
-        return true;
-    }
-
     @Override
-    public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        if (containsAny(path, exceptions) || containsAny(object, exceptions) || !containsAny(object, "overflow_menu_item"))
-            return false;
+    public boolean isFiltered(final String path, final String identifier, final String allValue, final byte[] _protobufBufferArray) {
+        if (identifier != null && identifier.startsWith("overflow_menu_item.eml|"))
+            return super.isFiltered(path, identifier, allValue, _protobufBufferArray);
 
-        if (isEveryFilterGroupEnabled())
-            if (flyoutPanelRule.check(identifier).isFiltered()) return true;
-
-        return super.isFiltered(path, identifier, object, _protobufBufferArray);
+        return false;
     }
 }

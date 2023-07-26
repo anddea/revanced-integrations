@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import app.revanced.integrations.patches.utils.NavBarIndexPatch;
 import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
@@ -47,16 +46,6 @@ public class LowLevelFilter {
     public static boolean filter(String path, String value) {
         if (ignoredList.stream().anyMatch(path::contains))
             return false;
-
-        // Hide suggestions shelf
-        if (path.contains("library_recent_shelf")) {
-            // If the library shelf is detected, set the current navbar index to 4
-            NavBarIndexPatch.setCurrentNavBarIndex(4);
-        } else if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() && path.contains("horizontal_video_shelf")) {
-            // When the library shelf is not detected, but the suggestions shelf is detected
-            // Block if the current navbar index is not 4
-            return NavBarIndexPatch.isNotLibraryTab();
-        }
 
         int count = 0;
         if (PatchStatus.LayoutComponent()) {
