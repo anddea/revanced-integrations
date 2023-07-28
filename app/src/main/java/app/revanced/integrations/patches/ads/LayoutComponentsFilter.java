@@ -37,6 +37,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "member_recognition_shelf"
         );
 
+        final var chipsShelf = new StringFilterGroup(
+                SettingsEnum.HIDE_CHIPS_SHELF,
+                "chips_shelf"
+        );
+
         final var expandableMetadata = new StringFilterGroup(
                 SettingsEnum.HIDE_EXPANDABLE_CHIP,
                 "inline_expander"
@@ -114,6 +119,7 @@ public final class LayoutComponentsFilter extends Filter {
         );
 
         this.identifierFilterGroups.addAll(
+                chipsShelf,
                 graySeparator
         );
     }
