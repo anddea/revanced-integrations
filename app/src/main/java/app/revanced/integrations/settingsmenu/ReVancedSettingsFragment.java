@@ -79,7 +79,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
                 switch (setting) {
                     case HIDE_FEED_FLYOUT_PANEL -> {
-                        if (SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.getString().isEmpty())
+                        final String value = SharedPrefHelper.getString(REVANCED, SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.path, "");
+
+                        if (value.isEmpty())
                             SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.saveValue(str("report_button") + "\n" + str("share"));
                     }
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
@@ -423,6 +425,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             final var EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_external_downloader_package_name";
             final var EXTERNAL_DOWNLOADER_WEBSITE_PREFERENCE_KEY = "revanced_external_downloader_website";
 
+            final String value = SharedPrefHelper.getString(REVANCED, SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.path, "com.deniscerri.ytdl");
+            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(value);
+
             Activity activity = getActivity();
 
             String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY);
@@ -669,10 +674,11 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     String key = entry.getKey().toString();
                     Object value = entry.getValue();
 
-                    if (value instanceof Boolean)
-                        editor.putBoolean(key, settingsJson.optBoolean(key, (Boolean) entry.getValue()));
-                    else
-                        editor.putString(key, settingsJson.optString(key, (String) entry.getValue()));
+                    if (value instanceof Boolean) {
+                        editor.putBoolean(key, settingsJson.optBoolean(key, (boolean) entry.getValue()));
+                    } else {
+                        editor.putString(key, settingsJson.optString(key, entry.getValue().toString()));
+                    }
                 }
             }
             editor.apply();
