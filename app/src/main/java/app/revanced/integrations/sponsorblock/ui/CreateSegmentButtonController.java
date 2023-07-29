@@ -23,6 +23,8 @@ public class CreateSegmentButtonController {
     private static Animation fadeIn;
     private static Animation fadeOut;
     private static boolean isShowing;
+    private static boolean isScrubbed;
+
 
     /**
      * injection point
@@ -44,6 +46,7 @@ public class CreateSegmentButtonController {
                 fadeOut.setDuration(integer("fade_duration_scheduled"));
             }
             isShowing = true;
+            isScrubbed = false;
             changeVisibilityImmediate(false);
         } catch (Exception ex) {
             LogHelper.printException(CreateSegmentButtonController.class, "Unable to set RelativeLayout", ex);
@@ -57,8 +60,14 @@ public class CreateSegmentButtonController {
     /**
      * injection point
      */
-    public static void changeVisibilityNegatedImmediate(boolean visible) {
-        changeVisibility(!visible, true);
+    public static void changeVisibilityNegatedImmediate(boolean isUserScrubbing) {
+        ImageView imageView = buttonReference.get();
+
+        if (imageView == null || !isUserScrubbing) return;
+
+        isShowing = false;
+        isScrubbed = true;
+        imageView.setVisibility(View.GONE);
     }
 
     /**
