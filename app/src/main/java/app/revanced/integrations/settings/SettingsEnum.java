@@ -183,8 +183,6 @@ public enum SettingsEnum {
     SPOOF_APP_VERSION_TARGET("revanced_spoof_app_version_target", STRING, "18.20.39", true,
             parents(SPOOF_APP_VERSION)),
     SPOOF_PLAYER_PARAMETER("revanced_spoof_player_parameter", BOOLEAN, FALSE, true),
-    SPOOF_PLAYER_PARAMETER_TYPE("revanced_spoof_player_parameter_type", BOOLEAN, FALSE, true,
-            parents(SPOOF_PLAYER_PARAMETER)),
 
 
     // Navigation
