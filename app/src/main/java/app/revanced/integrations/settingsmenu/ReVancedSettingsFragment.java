@@ -113,7 +113,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     };
     private PreferenceScreen externalDownloaderPreferenceScreen;
-    private PreferenceScreen miscPreferenceScreen;
 
     public ReVancedSettingsFragment() {
     }
@@ -140,7 +139,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             enableDisablePreferences();
 
             externalDownloaderPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("external_downloader");
-            miscPreferenceScreen = (PreferenceScreen) getPreferenceScreen().findPreference("misc");
 
             initializeReVancedSettings();
         } catch (Throwable th) {
@@ -400,20 +398,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         Preference integrations = findPreference("revanced-integrations");
         if (integrations != null)
             integrations.setSummary(BuildConfig.VERSION_NAME);
-
-        if (miscPreferenceScreen == null)
-            return;
-
-        Preference reportPreference = new Preference(getActivity());
-        reportPreference.setTitle(str("revanced_extended_support_center_title"));
-        reportPreference.setSummary(str("revanced_extended_support_center_summary"));
-        reportPreference.setOnPreferenceClickListener(pref -> {
-            var intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://github.com/inotia00/ReVanced_Extended"));
-            pref.getContext().startActivity(intent);
-            return false;
-        });
-        miscPreferenceScreen.addPreference(reportPreference);
     }
 
     /**
