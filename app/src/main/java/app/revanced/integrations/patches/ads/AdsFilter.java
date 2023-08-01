@@ -65,6 +65,7 @@ public final class AdsFilter extends Filter {
                 "hero_promo_image",
                 "landscape_image_wide_button_layout",
                 "legal_disclosure_cell",
+                "lumiere_promo_carousel",
                 "primetime_promo",
                 "product_details",
                 "square_image_layout",
