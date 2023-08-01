@@ -1,11 +1,19 @@
 package app.revanced.integrations.patches.video;
 
+import static app.revanced.integrations.patches.layout.FlyoutPanelPatch.addRecyclerListener;
 import static app.revanced.integrations.utils.StringRef.str;
+
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.litho.ComponentHost;
+
 import java.util.Arrays;
 
+import app.revanced.integrations.patches.ads.PlaybackSpeedMenuFilter;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
@@ -114,6 +122,36 @@ public class CustomPlaybackSpeedPatch {
 
     private static boolean isCustomPlaybackSpeedEnabled() {
         return SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean();
+    }
+
+    /**
+     * To reduce copy and paste between two similar code paths.
+     */
+    public static void onFlyoutMenuCreate(final LinearLayout linearLayout) {
+        if (!SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean()) return;
+
+        // The playback rate menu is a RecyclerView with 2 children. The third child is the "Advanced" quality menu.
+        addRecyclerListener(linearLayout, 2, 1, recyclerView -> {
+            if (PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible) {
+                PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible = false;
+
+                if (recyclerView.getChildCount() == 1 && recyclerView.getChildAt(0) instanceof ComponentHost) {
+                    linearLayout.setVisibility(View.GONE);
+
+                    // Close the new Playback speed menu and instead show the old one.
+                    showOldPlaybackSpeedMenu();
+
+                    // DismissView [R.id.touch_outside] is the 1st ChildView of the 3rd ParentView.
+                    ((ViewGroup) linearLayout.getParent().getParent().getParent())
+                            .getChildAt(0).performClick();
+                }
+            }
+        });
+    }
+
+    private static void showOldPlaybackSpeedMenu() {
+        SettingsEnum.CUSTOM_PLAYBACK_SPEEDS.getBoolean();
+        // Rest of the implementation added by patch.
     }
 
 }

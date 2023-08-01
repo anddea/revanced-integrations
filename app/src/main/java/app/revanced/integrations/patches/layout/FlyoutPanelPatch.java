@@ -2,23 +2,43 @@ package app.revanced.integrations.patches.layout;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+
 import com.facebook.litho.ComponentHost;
 
-import app.revanced.integrations.patches.ads.PlaybackSpeedMenuFilter;
 import app.revanced.integrations.patches.ads.VideoQualityMenuFilter;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class FlyoutPanelPatch {
-    /**
-     * Dummy field.
-     */
-    public static Object playbackRateBottomSheetClass;
+
+    public static void addRecyclerListener(@NonNull LinearLayout linearLayout,
+                                           int expectedLayoutChildCount, int recyclerViewIndex,
+                                           @NonNull RecyclerViewGlobalLayoutListener listener) {
+        if (linearLayout.getChildCount() != expectedLayoutChildCount) return;
+
+        var layoutChild = linearLayout.getChildAt(recyclerViewIndex);
+        if (!(layoutChild instanceof RecyclerView recyclerView)) return;
+
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        try {
+                            listener.recyclerOnGlobalLayout(recyclerView);
+                        } catch (Exception ignored) {
+                        } finally {
+                            // Remove the listener because it will be added again.
+                            recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    }
+                }
+        );
+    }
 
     public static void enableOldQualityMenu(ListView listView) {
         if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean())
@@ -30,111 +50,6 @@ public class FlyoutPanelPatch {
                         listView.performItemClick(null, 4, 0),
                 1
         );
-    }
-
-    /**
-     * Old Quality Layout patch for new player flyout panels.
-     *
-     * @param linearLayout [BOTTOM_SHEET_FRAGMENT], {@ComponentHost} is located under linearLayout.
-     */
-    public static void enableOldQualityMenu(LinearLayout linearLayout) {
-        if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean())
-            return;
-
-        // The RecyclerView is placed on the 3rd ChildView.
-        if (linearLayout.getChildCount() != 3)
-            return;
-
-        // Make sure that this ChildView is castable to the RecyclerView.
-        if (!(linearLayout.getChildAt(2) instanceof RecyclerView recyclerView))
-            return;
-
-        // When method called from the abstract class, only the RecyclerView is defined.
-        // ComponentHost is not defined at here.
-        // So we need to add ViewTreeObserver to RecyclerView and check the moment ComponentHost is added to this RecyclerView.
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        // Check if [VIDEO_QUALITIES_QUICK_MENU_BOTTOM_SHEET_FRAGMENT] is loaded.
-                        // Since ViewTreeObserver is activated even when [VIDEO_QUALITIES_MENU_BOTTOM_SHEET_FRAGMENT] or [SUBTITLE_MENU_BOTTOM_SHEET_FRAGMENT] are loaded,
-                        // So this check process is absolutely necessary.
-                        if (!VideoQualityMenuFilter.isVideoQualityMenuVisible)
-                            return;
-
-                        // ComponentHost is placed on the 1st ChildView.
-                        if (recyclerView.getChildCount() != 1)
-                            return;
-
-                        // Make sure that this ChildView is castable to the ComponentHost.
-                        if (!(recyclerView.getChildAt(0) instanceof ComponentHost lithoView))
-                            return;
-
-                        // TargetView found, hide [BOTTOM_SHEET_FRAGMENT].
-                        linearLayout.setVisibility(View.GONE);
-
-                        // Click the TargetView.
-                        lithoView.getChildAt(3).performClick();
-
-                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                });
-    }
-
-    /**
-     * Old Playback Speed Layout patch for new player flyout panels.
-     *
-     * Currently, there is no way to implement the [custom-video-speed] patch in the new player flyout panels,
-     * So calls the old style player flyout panels.
-     *
-     * @param linearLayout [BOTTOM_SHEET_FRAGMENT], {@ComponentHost} is located under linearLayout.
-     */
-    public static void enableOldPlaybackRateMenu(LinearLayout linearLayout) {
-        if (!SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean())
-            return;
-
-        // The RecyclerView is placed on the 1st ChildView.
-        if (linearLayout.getChildCount() != 2)
-            return;
-
-        // Make sure that this ChildView is castable to the RecyclerView.
-        if (!(linearLayout.getChildAt(1) instanceof RecyclerView recyclerView))
-            return;
-
-        // When method called from the abstract class, only the RecyclerView is defined.
-        // ComponentHost is not defined at here.
-        // So we need to add ViewTreeObserver to RecyclerView and check the moment ComponentHost is added to this RecyclerView.
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        // ComponentHost is placed on the 1st ChildView.
-                        if (recyclerView.getChildCount() != 1)
-                            return;
-
-                        // Make sure that this ChildView is castable to the ComponentHost.
-                        if (!(recyclerView.getChildAt(0) instanceof ComponentHost))
-                            return;
-
-                        // Check if [PLAYBACK_RATE_MENU_BOTTOM_SHEET_FRAGMENT] is loaded.
-                        // Since ViewTreeObserver is activated even when [SUBTITLE_MENU_BOTTOM_SHEET_FRAGMENT] are loaded,
-                        // So this check process is absolutely necessary.
-                        if (!PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible)
-                            return;
-
-                        // Hide [BOTTOM_SHEET_FRAGMENT].
-                        linearLayout.setVisibility(View.GONE);
-
-                        // Open old playback rate bottom sheet fragment.
-                        openOldPlaybackRateBottomSheetFragment();
-
-                        // DismissView [R.id.touch_outside] is the 1st ChildView of the 3rd ParentView.
-                        // This is the easiest way to close the new player flyout panels
-                        ((ViewGroup) linearLayout.getParent().getParent().getParent()).getChildAt(0).performClick();
-
-                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                });
     }
 
     public static CharSequence hideFeedFlyoutPanel(CharSequence charSequence) {
@@ -152,12 +67,23 @@ public class FlyoutPanelPatch {
         return charSequence;
     }
 
-    /**
-     * Add command to open Playback Speed Bottom Sheet Fragment in patch.
-     */
-    private static void openOldPlaybackRateBottomSheetFragment() {
-        if (playbackRateBottomSheetClass == null)
-            return;
-        playbackRateBottomSheetClass.getClass();
+    public static void onFlyoutMenuCreate(final LinearLayout linearLayout) {
+        if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) return;
+
+        // The quality menu is a RecyclerView with 3 children. The third child is the "Advanced" quality menu.
+        addRecyclerListener(linearLayout, 3, 2, recyclerView -> {
+            // Check if the current view is the quality menu.
+            if (VideoQualityMenuFilter.isVideoQualityMenuVisible) {
+                VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
+                linearLayout.setVisibility(View.GONE);
+
+                // Click the "Advanced" quality menu to show the "old" quality menu.
+                ((ComponentHost) recyclerView.getChildAt(0)).getChildAt(3).performClick();
+            }
+        });
+    }
+
+    public interface RecyclerViewGlobalLayoutListener {
+        void recyclerOnGlobalLayout(@NonNull RecyclerView recyclerView);
     }
 }
