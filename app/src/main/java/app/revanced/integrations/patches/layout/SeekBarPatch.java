@@ -15,8 +15,8 @@ public class SeekBarPatch {
      */
     public static final int ORIGINAL_SEEKBAR_COLOR = 0xFFFF0000;
 
-    public static boolean enableNewThumbnailPreview(boolean original) {
-        return SettingsEnum.ENABLE_NEW_THUMBNAIL_PREVIEW.getBoolean() || original;
+    public static boolean enableNewThumbnailPreview() {
+        return SettingsEnum.ENABLE_NEW_THUMBNAIL_PREVIEW.getBoolean();
     }
 
     public static boolean enableSeekbarTapping() {
