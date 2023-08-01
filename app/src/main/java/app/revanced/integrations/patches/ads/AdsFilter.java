@@ -2,14 +2,18 @@ package app.revanced.integrations.patches.ads;
 
 import android.view.View;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.integrations.utils.StringTrieSearch;
 
 public final class AdsFilter extends Filter {
-    private final String[] exceptions;
+    private final StringTrieSearch exceptions = new StringTrieSearch();
+
 
     public AdsFilter() {
-        exceptions = new String[]{
+        exceptions.addPatterns(
                 "comment_thread", // skip blocking anything in the comments
                 "download_",
                 "downloads_",
@@ -18,7 +22,7 @@ public final class AdsFilter extends Filter {
                 "playlist_add",
                 "related_video_with_context", // Don't filter anything in the related video component.
                 "|comment." // skip blocking anything in the comments replies
-        };
+        );
 
         final var carouselAd = new StringFilterGroup(
                 SettingsEnum.HIDE_GENERAL_ADS,
@@ -119,10 +123,11 @@ public final class AdsFilter extends Filter {
     }
 
     @Override
-    public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        if (ReVancedUtils.containsAny(path, exceptions))
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (exceptions.matches(path))
             return false;
 
-        return super.isFiltered(path, identifier, object, _protobufBufferArray);
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }

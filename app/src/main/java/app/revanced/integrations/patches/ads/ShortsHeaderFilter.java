@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.patches.utils.NavBarIndexPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 
@@ -15,11 +17,12 @@ public final class ShortsHeaderFilter extends Filter {
     }
 
     @Override
-    boolean isFiltered(final String path, final String identifier, final String object, final byte[] protobufBufferArray) {
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         // 'shelf_header' is also used in the library tab, so use [NavBarIndexPatch] to identify it
         if (!NavBarIndexPatch.isNotLibraryTab())
             return false;
 
-        return this.identifierFilterGroups.contains(identifier);
+        return identifierFilterGroups == matchedList;
     }
 }

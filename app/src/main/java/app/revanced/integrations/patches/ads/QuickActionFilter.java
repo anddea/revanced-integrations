@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
 
 final class QuickActionFilter extends Filter {
@@ -52,9 +54,10 @@ final class QuickActionFilter extends Filter {
     }
 
     @Override
-    public boolean isFiltered(final String path, final String identifier, final String allValue, final byte[] _protobufBufferArray) {
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (path.startsWith("quick_actions.eml|"))
-            return super.isFiltered(path, identifier, allValue, _protobufBufferArray);
+            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
 
         return false;
     }

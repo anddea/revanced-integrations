@@ -1,13 +1,10 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
 
 public final class ShortsFilter extends Filter {
-
-    private final StringFilterGroup reelChannelBar = new StringFilterGroup(
-            null,
-            "reel_channel_bar"
-    );
 
     public ShortsFilter() {
         final var thanksButton = new StringFilterGroup(
@@ -38,11 +35,12 @@ public final class ShortsFilter extends Filter {
     }
 
     @Override
-    boolean isFiltered(final String path, final String identifier, final String object, final byte[] protobufBufferArray) {
-        if (reelChannelBar.check(path).isFiltered())
-            if (this.pathFilterGroups.contains(path))
-                return true;
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (pathFilterGroups == matchedList) {
+            return path.contains("reel_channel_bar");
+        }
 
-        return this.identifierFilterGroups.contains(identifier);
+        return identifierFilterGroups == matchedList;
     }
 }

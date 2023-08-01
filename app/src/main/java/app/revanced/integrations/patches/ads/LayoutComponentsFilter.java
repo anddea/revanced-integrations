@@ -1,20 +1,21 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.integrations.utils.StringTrieSearch;
 
 public final class LayoutComponentsFilter extends Filter {
-    private final String[] exceptions;
-
+    private final StringTrieSearch exceptions = new StringTrieSearch();
     private final CustomFilterGroup custom;
 
     public LayoutComponentsFilter() {
-        exceptions = new String[]{
+        exceptions.addPatterns(
                 "related_video_with_context",
                 "comment_thread", // skip blocking anything in the comments
                 "|comment.", // skip blocking anything in the comments replies
                 "library_recent_shelf"
-        };
+        );
 
         custom = new CustomFilterGroup(
                 SettingsEnum.CUSTOM_FILTER,
@@ -107,6 +108,7 @@ public final class LayoutComponentsFilter extends Filter {
                 albumCard,
                 audioTrackButton,
                 channelMemberShelf,
+                custom,
                 expandableMetadata,
                 feedSurvey,
                 infoPanel,
@@ -125,13 +127,11 @@ public final class LayoutComponentsFilter extends Filter {
     }
 
     @Override
-    public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        if (custom.isEnabled() && custom.check(path).isFiltered())
-            return true;
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (matchedGroup != custom && exceptions.matches(path))
+            return false; // Exceptions are not filtered.
 
-        if (ReVancedUtils.containsAny(path, exceptions))
-            return false;
-
-        return super.isFiltered(path, identifier, object, _protobufBufferArray);
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }

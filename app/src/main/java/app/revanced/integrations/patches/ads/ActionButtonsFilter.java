@@ -1,26 +1,24 @@
 package app.revanced.integrations.patches.ads;
 
-import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
-
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
+import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.StringTrieSearch;
 
 final class ActionButtonsFilter extends Filter {
     private final StringFilterGroup actionButtonRule;
 
-    private final String[] exceptions;
+    private final StringTrieSearch exceptions = new StringTrieSearch();
 
     public ActionButtonsFilter() {
-        exceptions = new String[]{
+        exceptions.addPatterns(
                 "account_link_button",
                 "comment",
                 "download_button",
                 "like_button",
                 "save_to_playlist_button",
                 "video_with_context"
-        };
+        );
 
         actionButtonRule = new StringFilterGroup(
                 null,
@@ -68,13 +66,14 @@ final class ActionButtonsFilter extends Filter {
     }
 
     @Override
-    public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        if (containsAny(path, exceptions) || path.startsWith("CellType|"))
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (exceptions.matches(path) || path.startsWith("CellType|"))
             return false;
 
         if (isEveryFilterGroupEnabled())
             if (actionButtonRule.check(identifier).isFiltered()) return true;
 
-        return super.isFiltered(path, identifier, object, _protobufBufferArray);
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }

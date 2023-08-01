@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
 
 final class ButtonsFilter extends Filter {
@@ -42,7 +44,8 @@ final class ButtonsFilter extends Filter {
                         SettingsEnum.HIDE_ACTION_BUTTON,
                         "ContainerType|video_action_button",
                         "|CellType|CollectionType|CellType|ContainerType|button.eml|"
-                )
+                ),
+                actionBarRule
         );
     }
 
@@ -54,10 +57,12 @@ final class ButtonsFilter extends Filter {
     }
 
     @Override
-    public boolean isFiltered(final String path, final String identifier, final String object, final byte[] _protobufBufferArray) {
-        if (isEveryFilterGroupEnabled())
-            if (actionBarRule.check(identifier).isFiltered()) return true;
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (matchedGroup == actionBarRule) {
+            return isEveryFilterGroupEnabled();
+        }
 
-        return super.isFiltered(path, identifier, object, _protobufBufferArray);
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }

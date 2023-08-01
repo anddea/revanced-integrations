@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
 
 public final class VideoQualityMenuFilter extends Filter {
@@ -14,8 +16,9 @@ public final class VideoQualityMenuFilter extends Filter {
     }
 
     @Override
-    boolean isFiltered(final String path, final String identifier, final String object, final byte[] protobufBufferArray) {
-        isVideoQualityMenuVisible = super.isFiltered(path, identifier, object, protobufBufferArray);
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        isVideoQualityMenuVisible = true;
 
         return false;
     }

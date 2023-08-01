@@ -3,17 +3,21 @@ package app.revanced.music.patches.ads;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
+import app.revanced.music.utils.StringTrieSearch;
+import app.revanced.music.utils.TrieSearch;
 
 abstract class FilterGroup<T> {
     protected final SettingsEnum setting;
@@ -28,23 +32,44 @@ abstract class FilterGroup<T> {
     public FilterGroup(final SettingsEnum setting, final T... filters) {
         this.setting = setting;
         this.filters = filters;
+        if (filters.length == 0) {
+            throw new IllegalArgumentException("Must use one or more filter patterns (zero specified)");
+        }
     }
 
     public boolean isEnabled() {
-        return setting.getBoolean();
+        return setting == null || setting.getBoolean();
+    }
+
+    /**
+     * @return If {@link FilterGroupList} should include this group when searching.
+     * By default, all filters are included except non enabled settings that require reboot.
+     */
+    public boolean includeInSearch() {
+        return isEnabled() || !setting.rebootApp;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " + (setting == null ? "(null setting)" : setting);
     }
 
     public abstract FilterGroupResult check(final T stack);
 
     final static class FilterGroupResult {
-        private final boolean filtered;
-        private final SettingsEnum setting;
+        SettingsEnum setting;
+        boolean filtered;
 
-        public FilterGroupResult(final SettingsEnum setting, final boolean filtered) {
+        FilterGroupResult(SettingsEnum setting, boolean filtered) {
             this.setting = setting;
             this.filtered = filtered;
         }
 
+        /**
+         * A null value if the group has no setting,
+         * or if no match is returned from {@link FilterGroupList#check(Object)}.
+         */
         public SettingsEnum getSetting() {
             return setting;
         }
@@ -57,35 +82,57 @@ abstract class FilterGroup<T> {
 
 class StringFilterGroup extends FilterGroup<String> {
 
-    /**
-     * {@link FilterGroup#FilterGroup(SettingsEnum, Object[])}
-     */
     public StringFilterGroup(final SettingsEnum setting, final String... filters) {
         super(setting, filters);
     }
 
     @Override
     public FilterGroupResult check(final String string) {
-        return new FilterGroupResult(setting, string != null && ReVancedUtils.containsAny(string, filters));
+        return new FilterGroupResult(setting,
+                (setting == null || setting.getBoolean()) && ReVancedUtils.containsAny(string, filters));
     }
 }
 
 final class CustomFilterGroup extends StringFilterGroup {
 
-    /**
-     * {@link FilterGroup#FilterGroup(SettingsEnum, Object[])}
-     */
     public CustomFilterGroup(final SettingsEnum setting, final SettingsEnum filter) {
         super(setting, filter.getString().split(","));
     }
 }
 
 abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<T> {
-    private final ArrayList<T> filterGroups = new ArrayList<>();
+
+    private final List<T> filterGroups = new ArrayList<>();
+    /**
+     * Search graph. Created only if needed.
+     */
+    private TrieSearch<V> search;
 
     @SafeVarargs
-    protected final void addAll(final T... filterGroups) {
-        this.filterGroups.addAll(Arrays.asList(filterGroups));
+    protected final void addAll(final T... groups) {
+        filterGroups.addAll(Arrays.asList(groups));
+        search = null; // Rebuild, if already created.
+    }
+
+    protected final void buildSearch() {
+        LogHelper.printDebug(LithoFilterPatch.class, "Creating prefix search tree for: " + this);
+        search = createSearchGraph();
+        for (T group : filterGroups) {
+            if (!group.includeInSearch()) {
+                continue;
+            }
+            for (V pattern : group.filters) {
+                search.addPattern(pattern, (textSearched, matchedStartIndex, callbackParameter) -> {
+                    if (group.isEnabled()) {
+                        FilterGroup.FilterGroupResult result = (FilterGroup.FilterGroupResult) callbackParameter;
+                        result.setting = group.setting;
+                        result.filtered = true;
+                        return true;
+                    }
+                    return false;
+                });
+            }
+        }
     }
 
     @NonNull
@@ -107,46 +154,58 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
         return filterGroups.spliterator();
     }
 
-    protected boolean contains(final V stack) {
-        for (T filterGroup : this) {
-            if (!filterGroup.isEnabled())
-                continue;
-
-            var result = filterGroup.check(stack);
-            if (result.isFiltered()) {
-                return true;
-            }
+    protected FilterGroup.FilterGroupResult check(V stack) {
+        if (search == null) {
+            buildSearch(); // Lazy load.
         }
-
-        return false;
+        FilterGroup.FilterGroupResult result = new FilterGroup.FilterGroupResult(null, false);
+        search.matches(stack, result);
+        return result;
     }
+
+    protected abstract TrieSearch<V> createSearchGraph();
 }
 
 final class StringFilterGroupList extends FilterGroupList<String, StringFilterGroup> {
+    protected StringTrieSearch createSearchGraph() {
+        return new StringTrieSearch();
+    }
 }
 
 abstract class Filter {
-    final protected StringFilterGroupList pathFilterGroups = new StringFilterGroupList();
-    final protected StringFilterGroupList identifierFilterGroups = new StringFilterGroupList();
+    /**
+     * All group filters must be set before the constructor call completes.
+     * Otherwise {@link #isFiltered(String, String, FilterGroupList, FilterGroup, int)}
+     * will never be called for any matches.
+     */
+
+    protected final StringFilterGroupList pathFilterGroups = new StringFilterGroupList();
+    protected final StringFilterGroupList identifierFilterGroups = new StringFilterGroupList();
+
 
     /**
-     * Check if the given path, identifier or protobuf buffer is filtered by any
-     * {@link FilterGroup}.
+     * Called after an enabled filter has been matched.
+     * Default implementation is to always filter the matched item.
+     * Subclasses can perform additional or different checks if needed.
+     * <p>
+     * Method is called off the main thread.
      *
-     * @return True if filtered, false otherwise.
+     * @param matchedList  The list the group filter belongs to.
+     * @param matchedGroup The actual filter that matched.
+     * @param matchedIndex Matched index of string/array.
+     * @return True if the litho item should be filtered out.
      */
-    boolean isFiltered(final String path, final String identifier) {
-        if (pathFilterGroups.contains(path)) {
-            LogHelper.printDebug(LithoFilterPatch.class, String.format("Filtered path: %s", path));
-            return true;
+    @SuppressWarnings("rawtypes")
+    boolean isFiltered(String path, @Nullable String identifier,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) {
+            if (pathFilterGroups == matchedList) {
+                LogHelper.printDebug(LithoFilterPatch.class, getClass().getSimpleName() + " Filtered path: " + path);
+            } else if (identifierFilterGroups == matchedList) {
+                LogHelper.printDebug(LithoFilterPatch.class, getClass().getSimpleName() + " Filtered identifier: " + identifier);
+            }
         }
-
-        if (identifierFilterGroups.contains(identifier)) {
-            LogHelper.printDebug(LithoFilterPatch.class, String.format("Filtered identifier: %s", identifier));
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }
 
@@ -156,31 +215,82 @@ public final class LithoFilterPatch {
     private static final Filter[] filters = new Filter[]{
             new DummyFilter() // Replaced by patch.
     };
+    private static final StringTrieSearch pathSearchTree = new StringTrieSearch();
+    private static final StringTrieSearch identifierSearchTree = new StringTrieSearch();
 
+    static {
+        for (Filter filter : filters) {
+            filterGroupLists(pathSearchTree, filter, filter.pathFilterGroups);
+            filterGroupLists(identifierSearchTree, filter, filter.identifierFilterGroups);
+        }
+
+        LogHelper.printDebug(LithoFilterPatch.class, "Using: "
+                + pathSearchTree.numberOfPatterns() + " path filters"
+                + " (" + pathSearchTree.getEstimatedMemorySize() + " KB), "
+                + identifierSearchTree.numberOfPatterns() + " identifier filters"
+                + " (" + identifierSearchTree.getEstimatedMemorySize() + " KB), ");
+    }
+
+    private static <T> void filterGroupLists(TrieSearch<T> pathSearchTree,
+                                             Filter filter, FilterGroupList<T, ? extends FilterGroup<T>> list) {
+        for (FilterGroup<T> group : list) {
+            if (!group.includeInSearch()) {
+                continue;
+            }
+            for (T pattern : group.filters) {
+                pathSearchTree.addPattern(pattern, (textSearched, matchedStartIndex, callbackParameter) -> {
+                            if (!group.isEnabled()) return false;
+                            LithoFilterParameters parameters = (LithoFilterParameters) callbackParameter;
+                            return filter.isFiltered(parameters.path, parameters.identifier,
+                                    list, group, matchedStartIndex);
+                        }
+                );
+            }
+        }
+    }
+
+    /**
+     * Injection point.  Called off the main thread.
+     */
     @SuppressWarnings("unused")
-    public static boolean filter(final StringBuilder pathBuilder, final String identifier) {
-        // TODO: Maybe this can be moved to the Filter class, to prevent unnecessary
-        // string creation
-        // because some filters might not need the path.
-        var path = pathBuilder.toString();
+    public static boolean filter(@NonNull StringBuilder pathBuilder, @Nullable String lithoIdentifier) {
+        try {
+            // It is assumed that protobufBuffer is empty as well in this case.
+            if (pathBuilder.length() == 0)
+                return false;
 
-        // It is assumed that protobufBuffer is empty as well in this case.
-        if (path.isEmpty())
-            return false;
+            LithoFilterParameters parameter = new LithoFilterParameters(pathBuilder, lithoIdentifier);
+            LogHelper.printDebug(LithoFilterPatch.class, "Searching " + parameter);
 
-        LogHelper.printDebug(LithoFilterPatch.class, String.format(
-                "Searching (ID: %s): %s",
-                identifier, path));
-
-        for (var filter : filters) {
-            var filtered = filter.isFiltered(path, identifier);
-
-            LogHelper.printDebug(LithoFilterPatch.class, String.format("%s (ID: %s): %s", filtered ? "Filtered" : "Unfiltered", identifier, path));
-
-            if (filtered)
-                return true;
+            if (pathSearchTree.matches(parameter.path, parameter)) return true;
+            if (parameter.identifier != null) {
+                if (identifierSearchTree.matches(parameter.identifier, parameter)) return true;
+            }
+        } catch (Exception ex) {
+            LogHelper.printException(LithoFilterPatch.class, "Litho filter failure", ex);
         }
 
         return false;
+    }
+
+    /**
+     * Simple wrapper to pass the litho parameters through the prefix search.
+     */
+    private static final class LithoFilterParameters {
+        final String path;
+        final String identifier;
+
+        LithoFilterParameters(StringBuilder lithoPath, String lithoIdentifier) {
+            this.path = lithoPath.toString();
+            this.identifier = lithoIdentifier;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            // Estimated percentage of the buffer that are Strings.
+
+            return "ID: " + identifier + " Path: " + path;
+        }
     }
 }
