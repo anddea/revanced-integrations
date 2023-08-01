@@ -114,6 +114,7 @@ public class PlayerPatch {
 
         try {
             ((LinearLayout) coreContainer.getChildAt(0)).getChildAt(1).performClick();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 }

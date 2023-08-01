@@ -48,7 +48,8 @@ public class GeneralPatch {
     }
 
     public static void hideAccountMenu(@NonNull Spanned span) {
-        if (!(compactLink instanceof ViewGroup viewGroup) || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean()) return;
+        if (!(compactLink instanceof ViewGroup viewGroup) || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean())
+            return;
 
         String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS.getString().split("\\n");
 
