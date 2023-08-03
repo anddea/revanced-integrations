@@ -38,8 +38,8 @@ public class LayoutPatch {
         }
     }
 
-    public static boolean enableNewLayout(boolean original) {
-        return SettingsEnum.ENABLE_NEW_LAYOUT.getBoolean() || original;
+    public static boolean enableNewLayout() {
+        return SettingsEnum.ENABLE_NEW_LAYOUT.getBoolean();
     }
 
     public static boolean enableOldStyleMiniPlayer(boolean original) {
