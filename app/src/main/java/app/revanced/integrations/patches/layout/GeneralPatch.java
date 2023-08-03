@@ -101,6 +101,10 @@ public class GeneralPatch {
         return SettingsEnum.HIDE_FLOATING_MICROPHONE.getBoolean() || original;
     }
 
+    public static void hideLatestVideosButton(View view) {
+        hideViewUnderCondition(SettingsEnum.HIDE_LATEST_VIDEOS_BUTTON.getBoolean(), view);
+    }
+
     public static void hideLoadMoreButton(View view) {
         hideViewBy0dpUnderCondition(SettingsEnum.HIDE_LOAD_MORE_BUTTON.getBoolean(), view);
     }

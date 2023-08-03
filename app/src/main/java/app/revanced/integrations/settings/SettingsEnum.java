@@ -127,6 +127,7 @@ public enum SettingsEnum {
     HIDE_CROWDFUNDING_BOX("revanced_hide_crowdfunding_box", BOOLEAN, TRUE, true),
     HIDE_EMAIL_ADDRESS("revanced_hide_email_address", BOOLEAN, TRUE, true),
     HIDE_FLOATING_MICROPHONE("revanced_hide_floating_microphone", BOOLEAN, TRUE, true),
+    HIDE_LATEST_VIDEOS_BUTTON("revanced_hide_latest_videos_button", BOOLEAN, TRUE),
     HIDE_LOAD_MORE_BUTTON("revanced_hide_load_more_button", BOOLEAN, TRUE, true),
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", BOOLEAN, FALSE),
     HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
