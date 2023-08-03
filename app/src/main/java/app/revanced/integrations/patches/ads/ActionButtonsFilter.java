@@ -17,6 +17,7 @@ final class ActionButtonsFilter extends Filter {
                 "download_button",
                 "like_button",
                 "save_to_playlist_button",
+                "video_metadata_carousel",
                 "video_with_context"
         );
 

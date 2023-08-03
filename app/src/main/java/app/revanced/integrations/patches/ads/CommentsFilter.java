@@ -26,6 +26,7 @@ final class CommentsFilter extends Filter {
         final var previewComment = new StringFilterGroup(
                 SettingsEnum.HIDE_PREVIEW_COMMENT,
                 "|carousel_item",
+                "|carousel_listener",
                 "comments_entry_point_teaser",
                 "comments_entry_point_simplebox"
         );
