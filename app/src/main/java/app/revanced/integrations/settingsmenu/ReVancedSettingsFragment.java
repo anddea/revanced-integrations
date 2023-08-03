@@ -184,7 +184,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setPatchesInformation();
         setPlaybackSpeed();
         setSpoofAppVersionTarget();
-        setSplashAnimationPreference();
         setVideoQuality(false);
         setVideoQuality(true);
     }
@@ -513,25 +512,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             });
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setOpenSettingsPreference" + th);
-        }
-    }
-
-    /**
-     * Set Splash Animation Preference Restricts
-     */
-    private void setSplashAnimationPreference() {
-        SwitchPreference preference = (SwitchPreference) findPreference(SettingsEnum.ENABLE_NEW_SPLASH_ANIMATION.path);
-        if (preference == null)
-            return;
-
-        final boolean isSplashAnimationSupported = ReVancedHelper.isSupportSplashAnimation();
-
-        if (isSplashAnimationSupported) {
-            preference.setSummaryOn(str("revanced_enable_new_splash_animation_summary_on"));
-            preference.setSummaryOff(str("revanced_enable_new_splash_animation_summary_off"));
-        } else {
-            preference.setSummary(str("revanced_enable_new_splash_animation_warning"));
-            preference.setEnabled(false);
         }
     }
 

@@ -5,7 +5,6 @@ import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 
 import java.util.Objects;
 
@@ -17,7 +16,6 @@ public class ReVancedHelper {
     private static final String DEFAULT_VERSION_NAME = "18.20.39";
     private static final int HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE = 1538379200; // 18.24.33
     private static final int NEW_PLAYER_FLYOUT_PANEL_APPLIED = 1538115008; // 18.22.32
-    private static final int SPLASH_ANIMATION_TARGET_VERSION_CODE = 1538115008; // 18.22.32
 
     private ReVancedHelper() {
     } // utility class
@@ -112,12 +110,6 @@ public class ReVancedHelper {
 
     public static boolean isSupportHookDownloadButton() {
         return isSpoofedTargetVersionGez("18.24.00") || getVersionCode() >= HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE;
-    }
-
-    public static boolean isSupportSplashAnimation() {
-        final boolean aboveAndroidS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
-
-        return aboveAndroidS || getVersionCode() >= SPLASH_ANIMATION_TARGET_VERSION_CODE;
     }
 
     public static boolean isTablet() {
