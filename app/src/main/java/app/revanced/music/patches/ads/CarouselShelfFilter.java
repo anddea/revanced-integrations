@@ -15,6 +15,7 @@ public final class CarouselShelfFilter extends Filter {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public CarouselShelfFilter() {
         exceptions.addPatterns(
+                "comment_thread",
                 "menu",
                 "root",
                 "-count",
