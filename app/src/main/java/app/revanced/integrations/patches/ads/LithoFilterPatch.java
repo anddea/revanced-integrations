@@ -447,13 +447,15 @@ public final class LithoFilterPatch {
         public String toString() {
             // Estimate the percentage of the buffer that are Strings.
             StringBuilder builder = new StringBuilder(protoBuffer.length / 2);
-            builder.append("ID: ");
+            builder.append("\nID: ");
             builder.append(identifier);
-            builder.append(" Path: ");
+            builder.append("\nPath: ");
             builder.append(path);
-            // TODO: allow turning on/off buffer logging with a debug setting?
-            builder.append(" BufferStrings: ");
-            findAsciiStrings(builder, protoBuffer);
+
+            if (SettingsEnum.ENABLE_DEBUG_BUFFER_LOGGING.getBoolean()) {
+                builder.append("\nBufferStrings: ");
+                findAsciiStrings(builder, protoBuffer);
+            }
 
             return builder.toString();
         }

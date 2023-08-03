@@ -293,7 +293,7 @@ public final class LithoFilterPatch {
         public String toString() {
             // Estimated percentage of the buffer that are Strings.
 
-            return "ID: " + identifier + " Path: " + path;
+            return "\nID: " + identifier + "\nPath: " + path;
         }
     }
 }
