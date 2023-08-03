@@ -106,7 +106,7 @@ final class CustomFilterGroup extends StringFilterGroup {
  */
 class ByteArrayFilterGroup extends FilterGroup<byte[]> {
 
-    private int[][] failurePatterns;
+    private volatile int[][] failurePatterns;
 
     public ByteArrayFilterGroup(SettingsEnum setting, byte[]... filters) {
         super(setting, filters);
@@ -149,13 +149,14 @@ class ByteArrayFilterGroup extends FilterGroup<byte[]> {
         return failure;
     }
 
-    private void buildFailurePatterns() {
-        LogHelper.printDebug(LithoFilterPatch.class, "Building failure array for: " + this);
-        failurePatterns = new int[filters.length][];
+    private synchronized void buildFailurePatterns() {
+        if (failurePatterns != null) return; // Thread race and another thread already initialized the search.
+        int[][] failurePatterns = new int[filters.length][];
         int i = 0;
         for (byte[] pattern : filters) {
             failurePatterns[i++] = createFailurePattern(pattern);
         }
+        this.failurePatterns = failurePatterns; // Must set after initialization finishes.
     }
 
     @Override
@@ -190,7 +191,7 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
     /**
      * Search graph. Created only if needed.
      */
-    private TrieSearch<V> search;
+    private volatile TrieSearch<V> search;
 
     @SafeVarargs
     protected final void addAll(final T... groups) {
@@ -198,9 +199,11 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
         search = null; // Rebuild, if already created.
     }
 
-    protected final void buildSearch() {
+    protected final synchronized void buildSearch() {
+        // Since litho filtering is multi-threaded, this method can be concurrently called by multiple threads.
+        if (search != null) return; // Thread race and another thread already initialized the search.
         LogHelper.printDebug(LithoFilterPatch.class, "Creating prefix search tree for: " + this);
-        search = createSearchGraph();
+        TrieSearch<V> search = createSearchGraph();
         for (T group : filterGroups) {
             if (!group.includeInSearch()) {
                 continue;
@@ -217,6 +220,7 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
                 });
             }
         }
+        this.search = search; // Must set after it's completely initialized.
     }
 
     @NonNull
