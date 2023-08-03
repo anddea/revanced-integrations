@@ -37,6 +37,7 @@ public enum SettingsEnum {
     HIDE_CAROUSEL_SHELF("revanced_hide_carousel_shelf", BOOLEAN, FALSE, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", BOOLEAN, TRUE),
     HIDE_CATEGORY_BAR("revanced_hide_category_bar", BOOLEAN, TRUE, true),
+    HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
     HIDE_NAVIGATION_LABEL("revanced_hide_navigation_label", BOOLEAN, FALSE, true),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, FALSE),
     HIDE_PLAYLIST_CARD("revanced_hide_playlist_card", BOOLEAN, FALSE, true),
