@@ -38,16 +38,13 @@ public enum SettingsEnum {
 
 
     // Bottom Player
-    HIDE_ACTION_BUTTON("revanced_hide_action_buttons", BOOLEAN, FALSE),
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),
     HIDE_DISLIKE_BUTTON("revanced_hide_button_dislike", BOOLEAN, FALSE),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", BOOLEAN, FALSE),
     HIDE_LIKE_BUTTON("revanced_hide_button_like", BOOLEAN, FALSE),
+    HIDE_LIVE_CHAT_BUTTON("revanced_hide_button_live_chat", BOOLEAN, FALSE),
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", BOOLEAN, FALSE),
     HIDE_REWARDS_BUTTON("revanced_hide_button_rewards", BOOLEAN, FALSE),
-
-    // Experimental Flags
-    HIDE_LIVE_CHAT_BUTTON("revanced_hide_button_live_chat", BOOLEAN, FALSE),
     HIDE_REMIX_BUTTON("revanced_hide_button_remix", BOOLEAN, FALSE),
     HIDE_REPORT_BUTTON("revanced_hide_button_report", BOOLEAN, FALSE),
     HIDE_SHARE_BUTTON("revanced_hide_button_share", BOOLEAN, FALSE),

@@ -329,6 +329,12 @@ public final class LithoFilterPatch {
     private static final StringTrieSearch allValueSearchTree = new StringTrieSearch();
     private static final ByteTrieSearch protoSearchTree = new ByteTrieSearch();
 
+    /**
+     * Because litho filtering is multi-threaded and the buffer is passed in from a different injection point,
+     * the buffer is saved to a ThreadLocal so each calling thread does not interfere with other threads.
+     */
+    private static final ThreadLocal<ByteBuffer> bufferThreadLocal = new ThreadLocal<>();
+
     static {
         for (Filter filter : filters) {
             filterGroupLists(pathSearchTree, filter, filter.pathFilterGroups);
@@ -364,24 +370,38 @@ public final class LithoFilterPatch {
         }
     }
 
+    public static void setProtoBuffer(@NonNull ByteBuffer protobufBuffer) {
+        bufferThreadLocal.set(protobufBuffer);
+    }
+
     /**
-     * Injection point.  Called off the main thread.
+     * Injection point.  Called off the main thread, and commonly called by multiple threads at the same time.
      */
     @SuppressWarnings("unused")
     public static boolean filter(@NonNull String lithoPath, @Nullable String lithoIdentifier,
-                                 @NonNull String allValue, @Nullable byte[] bufferArray) {
+                                 @NonNull String allValue) {
         try {
-            LithoFilterParameters parameter = new LithoFilterParameters(lithoPath, lithoIdentifier, allValue, bufferArray);
+            ByteBuffer protobufBuffer = bufferThreadLocal.get();
+            if (protobufBuffer == null) {
+                LogHelper.printException(LithoFilterPatch.class, "Proto buffer is null"); // Should never happen
+                return false;
+            }
+
+            LithoFilterParameters parameter = new LithoFilterParameters(lithoPath, lithoIdentifier, allValue, protobufBuffer.array());
             LogHelper.printDebug(LithoFilterPatch.class, "Searching " + parameter);
 
-            if (pathSearchTree.matches(parameter.path, parameter)) return true;
             if (parameter.identifier != null) {
                 if (identifierSearchTree.matches(parameter.identifier, parameter)) return true;
             }
+            if (pathSearchTree.matches(parameter.path, parameter)) return true;
             if (allValueSearchTree.matches(parameter.allValue, parameter)) return true;
             if (protoSearchTree.matches(parameter.protoBuffer, parameter)) return true;
         } catch (Exception ex) {
             LogHelper.printException(LithoFilterPatch.class, "Litho filter failure", ex);
+        } finally {
+            // Cleanup and remove the value,
+            // otherwise this will cause a memory leak if Litho is using a non fixed thread pool.
+            bufferThreadLocal.remove();
         }
 
         return false;
@@ -390,14 +410,14 @@ public final class LithoFilterPatch {
     /**
      * Injection point.
      */
-    public static boolean filters(@NonNull StringBuilder pathBuilder, @NonNull String identifier, @NonNull Object object, @NonNull ByteBuffer protobufBuffer) {
+    public static boolean filters(@NonNull StringBuilder pathBuilder, @NonNull String identifier, @NonNull Object object) {
         var path = pathBuilder.toString();
         var allValue = object.toString();
 
         if (pathBuilder.length() == 0 || path.isEmpty() || allValue.isEmpty())
             return false;
 
-        return LowLevelFilter.filter(path, allValue) || filter(path, identifier, allValue, protobufBuffer.array());
+        return LowLevelFilter.filters(path, allValue) || filter(path, identifier, allValue);
     }
 
     /**

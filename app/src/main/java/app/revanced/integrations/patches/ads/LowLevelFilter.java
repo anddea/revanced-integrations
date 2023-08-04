@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.NonNull;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -9,6 +11,7 @@ import java.util.stream.Stream;
 import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
+import app.revanced.integrations.utils.LogHelper;
 
 
 public class LowLevelFilter {
@@ -41,12 +44,35 @@ public class LowLevelFilter {
             "channel_profile_tablet.eml",
             "|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|button.eml|"
     );
-    public static ByteBuffer byteBuffer;
+    private static final ThreadLocal<ByteBuffer> lowlevelBufferThreadLocal = new ThreadLocal<>();
 
-    public static boolean filter(String path, String value) {
-        if (ignoredList.stream().anyMatch(path::contains))
-            return false;
+    public static void setProtoBuffer(@NonNull ByteBuffer protobufBuffer) {
+        lowlevelBufferThreadLocal.set(protobufBuffer);
+    }
 
+    public static boolean filters(String path, String allValue) {
+        try {
+            if (ignoredList.stream().anyMatch(path::contains))
+                return false;
+
+            ByteBuffer protobufBuffer = lowlevelBufferThreadLocal.get();
+            if (protobufBuffer == null) {
+                LogHelper.printException(LowLevelFilter.class, "Proto buffer is null"); // Should never happen
+                return false;
+            }
+
+            return filter(path, allValue, new String(protobufBuffer.array(), StandardCharsets.UTF_8));
+        } catch (Exception ex) {
+            LogHelper.printException(LowLevelFilter.class, "Litho filter failure", ex);
+        } finally {
+            // Cleanup and remove the value,
+            // otherwise this will cause a memory leak if Litho is using a non fixed thread pool.
+            lowlevelBufferThreadLocal.remove();
+        }
+        return false;
+    }
+
+    private static boolean filter(String path, String allValue, String bufferString) {
         int count = 0;
         if (PatchStatus.LayoutComponent()) {
             // Browse store button needs a bit of a tricky filter
@@ -59,7 +85,7 @@ public class LowLevelFilter {
             // Survey banners are shown everywhere, so we handle them in low-level filters
             // e.g. Home Feed, Search Results, Related Videos, Comments, and Shorts
             if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
-                    value.contains("_survey")) count++;
+                    allValue.contains("_survey")) count++;
 
             // Descriptions banner at the bottom of thumbnails are also shown in various places
             if (SettingsEnum.HIDE_GRAY_DESCRIPTION.getBoolean() &&
@@ -68,9 +94,9 @@ public class LowLevelFilter {
             // Official header of the search results can be identified through another byteBuffer
             if (SettingsEnum.HIDE_OFFICIAL_HEADER.getBoolean() &&
                     Stream.of("shelf_header")
-                            .allMatch(value::contains) &&
+                            .allMatch(allValue::contains) &&
                     Stream.of("YTSans-SemiBold", "sans-serif-medium")
-                            .allMatch(new String(byteBuffer.array(), StandardCharsets.UTF_8)::contains))
+                            .allMatch(bufferString::contains))
                 count++;
         }
 
@@ -83,7 +109,7 @@ public class LowLevelFilter {
         if (PatchStatus.SuggestedActions() && !PlayerType.getCurrent().isNoneOrHidden()) {
             // It is a single filter to separate into independent patches
             if (SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean() &&
-                    value.contains("suggested_action")) count++;
+                    allValue.contains("suggested_action")) count++;
         }
 
         return count > 0;
