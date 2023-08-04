@@ -13,21 +13,21 @@ import androidx.annotation.NonNull;
 public class MicroGPatch {
     private static final String MICROG_VENDOR = "com.mgoogle";
     private static final String MICROG_PACKAGE_NAME = MICROG_VENDOR + ".android.gms";
-    private static final Uri VANCED_MICROG_PROVIDER = Uri.parse("content://" + MICROG_VENDOR + ".android.gsf.gservices/prefix");
+    private static final Uri MICROG_PROVIDER = Uri.parse("content://" + MICROG_VENDOR + ".android.gsf.gservices/prefix");
 
     public static void checkAvailability(@NonNull Context context) {
         try {
             context.getPackageManager().getPackageInfo(MICROG_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
         } catch (PackageManager.NameNotFoundException exception) {
-            showToastShort(str("microg_not_installed_warning"));
-            showToastShort(str("microg_not_installed_notice"));
+            showToastShort(context, str("microg_not_installed_warning"));
+            showToastShort(context, str("microg_not_installed_notice"));
 
             System.exit(0);
         }
 
-        try (var client = context.getContentResolver().acquireContentProviderClient(VANCED_MICROG_PROVIDER)) {
+        try (var client = context.getContentResolver().acquireContentProviderClient(MICROG_PROVIDER)) {
             if (client != null) return;
-            showToastLong(str("microg_not_running_warning"));
+            showToastLong(context, str("microg_not_running_warning"));
         }
     }
 }
