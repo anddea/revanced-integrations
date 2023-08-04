@@ -82,6 +82,16 @@ public final class VideoInformation {
     }
 
     /**
+     * Id of the current video playing.  Includes Shorts.
+     *
+     * @return The id of the video. Empty string if not set yet.
+     */
+    @NonNull
+    public static String getVideoId() {
+        return videoId;
+    }
+
+    /**
      * Injection point.
      *
      * @param newlyLoadedVideoId id of the current video
@@ -93,12 +103,39 @@ public final class VideoInformation {
     }
 
     /**
+     * Length of the current video playing.  Includes Shorts.
+     *
+     * @return The length of the video in milliseconds.
+     * If the video is not yet loaded, or if the video is playing in the background with no video visible,
+     * then this returns zero.
+     */
+    public static long getVideoLength() {
+        return videoLength;
+    }
+
+    /**
      * Injection point.
      *
      * @param length The length of the video in milliseconds.
      */
     public static void setVideoLength(final long length) {
         videoLength = length;
+    }
+
+    /**
+     * Playback time of the current video playing.  Includes Shorts.
+     * <p>
+     * Value will lag behind the actual playback time by a variable amount based on the playback speed.
+     * <p>
+     * If playback speed is 2.0x, this value may be up to 2000ms behind the actual playback time.
+     * If playback speed is 1.0x, this value may be up to 1000ms behind the actual playback time.
+     * If playback speed is 0.5x, this value may be up to 500ms behind the actual playback time.
+     * Etc.
+     *
+     * @return The time of the video in milliseconds. -1 if not set yet.
+     */
+    public static long getVideoTime() {
+        return videoTime;
     }
 
     /**
@@ -112,51 +149,13 @@ public final class VideoInformation {
     }
 
     /**
-     * Id of the current video playing.  Includes Shorts.
-     *
-     * @return The id of the video. Empty string if not set yet.
-     */
-    @NonNull
-    public static String getVideoId() {
-        return videoId;
-    }
-
-    /**
-     * Length of the current video playing.  Includes Shorts.
-     *
-     * @return The length of the video in milliseconds.
-     *         If the video is not yet loaded, or if the video is playing in the background with no video visible,
-     *         then this returns zero.
-     */
-    public static long getVideoLength() {
-       return videoLength;
-    }
-
-    /**
-     * Playback time of the current video playing.  Includes Shorts.
-     *
-     * Value will lag behind the actual playback time by a variable amount based on the playback speed.
-     *
-     * If playback speed is 2.0x, this value may be up to 2000ms behind the actual playback time.
-     * If playback speed is 1.0x, this value may be up to 1000ms behind the actual playback time.
-     * If playback speed is 0.5x, this value may be up to 500ms behind the actual playback time.
-     * Etc.
-     *
-     * @return The time of the video in milliseconds. -1 if not set yet.
-     */
-    public static long getVideoTime() {
-        return videoTime;
-    }
-
-    /**
      * @return If the playback is at the end of the video.
-     *
+     * <p>
      * If video is playing in the background with no video visible,
      * this always returns false (even if the video is actually at the end).
-     *
+     * <p>
      * This is equivalent to checking for {@link VideoState#ENDED},
      * but can give a more up to date result for code calling from some hooks.
-     *
      * @see VideoState
      */
     public static boolean isAtEndOfVideo() {

@@ -17,8 +17,6 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-import app.revanced.music.settings.SettingsEnum;
-
 public class ReVancedUtils {
     @SuppressLint("StaticFieldLeak")
     public static Context context;

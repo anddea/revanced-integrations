@@ -25,8 +25,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import app.revanced.integrations.settings.SettingsEnum;
-
 public class ReVancedUtils {
     /**
      * General purpose pool for network calls and other background tasks.

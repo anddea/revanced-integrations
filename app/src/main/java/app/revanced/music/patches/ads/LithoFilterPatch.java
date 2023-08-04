@@ -22,6 +22,7 @@ import app.revanced.music.utils.TrieSearch;
 abstract class FilterGroup<T> {
     protected final SettingsEnum setting;
     protected final T[] filters;
+
     /**
      * Initialize a new filter group.
      *
@@ -116,7 +117,8 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
 
     protected final synchronized void buildSearch() {
         // Since litho filtering is multi-threaded, this method can be concurrently called by multiple threads.
-        if (search != null) return; // Thread race and another thread already initialized the search.
+        if (search != null)
+            return; // Thread race and another thread already initialized the search.
         LogHelper.printDebug(LithoFilterPatch.class, "Creating prefix search tree for: " + this);
         TrieSearch<V> search = createSearchGraph();
         for (T group : filterGroups) {

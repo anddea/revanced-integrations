@@ -7,15 +7,6 @@ import java.util.Objects;
 
 public final class ByteTrieSearch extends TrieSearch<byte[]> {
 
-    private static final class ByteTrieNode extends TrieNode<byte[]> {
-        TrieNode<byte[]> createNode() {
-            return new ByteTrieNode();
-        }
-        char getCharValue(byte[] text, int index) {
-            return (char) text[index];
-        }
-    }
-
     public ByteTrieSearch() {
         super(new ByteTrieNode());
     }
@@ -33,6 +24,16 @@ public final class ByteTrieSearch extends TrieSearch<byte[]> {
     @Override
     public boolean matches(@NonNull byte[] textToSearch, @Nullable Object callbackParameter) {
         return super.matches(textToSearch, textToSearch.length, callbackParameter);
+    }
+
+    private static final class ByteTrieNode extends TrieNode<byte[]> {
+        TrieNode<byte[]> createNode() {
+            return new ByteTrieNode();
+        }
+
+        char getCharValue(byte[] text, int index) {
+            return (char) text[index];
+        }
     }
 
 }

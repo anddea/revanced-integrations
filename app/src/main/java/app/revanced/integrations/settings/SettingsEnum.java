@@ -10,7 +10,6 @@ import static app.revanced.integrations.settings.SettingsEnum.ReturnType.STRING;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.RYD;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

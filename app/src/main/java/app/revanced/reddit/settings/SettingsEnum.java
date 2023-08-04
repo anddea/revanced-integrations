@@ -83,6 +83,7 @@ public enum SettingsEnum {
     SettingsEnum(String path, ReturnType returnType, Object defaultValue) {
         this(path, returnType, defaultValue, SharedPrefCategory.REDDIT, false, "", "");
     }
+
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, String title, String summary) {
         this(path, returnType, defaultValue, SharedPrefCategory.REDDIT, false, title, summary);
     }

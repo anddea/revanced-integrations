@@ -10,15 +10,6 @@ import java.util.Objects;
  */
 public final class StringTrieSearch extends TrieSearch<String> {
 
-    private static final class StringTrieNode extends TrieNode<String> {
-        TrieNode<String> createNode() {
-            return new StringTrieNode();
-        }
-        char getCharValue(String text, int index) {
-            return text.charAt(index);
-        }
-    }
-
     public StringTrieSearch() {
         super(new StringTrieNode());
     }
@@ -36,5 +27,15 @@ public final class StringTrieSearch extends TrieSearch<String> {
     @Override
     public boolean matches(@NonNull String textToSearch, @Nullable Object callbackParameter) {
         return super.matches(textToSearch, textToSearch.length(), callbackParameter);
+    }
+
+    private static final class StringTrieNode extends TrieNode<String> {
+        TrieNode<String> createNode() {
+            return new StringTrieNode();
+        }
+
+        char getCharValue(String text, int index) {
+            return text.charAt(index);
+        }
     }
 }
