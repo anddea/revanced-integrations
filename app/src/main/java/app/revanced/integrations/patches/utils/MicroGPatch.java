@@ -1,9 +1,11 @@
 package app.revanced.integrations.patches.utils;
 
+import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastLong;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -22,7 +24,9 @@ public class MicroGPatch {
             showToastShort(context, str("microg_not_installed_warning"));
             showToastShort(context, str("microg_not_installed_notice"));
 
-            System.exit(0);
+            Activity activity = (Activity) context;
+
+            runOnMainThreadDelayed(activity::finish, 1000L);
         }
 
         try (var client = context.getContentResolver().acquireContentProviderClient(MICROG_PROVIDER)) {
