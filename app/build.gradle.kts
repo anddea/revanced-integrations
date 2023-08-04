@@ -52,7 +52,6 @@ android {
 dependencies {
     compileOnly(project(mapOf("path" to ":dummy")))
     compileOnly("androidx.annotation:annotation:1.6.0")
-    compileOnly("com.facebook.litho:litho-core:0.47.0")
 }
 
 tasks.register("publish") { dependsOn("build") }
