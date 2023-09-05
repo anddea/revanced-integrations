@@ -23,6 +23,10 @@ public class SharedPrefHelper {
         Objects.requireNonNull(getPreferences()).edit().putInt(key, value).apply();
     }
 
+    public static void saveFloat(String key, float value) {
+        Objects.requireNonNull(getPreferences()).edit().putFloat(key, value).apply();
+    }
+
     public static String getString(String key, String _default) {
         return Objects.requireNonNull(getPreferences()).getString(key, _default);
     }
