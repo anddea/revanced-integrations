@@ -52,6 +52,7 @@ android {
 dependencies {
     compileOnly(project(mapOf("path" to ":dummy")))
     compileOnly("androidx.annotation:annotation:1.6.0")
+    compileOnly("com.google.android.material:material:1.9.0")
 }
 
 tasks.register("publish") { dependsOn("build") }
