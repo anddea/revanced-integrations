@@ -66,7 +66,7 @@ public class VideoHelpers {
 
     public static void download(Context context) {
         try {
-            var packageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString();
+            var packageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString().trim();
 
             if (packageName.isEmpty()) {
                 final String defaultValue = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.defaultValue.toString();
