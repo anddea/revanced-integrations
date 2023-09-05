@@ -41,15 +41,22 @@ public class SharedPreferenceChangeListener {
         }
     }
 
-    public static void initializeSettings(@NonNull Activity base) {
+    public static boolean initializeSettings(@NonNull Activity base) {
+        final String dataString = Objects.requireNonNull(base.getIntent()).getDataString();
+        base.finish();
 
-        String dataString = Objects.requireNonNull(base.getIntent()).getDataString();
+        if (dataString == null || dataString.isEmpty())
+            return false;
 
-        assert dataString != null;
-        if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path))
-            editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, base);
-        else if (dataString.equals(CUSTOM_FILTER_STRINGS.path))
-            editTextDialogBuilder(CUSTOM_FILTER_STRINGS, base);
+        if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path)) {
+            editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, activity);
+            return true;
+        } else if (dataString.equals(CUSTOM_FILTER_STRINGS.path)) {
+            editTextDialogBuilder(CUSTOM_FILTER_STRINGS, activity);
+            return true;
+        }
+
+        return false;
     }
 
     private static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base) {
@@ -65,12 +72,10 @@ public class SharedPreferenceChangeListener {
                     .setNegativeButton(android.R.string.cancel, (dialog, which) -> base.finish())
                     .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
                         saveString(setting.path, setting.defaultValue.toString());
-                        base.finish();
                         rebootDialog();
                     })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         saveString(setting.path, textView.getText().toString());
-                        base.finish();
                         rebootDialog();
                     })
                     .show();
