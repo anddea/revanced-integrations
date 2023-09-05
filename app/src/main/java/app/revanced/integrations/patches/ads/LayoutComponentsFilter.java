@@ -43,18 +43,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "chips_shelf"
         );
 
-        final var expandableMetadata = new StringFilterGroup(
-                SettingsEnum.HIDE_EXPANDABLE_CHIP,
-                "inline_expander"
-        );
-
-        final var feedSurvey = new StringFilterGroup(
-                SettingsEnum.HIDE_FEED_SURVEY,
-                "feed_nudge",
-                "in_feed_survey",
-                "slimline_survey"
-        );
-
         final var graySeparator = new StringFilterGroup(
                 SettingsEnum.HIDE_GRAY_SEPARATOR,
                 "cell_divider"
@@ -109,8 +97,6 @@ public final class LayoutComponentsFilter extends Filter {
                 audioTrackButton,
                 channelMemberShelf,
                 custom,
-                expandableMetadata,
-                feedSurvey,
                 infoPanel,
                 joinMembership,
                 latestPosts,

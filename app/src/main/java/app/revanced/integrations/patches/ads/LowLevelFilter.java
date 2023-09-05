@@ -78,15 +78,6 @@ public class LowLevelFilter {
                             browseButtonTablet.stream().allMatch(path::contains)))
                 count++;
 
-            // Survey banners are shown everywhere, so we handle them in low-level filters
-            // e.g. Home Feed, Search Results, Related Videos, Comments, and Shorts
-            if (SettingsEnum.HIDE_FEED_SURVEY.getBoolean() &&
-                    allValue.contains("_survey")) count++;
-
-            // Descriptions banner at the bottom of thumbnails are also shown in various places
-            if (SettingsEnum.HIDE_GRAY_DESCRIPTION.getBoolean() &&
-                    path.contains("endorsement_header_footer")) count++;
-
             // Official header of the search results can be identified through another byteBuffer
             if (SettingsEnum.HIDE_OFFICIAL_HEADER.getBoolean() &&
                     Stream.of("shelf_header")
