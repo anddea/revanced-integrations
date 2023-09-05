@@ -36,7 +36,27 @@ public enum SettingsEnum {
     ENABLE_SLEEP_TIMER("revanced_enable_sleep_timer", BOOLEAN, TRUE, true),
     ENABLE_FLYOUT_PANEL_PLAYBACK_SPEED("revanced_enable_flyout_panel_playback_speed", BOOLEAN, FALSE, true),
 
+    HIDE_FLYOUT_PANEL_ADD_TO_QUEUE("revanced_hide_flyout_panel_add_to_queue", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_CAPTIONS("revanced_hide_flyout_panel_captions", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_DISMISS_QUEUE("revanced_hide_flyout_panel_dismiss_queue", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_DOWNLOAD("revanced_hide_flyout_panel_download", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_EDIT_PLAYLIST("revanced_hide_flyout_panel_edit_playlist", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_GO_TO_ALBUM("revanced_hide_flyout_panel_go_to_album", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_GO_TO_ARTIST("revanced_hide_flyout_panel_go_to_artist", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_LIKE_DISLIKE("revanced_hide_flyout_panel_like_dislike", BOOLEAN, FALSE, true),
+    HIDE_FLYOUT_PANEL_PLAY_NEXT("revanced_hide_flyout_panel_play_next", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_QUALITY("revanced_hide_flyout_panel_quality", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_REMOVE_FROM_LIBRARY("revanced_hide_flyout_panel_remove_from_library", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_REPORT("revanced_hide_flyout_panel_report", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_SAVE_TO_LIBRARY("revanced_hide_flyout_panel_save_to_library", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_SAVE_TO_PLAYLIST("revanced_hide_flyout_panel_save_to_playlist", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_SHARE("revanced_hide_flyout_panel_share", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_SHUFFLE("revanced_hide_flyout_panel_shuffle", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_SLEEP_TIMER("revanced_hide_flyout_panel_sleep_timer", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_START_RADIO("revanced_hide_flyout_panel_start_radio", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_STATS_FOR_NERDS("revanced_hide_flyout_panel_stats_for_nerds", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_VIEW_SONG_CREDIT("revanced_hide_flyout_panel_view_song_credit", BOOLEAN, FALSE),
+
 
     // General
     CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
