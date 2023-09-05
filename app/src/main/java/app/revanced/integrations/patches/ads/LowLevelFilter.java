@@ -64,10 +64,6 @@ public class LowLevelFilter {
             return filter(path, allValue, new String(protobufBuffer.array(), StandardCharsets.UTF_8));
         } catch (Exception ex) {
             LogHelper.printException(LowLevelFilter.class, "Litho filter failure", ex);
-        } finally {
-            // Cleanup and remove the value,
-            // otherwise this will cause a memory leak if Litho is using a non fixed thread pool.
-            lowlevelBufferThreadLocal.remove();
         }
         return false;
     }
