@@ -67,7 +67,7 @@ public enum SettingsEnum {
     HIDE_BUTTON_SHELF("revanced_hide_button_shelf", BOOLEAN, FALSE, true),
     HIDE_CAROUSEL_SHELF("revanced_hide_carousel_shelf", BOOLEAN, FALSE, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", BOOLEAN, TRUE),
-    HIDE_CATEGORY_BAR("revanced_hide_category_bar", BOOLEAN, TRUE, true),
+    HIDE_CATEGORY_BAR("revanced_hide_category_bar", BOOLEAN, FALSE, true),
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
     HIDE_EMOJI_PICKER("revanced_hide_emoji_picker", BOOLEAN, FALSE),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, FALSE),
