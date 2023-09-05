@@ -33,6 +33,7 @@ public enum SettingsEnum {
     CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE),
     ENABLE_LANDSCAPE_MODE("revanced_enable_landscape_mode", BOOLEAN, TRUE, true),
+    ENABLE_OLD_STYLE_LIBRARY_SHELF("revanced_enable_old_style_library_shelf", BOOLEAN, FALSE, true),
     HIDE_BUTTON_SHELF("revanced_hide_button_shelf", BOOLEAN, FALSE, true),
     HIDE_CAROUSEL_SHELF("revanced_hide_carousel_shelf", BOOLEAN, FALSE, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", BOOLEAN, TRUE),

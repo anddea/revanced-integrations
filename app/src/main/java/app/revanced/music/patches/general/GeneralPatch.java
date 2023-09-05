@@ -4,7 +4,10 @@ import static app.revanced.music.utils.ReVancedUtils.hideViewBy0dpUnderCondition
 
 import android.view.View;
 
+import java.util.stream.Stream;
+
 import app.revanced.music.settings.SettingsEnum;
+import app.revanced.music.utils.LogHelper;
 
 public class GeneralPatch {
 
@@ -18,6 +21,18 @@ public class GeneralPatch {
         } catch (Exception ignored) {
             return original;
         }
+    }
+
+    public static String enableOldStyleLibraryShelf(final String original) {
+        if (original.startsWith("LV") || !SettingsEnum.ENABLE_OLD_STYLE_LIBRARY_SHELF.getBoolean())
+            return original;
+
+        LogHelper.printDebug(GeneralPatch.class, "Current Browser ID: " + original);
+
+        if (Stream.of("FEmusic_library_landing").anyMatch(original::contains))
+            return "FEmusic_liked";
+
+        return original;
     }
 
     public static int hideCastButton(int original) {
