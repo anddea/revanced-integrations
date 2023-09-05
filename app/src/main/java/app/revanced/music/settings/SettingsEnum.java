@@ -55,7 +55,9 @@ public enum SettingsEnum {
 
     // Navigation
     ENABLE_BLACK_NAVIGATION_BAR("revanced_enable_black_navigation_bar", BOOLEAN, TRUE),
+    IS_SAMPLE_BUTTON_SHOWN("revanced_is_sample_button_shown", BOOLEAN, FALSE),
     HIDE_NAVIGATION_LABEL("revanced_hide_navigation_label", BOOLEAN, FALSE, true),
+    HIDE_SAMPLE_BUTTON("revanced_hide_sample_button", BOOLEAN, FALSE, true),
 
 
     // Player
