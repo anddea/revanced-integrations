@@ -113,7 +113,7 @@ public class SharedPreferenceChangeListener {
         }
     }
 
-    private static void reboot(Activity activity) {
+    public static void reboot(Activity activity) {
         Intent restartIntent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
 
         activity.finishAffinity();
