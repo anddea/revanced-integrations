@@ -97,7 +97,7 @@ class StringFilterGroup extends FilterGroup<String> {
 final class CustomFilterGroup extends StringFilterGroup {
 
     public CustomFilterGroup(final SettingsEnum setting, final SettingsEnum filter) {
-        super(setting, filter.getString().split(","));
+        super(setting, filter.getString().split("\\s+"));
     }
 }
 
