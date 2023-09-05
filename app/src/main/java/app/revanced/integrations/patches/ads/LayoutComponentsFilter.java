@@ -77,7 +77,7 @@ public final class LayoutComponentsFilter extends Filter {
                 "horizontal_movie_shelf",
                 "movie_and_show_upsell_card",
                 "compact_tvfilm_item",
-                "offer_module_root"
+                "offer_module"
         );
 
         final var ticketShelf = new StringFilterGroup(
