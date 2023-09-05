@@ -2,11 +2,8 @@ package app.revanced.integrations.patches.layout;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 import android.widget.ListView;
-
-import androidx.annotation.NonNull;
 
 import com.facebook.litho.ComponentHost;
 
@@ -15,30 +12,6 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class FlyoutPanelPatch {
-
-    public static void addRecyclerListener(@NonNull LinearLayout linearLayout,
-                                           int expectedLayoutChildCount, int recyclerViewIndex,
-                                           @NonNull RecyclerViewGlobalLayoutListener listener) {
-        if (linearLayout.getChildCount() != expectedLayoutChildCount) return;
-
-        var layoutChild = linearLayout.getChildAt(recyclerViewIndex);
-        if (!(layoutChild instanceof RecyclerView recyclerView)) return;
-
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        try {
-                            listener.recyclerOnGlobalLayout(recyclerView);
-                        } catch (Exception ignored) {
-                        } finally {
-                            // Remove the listener because it will be added again.
-                            recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        }
-                    }
-                }
-        );
-    }
 
     public static void enableOldQualityMenu(ListView listView) {
         if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean())
@@ -67,23 +40,19 @@ public class FlyoutPanelPatch {
         return charSequence;
     }
 
-    public static void onFlyoutMenuCreate(final LinearLayout linearLayout) {
+    public static void onFlyoutMenuCreate(final RecyclerView recyclerView) {
         if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) return;
 
-        // The quality menu is a RecyclerView with 3 children. The third child is the "Advanced" quality menu.
-        addRecyclerListener(linearLayout, 3, 2, recyclerView -> {
-            // Check if the current view is the quality menu.
-            if (VideoQualityMenuFilter.isVideoQualityMenuVisible) {
-                VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
-                linearLayout.setVisibility(View.GONE);
+        recyclerView.getViewTreeObserver().addOnDrawListener(
+                () -> {
+                    // Check if the current view is the quality menu.
+                    if (VideoQualityMenuFilter.isVideoQualityMenuVisible) {
+                        VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
+                        ((ViewGroup) recyclerView.getParent().getParent().getParent()).setVisibility(View.GONE);
 
-                // Click the "Advanced" quality menu to show the "old" quality menu.
-                ((ComponentHost) recyclerView.getChildAt(0)).getChildAt(3).performClick();
-            }
-        });
-    }
-
-    public interface RecyclerViewGlobalLayoutListener {
-        void recyclerOnGlobalLayout(@NonNull RecyclerView recyclerView);
+                        // Click the "Advanced" quality menu to show the "old" quality menu.
+                        ((ComponentHost) recyclerView.getChildAt(0)).getChildAt(3).performClick();
+                    }
+                });
     }
 }

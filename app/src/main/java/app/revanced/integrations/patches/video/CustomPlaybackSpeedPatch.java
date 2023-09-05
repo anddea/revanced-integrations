@@ -1,11 +1,10 @@
 package app.revanced.integrations.patches.video;
 
-import static app.revanced.integrations.patches.layout.FlyoutPanelPatch.addRecyclerListener;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
@@ -124,29 +123,41 @@ public class CustomPlaybackSpeedPatch {
         return SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean();
     }
 
-    /**
-     * To reduce copy and paste between two similar code paths.
-     */
-    public static void onFlyoutMenuCreate(final LinearLayout linearLayout) {
+    public static void onFlyoutMenuCreate(final RecyclerView recyclerView) {
         if (!SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean()) return;
 
-        // The playback rate menu is a RecyclerView with 2 children. The third child is the "Advanced" quality menu.
-        addRecyclerListener(linearLayout, 2, 1, recyclerView -> {
-            if (PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible) {
-                PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible = false;
+        recyclerView.getViewTreeObserver().addOnDrawListener(
+                () -> {
+                    // For some reason, the custom playback speed flyout panel is activated when the user opens the share panel. (A/B tests)
+                    // Check the child count of playback speed flyout panel to prevent this issue.
+                    // Child count of playback speed flyout panel is always 8.
+                    if (PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible && ((ComponentHost) recyclerView.getChildAt(0)).getChildCount() == 8) {
+                        PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible = false;
 
-                if (recyclerView.getChildCount() == 1 && recyclerView.getChildAt(0) instanceof ComponentHost) {
-                    linearLayout.setVisibility(View.GONE);
+                        ViewGroup parentView3rd = (ViewGroup) recyclerView.getParent().getParent().getParent();
+                        ViewGroup parentView4rd = (ViewGroup) parentView3rd.getParent();
 
-                    // Close the new Playback speed menu and instead show the old one.
-                    showOldPlaybackSpeedMenu();
+                        // Dismiss View [R.id.touch_outside] is the 1st ChildView of the 4rd ParentView.
+                        // This only shows in phone layout
+                        parentView4rd.getChildAt(0).performClick();
 
-                    // DismissView [R.id.touch_outside] is the 1st ChildView of the 3rd ParentView.
-                    ((ViewGroup) linearLayout.getParent().getParent().getParent())
-                            .getChildAt(0).performClick();
-                }
-            }
-        });
+                        // In tablet layout, there is no Dismiss View, instead we just hide all two parent views.
+                        parentView3rd.setVisibility(View.GONE);
+                        parentView4rd.setVisibility(View.GONE);
+
+                        // It works without issues for both tablet and phone layouts,
+                        // So no code is needed to check whether the current device is a tablet or phone.
+                        // If YouTube makes changes on the server side in the future,
+                        // So we need to check the tablet layout and phone layout, use [ReVancedHelper.isTablet()].
+
+                        // Close the new Playback speed menu and show the old one.
+                        showPlaybackSpeedMenu();
+                    }
+                });
+    }
+
+    public static void showPlaybackSpeedMenu() {
+        showOldPlaybackSpeedMenu();
     }
 
     private static void showOldPlaybackSpeedMenu() {
