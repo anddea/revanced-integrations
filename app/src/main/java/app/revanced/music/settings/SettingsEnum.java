@@ -21,8 +21,12 @@ public enum SettingsEnum {
 
 
     // Button Container
+    BUTTON_CONTAINER_DOWNLOAD_INDEX("revanced_button_container_download_index", INTEGER, 3),
+    BUTTON_CONTAINER_DOWNLOAD_INDEX_FOUND("revanced_button_container_download_index_found", BOOLEAN, FALSE),
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.junkfood.seal", true),
     HIDE_BUTTON_CONTAINER_LABEL("revanced_hide_button_container_label", BOOLEAN, FALSE),
     HIDE_BUTTON_CONTAINER_RADIO("revanced_hide_button_container_radio", BOOLEAN, FALSE),
+    HOOK_BUTTON_CONTAINER_DOWNLOAD("revanced_hook_button_container_download", BOOLEAN, FALSE, true),
 
 
     // Flyout
@@ -50,7 +54,6 @@ public enum SettingsEnum {
     ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE),
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, TRUE, true),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, TRUE),
-    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.junkfood.seal", true),
     DEFAULT_VIDEO_QUALITY_WIFI("revanced_default_video_quality_wifi", INTEGER, -2),
     DEFAULT_VIDEO_QUALITY_MOBILE("revanced_default_video_quality_mobile", INTEGER, -2),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, FALSE, true),
