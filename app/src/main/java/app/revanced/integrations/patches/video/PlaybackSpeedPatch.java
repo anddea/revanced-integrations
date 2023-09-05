@@ -38,7 +38,7 @@ public class PlaybackSpeedPatch {
 
         if (SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.getBoolean()) {
             SettingsEnum.DEFAULT_PLAYBACK_SPEED.saveValue(speed);
-            showToastShort(str("revanced_save_playback_speed") + speed + "x");
+            showToastShort(str("revanced_save_playback_speed") + "\u2009" + speed + "x");
         }
     }
 
