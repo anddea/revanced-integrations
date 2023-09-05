@@ -104,7 +104,7 @@ public class SharedPreferenceChangeListener {
                         rebootDialog();
                     })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        saveString(setting.path, textView.getText().toString());
+                        saveString(setting.path, textView.getText().toString().trim());
                         rebootDialog();
                     })
                     .show();
