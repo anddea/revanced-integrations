@@ -98,8 +98,14 @@ public enum SettingsEnum {
     ENABLE_FORCE_SHUFFLE("revanced_enable_force_shuffle", BOOLEAN, TRUE),
     ENABLE_NEW_LAYOUT("revanced_enable_new_layout", BOOLEAN, TRUE, true),
     ENABLE_OLD_STYLE_MINI_PLAYER("revanced_enable_old_style_mini_player", BOOLEAN, TRUE, true),
-    ENABLE_ZEN_MODE("revanced_enable_zen_mode", BOOLEAN, FALSE);
+    ENABLE_ZEN_MODE("revanced_enable_zen_mode", BOOLEAN, FALSE),
 
+
+    // Return YouTube Dislike
+    RYD_USER_ID("revanced_ryd_user_id", STRING, ""),
+    RYD_ENABLED("revanced_ryd_enabled", BOOLEAN, TRUE),
+    RYD_DISLIKE_PERCENTAGE("revanced_ryd_dislike_percentage", BOOLEAN, FALSE),
+    RYD_COMPACT_LAYOUT("revanced_ryd_compact_layout", BOOLEAN, FALSE);
 
     static {
         loadAllSettings();

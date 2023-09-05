@@ -14,12 +14,37 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import java.text.Bidi;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class ReVancedUtils {
+    /**
+     * General purpose pool for network calls and other background tasks.
+     * All tasks run at max thread priority.
+     */
+    private static final ThreadPoolExecutor backgroundThreadPool = new ThreadPoolExecutor(
+            2, // 2 threads always ready to go
+            Integer.MAX_VALUE,
+            10, // For any threads over the minimum, keep them alive 10 seconds after they go idle
+            TimeUnit.SECONDS,
+            new SynchronousQueue<>(),
+            r -> { // ThreadFactory
+                Thread t = new Thread(r);
+                t.setPriority(Thread.MAX_PRIORITY); // run at max priority
+                return t;
+            });
     @SuppressLint("StaticFieldLeak")
     public static Context context;
+    @Nullable
+    private static Boolean isRightToLeftTextLayout;
 
     private ReVancedUtils() {
     } // utility class
@@ -61,6 +86,26 @@ public class ReVancedUtils {
         for (String string : targets)
             if (!string.isEmpty() && value.contains(string)) return true;
         return false;
+    }
+
+    public static void runOnBackgroundThread(@NonNull Runnable task) {
+        backgroundThreadPool.execute(task);
+    }
+
+    @NonNull
+    public static <T> Future<T> submitOnBackgroundThread(@NonNull Callable<T> call) {
+        return backgroundThreadPool.submit(call);
+    }
+
+    /**
+     * If the device language uses right to left text layout (hebrew, arabic, etc)
+     */
+    public static boolean isRightToLeftTextLayout() {
+        if (isRightToLeftTextLayout == null) {
+            String displayLanguage = Locale.getDefault().getDisplayLanguage();
+            isRightToLeftTextLayout = new Bidi(displayLanguage, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT).isRightToLeft();
+        }
+        return isRightToLeftTextLayout;
     }
 
     public static void showToastShort(Context context, String messageToToast) {
@@ -133,6 +178,21 @@ public class ReVancedUtils {
         if (!isCurrentlyOnMainThread()) {
             throw new IllegalStateException("Must call _on_ the main thread");
         }
+    }
+
+    /**
+     * @throws IllegalStateException if the calling thread is _on_ the main thread
+     */
+    public static void verifyOffMainThread() throws IllegalStateException {
+        if (isCurrentlyOnMainThread()) {
+            throw new IllegalStateException("Must call _off_ the main thread");
+        }
+    }
+
+    public static boolean isNetworkConnected() {
+        NetworkType networkType = getNetworkType();
+        return networkType != NetworkType.MOBILE
+                && networkType != NetworkType.WIFI;
     }
 
     @SuppressLint("MissingPermission") // permission already included in YouTube
