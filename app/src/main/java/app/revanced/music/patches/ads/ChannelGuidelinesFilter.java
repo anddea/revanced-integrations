@@ -1,6 +1,5 @@
 package app.revanced.music.patches.ads;
 
-
 import android.os.Build;
 
 import androidx.annotation.Nullable;
