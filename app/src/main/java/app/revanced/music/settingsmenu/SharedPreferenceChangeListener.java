@@ -11,6 +11,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.util.TypedValue;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
