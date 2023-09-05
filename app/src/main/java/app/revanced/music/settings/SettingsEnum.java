@@ -21,6 +21,7 @@ public enum SettingsEnum {
 
 
     // Button Container
+    HIDE_BUTTON_CONTAINER_LABEL("revanced_hide_button_container_label", BOOLEAN, FALSE),
 
 
     // Flyout
