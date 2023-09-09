@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.SponsorBlockUtils;
+import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ResourceType;
 
 public final class NewSegmentLayout extends FrameLayout {
@@ -44,6 +45,7 @@ public final class NewSegmentLayout extends FrameLayout {
 
         LayoutInflater.from(context).inflate(identifier("new_segment", ResourceType.LAYOUT, context), this, true);
 
+
         TypedValue rippleEffect = new TypedValue();
         context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, rippleEffect, true);
         rippleEffectId = rippleEffect.resourceId;
@@ -51,37 +53,43 @@ public final class NewSegmentLayout extends FrameLayout {
         initializeButton(
                 context,
                 "sb_new_segment_rewind",
-                () -> VideoInformation.seekToRelative(-SettingsEnum.SB_ADJUST_NEW_SEGMENT_STEP.getInt())
+                () -> VideoInformation.seekToRelative(-SettingsEnum.SB_CREATE_NEW_SEGMENT_STEP.getInt()),
+                "Rewind button clicked"
         );
 
         initializeButton(
                 context,
                 "sb_new_segment_forward",
-                () -> VideoInformation.seekToRelative(SettingsEnum.SB_ADJUST_NEW_SEGMENT_STEP.getInt())
+                () -> VideoInformation.seekToRelative(SettingsEnum.SB_CREATE_NEW_SEGMENT_STEP.getInt()),
+                "Forward button clicked"
         );
 
         initializeButton(
                 context,
                 "sb_new_segment_adjust",
-                SponsorBlockUtils::onMarkLocationClicked
+                SponsorBlockUtils::onMarkLocationClicked,
+                "Adjust button clicked"
         );
 
         initializeButton(
                 context,
                 "sb_new_segment_compare",
-                SponsorBlockUtils::onPreviewClicked
+                SponsorBlockUtils::onPreviewClicked,
+                "Compare button clicked"
         );
 
         initializeButton(
                 context,
                 "sb_new_segment_edit",
-                SponsorBlockUtils::onEditByHandClicked
+                SponsorBlockUtils::onEditByHandClicked,
+                "Edit button clicked"
         );
 
         initializeButton(
                 context,
                 "sb_new_segment_publish",
-                SponsorBlockUtils::onPublishClicked
+                SponsorBlockUtils::onPublishClicked,
+                "Publish button clicked"
         );
 
         defaultBottomMargin = context.getResources().getDimensionPixelSize(identifier("brand_interaction_default_bottom_margin", ResourceType.DIMEN, context));
@@ -95,9 +103,10 @@ public final class NewSegmentLayout extends FrameLayout {
      * @param context                The context.
      * @param resourceIdentifierName The resource identifier name for the button.
      * @param handler                The handler for the button's click event.
+     * @param debugMessage           The debug message to print when the button is clicked.
      */
     private void initializeButton(final Context context, final String resourceIdentifierName,
-                                  final ButtonOnClickHandlerFunction handler) {
+                                  final ButtonOnClickHandlerFunction handler, final String debugMessage) {
         final ImageButton button = findViewById(identifier(resourceIdentifierName, ResourceType.ID, context));
 
         // Add ripple effect
@@ -105,7 +114,10 @@ public final class NewSegmentLayout extends FrameLayout {
         RippleDrawable rippleDrawable = (RippleDrawable) button.getBackground();
         rippleDrawable.setColor(rippleColorStateList);
 
-        button.setOnClickListener((v) -> handler.apply());
+        button.setOnClickListener((v) -> {
+            handler.apply();
+            LogHelper.printDebug(NewSegmentLayout.class, debugMessage);
+        });
     }
 
     @FunctionalInterface

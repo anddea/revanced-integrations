@@ -53,6 +53,12 @@ public class ReVancedUtils {
         return context;
     }
 
+    public static void setClipboard(@NonNull String text) {
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText("ReVanced", text);
+        clipboard.setPrimaryClip(clip);
+    }
+
     public static void hideViewBy0dpUnderCondition(boolean condition, View view) {
         if (!condition) return;
         hideViewByLayoutParams(view);
@@ -202,8 +208,8 @@ public class ReVancedUtils {
 
     public static boolean isNetworkConnected() {
         NetworkType networkType = getNetworkType();
-        return networkType != NetworkType.MOBILE
-                && networkType != NetworkType.WIFI;
+        return networkType == NetworkType.MOBILE
+                || networkType == NetworkType.WIFI;
     }
 
     @SuppressLint("MissingPermission") // permission already included in YouTube

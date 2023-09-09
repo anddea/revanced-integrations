@@ -111,7 +111,7 @@ public class VotingButtonController {
     }
 
     private static boolean shouldBeShown() {
-        return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_VOTING_ENABLED.getBoolean()
+        return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_VOTING_BUTTON.getBoolean()
                 && !VideoInformation.isAtEndOfVideo() && videoHasSegments();
     }
 }

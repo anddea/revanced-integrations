@@ -48,20 +48,16 @@ public class SkipSponsorButton extends FrameLayout {
         super(context, attributeSet, defStyleAttr, defStyleRes);
 
         LayoutInflater.from(context).inflate(identifier("skip_sponsor_button", ResourceType.LAYOUT, context), this, true);  // layout:skip_ad_button
-
         setMinimumHeight(getResources().getDimensionPixelSize(identifier("ad_skip_ad_button_min_height", ResourceType.DIMEN, context)));  // dimen:ad_skip_ad_button_min_height
         skipSponsorBtnContainer = (LinearLayout) Objects.requireNonNull((View) findViewById(identifier("sb_skip_sponsor_button_container", ResourceType.ID, context)));  // id:skip_ad_button_container
-
         background = new Paint();
         background.setColor(context.getColor(identifier("skip_ad_button_background_color", ResourceType.COLOR, context)));  // color:skip_ad_button_background_color);
         background.setStyle(Paint.Style.FILL);
         border = new Paint();
         border.setColor(context.getColor(identifier("skip_ad_button_border_color", ResourceType.COLOR, context)));  // color:skip_ad_button_border_color);
         border.setStrokeWidth(getResources().getDimension(identifier("ad_skip_ad_button_border_width", ResourceType.DIMEN, context)));  // dimen:ad_skip_ad_button_border_width
-
         border.setStyle(Paint.Style.STROKE);
         skipSponsorTextView = (TextView) Objects.requireNonNull((View) findViewById(identifier("sb_skip_sponsor_button_text", ResourceType.ID, context)));  // id:sb_skip_sponsor_button_text;
-
         Resources resources = context.getResources();
         defaultBottomMargin = resources.getDimensionPixelSize(identifier("skip_button_default_bottom_margin", ResourceType.DIMEN, context));  // dimen:skip_button_default_bottom_margin
         ctaBottomMargin = resources.getDimensionPixelSize(identifier("skip_button_cta_bottom_margin", ResourceType.DIMEN, context));  // dimen:skip_button_cta_bottom_margin
@@ -93,15 +89,15 @@ public class SkipSponsorButton extends FrameLayout {
     }
 
     /**
-     *
+     * @return true, if this button state was changed
      */
-    public void updateSkipButtonText(@NonNull SponsorSegment segment) {
+    public boolean updateSkipButtonText(@NonNull SponsorSegment segment) {
         this.segment = segment;
         CharSequence newText = segment.getSkipButtonText();
-        //noinspection StringEqualsCharSequence
         if (newText.equals(skipSponsorTextView.getText())) {
-            return;
+            return false;
         }
         skipSponsorTextView.setText(newText);
+        return true;
     }
 }

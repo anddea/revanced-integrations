@@ -54,20 +54,22 @@ public class SponsorBlockViewController {
      */
     public static void initialize(ViewGroup viewGroup) {
         try {
+            LogHelper.printDebug(SponsorBlockViewController.class, "initializing");
+
             // hide any old components, just in case they somehow are still hanging around
             hideAll();
 
-            RelativeLayout layout = new RelativeLayout(ReVancedUtils.getContext());
+            Context context = ReVancedUtils.getContext();
+            RelativeLayout layout = new RelativeLayout(context);
             layout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             LayoutInflater.from(ReVancedUtils.getContext()).inflate(identifier("inline_sponsor_overlay", ResourceType.LAYOUT), layout);
-
             inlineSponsorOverlayRef = new WeakReference<>(layout);
 
             viewGroup.addView(layout);
             viewGroup.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
                 @Override
                 public void onChildViewAdded(View parent, View child) {
-                    // ensure SB buttons and controls are always on top, otherwise the end screen cards can cover the skip button
+                    // ensure SB buttons and controls are always on top, otherwise the endscreen cards can cover the skip button
                     RelativeLayout layout = inlineSponsorOverlayRef.get();
                     if (layout != null) {
                         layout.bringToFront();
@@ -86,6 +88,7 @@ public class SponsorBlockViewController {
                     Objects.requireNonNull(layout.findViewById(identifier("sb_skip_sponsor_button", ResourceType.ID))));
             newSegmentLayoutRef = new WeakReference<>(
                     Objects.requireNonNull(layout.findViewById(identifier("sb_new_segment_view", ResourceType.ID))));
+
             newSegmentLayoutVisible = false;
             skipHighlight = null;
             skipSegment = null;

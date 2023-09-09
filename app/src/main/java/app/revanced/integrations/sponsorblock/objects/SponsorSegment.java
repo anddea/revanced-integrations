@@ -26,7 +26,6 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
      * If this segment has been counted as 'skipped'
      */
     public boolean recordedAsSkipped = false;
-
     public SponsorSegment(@NonNull SegmentCategory category, @Nullable String UUID, long start, long end, boolean isLocked) {
         this.category = category;
         this.UUID = UUID;

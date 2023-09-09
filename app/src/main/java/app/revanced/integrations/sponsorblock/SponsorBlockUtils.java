@@ -60,8 +60,7 @@ public class SponsorBlockUtils {
             for (int i = 0; i < voteOptions.length; i++) {
                 SegmentVote voteOption = voteOptions[i];
                 String title = voteOption.title.toString();
-                if (SettingsEnum.SB_IS_VIP.getBoolean() && segment.isLocked && voteOption.shouldHighlight) {
-                    //noinspection deprecation
+                if (SettingsEnum.SB_USER_IS_VIP.getBoolean() && segment.isLocked && voteOption.shouldHighlight) {
                     items[i] = Html.fromHtml(String.format("<font color=\"%s\">%s</font>", LOCKED_COLOR, title));
                 } else {
                     items[i] = title;
@@ -83,7 +82,7 @@ public class SponsorBlockUtils {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "onPreviewClicked failure", ex);
+            LogHelper.printException(SponsorBlockUtils.class, "segmentVoteClickListener failure", ex);
         }
     };
     private static long newSponsorSegmentDialogShownMillis;
@@ -93,14 +92,12 @@ public class SponsorBlockUtils {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
-                case DialogInterface.BUTTON_NEGATIVE:
+                case DialogInterface.BUTTON_NEGATIVE ->
                     // start
-                    newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
-                    break;
-                case DialogInterface.BUTTON_POSITIVE:
+                        newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
+                case DialogInterface.BUTTON_POSITIVE ->
                     // end
-                    newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
-                    break;
+                        newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
             }
             dialog.dismiss();
         }
@@ -215,21 +212,18 @@ public class SponsorBlockUtils {
     private static void submitNewSegment() {
         try {
             ReVancedUtils.verifyOnMainThread();
-            final String uuid = SettingsEnum.SB_UUID.getString();
             final long start = newSponsorSegmentStartMillis;
-            final long end = newSponsorSegmentEndMillis >= VideoInformation.getVideoTime() ? VideoInformation.getVideoTime() - 500 : newSponsorSegmentEndMillis;
+            final long end = newSponsorSegmentEndMillis;
             final String videoId = VideoInformation.getVideoId();
             final long videoLength = VideoInformation.getVideoLength();
             final SegmentCategory segmentCategory = newUserCreatedSegmentCategory;
-
-            if (start < 0 || end < 0 || start >= end || videoLength <= 0 || videoId.isEmpty()
-                    || segmentCategory == null || uuid.isEmpty()) {
+            if (start < 0 || end < 0 || start >= end || videoLength <= 0 || videoId.isEmpty() || segmentCategory == null) {
                 LogHelper.printException(SponsorBlockUtils.class, "invalid parameters");
                 return;
             }
             clearUnsubmittedSegmentTimes();
             ReVancedUtils.runOnBackgroundThread(() -> {
-                SBRequester.submitSegments(uuid, videoId, segmentCategory.key, start, end, videoLength);
+                SBRequester.submitSegments(videoId, segmentCategory.key, start, end, videoLength);
                 SegmentPlaybackController.executeDownloadSegments(videoId);
             });
         } catch (Exception e) {
@@ -328,7 +322,6 @@ public class SponsorBlockUtils {
                 htmlBuilder.append("</b>");
                 if (i + 1 != numberOfSegments) // prevents trailing new line after last segment
                     htmlBuilder.append("<br>");
-                //noinspection deprecation
                 titles[i] = Html.fromHtml(htmlBuilder.toString());
             }
 
@@ -370,7 +363,7 @@ public class SponsorBlockUtils {
                 SegmentPlaybackController.addUnsubmittedSegment(
                         new SponsorSegment(SegmentCategory.UNSUBMITTED, null,
                                 newSponsorSegmentStartMillis, newSponsorSegmentEndMillis, false));
-                VideoInformation.seekTo(newSponsorSegmentStartMillis - 1500);
+                VideoInformation.seekTo(newSponsorSegmentStartMillis - 2500);
             }
         } catch (Exception ex) {
             LogHelper.printException(SponsorBlockUtils.class, "onPreviewClicked failure", ex);
@@ -383,9 +376,13 @@ public class SponsorBlockUtils {
             return;
         }
         segment.recordedAsSkipped = true;
-        final long totalTimeSkipped = SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.getLong() + segment.length();
-        SettingsEnum.SB_SKIPPED_SEGMENTS_TIME_SAVED.saveValue(totalTimeSkipped);
-        SettingsEnum.SB_SKIPPED_SEGMENTS_NUMBER_SKIPPED.saveValue(SettingsEnum.SB_SKIPPED_SEGMENTS_NUMBER_SKIPPED.getInt() + 1);
+        final long totalTimeSkipped = SettingsEnum.SB_LOCAL_TIME_SAVED_MILLISECONDS.getLong() + segment.length();
+        SettingsEnum.SB_LOCAL_TIME_SAVED_MILLISECONDS.saveValue(totalTimeSkipped);
+        SettingsEnum.SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS.saveValue(SettingsEnum.SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS.getInt() + 1);
+
+        if (SettingsEnum.SB_TRACK_SKIP_COUNT.getBoolean()) {
+            ReVancedUtils.runOnBackgroundThread(() -> SBRequester.sendSegmentSkippedViewedRequest(segment));
+        }
     }
 
     public static void onEditByHandClicked() {

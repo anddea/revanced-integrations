@@ -32,7 +32,6 @@ public enum CategoryBehaviour {
     public final boolean skipAutomatically;
     @NonNull
     public final StringRef description;
-
     CategoryBehaviour(String key, int desktopKey, boolean skipAutomatically, StringRef description) {
         this.key = Objects.requireNonNull(key);
         this.desktopKey = desktopKey;
@@ -62,6 +61,7 @@ public enum CategoryBehaviour {
 
     private static void createNameAndKeyArrays() {
         ReVancedUtils.verifyOnMainThread();
+
         CategoryBehaviour[] behaviours = values();
         final int behaviorLength = behaviours.length;
         behaviorKeys = new String[behaviorLength];

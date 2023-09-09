@@ -2,6 +2,7 @@ package app.revanced.integrations.sponsorblock.objects;
 
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.IGNORE;
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY;
+import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY_ONCE;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.integrations.utils.StringRef.sf;
@@ -15,6 +16,9 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +61,11 @@ public enum SegmentCategory {
 
     private static final StringRef skipSponsorTextCompact = sf("sb_skip_button_compact");
     private static final StringRef skipSponsorTextCompactHighlight = sf("sb_skip_button_compact_highlight");
+
+    /**
+     * Prefix to use when serializing to flat JSON layout used with ReVanced import/export.
+     */
+    private static final String FLAT_JSON_IMPORT_EXPORT_PREFIX = "sb_";
 
     private static final SegmentCategory[] categoriesWithoutHighlights = new SegmentCategory[]{
             SPONSOR,
@@ -133,6 +142,8 @@ public enum SegmentCategory {
     @NonNull
     public final Paint paint;
     public final int defaultColor;
+    @NonNull
+    public final CategoryBehaviour defaultBehaviour;
     /**
      * If value is changed, then also call {@link #save(SharedPreferences.Editor)}
      */
@@ -152,7 +163,6 @@ public enum SegmentCategory {
                 skippedToastText, skippedToastText, skippedToastText,
                 defaultBehavior, defaultColor);
     }
-
     SegmentCategory(String key, StringRef title, StringRef description,
                     StringRef skipButtonTextBeginning, StringRef skipButtonTextMiddle, StringRef skipButtonTextEnd,
                     StringRef skippedToastBeginning, StringRef skippedToastMiddle, StringRef skippedToastEnd,
@@ -166,7 +176,7 @@ public enum SegmentCategory {
         this.skippedToastBeginning = Objects.requireNonNull(skippedToastBeginning);
         this.skippedToastMiddle = Objects.requireNonNull(skippedToastMiddle);
         this.skippedToastEnd = Objects.requireNonNull(skippedToastEnd);
-        this.behaviour = Objects.requireNonNull(defaultBehavior);
+        this.behaviour = this.defaultBehaviour = Objects.requireNonNull(defaultBehavior);
         this.color = this.defaultColor = defaultColor;
         this.paint = new Paint();
         setColor(defaultColor);
@@ -189,6 +199,7 @@ public enum SegmentCategory {
 
     public static void loadFromPreferences() {
         SharedPreferences preferences = getPreferences(SPONSOR_BLOCK);
+        LogHelper.printDebug(SegmentCategory.class, "loadFromPreferences");
         for (SegmentCategory category : categoriesWithoutUnsubmitted()) {
             category.load(preferences);
         }
@@ -237,10 +248,13 @@ public enum SegmentCategory {
         }
 
         String behaviorString = preferences.getString(key, null);
-        if (behaviorString != null) {
+        if (behaviorString == null) {
+            behaviour = defaultBehaviour;
+        } else {
             CategoryBehaviour preferenceBehavior = CategoryBehaviour.byStringKey(behaviorString);
             if (preferenceBehavior == null) {
                 LogHelper.printException(SegmentCategory.class, "Unknown behavior: " + behaviorString); // should never happen
+                behaviour = defaultBehaviour;
             } else {
                 behaviour = preferenceBehavior;
             }
@@ -257,6 +271,51 @@ public enum SegmentCategory {
                 : colorString();
         editor.putString(key + COLOR_PREFERENCE_KEY_SUFFIX, colorString);
         editor.putString(key, behaviour.key);
+    }
+
+    private String getFlatJsonBehaviorKey() {
+        return FLAT_JSON_IMPORT_EXPORT_PREFIX + key;
+    }
+
+    private String getFlatJsonColorKey() {
+        return FLAT_JSON_IMPORT_EXPORT_PREFIX + key + COLOR_PREFERENCE_KEY_SUFFIX;
+    }
+
+    public void exportToFlatJSON(JSONObject json) throws JSONException {
+        if (behaviour != defaultBehaviour) {
+            json.put(getFlatJsonBehaviorKey(), behaviour.key);
+        }
+        if (color != defaultColor) {
+            json.put(getFlatJsonColorKey(), colorString());
+        }
+    }
+
+    /**
+     * Calling code is responsible for calling {@link #updateEnabledCategories()} and {@link SharedPreferences.Editor#apply()}
+     */
+    public int importFromFlatJSON(JSONObject json, SharedPreferences.Editor editor) throws JSONException {
+        int numberOfSettingsImported = 0;
+        String behaviorKey = getFlatJsonBehaviorKey();
+        if (json.has(behaviorKey)) {
+            String behaviorString = json.getString(behaviorKey);
+            CategoryBehaviour importedBehavior = CategoryBehaviour.byStringKey(behaviorString);
+            if (importedBehavior == null) {
+                throw new IllegalArgumentException("unknown behavior: " + behaviorString);
+            }
+            behaviour = importedBehavior;
+            numberOfSettingsImported++;
+        } else {
+            behaviour = defaultBehaviour;
+        }
+        String colorKey = getFlatJsonColorKey();
+        if (json.has(colorKey)) {
+            setColor(json.getString(colorKey));
+            numberOfSettingsImported++;
+        } else {
+            color = defaultColor;
+        }
+        save(editor);
+        return numberOfSettingsImported;
     }
 
     /**
@@ -295,7 +354,7 @@ public enum SegmentCategory {
      */
     @NonNull
     StringRef getSkipButtonText(long segmentStartTime, long videoLength) {
-        if (SettingsEnum.SB_USE_COMPACT_SKIP_BUTTON.getBoolean()) {
+        if (SettingsEnum.SB_COMPACT_SKIP_BUTTON.getBoolean()) {
             return (this == SegmentCategory.HIGHLIGHT)
                     ? skipSponsorTextCompactHighlight
                     : skipSponsorTextCompact;

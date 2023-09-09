@@ -38,7 +38,7 @@ public class VideoHelpers {
                 url += String.format("?t=%s", seconds);
             }
 
-            setClipboard(context, url);
+            ReVancedUtils.setClipboard(url);
             showToastShort(context, str("share_copy_url_success"));
         } catch (Exception e) {
             LogHelper.printException(VideoHelpers.class, "Failed to generate video url", e);
@@ -57,7 +57,7 @@ public class VideoHelpers {
 
             @SuppressLint("DefaultLocale") String timeStamp = h > 0 ? String.format("%02d:%02d:%02d", h, m, s) : String.format("%02d:%02d", m, s);
 
-            setClipboard(context, timeStamp);
+            ReVancedUtils.setClipboard(timeStamp);
             showToastShort(context, str("revanced_copy_video_timestamp_success") + ": " + timeStamp);
         } catch (Exception ex) {
             LogHelper.printException(VideoHelpers.class, "Failed to generate video url", ex);
@@ -145,12 +145,6 @@ public class VideoHelpers {
     private static void overrideSpeedBridge(final float speed) {
         overrideSpeed(speed);
         userChangedSpeed(speed);
-    }
-
-    private static void setClipboard(Context context, String text) {
-        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        android.content.ClipData clip = android.content.ClipData.newPlainText("link", text);
-        clipboard.setPrimaryClip(clip);
     }
 
     public static float getCurrentSpeed() {
