@@ -3,12 +3,14 @@ package app.revanced.music.utils;
 import static app.revanced.music.utils.ReVancedUtils.showToastShort;
 import static app.revanced.music.utils.StringRef.str;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.net.Uri;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -78,6 +80,23 @@ public class VideoHelpers {
         params.width = (int) (size.x * 0.5);
         params.height = (int) (size.y * 0.55);
         speedDialog.getWindow().setAttributes(params);
+    }
+
+    public static void openInYouTube(Context context) {
+        try {
+            if (context == null) {
+                showToastShort("Context is null!");
+                return;
+            }
+            var content = String.format("vnd.youtube://%s", VideoInformation.getVideoId());
+
+            @SuppressLint("IntentReset")
+            var intent = new Intent("android.intent.action.VIEW", Uri.parse(content));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception ex) {
+            LogHelper.printException(VideoHelpers.class, "Failed to launch the open YouTube intent", ex);
+        }
     }
 
     private static void overrideSpeedBridge(final float speed) {

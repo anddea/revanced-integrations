@@ -23,8 +23,6 @@ public enum SettingsEnum {
 
 
     // Button Container
-    BUTTON_CONTAINER_DOWNLOAD_INDEX("revanced_button_container_download_index", INTEGER, 3),
-    BUTTON_CONTAINER_DOWNLOAD_INDEX_FOUND("revanced_button_container_download_index_found", BOOLEAN, FALSE),
     EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.junkfood.seal", true),
     HIDE_BUTTON_CONTAINER_LABEL("revanced_hide_button_container_label", BOOLEAN, FALSE),
     HIDE_BUTTON_CONTAINER_RADIO("revanced_hide_button_container_radio", BOOLEAN, FALSE),
@@ -56,6 +54,7 @@ public enum SettingsEnum {
     HIDE_FLYOUT_PANEL_START_RADIO("revanced_hide_flyout_panel_start_radio", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_STATS_FOR_NERDS("revanced_hide_flyout_panel_stats_for_nerds", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_VIEW_SONG_CREDIT("revanced_hide_flyout_panel_view_song_credit", BOOLEAN, FALSE),
+    REPLACE_FLYOUT_PANEL_DISMISS_QUEUE("revanced_replace_flyout_panel_dismiss_queue", BOOLEAN, FALSE, true),
 
 
     // General

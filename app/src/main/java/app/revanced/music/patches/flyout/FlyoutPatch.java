@@ -1,5 +1,9 @@
 package app.revanced.music.patches.flyout;
 
+import static app.revanced.music.utils.ResourceUtils.identifier;
+import static app.revanced.music.utils.StringRef.str;
+
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
@@ -8,16 +12,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
+import app.revanced.music.utils.ReVancedUtils;
+import app.revanced.music.utils.ResourceType;
 import app.revanced.music.utils.VideoHelpers;
 
 public class FlyoutPatch {
-    private static ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#ffffffff"), PorterDuff.Mode.SRC_ATOP);
+
+    private static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#ffffffff"), PorterDuff.Mode.SRC_ATOP);
 
     public static int enableCompactDialog(int original) {
         return SettingsEnum.ENABLE_COMPACT_DIALOG.getBoolean() && original < 600 ? 600 : original;
@@ -27,11 +35,11 @@ public class FlyoutPatch {
         return SettingsEnum.ENABLE_SLEEP_TIMER.getBoolean();
     }
 
-    public static boolean hideFlyoutPanels(@Nullable Enum flyoutPanel) {
-        if (flyoutPanel == null)
+    public static boolean hideFlyoutPanels(@Nullable Enum<?> flyoutPanelEnum) {
+        if (flyoutPanelEnum == null)
             return false;
 
-        final String flyoutPanelName = flyoutPanel.name();
+        final String flyoutPanelName = flyoutPanelEnum.name();
 
         LogHelper.printDebug(FlyoutPatch.class, flyoutPanelName);
 
@@ -40,6 +48,34 @@ public class FlyoutPatch {
                 return true;
 
         return false;
+    }
+
+    /**
+     * This method is called before the original method
+     * So even if we define TextView and ImageView, TextView and ImageView are redefined in the original method
+     * To prevent this, define the TextView and ImageView in a new thread
+     * @param flyoutPanelEnum Enum in menu
+     * @param textView TextView in menu
+     * @param imageView ImageView in menu
+     */
+    public static void replaceDismissQueue(@Nullable Enum<?> flyoutPanelEnum, @NonNull TextView textView, @NonNull ImageView imageView) {
+        if (flyoutPanelEnum == null || !SettingsEnum.REPLACE_FLYOUT_PANEL_DISMISS_QUEUE.getBoolean())
+            return;
+
+        final String flyoutPanelName = flyoutPanelEnum.name();
+
+        if (!flyoutPanelName.equals("DISMISS_QUEUE"))
+            return;
+
+        ViewGroup clickAbleArea = (ViewGroup) textView.getParent();
+
+        ReVancedUtils.runOnMainThreadDelayed(() -> {
+                    textView.setText(str("revanced_flyout_panel_watch_on_youtube"));
+                    imageView.setImageResource(identifier("yt_outline_youtube_logo_icon_black_24", ResourceType.DRAWABLE, clickAbleArea.getContext()));
+                    imageView.setColorFilter(cf);
+                    clickAbleArea.setOnClickListener(viewGroup -> VideoHelpers.openInYouTube(viewGroup.getContext()));
+                }, 0L
+        );
     }
 
     public static void hideImageView(@NonNull View view) {
