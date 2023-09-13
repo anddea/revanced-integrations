@@ -4,12 +4,14 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static app.revanced.music.settings.SettingsEnum.ReturnType.BOOLEAN;
 import static app.revanced.music.settings.SettingsEnum.ReturnType.FLOAT;
+import static app.revanced.music.settings.SettingsEnum.ReturnType.LONG;
 import static app.revanced.music.settings.SettingsEnum.ReturnType.INTEGER;
 import static app.revanced.music.settings.SettingsEnum.ReturnType.STRING;
 import static app.revanced.music.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.music.utils.SharedPrefHelper.saveBoolean;
 import static app.revanced.music.utils.SharedPrefHelper.saveFloat;
 import static app.revanced.music.utils.SharedPrefHelper.saveInteger;
+import static app.revanced.music.utils.SharedPrefHelper.saveLong;
 import static app.revanced.music.utils.SharedPrefHelper.saveString;
 
 import androidx.annotation.NonNull;
@@ -105,7 +107,17 @@ public enum SettingsEnum {
     RYD_USER_ID("revanced_ryd_user_id", STRING, ""),
     RYD_ENABLED("revanced_ryd_enabled", BOOLEAN, TRUE),
     RYD_DISLIKE_PERCENTAGE("revanced_ryd_dislike_percentage", BOOLEAN, FALSE),
-    RYD_COMPACT_LAYOUT("revanced_ryd_compact_layout", BOOLEAN, FALSE);
+    RYD_COMPACT_LAYOUT("revanced_ryd_compact_layout", BOOLEAN, FALSE),
+
+
+    // SponsorBlock
+    SB_ENABLED("sb_enabled", BOOLEAN, TRUE),
+    SB_TOAST_ON_SKIP("sb_toast_on_skip", BOOLEAN, TRUE),
+    SB_API_URL("sb_api_url", STRING, "https://sponsor.ajay.app"),
+    SB_PRIVATE_USER_ID("sb_private_user_id", STRING, ""),
+    // SB settings not exported
+    SB_LAST_VIP_CHECK("sb_last_vip_check", LONG, 0L);
+
 
     static {
         loadAllSettings();
@@ -145,6 +157,8 @@ public enum SettingsEnum {
                     value = Objects.requireNonNull(getPreferences()).getBoolean(path, (boolean) defaultValue);
             case INTEGER ->
                     value = Objects.requireNonNull(getPreferences()).getInt(path, (Integer) defaultValue);
+            case LONG ->
+                    value = Objects.requireNonNull(getPreferences()).getLong(path, (long) defaultValue);
             case FLOAT ->
                     value = Objects.requireNonNull(getPreferences()).getFloat(path, (float) defaultValue);
             case STRING ->
@@ -157,6 +171,7 @@ public enum SettingsEnum {
         Objects.requireNonNull(newValue);
         switch (returnType) {
             case BOOLEAN -> saveBoolean(path, (boolean) newValue);
+            case LONG -> saveLong(path, (long) newValue);
             case INTEGER -> saveInteger(path, (Integer) newValue);
             case FLOAT -> saveFloat(path, (float) newValue);
             default -> saveString(path, newValue.toString());
@@ -172,6 +187,10 @@ public enum SettingsEnum {
         return (Integer) value;
     }
 
+    public long getLong() {
+        return (Long) value;
+    }
+
     public float getFloat() {
         return (Float) value;
     }
@@ -183,6 +202,7 @@ public enum SettingsEnum {
     public enum ReturnType {
         BOOLEAN,
         INTEGER,
+        LONG,
         FLOAT,
         STRING,
     }

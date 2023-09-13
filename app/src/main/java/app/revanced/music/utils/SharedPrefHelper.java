@@ -27,6 +27,10 @@ public class SharedPrefHelper {
         Objects.requireNonNull(getPreferences()).edit().putFloat(key, value).apply();
     }
 
+    public static void saveLong(String key, long value) {
+        Objects.requireNonNull(getPreferences()).edit().putLong(key, value).apply();
+    }
+
     public static String getString(String key, String _default) {
         return Objects.requireNonNull(getPreferences()).getString(key, _default);
     }

@@ -1,36 +1,35 @@
 package app.revanced.music.utils;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.Resources;
-
 import androidx.annotation.NonNull;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 public class StringRef {
-    // must use a thread safe map, as this class is used both on and off the main thread
-    private static final Map<String, StringRef> strings = Collections.synchronizedMap(new HashMap<>());
-    private static Resources resources;
-    private static String packageName;
+    /**
+     * Shorthand for <code>constant("")</code>
+     * Its value always resolves to empty string
+     */
+    @NonNull
+    public static final StringRef empty = constant("");
+    private static final HashMap<String, StringRef> strings = new HashMap<>();
     @NonNull
     private String value;
     private boolean resolved;
+
 
     public StringRef(@NonNull String resName) {
         this.value = resName;
     }
 
     /**
-     * Returns a cached instance.
-     * Should be used if the same String could be loaded more than once.
+     * Gets strings reference from shared collection or creates if not exists yet,
+     * this method should be called if you want to get StringRef
      *
      * @param id string resource name/id
+     * @return String reference that'll resolve to excepted string, may be from cache
      */
     @NonNull
-    public static StringRef sfc(@NonNull String id) {
+    public static StringRef sf(@NonNull String id) {
         StringRef ref = strings.get(id);
         if (ref == null) {
             ref = new StringRef(id);
@@ -40,18 +39,18 @@ public class StringRef {
     }
 
     /**
-     * Gets string value by string id, shorthand for <code>sfc(id).toString()</code>
+     * Gets string value by string id, shorthand for <code>sf(id).toString()</code>
      *
      * @param id string resource name/id
      * @return String value from string.xml
      */
     @NonNull
     public static String str(@NonNull String id) {
-        return sfc(id).toString();
+        return sf(id).toString();
     }
 
     /**
-     * Gets string value by string id, shorthand for <code>sfc(id).toString()</code> and formats the string
+     * Gets string value by string id, shorthand for <code>sf(id).toString()</code> and formats the string
      * with given args.
      *
      * @param id   string resource name/id
@@ -63,25 +62,25 @@ public class StringRef {
         return String.format(str(id), args);
     }
 
+    /**
+     * Creates a StringRef object that'll not change it's value
+     *
+     * @param value value which toString() method returns when invoked on returned object
+     * @return Unique StringRef instance, its value will never change
+     */
+    @NonNull
+    public static StringRef constant(@NonNull String value) {
+        final StringRef ref = new StringRef(value);
+        ref.resolved = true;
+        return ref;
+    }
+
     @Override
     @NonNull
     public String toString() {
         if (!resolved) {
-            if (resources == null || packageName == null) {
-                Context context = ReVancedUtils.getContext();
-                resources = context.getResources();
-                packageName = context.getPackageName();
-            }
             resolved = true;
-            if (resources != null) {
-                @SuppressLint("DiscouragedApi") final int identifier = resources.getIdentifier(value, "string", packageName);
-                if (identifier == 0)
-                    LogHelper.printException(StringRef.class, "Resource not found: " + value);
-                else
-                    value = resources.getString(identifier);
-            } else {
-                LogHelper.printException(StringRef.class, "Could not resolve resources!");
-            }
+            value = ResourceUtils.string(value);
         }
         return value;
     }
