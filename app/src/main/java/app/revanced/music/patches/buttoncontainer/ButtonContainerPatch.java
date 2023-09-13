@@ -25,24 +25,24 @@ public class ButtonContainerPatch {
                         if (childCount == 0)
                             return;
 
-                        if (!SettingsEnum.BUTTON_CONTAINER_DOWNLOAD_INDEX_FOUND.getBoolean() || SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) {
+                        if (SettingsEnum.HOOK_BUTTON_CONTAINER_DOWNLOAD.getBoolean()) {
+                            int downloadButtonIndex = -1;
                             final String downloadButtonDescription = str("action_add_to_offline_songs");
                             for (int i = 0; i < childCount; i++) {
                                 View childView = viewGroup.getChildAt(i);
                                 String description = childView.getContentDescription().toString();
 
-                                if (!SettingsEnum.BUTTON_CONTAINER_DOWNLOAD_INDEX_FOUND.getBoolean() && description.contains(downloadButtonDescription)) {
-                                    SettingsEnum.BUTTON_CONTAINER_DOWNLOAD_INDEX_FOUND.saveValue(true);
-                                    SettingsEnum.BUTTON_CONTAINER_DOWNLOAD_INDEX.saveValue(i);
+                                if (description.contains(downloadButtonDescription)) {
+                                    downloadButtonIndex = i;
                                 }
 
                                 LogHelper.printDebug(ButtonContainerPatch.class, "Button Description: " + description);
                             }
-                        }
 
-                        if (SettingsEnum.HOOK_BUTTON_CONTAINER_DOWNLOAD.getBoolean()) {
-                            View downloadButton = viewGroup.getChildAt(SettingsEnum.BUTTON_CONTAINER_DOWNLOAD_INDEX.getInt());
-                            downloadButton.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
+                            if (downloadButtonIndex != -1) {
+                                View downloadButton = viewGroup.getChildAt(downloadButtonIndex);
+                                downloadButton.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
+                            }
                         }
 
                         if (SettingsEnum.HIDE_BUTTON_CONTAINER_RADIO.getBoolean()) {
