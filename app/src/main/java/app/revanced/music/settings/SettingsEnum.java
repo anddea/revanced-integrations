@@ -23,7 +23,7 @@ public enum SettingsEnum {
 
 
     // Button Container
-    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.junkfood.seal", true),
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
     HIDE_BUTTON_CONTAINER_LABEL("revanced_hide_button_container_label", BOOLEAN, FALSE),
     HIDE_BUTTON_CONTAINER_RADIO("revanced_hide_button_container_radio", BOOLEAN, FALSE),
     HOOK_BUTTON_CONTAINER_DOWNLOAD("revanced_hook_button_container_download", BOOLEAN, FALSE, true),
