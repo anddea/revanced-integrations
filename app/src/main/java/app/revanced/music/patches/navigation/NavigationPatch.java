@@ -21,19 +21,22 @@ public class NavigationPatch {
     }
 
     public static void hideSampleButton(List list) {
-        if (!SettingsEnum.HIDE_SAMPLE_BUTTON.getBoolean() || !SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.getBoolean())
-            return;
+        if ((SettingsEnum.HIDE_SAMPLE_BUTTON.getBoolean() || SettingsEnum.SPOOF_APP_VERSION.getBoolean()) && SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.getBoolean()) {
+            final int size = list.size();
+            final int sampleButtonIndex = 1;
 
-        final int size = list.size();
-        final int sampleButtonIndex = 1;
-
-        if (size > sampleButtonIndex) {
-            list.remove(sampleButtonIndex);
+            if (size > sampleButtonIndex) {
+                list.remove(sampleButtonIndex);
+            }
         }
     }
 
     public static boolean hideUpgradeButton(@NonNull Enum button) {
         final String buttonName = button.name();
+
+        if (SettingsEnum.SPOOF_APP_VERSION.getBoolean()) {
+            SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.saveValue(true);
+        }
 
         if (!SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.getBoolean() && buttonName.equals("TAB_SAMPLES")) {
             SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.saveValue(true);

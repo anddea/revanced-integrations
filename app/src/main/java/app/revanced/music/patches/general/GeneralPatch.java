@@ -24,13 +24,15 @@ public class GeneralPatch {
     }
 
     public static String enableOldStyleLibraryShelf(final String original) {
-        if (original.startsWith("LV") || !SettingsEnum.ENABLE_OLD_STYLE_LIBRARY_SHELF.getBoolean())
+        if (original.startsWith("LV"))
             return original;
 
-        LogHelper.printDebug(GeneralPatch.class, "Current Browser ID: " + original);
+        if (SettingsEnum.ENABLE_OLD_STYLE_LIBRARY_SHELF.getBoolean() || SettingsEnum.SPOOF_APP_VERSION.getBoolean()) {
+            LogHelper.printDebug(GeneralPatch.class, "Current Browse ID: " + original);
 
-        if (Stream.of("FEmusic_library_landing").anyMatch(original::contains))
-            return "FEmusic_liked";
+            if (Stream.of("FEmusic_library_landing").anyMatch(original::contains))
+                return "FEmusic_liked";
+        }
 
         return original;
     }
