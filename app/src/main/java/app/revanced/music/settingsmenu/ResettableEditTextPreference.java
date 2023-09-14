@@ -50,7 +50,7 @@ public class ResettableEditTextPreference {
             textInputLayout.addView(textView);
             container.addView(textInputLayout);
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(base,android.R.style.Theme_DeviceDefault_Dialog_Alert);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(base, android.R.style.Theme_DeviceDefault_Dialog_Alert);
 
             builder.setTitle(str(setting.path + "_title"))
                     .setView(container)

@@ -321,7 +321,10 @@ public enum SettingsEnum {
 
     // SponsorBlock
     SB_ENABLED("sb_enabled", BOOLEAN, TRUE, SPONSOR_BLOCK),
-    SB_PRIVATE_USER_ID("sb_private_user_id_Do_Not_Share", STRING, "", SPONSOR_BLOCK), /** Do not use directly, instead use {@link SponsorBlockSettings} */
+    SB_PRIVATE_USER_ID("sb_private_user_id_Do_Not_Share", STRING, "", SPONSOR_BLOCK),
+    /**
+     * Do not use directly, instead use {@link SponsorBlockSettings}
+     */
     SB_CREATE_NEW_SEGMENT_STEP("sb_create_new_segment_step", INTEGER, 150, SPONSOR_BLOCK, parents(SB_ENABLED)),
     SB_VOTING_BUTTON("sb_voting_button", BOOLEAN, FALSE, SPONSOR_BLOCK, parents(SB_ENABLED)),
     SB_CREATE_NEW_SEGMENT("sb_create_new_segment", BOOLEAN, FALSE, SPONSOR_BLOCK, parents(SB_ENABLED)),

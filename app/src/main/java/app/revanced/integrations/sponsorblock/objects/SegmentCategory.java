@@ -2,7 +2,6 @@ package app.revanced.integrations.sponsorblock.objects;
 
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.IGNORE;
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY;
-import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY_ONCE;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.integrations.utils.StringRef.sf;
@@ -163,6 +162,7 @@ public enum SegmentCategory {
                 skippedToastText, skippedToastText, skippedToastText,
                 defaultBehavior, defaultColor);
     }
+
     SegmentCategory(String key, StringRef title, StringRef description,
                     StringRef skipButtonTextBeginning, StringRef skipButtonTextMiddle, StringRef skipButtonTextEnd,
                     StringRef skippedToastBeginning, StringRef skippedToastMiddle, StringRef skippedToastEnd,

@@ -23,7 +23,7 @@ public class ReturnYouTubeDislikePatch {
 
     /**
      * Injection point
-     *
+     * <p>
      * Called when a Shorts dislike Spannable is created
      */
     public static Spanned onComponentCreated(Spanned like) {

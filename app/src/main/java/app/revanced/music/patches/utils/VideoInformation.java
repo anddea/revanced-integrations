@@ -65,32 +65,9 @@ public final class VideoInformation {
     }
 
     /**
-     * Injection point.
-     *
-     * @param length The length of the video in milliseconds.
-     */
-    public static void setVideoLength(final long length) {
-        if (videoLength != length) {
-            //LogHelper.printDebug(VideoInformation.class, "Current video length: " + length);
-            videoLength = length;
-        }
-    }
-
-    /**
-     * Injection point.
-     * Called on the main thread every 1000ms.
-     *
-     * @param currentPlaybackTime The current playback time of the video in milliseconds.
-     */
-    public static void setVideoTime(final long currentPlaybackTime) {
-        //LogHelper.printDebug(VideoInformation.class, "Current video time: " + currentPlaybackTime);
-        videoTime = currentPlaybackTime;
-    }
-
-    /**
      * Seek on the current video.
      * Does not function for playback of Shorts.
-     *
+     * <p>
      * Caution: If called from a videoTimeHook() callback,
      * this will cause a recursive call into the same videoTimeHook() callback.
      *
@@ -116,18 +93,30 @@ public final class VideoInformation {
      * Length of the current video playing.  Includes Shorts.
      *
      * @return The length of the video in milliseconds.
-     *         If the video is not yet loaded, or if the video is playing in the background with no video visible,
-     *         then this returns zero.
+     * If the video is not yet loaded, or if the video is playing in the background with no video visible,
+     * then this returns zero.
      */
     public static long getVideoLength() {
         return videoLength;
     }
 
     /**
+     * Injection point.
+     *
+     * @param length The length of the video in milliseconds.
+     */
+    public static void setVideoLength(final long length) {
+        if (videoLength != length) {
+            //LogHelper.printDebug(VideoInformation.class, "Current video length: " + length);
+            videoLength = length;
+        }
+    }
+
+    /**
      * Playback time of the current video playing.  Includes Shorts.
-     *
+     * <p>
      * Value will lag behind the actual playback time by a variable amount based on the playback speed.
-     *
+     * <p>
      * If playback speed is 2.0x, this value may be up to 2000ms behind the actual playback time.
      * If playback speed is 1.0x, this value may be up to 1000ms behind the actual playback time.
      * If playback speed is 0.5x, this value may be up to 500ms behind the actual playback time.
@@ -137,6 +126,17 @@ public final class VideoInformation {
      */
     public static long getVideoTime() {
         return videoTime;
+    }
+
+    /**
+     * Injection point.
+     * Called on the main thread every 1000ms.
+     *
+     * @param currentPlaybackTime The current playback time of the video in milliseconds.
+     */
+    public static void setVideoTime(final long currentPlaybackTime) {
+        //LogHelper.printDebug(VideoInformation.class, "Current video time: " + currentPlaybackTime);
+        videoTime = currentPlaybackTime;
     }
 
 }

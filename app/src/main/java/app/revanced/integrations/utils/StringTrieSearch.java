@@ -38,6 +38,7 @@ public final class StringTrieSearch extends TrieSearch<String> {
     public boolean matches(@NonNull String textToSearch, int startIndex) {
         return matches(textToSearch, startIndex, textToSearch.length(), null);
     }
+
     private static final class StringTrieNode extends TrieNode<String> {
         TrieNode<String> createNode() {
             return new StringTrieNode();

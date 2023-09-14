@@ -49,7 +49,7 @@ public class SponsorBlockEditTextPreference {
             textInputLayout.addView(textView);
             container.addView(textInputLayout);
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(base,android.R.style.Theme_DeviceDefault_Dialog_Alert);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(base, android.R.style.Theme_DeviceDefault_Dialog_Alert);
 
             builder.setTitle(str("sb_api_url"))
                     .setView(container)

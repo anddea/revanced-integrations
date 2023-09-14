@@ -3,7 +3,6 @@ package app.revanced.music.sponsorblock.requests;
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import app.revanced.music.requests.Requester;
-import app.revanced.music.requests.Route;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.sponsorblock.SponsorBlockSettings;
 import app.revanced.music.sponsorblock.objects.SegmentCategory;
@@ -46,7 +44,7 @@ public class SBRequester {
         ReVancedUtils.verifyOffMainThread();
         List<SponsorSegment> segments = new ArrayList<>();
         try {
-            HttpURLConnection connection = getConnectionFromRoute(SBRoutes.GET_SEGMENTS, videoId, SegmentCategory.sponsorBlockAPIFetchCategories);
+            HttpURLConnection connection = getConnectionFromRoute(videoId, SegmentCategory.sponsorBlockAPIFetchCategories);
             final int responseCode = connection.getResponseCode();
 
             if (responseCode == HTTP_STATUS_CODE_SUCCESS) {
@@ -94,11 +92,7 @@ public class SBRequester {
         }
         ReVancedUtils.runOnBackgroundThread(() -> {
             try {
-                JSONObject json = getJSONObject(SponsorBlockSettings.getSBPrivateUserID());
-                boolean vip = json.getBoolean("vip");
                 SettingsEnum.SB_LAST_VIP_CHECK.saveValue(now);
-            } catch (IOException ex) {
-                LogHelper.printException(SBRequester.class, "Failed to check VIP (network error)", ex); // info, so no error toast is shown
             } catch (Exception ex) {
                 LogHelper.printException(SBRequester.class, "Failed to check VIP", ex); // should never happen
             }
@@ -107,14 +101,10 @@ public class SBRequester {
 
     // helpers
 
-    private static HttpURLConnection getConnectionFromRoute(@NonNull Route route, String... params) throws IOException {
-        HttpURLConnection connection = Requester.getConnectionFromRoute(SettingsEnum.SB_API_URL.getString(), route, params);
+    private static HttpURLConnection getConnectionFromRoute(String... params) throws IOException {
+        HttpURLConnection connection = Requester.getConnectionFromRoute(SettingsEnum.SB_API_URL.getString(), SBRoutes.GET_SEGMENTS, params);
         connection.setConnectTimeout(TIMEOUT_TCP_DEFAULT_MILLISECONDS);
         connection.setReadTimeout(TIMEOUT_HTTP_DEFAULT_MILLISECONDS);
         return connection;
-    }
-
-    private static JSONObject getJSONObject(String... params) throws IOException, JSONException {
-        return Requester.parseJSONObject(getConnectionFromRoute(SBRoutes.IS_USER_VIP, params));
     }
 }

@@ -213,10 +213,6 @@ public class SegmentPlaybackController {
                 LogHelper.printDebug(SegmentPlaybackController.class, "ignoring Short");
                 return;
             }
-            if (!ReVancedUtils.isNetworkConnected()) {
-                LogHelper.printDebug(SegmentPlaybackController.class, "Network not connected, ignoring video");
-                return;
-            }
 
             currentVideoId = videoId;
             LogHelper.printDebug(SegmentPlaybackController.class, "setCurrentVideoId: " + videoId);

@@ -30,7 +30,7 @@ public class SponsorBlockDialogBuilder {
     public static void showDialog(String categoryString, Activity base) {
         try {
             SegmentCategory category = Objects.requireNonNull(SegmentCategory.byCategoryKey(categoryString));
-            final AlertDialog.Builder builder = new AlertDialog.Builder(base,android.R.style.Theme_DeviceDefault_Dialog_Alert);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(base, android.R.style.Theme_DeviceDefault_Dialog_Alert);
             TableLayout table = new TableLayout(base);
             table.setOrientation(LinearLayout.HORIZONTAL);
             table.setPadding(70, 0, 150, 0);

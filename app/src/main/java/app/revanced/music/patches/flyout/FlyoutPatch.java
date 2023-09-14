@@ -3,7 +3,6 @@ package app.revanced.music.patches.flyout;
 import static app.revanced.music.utils.ResourceUtils.identifier;
 import static app.revanced.music.utils.StringRef.str;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
@@ -54,9 +53,10 @@ public class FlyoutPatch {
      * This method is called before the original method
      * So even if we define TextView and ImageView, TextView and ImageView are redefined in the original method
      * To prevent this, define the TextView and ImageView in a new thread
+     *
      * @param flyoutPanelEnum Enum in menu
-     * @param textView TextView in menu
-     * @param imageView ImageView in menu
+     * @param textView        TextView in menu
+     * @param imageView       ImageView in menu
      */
     public static void replaceDismissQueue(@Nullable Enum<?> flyoutPanelEnum, @NonNull TextView textView, @NonNull ImageView imageView) {
         if (flyoutPanelEnum == null || !SettingsEnum.REPLACE_FLYOUT_PANEL_DISMISS_QUEUE.getBoolean())

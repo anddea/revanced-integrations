@@ -129,6 +129,7 @@ public enum SegmentCategory {
                 skippedToastText, skippedToastText, skippedToastText,
                 defaultBehavior, defaultColor);
     }
+
     SegmentCategory(String key, StringRef title, StringRef description,
                     StringRef skipButtonTextBeginning, StringRef skipButtonTextMiddle, StringRef skipButtonTextEnd,
                     StringRef skippedToastBeginning, StringRef skippedToastMiddle, StringRef skippedToastEnd,

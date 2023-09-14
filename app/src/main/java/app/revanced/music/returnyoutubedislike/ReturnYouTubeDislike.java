@@ -155,10 +155,6 @@ public class ReturnYouTubeDislike {
             if (videoId.equals(currentVideoId)) {
                 return; // already loaded
             }
-            if (ReVancedUtils.isNetworkConnected()) { // must do network check after verifying it's a new video id
-                setCurrentVideoId(null);
-                return;
-            }
             setCurrentVideoId(videoId);
 
             RYDCachedFetch entry = futureCache.get(videoId);

@@ -206,12 +206,6 @@ public class ReVancedUtils {
         }
     }
 
-    public static boolean isNetworkConnected() {
-        NetworkType networkType = getNetworkType();
-        return networkType == NetworkType.MOBILE
-                || networkType == NetworkType.WIFI;
-    }
-
     @SuppressLint("MissingPermission") // permission already included in YouTube
     public static NetworkType getNetworkType() {
         assert context != null;

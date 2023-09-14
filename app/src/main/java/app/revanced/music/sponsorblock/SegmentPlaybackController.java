@@ -9,15 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import app.revanced.music.patches.utils.VideoInformation;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.sponsorblock.objects.CategoryBehaviour;
-import app.revanced.music.sponsorblock.objects.SegmentCategory;
 import app.revanced.music.sponsorblock.objects.SponsorSegment;
 import app.revanced.music.sponsorblock.requests.SBRequester;
 import app.revanced.music.utils.LogHelper;

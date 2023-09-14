@@ -170,10 +170,6 @@ public class ReturnYouTubeDislike {
             if (videoId.equals(currentVideoId)) {
                 return; // already loaded
             }
-            if (!ReVancedUtils.isNetworkConnected()) { // must do network check after verifying it's a new video id
-                setCurrentVideoId(null);
-                return;
-            }
             setCurrentVideoId(videoId);
 
             // If a Short is opened while a regular video is on screen, this will incorrectly set this as false.

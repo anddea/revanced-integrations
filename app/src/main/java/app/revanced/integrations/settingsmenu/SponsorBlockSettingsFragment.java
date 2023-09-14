@@ -43,6 +43,7 @@ import app.revanced.integrations.utils.ReVancedUtils;
 @SuppressWarnings("deprecation")
 public class SponsorBlockSettingsFragment extends PreferenceFragment {
 
+    private static final DecimalFormat statsNumberOfSegmentsSkippedFormatter = new DecimalFormat("#,###,###");
     private SwitchPreference sbEnabled;
     private SwitchPreference addNewSegment;
     private SwitchPreference votingEnabled;
@@ -52,13 +53,11 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
     private SwitchPreference trackSkips;
     private SwitchPreference showTimeWithoutSegments;
     private SwitchPreference toastOnConnectionError;
-
     private EditTextPreference newSegmentStep;
     private EditTextPreference minSegmentDuration;
     private EditTextPreference privateUserId;
     private EditTextPreference importExport;
     private Preference apiUrl;
-
     private PreferenceCategory statsCategory;
     private PreferenceCategory segmentCategory;
 
@@ -446,8 +445,6 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
             LogHelper.printException(SponsorBlockSettingsFragment.class, "fetchAndDisplayStats failure", ex);
         }
     }
-
-    private static final DecimalFormat statsNumberOfSegmentsSkippedFormatter = new DecimalFormat("#,###,###");
 
     private void addUserStats(@NonNull Preference loadingPlaceholder, @Nullable UserStats stats) {
         ReVancedUtils.verifyOnMainThread();

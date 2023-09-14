@@ -189,19 +189,15 @@ public class ReVancedUtils {
         }
     }
 
-    public static boolean isNetworkConnected() {
-        NetworkType networkType = getNetworkType();
-        return networkType != NetworkType.MOBILE
-                && networkType != NetworkType.WIFI;
-    }
-
     @SuppressLint("MissingPermission") // permission already included in YouTube
     public static NetworkType getNetworkType() {
         assert context != null;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         var networkInfo = cm.getActiveNetworkInfo();
 
-        if (networkInfo == null || !networkInfo.isConnected()) return NetworkType.NONE;
+        if (networkInfo == null || !networkInfo.isConnected())
+            return NetworkType.NONE;
+
         return switch (networkInfo.getType()) {
             case ConnectivityManager.TYPE_MOBILE, ConnectivityManager.TYPE_BLUETOOTH ->
                     NetworkType.MOBILE;

@@ -22,9 +22,9 @@ import app.revanced.music.settings.SettingsEnum;
 
 public class VideoHelpers {
 
-    public static float currentSpeed = 1.0f;
     private static final String[] playbackSpeedEntries = {"0.25x", "0.5x", "0.75x", str("offline_audio_quality_normal"), "1.25x", "1.5x", "1.75x", "2.0x"};
     private static final String[] playbackSpeedEntryValues = {"0.25", "0.5", "0.75", "1.0", "1.25", "1.50", "1.75", "2.0"};
+    public static float currentSpeed = 1.0f;
 
     public static void downloadMusic(Context context) {
         try {
@@ -67,7 +67,7 @@ public class VideoHelpers {
     }
 
     public static void playbackSpeedDialogListener(Context context) {
-        AlertDialog speedDialog = new AlertDialog.Builder(context,android.R.style.Theme_DeviceDefault_Dialog_Alert)
+        AlertDialog speedDialog = new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
                 .setTitle(currentSpeed + "x")
                 .setItems(playbackSpeedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(playbackSpeedEntryValues[index] + "f")))
                 .show();

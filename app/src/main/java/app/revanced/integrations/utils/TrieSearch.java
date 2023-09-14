@@ -97,8 +97,8 @@ public abstract class TrieSearch<T> {
      * Searches through text, looking for any substring that matches any pattern in this tree.
      *
      * @param textToSearch      Text to search through.
-     * @param startIndex Index to start searching, inclusive value.
-     * @param endIndex Index to stop matching, exclusive value.
+     * @param startIndex        Index to start searching, inclusive value.
+     * @param endIndex          Index to stop matching, exclusive value.
      * @param callbackParameter Optional parameter passed to the callbacks.
      * @return If any pattern matched, and it's callback halted searching.
      */

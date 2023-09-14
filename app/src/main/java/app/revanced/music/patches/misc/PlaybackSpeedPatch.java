@@ -11,7 +11,8 @@ public class PlaybackSpeedPatch {
     public static float getPlaybackSpeed() {
         try {
             return SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return selectedSpeed;
     }
 

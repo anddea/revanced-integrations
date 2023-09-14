@@ -19,7 +19,7 @@ public final class NavBarIndexFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        final boolean isLibraryShelfShown = path.contains("library_recent_shelf");
+        final boolean isLibraryShelfShown = path.startsWith("library_recent_shelf");
 
         if (isLibraryShelfShown) {
             // If the library shelf is detected, set the current navbar index to 4
