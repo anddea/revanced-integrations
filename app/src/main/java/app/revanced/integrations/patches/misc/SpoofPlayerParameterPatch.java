@@ -41,7 +41,7 @@ public class SpoofPlayerParameterPatch {
      */
     public static String overridePlayerParameter(String originalValue) {
         try {
-            if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
+            if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || originalValue.startsWith("8AEB")) {
                 return originalValue;
             }
 
