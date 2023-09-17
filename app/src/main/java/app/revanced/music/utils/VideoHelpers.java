@@ -17,7 +17,8 @@ import android.view.WindowManager;
 import java.util.Objects;
 
 import app.revanced.music.patches.misc.PlaybackSpeedPatch;
-import app.revanced.music.patches.utils.VideoInformation;
+import app.revanced.music.patches.video.PlaybackSpeedPatch;
+import app.revanced.music.patches.video.VideoInformation;
 import app.revanced.music.settings.SettingsEnum;
 
 public class VideoHelpers {

@@ -1,4 +1,4 @@
-package app.revanced.music.patches.misc;
+package app.revanced.music.patches.video;
 
 import static app.revanced.music.utils.ReVancedUtils.NetworkType;
 import static app.revanced.music.utils.ReVancedUtils.getNetworkType;

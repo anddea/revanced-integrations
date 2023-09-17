@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-import app.revanced.music.patches.utils.VideoInformation;
+import app.revanced.music.patches.video.VideoInformation;
 import app.revanced.music.utils.StringRef;
 
 public class SponsorSegment implements Comparable<SponsorSegment> {
