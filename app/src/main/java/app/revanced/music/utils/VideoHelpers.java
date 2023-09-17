@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.view.Display;
 import android.view.WindowManager;
@@ -71,6 +72,13 @@ public class VideoHelpers {
 
     @SuppressLint("IntentReset")
     public static void openInYouTube(@NonNull Context context) {
+        AudioManager audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+        if (audioManager != null) {
+            // noinspection deprecation
+            audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        }
+
         String url = String.format("vnd.youtube://%s", VideoInformation.getVideoId());
         if (SettingsEnum.REPLACE_FLYOUT_PANEL_DISMISS_QUEUE_CONTINUE_WATCH.getBoolean()) {
             long seconds = VideoInformation.getVideoTime() / 1000;
