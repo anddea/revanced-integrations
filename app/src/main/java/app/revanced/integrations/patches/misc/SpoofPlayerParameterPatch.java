@@ -1,10 +1,13 @@
 package app.revanced.integrations.patches.misc;
 
-import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+
+import java.util.Arrays;
+import java.util.List;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
@@ -15,10 +18,15 @@ public class SpoofPlayerParameterPatch {
     /**
      * Target player parameters.
      */
-    private static final String[] PLAYER_PARAMETER_WHITELIST = {
+    private static final List<String> PLAYER_PARAMETER_WHITELIST = Arrays.asList(
             "YAHI", // Autoplay in feed
             "SAFg"  // Autoplay in scrim
-    };
+    );
+
+    /**
+     * Player parameters parameters used in shorts.
+     */
+    private static final String PLAYER_PARAMETER_SHORTS = "8AEB";
 
     /**
      * Player parameters parameters used in autoplay in scrim
@@ -34,32 +42,44 @@ public class SpoofPlayerParameterPatch {
      */
     private static final String PLAYER_PARAMETER_INCOGNITO = "CgIQBg==";
 
+    private static boolean isPlayingShorts;
+
     /**
      * Injection point.
      *
-     * @param originalValue originalValue player parameter
+     * @param playerParameter player parameter
      */
-    public static String overridePlayerParameter(String originalValue) {
+    public static String overridePlayerParameter(String playerParameter) {
         try {
-            if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || originalValue.startsWith("8AEB")) {
-                return originalValue;
+            if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
+                return playerParameter;
             }
 
-            LogHelper.printDebug(SpoofPlayerParameterPatch.class, "Original protobuf parameter value: " + originalValue);
+            if (playerParameter.startsWith(PLAYER_PARAMETER_SHORTS)) {
+                isPlayingShorts = true;
 
-            boolean isPlayingFeed = containsAny(originalValue, PLAYER_PARAMETER_WHITELIST) && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
+                return playerParameter;
+            }
+
+            isPlayingShorts = false;
+
+            LogHelper.printDebug(SpoofPlayerParameterPatch.class, "Original player parameter value: " + playerParameter);
+
+            boolean isPlayingFeed = PLAYER_PARAMETER_WHITELIST.stream().anyMatch(playerParameter::contains)
+                    && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
+
             if (isPlayingFeed) {
                 // Videos in feed won't autoplay with sound.
                 return PLAYER_PARAMETER_SCRIM + PLAYER_PARAMETER_INCOGNITO;
             } else {
-                // Spoof the parameter to prevent playback issues.
+                // Spoof the player parameter to prevent playback issues.
                 return PLAYER_PARAMETER_INCOGNITO;
             }
         } catch (Exception ex) {
             LogHelper.printException(SpoofPlayerParameterPatch.class, "overrideProtobufParameter failure", ex);
         }
 
-        return originalValue;
+        return playerParameter;
     }
 
 
@@ -75,14 +95,16 @@ public class SpoofPlayerParameterPatch {
      *
      * @param view seekbar thumbnail view.  Includes both shorts and regular videos.
      */
-    public static void seekbarImageViewCreated(ImageView view) {
+    public static void seekbarImageViewCreated(@NonNull ImageView view) {
+        // seekbar thumbnail view does not need to be hidden in Shorts videos
+        if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || isPlayingShorts)
+            return;
+
         try {
-            if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
-                view.setVisibility(View.GONE);
-                // Also hide the white border around the thumbnail (otherwise a 1 pixel wide bordered frame is visible).
-                ViewGroup parentLayout = (ViewGroup) view.getParent();
-                parentLayout.setPadding(0, 0, 0, 0);
-            }
+            view.setVisibility(View.GONE);
+            // Also hide the white border around the thumbnail (otherwise a 1 pixel wide bordered frame is visible).
+            ViewGroup parentLayout = (ViewGroup) view.getParent();
+            parentLayout.setPadding(0, 0, 0, 0);
         } catch (Exception ex) {
             LogHelper.printException(SpoofPlayerParameterPatch.class, "seekbarImageViewCreated failure", ex);
         }
