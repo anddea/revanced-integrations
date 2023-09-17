@@ -69,21 +69,17 @@ public class VideoHelpers {
         speedDialog.getWindow().setAttributes(params);
     }
 
-    public static void openInYouTube(Context context) {
-        try {
-            if (context == null) {
-                showToastShort("Context is null!");
-                return;
-            }
-            var content = String.format("vnd.youtube://%s", VideoInformation.getVideoId());
-
-            @SuppressLint("IntentReset")
-            var intent = new Intent("android.intent.action.VIEW", Uri.parse(content));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-        } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Failed to launch the open YouTube intent", ex);
+    @SuppressLint("IntentReset")
+    public static void openInYouTube(@NonNull Context context) {
+        String url = String.format("vnd.youtube://%s", VideoInformation.getVideoId());
+        if (SettingsEnum.REPLACE_FLYOUT_PANEL_DISMISS_QUEUE_CONTINUE_WATCH.getBoolean()) {
+            long seconds = VideoInformation.getVideoTime() / 1000;
+            url += String.format("?t=%s", seconds);
         }
+
+        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(url));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     private static void overrideSpeedBridge(final float speed) {
