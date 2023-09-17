@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
@@ -19,43 +22,47 @@ public class ReVancedHelper {
     private ReVancedHelper() {
     } // utility class
 
-    public static String getAppName() {
-        var packageInfo = getPackageInfo();
+    @NonNull
+    public static String getAppName(@NonNull Context context) {
+        var packageInfo = getPackageInfo(context);
         return packageInfo == null
                 ? DEFAULT_APP_NAME
-                : (String) packageInfo.applicationInfo.loadLabel(getPackageManager());
+                : (String) packageInfo.applicationInfo.loadLabel(getPackageManager(context));
     }
 
-    private static PackageInfo getPackageInfo() {
+    @Nullable
+    private static PackageInfo getPackageInfo(@NonNull Context context) {
         try {
-            var context = Objects.requireNonNull(ReVancedUtils.getContext());
-            return getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return getPackageManager(context).getPackageInfo(context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             LogHelper.printException(ReVancedHelper.class, "Failed to get package Info!" + e);
         }
         return null;
     }
 
-    private static PackageManager getPackageManager() {
-        var context = Objects.requireNonNull(ReVancedUtils.getContext());
+    @NonNull
+    private static PackageManager getPackageManager(@NonNull Context context) {
         return context.getPackageManager();
     }
 
-    private static int getVersionCode() {
-        var packageInfo = getPackageInfo();
+    @NonNull
+    private static int getVersionCode(@NonNull Context context) {
+        final PackageInfo packageInfo = getPackageInfo(context);
         return packageInfo == null
                 ? DEFAULT_VERSION_CODE
                 : packageInfo.versionCode;
     }
 
-    public static String getVersionName() {
-        var packageInfo = getPackageInfo();
+    @NonNull
+    public static String getVersionName(@NonNull Context context) {
+        final PackageInfo packageInfo = getPackageInfo(context);
         return packageInfo == null
                 ? DEFAULT_VERSION_NAME
                 : packageInfo.versionName;
     }
 
-    public static String[] getStringArray(Context context, String key) {
+    @NonNull
+    public static String[] getStringArray(@NonNull Context context, @NonNull String key) {
         return context.getResources().getStringArray(identifier(key, ResourceType.ARRAY));
     }
 
@@ -73,19 +80,16 @@ public class ReVancedHelper {
         return isFullscreenHidden;
     }
 
-    public static boolean isPackageEnabled(Context context, String packageName) {
-        boolean packageEnabled = false;
-
+    public static boolean isPackageEnabled(@NonNull Context context, @NonNull String packageName) {
         try {
-            assert context != null;
-            packageEnabled = context.getPackageManager().getApplicationInfo(packageName, 0).enabled;
+            return context.getPackageManager().getApplicationInfo(packageName, 0).enabled;
         } catch (PackageManager.NameNotFoundException ignored) {
         }
 
-        return packageEnabled;
+        return false;
     }
 
-    public static boolean isSpoofedTargetVersionGez(String versionName) {
+    public static boolean isSpoofedTargetVersionGez(@NonNull String versionName) {
         if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
             return false;
 
@@ -94,7 +98,7 @@ public class ReVancedHelper {
         return spoofedVersion >= targetVersion;
     }
 
-    public static boolean isSpoofedTargetVersionLez(String versionName) {
+    public static boolean isSpoofedTargetVersionLez(@NonNull String versionName) {
         if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
             return false;
 
@@ -103,12 +107,12 @@ public class ReVancedHelper {
         return spoofedVersion <= targetVersion;
     }
 
-    public static boolean isSupportHookDownloadButton() {
-        return isSpoofedTargetVersionGez("18.24.00") || getVersionCode() >= HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE;
+    public static boolean isSupportHookDownloadButton(@NonNull Context context) {
+        return isSpoofedTargetVersionGez("18.24.00") || getVersionCode(context) >= HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE;
     }
 
     public static boolean isTablet() {
-        var context = Objects.requireNonNull(ReVancedUtils.getContext());
+        final Context context = Objects.requireNonNull(ReVancedUtils.getContext());
         return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
     }
 }

@@ -455,7 +455,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 externalDownloaderPreferenceScreen.addPreference(externalDownloaderPreference);
             }
 
-            if (isSupportHookDownloadButton()) {
+            if (isSupportHookDownloadButton(activity)) {
                 Preference experimentalPreference = new Preference(activity);
                 experimentalPreference.setTitle(" ");
                 experimentalPreference.setSummary(str("revanced_experimental_flag"));
@@ -528,8 +528,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        var appName = ReVancedHelper.getAppName();
-        var versionName = ReVancedHelper.getVersionName();
+        Activity activity = getActivity();
+
+        var appName = ReVancedHelper.getAppName(activity);
+        var versionName = ReVancedHelper.getVersionName(activity);
         var formatDate = dateFormat.format(new Date(System.currentTimeMillis()));
         var fileName = String.format("%s_v%s_%s.json", appName, versionName, formatDate);
 

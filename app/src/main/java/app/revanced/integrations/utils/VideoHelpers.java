@@ -18,6 +18,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.Display;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
@@ -30,70 +33,62 @@ public class VideoHelpers {
 
     public static float currentSpeed;
 
-    public static void copyUrl(Context context, Boolean withTimestamp) {
-        try {
-            String url = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
-            if (withTimestamp) {
-                long seconds = VideoInformation.getVideoTime() / 1000;
-                url += String.format("?t=%s", seconds);
-            }
-
-            ReVancedUtils.setClipboard(url);
-            showToastShort(context, str("share_copy_url_success"));
-        } catch (Exception e) {
-            LogHelper.printException(VideoHelpers.class, "Failed to generate video url", e);
+    public static void copyUrl(@NonNull Context context, Boolean withTimestamp) {
+        String url = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
+        if (withTimestamp) {
+            long seconds = VideoInformation.getVideoTime() / 1000;
+            url += String.format("?t=%s", seconds);
         }
+
+        ReVancedUtils.setClipboard(url);
+        showToastShort(context, str("share_copy_url_success"));
     }
 
-    public static void copyTimeStamp(Context context) {
-        try {
-            long videoTime = VideoInformation.getVideoTime();
+    @SuppressLint("DefaultLocale")
+    public static void copyTimeStamp(@NonNull Context context) {
+        final long videoTime = VideoInformation.getVideoTime();
 
-            Duration duration = Duration.ofMillis(videoTime);
+        final Duration duration = Duration.ofMillis(videoTime);
 
-            long h = duration.toHours();
-            long m = duration.toMinutes() % 60;
-            long s = duration.getSeconds() % 60;
+        long h = duration.toHours();
+        long m = duration.toMinutes() % 60;
+        long s = duration.getSeconds() % 60;
 
-            @SuppressLint("DefaultLocale") String timeStamp = h > 0 ? String.format("%02d:%02d:%02d", h, m, s) : String.format("%02d:%02d", m, s);
+        final String timeStamp = h > 0
+                ? String.format(":\u2009%02d:%02d:%02d", h, m, s)
+                : String.format(":\u2009%02d:%02d", m, s);
 
-            ReVancedUtils.setClipboard(timeStamp);
-            showToastShort(context, str("revanced_copy_video_timestamp_success") + ": " + timeStamp);
-        } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Failed to generate video url", ex);
-        }
+        ReVancedUtils.setClipboard(timeStamp);
+        showToastShort(context, str("revanced_copy_video_timestamp_success") + timeStamp);
     }
 
-    public static void download(Context context) {
-        try {
-            var packageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString().trim();
+    public static void download(@NonNull Context context) {
+        String downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString().trim();
 
-            if (packageName.isEmpty()) {
-                final String defaultValue = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.defaultValue.toString();
-                SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(defaultValue);
-                packageName = defaultValue;
-            }
-
-            if (!isPackageEnabled(context, packageName)) {
-                showToastShort(str("revanced_external_downloader_not_installed_warning", getExternalDownloaderName(context, packageName)));
-                return;
-            }
-
-            startDownloaderActivity(context, packageName, String.format("https://youtu.be/%s", VideoInformation.getVideoId()));
-        } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Failed to launch the intent: ", ex);
+        if (downloaderPackageName.isEmpty()) {
+            final String defaultValue = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.defaultValue.toString();
+            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(defaultValue);
+            downloaderPackageName = defaultValue;
         }
+
+        if (!isPackageEnabled(context, downloaderPackageName)) {
+            showToastShort(str("revanced_external_downloader_not_installed_warning", getExternalDownloaderName(context, downloaderPackageName)));
+            return;
+        }
+
+        startDownloaderActivity(context, downloaderPackageName, String.format("https://youtu.be/%s", VideoInformation.getVideoId()));
     }
 
-    private static String getExternalDownloaderName(Context context, String packageName) {
+    @NonNull
+    private static String getExternalDownloaderName(@NonNull Context context, @NonNull String packageName) {
         try {
-            final var EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_external_downloader_label";
-            final var EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_external_downloader_package_name";
+            final String EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY = "revanced_external_downloader_label";
+            final String EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_external_downloader_package_name";
 
-            String[] labelArray = getStringArray(context, EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY);
-            String[] packageNameArray = getStringArray(context, EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY);
+            final String[] labelArray = getStringArray(context, EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY);
+            final String[] packageNameArray = getStringArray(context, EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY);
 
-            int findIndex = Arrays.binarySearch(packageNameArray, packageName);
+            final int findIndex = Arrays.binarySearch(packageNameArray, packageName);
 
             return findIndex >= 0 ? labelArray[findIndex] : packageName;
         } catch (Exception e) {
@@ -102,22 +97,18 @@ public class VideoHelpers {
         return packageName;
     }
 
-    public static void startDownloaderActivity(Context context, String downloaderPackageName, String content) {
-        try {
-            var intent = new Intent("android.intent.action.SEND");
-            intent.setType("text/plain");
-            intent.setPackage(downloaderPackageName);
-            intent.putExtra("android.intent.extra.TEXT", content);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-        } catch (Exception e) {
-            LogHelper.printException(VideoHelpers.class, "Unable to start DownloaderActivity", e);
-        }
+    public static void startDownloaderActivity(@NonNull Context context, @NonNull String downloaderPackageName, @NonNull String content) {
+        Intent intent = new Intent("android.intent.action.SEND");
+        intent.setType("text/plain");
+        intent.setPackage(downloaderPackageName);
+        intent.putExtra("android.intent.extra.TEXT", content);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
-    public static void playbackSpeedDialogListener(Context context) {
-        String[] speedEntries = CustomPlaybackSpeedPatch.getListEntries();
-        String[] speedEntryValues = CustomPlaybackSpeedPatch.getListEntryValues();
+    public static void playbackSpeedDialogListener(@NonNull Context context) {
+        final String[] speedEntries = CustomPlaybackSpeedPatch.getListEntries();
+        final String[] speedEntryValues = CustomPlaybackSpeedPatch.getListEntryValues();
 
         AlertDialog speedDialog = new AlertDialog.Builder(context)
                 .setTitle(setTitle(str("camera_speed_button_label")))
@@ -134,11 +125,14 @@ public class VideoHelpers {
         speedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
-    public static String setTitle(String prefix) {
-        String speed = ReVancedUtils.isRightToLeftTextLayout()
+    public static String setTitle(@Nullable String prefix) {
+        final String speed = ReVancedUtils.isRightToLeftTextLayout()
                 ? "\u2066x\u2069" + currentSpeed  // u202E = right to left character
                 : currentSpeed + "x"; // u202D = left to right character
-        if (prefix == null) return speed;
+
+        if (prefix == null)
+            return speed;
+
         return String.format("%s\u2009•\u2009%s", prefix, speed);
     }
 
