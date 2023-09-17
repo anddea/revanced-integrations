@@ -1,4 +1,4 @@
-package app.revanced.music.patches.utils;
+package app.revanced.music.patches.video;
 
 import androidx.annotation.NonNull;
 
@@ -78,15 +78,16 @@ public final class VideoInformation {
         ReVancedUtils.verifyOnMainThread();
         try {
             LogHelper.printDebug(VideoInformation.class, "Seeking to " + millisecond);
-            return (Boolean) seekMethod.invoke(playerControllerRef.get(), millisecond);
+            Object seekResultObject = seekMethod.invoke(playerControllerRef.get(), millisecond);
+
+            if (!(seekResultObject instanceof Boolean seekResult))
+                return false;
+
+            return seekResult;
         } catch (Exception ex) {
             LogHelper.printException(VideoInformation.class, "Failed to seek", ex);
             return false;
         }
-    }
-
-    public static boolean seekToRelative(long millisecondsRelative) {
-        return seekTo(videoTime + millisecondsRelative);
     }
 
     /**
@@ -107,7 +108,6 @@ public final class VideoInformation {
      */
     public static void setVideoLength(final long length) {
         if (videoLength != length) {
-            //LogHelper.printDebug(VideoInformation.class, "Current video length: " + length);
             videoLength = length;
         }
     }
@@ -135,7 +135,6 @@ public final class VideoInformation {
      * @param currentPlaybackTime The current playback time of the video in milliseconds.
      */
     public static void setVideoTime(final long currentPlaybackTime) {
-        //LogHelper.printDebug(VideoInformation.class, "Current video time: " + currentPlaybackTime);
         videoTime = currentPlaybackTime;
     }
 
