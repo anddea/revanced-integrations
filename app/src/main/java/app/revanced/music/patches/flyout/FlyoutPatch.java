@@ -27,7 +27,10 @@ public class FlyoutPatch {
     private static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#ffffffff"), PorterDuff.Mode.SRC_ATOP);
 
     public static int enableCompactDialog(int original) {
-        return SettingsEnum.ENABLE_COMPACT_DIALOG.getBoolean() && original < 600 ? 600 : original;
+        if (!SettingsEnum.ENABLE_COMPACT_DIALOG.getBoolean())
+            return original;
+
+        return Math.max(original, 600);
     }
 
     public static boolean enableSleepTimer() {
