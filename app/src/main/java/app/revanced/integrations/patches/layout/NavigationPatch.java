@@ -11,7 +11,7 @@ import java.util.Objects;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class NavigationPatch {
-    public static Enum lastPivotTab;
+    public static Enum<?> lastPivotTab;
 
     public static boolean changeHomePage() {
         return SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean();
@@ -36,7 +36,8 @@ public class NavigationPatch {
     }
 
     public static void hideNavigationButton(View view) {
-        if (lastPivotTab == null) return;
+        if (lastPivotTab == null)
+            return;
 
         clickLibraryButton(view);
 

@@ -4,17 +4,17 @@ import static app.revanced.integrations.patches.utils.NavBarIndexPatch.isShortsT
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.HorizontalScrollView;
 
-import java.util.Objects;
-
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class ShortsPatch {
+    @SuppressLint("StaticFieldLeak")
     public static Object pivotBar;
 
     public static boolean disableStartupShortsPlayer() {
@@ -30,12 +30,10 @@ public class ShortsPatch {
     }
 
     public static void hideShortsPlayerNavigationBar() {
-        if (!SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean())
+        if (!SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean() || !(pivotBar instanceof HorizontalScrollView horizontalScrollView))
             return;
 
-        if (pivotBar instanceof HorizontalScrollView) {
-            Objects.requireNonNull((HorizontalScrollView) pivotBar).setVisibility(View.GONE);
-        }
+        horizontalScrollView.setVisibility(View.GONE);
     }
 
     public static void hideShortsPlayerCommentsButton(View view) {

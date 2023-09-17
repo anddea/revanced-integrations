@@ -8,15 +8,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
 import android.view.Display;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
-import app.revanced.music.patches.misc.PlaybackSpeedPatch;
 import app.revanced.music.patches.video.PlaybackSpeedPatch;
 import app.revanced.music.patches.video.VideoInformation;
 import app.revanced.music.settings.SettingsEnum;
@@ -27,47 +27,33 @@ public class VideoHelpers {
     private static final String[] playbackSpeedEntryValues = {"0.25", "0.5", "0.75", "1.0", "1.25", "1.50", "1.75", "2.0"};
     public static float currentSpeed = 1.0f;
 
-    public static void downloadMusic(Context context) {
-        try {
-            if (context == null) {
-                showToastShort("Context is null!");
-                return;
-            }
-            var downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString();
+    public static void downloadMusic(@NonNull Context context) {
+        String downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString();
 
-            boolean packageEnabled = false;
-            try {
-                packageEnabled = context.getPackageManager().getApplicationInfo(downloaderPackageName, 0).enabled;
-            } catch (PackageManager.NameNotFoundException error) {
-                showToastShort(str("revanced_external_downloader_not_installed_warning", downloaderPackageName));
-            }
-
-            if (!packageEnabled) {
-                showToastShort(str("revanced_external_downloader_not_installed_warning", downloaderPackageName));
-                return;
-            }
-            var content = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
-
-            startDownloaderActivity(context, downloaderPackageName, content);
-        } catch (Exception ex) {
-            LogHelper.printException(VideoHelpers.class, "Failed to launch the downloader intent", ex);
+        if (downloaderPackageName.isEmpty()) {
+            final String defaultValue = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.defaultValue.toString();
+            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(defaultValue);
+            downloaderPackageName = defaultValue;
         }
+
+        if (!ReVancedHelper.isPackageEnabled(context, downloaderPackageName)) {
+            showToastShort(str("revanced_external_downloader_not_installed_warning", downloaderPackageName));
+            return;
+        }
+
+        startDownloaderActivity(context, downloaderPackageName, String.format("https://youtu.be/%s", VideoInformation.getVideoId()));
     }
 
-    public static void startDownloaderActivity(Context context, String downloaderPackageName, String content) {
-        try {
-            var intent = new Intent("android.intent.action.SEND");
-            intent.setType("text/plain");
-            intent.setPackage(downloaderPackageName);
-            intent.putExtra("android.intent.extra.TEXT", content);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-        } catch (Exception e) {
-            LogHelper.printException(VideoHelpers.class, "Unable to start DownloaderActivity", e);
-        }
+    public static void startDownloaderActivity(@NonNull Context context, @NonNull String downloaderPackageName, @NonNull String content) {
+        Intent intent = new Intent("android.intent.action.SEND");
+        intent.setType("text/plain");
+        intent.setPackage(downloaderPackageName);
+        intent.putExtra("android.intent.extra.TEXT", content);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
-    public static void playbackSpeedDialogListener(Context context) {
+    public static void playbackSpeedDialogListener(@NonNull Context context) {
         AlertDialog speedDialog = new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
                 .setTitle(currentSpeed + "x")
                 .setItems(playbackSpeedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(playbackSpeedEntryValues[index] + "f")))
