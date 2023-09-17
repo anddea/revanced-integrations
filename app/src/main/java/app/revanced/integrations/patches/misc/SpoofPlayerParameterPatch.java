@@ -29,16 +29,15 @@ public class SpoofPlayerParameterPatch {
     private static final String PLAYER_PARAMETER_SHORTS = "8AEB";
 
     /**
-     * Player parameters parameters used in autoplay in scrim
-     * Prepend this parameter to mute video playback (for autoplay in feed)
-     */
-    private static final String PLAYER_PARAMETER_SCRIM = "SAFgAXgB";
-
-    /**
      * Player parameters used in incognito mode's visitor data.
-     * Known issue: ambient mode may not work.
-     * Known issue: downloading videos may not work.
-     * Known issue: seekbar thumbnails are hidden.
+     * <p>
+     * Known issue
+     * - Ambient mode may not work
+     * - Clip cannot be played normally
+     * - Downloading videos may not work
+     * - Filmstrip overlay are always hidden
+     * - No spoofing applied when watching previews in the feed
+     * - Seekbar thumbnails are hidden
      */
     private static final String PLAYER_PARAMETER_INCOGNITO = "CgIQBg==";
 
@@ -69,8 +68,10 @@ public class SpoofPlayerParameterPatch {
                     && PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL;
 
             if (isPlayingFeed) {
-                // Videos in feed won't autoplay with sound.
-                return PLAYER_PARAMETER_SCRIM + PLAYER_PARAMETER_INCOGNITO;
+                // Spoofing is not applied when playing in the feed.
+                // It can prevent unintended histories from being added to your watching history.
+                // This will cause playback buffer issues for videos playing in the feed.
+                return playerParameter;
             } else {
                 // Spoof the player parameter to prevent playback issues.
                 return PLAYER_PARAMETER_INCOGNITO;
