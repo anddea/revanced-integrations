@@ -1,6 +1,7 @@
 package app.revanced.music.settingsmenu;
 
 import static app.revanced.music.settings.SettingsEnum.CUSTOM_FILTER_STRINGS;
+import static app.revanced.music.settings.SettingsEnum.CUSTOM_PLAYBACK_SPEEDS;
 import static app.revanced.music.settings.SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME;
 import static app.revanced.music.settings.SettingsEnum.SB_API_URL;
 import static app.revanced.music.settings.SettingsEnum.values;
@@ -16,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import app.revanced.music.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.sponsorblock.objects.SponsorBlockDialogBuilder;
 import app.revanced.music.sponsorblock.objects.SponsorBlockEditTextPreference;
@@ -42,10 +44,11 @@ public class SharedPreferenceChangeListener {
 
     public static boolean initializeSettings(@NonNull Activity base) {
         final String dataString = Objects.requireNonNull(base.getIntent()).getDataString();
-        base.finish();
 
         if (dataString == null || dataString.isEmpty())
             return false;
+
+        base.finish();
 
         if (dataString.startsWith("sb_segments_")) {
             final String categoryString = dataString.replaceAll("sb_segments_", "");
@@ -58,7 +61,10 @@ public class SharedPreferenceChangeListener {
             ResettableEditTextPreference.editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, activity);
             return true;
         } else if (dataString.equals(CUSTOM_FILTER_STRINGS.path)) {
-            ResettableEditTextPreference.editTextDialogBuilder(CUSTOM_FILTER_STRINGS, activity);
+            ResettableEditTextPreference.editTextDialogBuilder(CUSTOM_FILTER_STRINGS, activity, str("revanced_custom_filter_strings_summary"));
+            return true;
+        } else if (dataString.equals(CUSTOM_PLAYBACK_SPEEDS.path)) {
+            ResettableEditTextPreference.editTextDialogBuilder(CUSTOM_PLAYBACK_SPEEDS, activity, CustomPlaybackSpeedPatch.getWarningMessage());
             return true;
         }
 

@@ -18,14 +18,12 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+import app.revanced.music.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.music.patches.video.PlaybackSpeedPatch;
 import app.revanced.music.patches.video.VideoInformation;
 import app.revanced.music.settings.SettingsEnum;
 
 public class VideoHelpers {
-
-    private static final String[] playbackSpeedEntries = {"0.25x", "0.5x", "0.75x", str("offline_audio_quality_normal"), "1.25x", "1.5x", "1.75x", "2.0x"};
-    private static final String[] playbackSpeedEntryValues = {"0.25", "0.5", "0.75", "1.0", "1.25", "1.50", "1.75", "2.0"};
     public static float currentSpeed = 1.0f;
 
     public static void downloadMusic(@NonNull Context context) {
@@ -55,6 +53,9 @@ public class VideoHelpers {
     }
 
     public static void playbackSpeedDialogListener(@NonNull Context context) {
+        final String[] playbackSpeedEntries = CustomPlaybackSpeedPatch.getListEntries();
+        final String[] playbackSpeedEntryValues = CustomPlaybackSpeedPatch.getListEntryValues();
+
         AlertDialog speedDialog = new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
                 .setTitle(currentSpeed + "x")
                 .setItems(playbackSpeedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(playbackSpeedEntryValues[index] + "f")))
@@ -66,7 +67,10 @@ public class VideoHelpers {
 
         WindowManager.LayoutParams params = Objects.requireNonNull(speedDialog.getWindow()).getAttributes();
         params.width = (int) (size.x * 0.5);
-        params.height = (int) (size.y * 0.55);
+
+        if (CustomPlaybackSpeedPatch.getLength(7) > 7)
+            params.height = (int) (size.y * 0.55);
+
         speedDialog.getWindow().setAttributes(params);
     }
 

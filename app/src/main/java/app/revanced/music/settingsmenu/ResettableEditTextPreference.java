@@ -27,13 +27,18 @@ public class ResettableEditTextPreference {
     }
 
     public static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base) {
+        editTextDialogBuilder(setting, base, setting.getString());
+    }
+
+    public static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base, String hint) {
         try {
-            if (setting.returnType != ReturnType.STRING) return;
+            if (setting.returnType != ReturnType.STRING)
+                return;
 
             TextInputLayout textInputLayout = new TextInputLayout(base);
 
             final EditText textView = new EditText(base);
-            textView.setHint(setting.getString());
+            textView.setHint(hint);
             textView.setText(setting.getString());
 
             FrameLayout container = new FrameLayout(base);

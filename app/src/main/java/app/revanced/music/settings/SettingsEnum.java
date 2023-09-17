@@ -100,6 +100,8 @@ public enum SettingsEnum {
 
 
     // Video
+    CUSTOM_PLAYBACK_SPEEDS("revanced_custom_playback_speeds", STRING,
+            "0.25\n0.5\n0.75\n1.0\n1.25\n1.5\n1.75\n2.0", true),
     ENABLE_SAVE_PLAYBACK_SPEED("revanced_enable_save_playback_speed", BOOLEAN, FALSE),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, TRUE),
     DEFAULT_PLAYBACK_SPEED("revanced_default_playback_speed", FLOAT, 1.0f),
