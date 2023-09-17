@@ -37,13 +37,22 @@ public class LowLevelFilter {
             "channel_action_buttons_phone.eml",
             "|ContainerType|button.eml|"
     );
-    private static final List<String> joinButtonPhone = List.of(
-            "|ContainerType|ContainerType|ContainerType|button.eml|"
-    );
     private static final List<String> browseButtonTablet = Arrays.asList(
             "channel_profile_tablet.eml",
             "|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|button.eml|"
     );
+    private static final List<String> horizontalShelf = Arrays.asList(
+            "horizontal_tile_shelf.eml",
+            "horizontal_video_shelf.eml"
+    );
+    private static final List<String> horizontalShelfHeader = Arrays.asList(
+            "horizontalCollectionSwipeProtector=null",
+            "shelf_header.eml"
+    );
+    private static final List<String> joinButtonPhone = List.of(
+            "|ContainerType|ContainerType|ContainerType|button.eml|"
+    );
+
     private static final ThreadLocal<ByteBuffer> lowlevelBufferThreadLocal = new ThreadLocal<>();
 
     public static void setProtoBuffer(@NonNull ByteBuffer protobufBuffer) {
@@ -70,6 +79,7 @@ public class LowLevelFilter {
 
     private static boolean filter(String path, String allValue, String bufferString) {
         int count = 0;
+
         if (PatchStatus.LayoutComponent()) {
             // Browse store button needs a bit of a tricky filter
             if (SettingsEnum.HIDE_BROWSE_STORE_BUTTON.getBoolean() &&
@@ -98,6 +108,12 @@ public class LowLevelFilter {
             if (SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean() &&
                     allValue.contains("suggested_action")) count++;
         }
+
+        // Since the header of the horizontal video shelf is not removed, it must be removed through the low level filter
+        if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() &&
+                horizontalShelf.stream().anyMatch(path::contains) &&
+                horizontalShelfHeader.stream().allMatch(allValue::contains)
+        ) count++;
 
         return count > 0;
     }

@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
@@ -23,8 +25,11 @@ import app.revanced.integrations.utils.ResourceType;
 
 public class GeneralPatch {
     private static final String PREMIUM_HEADER_NAME = "ytPremiumWordmarkHeader";
+    private static final List<String> horizontalShelf = Arrays.asList(
+            "horizontal_tile_shelf.eml",
+            "horizontal_video_shelf.eml"
+    );
     public static boolean captionsButtonStatus;
-
     @SuppressLint("StaticFieldLeak")
     public static View compactLink;
 
@@ -122,6 +127,25 @@ public class GeneralPatch {
 
     public static boolean hideSnackBar() {
         return SettingsEnum.HIDE_SNACK_BAR.getBoolean();
+    }
+
+    /**
+     * In this method, only subcomponents are created:
+     * - horizontal video shelf in feed (horizontal_video_shelf.eml)
+     * - video action bar (video_action_bar.eml)
+     * <p>
+     * Horizontal video shelf used in library tab is not used in this method
+     * The header of the suggestion shelf cannot be removed here, so it must be removed from the low-level filter
+     *
+     * @param object allValue
+     * @return whether horizontal video shelf contains
+     */
+    public static boolean hideSuggestionsShelf(Object object) {
+        if (!SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean())
+            return false;
+
+        final String allValue = object.toString();
+        return horizontalShelf.stream().anyMatch(allValue::contains);
     }
 
     public static void hideTrendingSearches(ImageView imageView, boolean isTrendingSearches) {
