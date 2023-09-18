@@ -23,18 +23,14 @@ public class GeneralPatch {
         }
     }
 
-    public static String enableOldStyleLibraryShelf(final String original) {
-        if (original.startsWith("LV"))
-            return original;
-
+    public static String enableOldStyleLibraryShelf(final String browseId) {
         if (SettingsEnum.ENABLE_OLD_STYLE_LIBRARY_SHELF.getBoolean() || SettingsEnum.SPOOF_APP_VERSION.getBoolean()) {
-            LogHelper.printDebug(GeneralPatch.class, "Current Browse ID: " + original);
 
-            if (Stream.of("FEmusic_library_landing").anyMatch(original::contains))
+            if (Stream.of("FEmusic_library_landing").anyMatch(browseId::contains))
                 return "FEmusic_liked";
         }
 
-        return original;
+        return browseId;
     }
 
     public static int hideCastButton(int original) {
@@ -47,5 +43,12 @@ public class GeneralPatch {
 
     public static boolean hideNewPlaylistButton() {
         return SettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
+    }
+
+    public static String setStartPage(final String browseId) {
+        if (!browseId.equals("FEmusic_home"))
+            return browseId;
+
+        return SettingsEnum.START_PAGE.getString();
     }
 }

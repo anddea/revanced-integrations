@@ -92,6 +92,7 @@ public enum SettingsEnum {
     HIDE_EMOJI_PICKER("revanced_hide_emoji_picker", BOOLEAN, FALSE),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, FALSE),
     HIDE_PLAYLIST_CARD("revanced_hide_playlist_card", BOOLEAN, FALSE, true),
+    START_PAGE("revanced_start_page", STRING, "FEmusic_home", true),
 
 
     // Misc
