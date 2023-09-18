@@ -1,4 +1,4 @@
-package app.revanced.music.patches.buttoncontainer;
+package app.revanced.music.patches.actionbar;
 
 import static app.revanced.music.utils.StringRef.str;
 
@@ -10,13 +10,13 @@ import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.VideoHelpers;
 
-public class ButtonContainerPatch {
+public class ActionBarPatch {
 
-    public static boolean hideButtonContainerLabel(boolean original) {
-        return !SettingsEnum.HIDE_BUTTON_CONTAINER_LABEL.getBoolean() && original;
+    public static boolean hideActionBarLabel(boolean original) {
+        return !SettingsEnum.HIDE_ACTION_BAR_LABEL.getBoolean() && original;
     }
 
-    public static void hookButtonContainer(ViewGroup viewGroup) {
+    public static void hookActionBar(ViewGroup viewGroup) {
         viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -25,7 +25,7 @@ public class ButtonContainerPatch {
                         if (childCount == 0)
                             return;
 
-                        if (SettingsEnum.HOOK_BUTTON_CONTAINER_DOWNLOAD.getBoolean()) {
+                        if (SettingsEnum.HOOK_ACTION_BAR_DOWNLOAD.getBoolean()) {
                             int downloadButtonIndex = -1;
                             final String downloadButtonDescription = str("action_add_to_offline_songs");
                             for (int i = 0; i < childCount; i++) {
@@ -36,7 +36,7 @@ public class ButtonContainerPatch {
                                     downloadButtonIndex = i;
                                 }
 
-                                LogHelper.printDebug(ButtonContainerPatch.class, "Button Description: " + description);
+                                LogHelper.printDebug(ActionBarPatch.class, "Button Description: " + description);
                             }
 
                             if (downloadButtonIndex != -1) {
@@ -45,7 +45,7 @@ public class ButtonContainerPatch {
                             }
                         }
 
-                        if (SettingsEnum.HIDE_BUTTON_CONTAINER_RADIO.getBoolean()) {
+                        if (SettingsEnum.HIDE_ACTION_BAR_RADIO.getBoolean()) {
                             viewGroup.getChildAt(viewGroup.getChildCount() - 1).setVisibility(View.GONE);
                         }
 

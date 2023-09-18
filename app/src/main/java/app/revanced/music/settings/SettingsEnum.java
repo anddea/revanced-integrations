@@ -20,15 +20,15 @@ import java.util.Objects;
 
 public enum SettingsEnum {
 
+    // Action Bar
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
+    HIDE_ACTION_BAR_LABEL("revanced_hide_action_bar_label", BOOLEAN, FALSE),
+    HIDE_ACTION_BAR_RADIO("revanced_hide_action_bar_radio", BOOLEAN, FALSE),
+    HOOK_ACTION_BAR_DOWNLOAD("revanced_hook_action_bar_download", BOOLEAN, FALSE, true),
+
+
     // Ads
     HIDE_MUSIC_ADS("revanced_hide_music_ads", BOOLEAN, TRUE, true),
-
-
-    // Button Container
-    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
-    HIDE_BUTTON_CONTAINER_LABEL("revanced_hide_button_container_label", BOOLEAN, FALSE),
-    HIDE_BUTTON_CONTAINER_RADIO("revanced_hide_button_container_radio", BOOLEAN, FALSE),
-    HOOK_BUTTON_CONTAINER_DOWNLOAD("revanced_hook_button_container_download", BOOLEAN, FALSE, true),
 
 
     // Flyout
@@ -135,9 +135,7 @@ public enum SettingsEnum {
     public final Object defaultValue;
     @NonNull
     public final ReturnType returnType;
-
     public final boolean rebootApp;
-
     public Object value;
 
     SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue) {
