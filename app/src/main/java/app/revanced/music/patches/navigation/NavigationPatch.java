@@ -2,15 +2,15 @@ package app.revanced.music.patches.navigation;
 
 import static app.revanced.music.utils.ReVancedUtils.hideViewUnderCondition;
 
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import java.util.List;
-
 import app.revanced.music.settings.SettingsEnum;
 
 public class NavigationPatch {
+    public static Enum<?> lastPivotTab;
 
     public static int enableBlackNavigationBar() {
         return SettingsEnum.ENABLE_BLACK_NAVIGATION_BAR.getBoolean() ? -16777216 : -14869219;
@@ -20,28 +20,30 @@ public class NavigationPatch {
         hideViewUnderCondition(SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean(), textview);
     }
 
-    public static void hideSampleButton(List list) {
-        if ((SettingsEnum.HIDE_SAMPLE_BUTTON.getBoolean() || SettingsEnum.SPOOF_APP_VERSION.getBoolean()) && SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.getBoolean()) {
-            final int size = list.size();
-            final int sampleButtonIndex = 1;
-
-            if (size > sampleButtonIndex) {
-                list.remove(sampleButtonIndex);
-            }
+    public static void hideNavigationButton(@NonNull View view) {
+        if (SettingsEnum.HIDE_NAVIGATION_BAR.getBoolean() && view.getParent() != null) {
+            hideViewUnderCondition(true, (View) view.getParent());
+            return;
         }
+
+        for (NavigationButton button : NavigationButton.values())
+            if (lastPivotTab.name().equals(button.name))
+                hideViewUnderCondition(button.enabled, view);
     }
 
-    public static boolean hideUpgradeButton(@NonNull Enum button) {
-        final String buttonName = button.name();
+    private enum NavigationButton {
+        HOME("TAB_HOME", SettingsEnum.HIDE_HOME_BUTTON.getBoolean()),
+        SAMPLES("TAB_SAMPLES", SettingsEnum.HIDE_SAMPLES_BUTTON.getBoolean()),
+        EXPLORE("TAB_EXPLORE", SettingsEnum.HIDE_EXPLORE_BUTTON.getBoolean()),
+        LIBRARY("LIBRARY_MUSIC", SettingsEnum.HIDE_LIBRARY_BUTTON.getBoolean()),
+        UPGRADE("TAB_MUSIC_PREMIUM", SettingsEnum.HIDE_UPGRADE_BUTTON.getBoolean());
 
-        if (SettingsEnum.SPOOF_APP_VERSION.getBoolean()) {
-            SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.saveValue(true);
+        private final boolean enabled;
+        private final String name;
+
+        NavigationButton(String name, boolean enabled) {
+            this.enabled = enabled;
+            this.name = name;
         }
-
-        if (!SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.getBoolean() && buttonName.equals("TAB_SAMPLES")) {
-            SettingsEnum.IS_SAMPLE_BUTTON_SHOWN.saveValue(true);
-        }
-
-        return buttonName.equals("TAB_MUSIC_PREMIUM");
     }
 }
