@@ -27,7 +27,7 @@ public class SponsorBlockDialogBuilder {
     private static final CategoryBehaviour[] CategoryBehaviourEntryValues = {CategoryBehaviour.SKIP_AUTOMATICALLY, CategoryBehaviour.IGNORE};
     private static int mClickedDialogEntryIndex;
 
-    public static void showDialog(String categoryString, Activity base) {
+    public static void dialogBuilder(String categoryString, Activity base) {
         try {
             SegmentCategory category = Objects.requireNonNull(SegmentCategory.byCategoryKey(categoryString));
             final AlertDialog.Builder builder = new AlertDialog.Builder(base, android.R.style.Theme_DeviceDefault_Dialog_Alert);
@@ -125,7 +125,7 @@ public class SponsorBlockDialogBuilder {
                     (dialog, id) -> mClickedDialogEntryIndex = id);
             builder.show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockDialogBuilder.class, "onPrepareDialogBuilder failure", ex);
+            LogHelper.printException(SponsorBlockDialogBuilder.class, "dialogBuilder failure", ex);
         }
     }
 }

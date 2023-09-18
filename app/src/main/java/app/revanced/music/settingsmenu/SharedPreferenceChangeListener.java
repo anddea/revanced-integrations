@@ -20,7 +20,7 @@ import java.util.Objects;
 import app.revanced.music.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.sponsorblock.objects.SponsorBlockDialogBuilder;
-import app.revanced.music.sponsorblock.objects.SponsorBlockEditTextPreference;
+import app.revanced.music.sponsorblock.objects.SponsorBlockEditTextDialogBuilder;
 
 public class SharedPreferenceChangeListener {
     @SuppressLint("StaticFieldLeak")
@@ -51,20 +51,19 @@ public class SharedPreferenceChangeListener {
         base.finish();
 
         if (dataString.startsWith("sb_segments_")) {
-            final String categoryString = dataString.replaceAll("sb_segments_", "");
-            SponsorBlockDialogBuilder.showDialog(categoryString, activity);
+            SponsorBlockDialogBuilder.dialogBuilder(dataString.replaceAll("sb_segments_", ""), activity);
             return true;
         } else if (dataString.equals(SB_API_URL.path)) {
-            SponsorBlockEditTextPreference.editTextDialogBuilder(activity);
-            return true;
-        } else if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path)) {
-            ResettableEditTextPreference.editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, activity);
+            SponsorBlockEditTextDialogBuilder.editTextDialogBuilder(activity);
             return true;
         } else if (dataString.equals(CUSTOM_FILTER_STRINGS.path)) {
-            ResettableEditTextPreference.editTextDialogBuilder(CUSTOM_FILTER_STRINGS, activity, str("revanced_custom_filter_strings_summary"));
+            EditTextDialogBuilder.editTextDialogBuilder(CUSTOM_FILTER_STRINGS, activity, str("revanced_custom_filter_strings_summary"));
             return true;
         } else if (dataString.equals(CUSTOM_PLAYBACK_SPEEDS.path)) {
-            ResettableEditTextPreference.editTextDialogBuilder(CUSTOM_PLAYBACK_SPEEDS, activity, CustomPlaybackSpeedPatch.getWarningMessage());
+            EditTextDialogBuilder.editTextDialogBuilder(CUSTOM_PLAYBACK_SPEEDS, activity, CustomPlaybackSpeedPatch.getWarningMessage());
+            return true;
+        } else if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path)) {
+            EditTextDialogBuilder.editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, activity);
             return true;
         }
 

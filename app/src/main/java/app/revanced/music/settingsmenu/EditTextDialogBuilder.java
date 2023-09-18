@@ -1,14 +1,12 @@
 package app.revanced.music.settingsmenu;
 
 import static app.revanced.music.settings.SettingsEnum.ReturnType;
+import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
+import static app.revanced.music.utils.ReVancedHelper.getLayoutParams;
 import static app.revanced.music.utils.SharedPrefHelper.saveString;
 import static app.revanced.music.utils.StringRef.str;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.res.Resources;
-import android.util.TypedValue;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
@@ -19,45 +17,30 @@ import com.google.android.material.textfield.TextInputLayout;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 
-public class ResettableEditTextPreference {
-
-    private static int dpToPx(float dp, Resources resources) {
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
-        return (int) px;
-    }
+public class EditTextDialogBuilder {
 
     public static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base) {
         editTextDialogBuilder(setting, base, setting.getString());
     }
 
-    public static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base, String hint) {
+    public static void editTextDialogBuilder(@NonNull SettingsEnum setting, @NonNull Activity activity, String hint) {
         try {
             if (setting.returnType != ReturnType.STRING)
                 return;
 
-            TextInputLayout textInputLayout = new TextInputLayout(base);
-
-            final EditText textView = new EditText(base);
+            final EditText textView = new EditText(activity);
             textView.setHint(hint);
             textView.setText(setting.getString());
 
-            FrameLayout container = new FrameLayout(base);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            int left_margin = dpToPx(20, base.getResources());
-            int top_margin = dpToPx(10, base.getResources());
-            int right_margin = dpToPx(20, base.getResources());
-            int bottom_margin = dpToPx(4, base.getResources());
-            params.setMargins(left_margin, top_margin, right_margin, bottom_margin);
-
-            textInputLayout.setLayoutParams(params);
-
+            TextInputLayout textInputLayout = new TextInputLayout(activity);
+            textInputLayout.setLayoutParams(getLayoutParams(activity));
             textInputLayout.addView(textView);
+
+            FrameLayout container = new FrameLayout(activity);
             container.addView(textInputLayout);
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(base, android.R.style.Theme_DeviceDefault_Dialog_Alert);
-
-            builder.setTitle(str(setting.path + "_title"))
+            getDialogBuilder(activity)
+                    .setTitle(str(setting.path + "_title"))
                     .setView(container)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
@@ -70,7 +53,7 @@ public class ResettableEditTextPreference {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(ResettableEditTextPreference.class, "editTextDialogBuilder failure", ex);
+            LogHelper.printException(EditTextDialogBuilder.class, "editTextDialogBuilder failure", ex);
         }
     }
 

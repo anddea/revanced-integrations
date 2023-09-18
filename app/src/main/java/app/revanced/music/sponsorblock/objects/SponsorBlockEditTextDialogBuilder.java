@@ -1,13 +1,11 @@
 package app.revanced.music.sponsorblock.objects;
 
+import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
+import static app.revanced.music.utils.ReVancedHelper.getLayoutParams;
 import static app.revanced.music.utils.StringRef.str;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.res.Resources;
 import android.util.Patterns;
-import android.util.TypedValue;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
@@ -19,39 +17,25 @@ import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
-public class SponsorBlockEditTextPreference {
+public class SponsorBlockEditTextDialogBuilder {
 
-    private static int dpToPx(float dp, Resources resources) {
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
-        return (int) px;
-    }
-
-    public static void editTextDialogBuilder(Activity base) {
+    public static void editTextDialogBuilder(@NonNull Activity activity) {
         try {
             SettingsEnum api = SettingsEnum.SB_API_URL;
-            TextInputLayout textInputLayout = new TextInputLayout(base);
 
-            final EditText textView = new EditText(base);
+            final EditText textView = new EditText(activity);
             textView.setHint(api.getString());
             textView.setText(api.getString());
 
-            FrameLayout container = new FrameLayout(base);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            int left_margin = dpToPx(20, base.getResources());
-            int top_margin = dpToPx(10, base.getResources());
-            int right_margin = dpToPx(20, base.getResources());
-            int bottom_margin = dpToPx(4, base.getResources());
-            params.setMargins(left_margin, top_margin, right_margin, bottom_margin);
-
-            textInputLayout.setLayoutParams(params);
-
+            TextInputLayout textInputLayout = new TextInputLayout(activity);
+            textInputLayout.setLayoutParams(getLayoutParams(activity));
             textInputLayout.addView(textView);
+
+            FrameLayout container = new FrameLayout(activity);
             container.addView(textInputLayout);
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(base, android.R.style.Theme_DeviceDefault_Dialog_Alert);
-
-            builder.setTitle(str("sb_api_url"))
+            getDialogBuilder(activity)
+                    .setTitle(str("sb_api_url"))
                     .setView(container)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
@@ -69,7 +53,7 @@ public class SponsorBlockEditTextPreference {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockEditTextPreference.class, "editTextDialogBuilder failure", ex);
+            LogHelper.printException(SponsorBlockEditTextDialogBuilder.class, "editTextDialogBuilder failure", ex);
         }
     }
 

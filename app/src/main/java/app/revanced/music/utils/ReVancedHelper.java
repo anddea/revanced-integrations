@@ -1,13 +1,17 @@
 package app.revanced.music.utils;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.util.TypedValue;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.util.Objects;
 
 public class ReVancedHelper {
 
@@ -38,8 +42,24 @@ public class ReVancedHelper {
         return false;
     }
 
-    public static boolean isTablet() {
-        final Context context = Objects.requireNonNull(ReVancedUtils.getContext());
-        return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
+    private static int dpToPx(float dp, Resources resources) {
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
+        return (int) px;
+    }
+
+    public static AlertDialog.Builder getDialogBuilder(@NonNull Activity activity) {
+        return new AlertDialog.Builder(activity, android.R.style.Theme_DeviceDefault_Dialog_Alert);
+    }
+
+    public static FrameLayout.LayoutParams getLayoutParams(@NonNull Activity activity) {
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        int left_margin = dpToPx(20, activity.getResources());
+        int top_margin = dpToPx(10, activity.getResources());
+        int right_margin = dpToPx(20, activity.getResources());
+        int bottom_margin = dpToPx(4, activity.getResources());
+        params.setMargins(left_margin, top_margin, right_margin, bottom_margin);
+
+        return params;
     }
 }
