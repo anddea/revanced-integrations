@@ -30,6 +30,10 @@ import app.revanced.music.utils.ReVancedUtils;
 
 public enum SettingsEnum {
 
+    // Account
+    HIDE_HANDLE("revanced_hide_handle", BOOLEAN, TRUE, true),
+
+
     // Action Bar
     EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
     HIDE_ACTION_BAR_LABEL("revanced_hide_action_bar_label", BOOLEAN, FALSE),
