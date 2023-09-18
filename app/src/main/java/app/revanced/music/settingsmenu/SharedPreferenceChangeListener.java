@@ -3,6 +3,7 @@ package app.revanced.music.settingsmenu;
 import static app.revanced.music.settings.SettingsEnum.CUSTOM_FILTER_STRINGS;
 import static app.revanced.music.settings.SettingsEnum.CUSTOM_PLAYBACK_SPEEDS;
 import static app.revanced.music.settings.SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME;
+import static app.revanced.music.settings.SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS;
 import static app.revanced.music.settings.SettingsEnum.SB_API_URL;
 import static app.revanced.music.settings.SettingsEnum.values;
 import static app.revanced.music.utils.StringRef.str;
@@ -64,6 +65,9 @@ public class SharedPreferenceChangeListener {
             return true;
         } else if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path)) {
             EditTextDialogBuilder.editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, activity);
+            return true;
+        } else if (dataString.equals(HIDE_ACCOUNT_MENU_FILTER_STRINGS.path)) {
+            EditTextDialogBuilder.editTextDialogBuilder(HIDE_ACCOUNT_MENU_FILTER_STRINGS, activity, str("revanced_custom_filter_strings_summary"));
             return true;
         } else if (dataString.equals("revanced_extended_settings_import_export")) {
             ImportExportDialogBuilder.editTextDialogBuilder(activity);
