@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.facebook.litho.ComponentHost;
 
@@ -25,6 +26,11 @@ public class FlyoutPanelPatch {
         );
     }
 
+    /**
+     * hide feed flyout panel for phone
+     *
+     * @param charSequence raw text
+     */
     public static CharSequence hideFeedFlyoutPanel(CharSequence charSequence) {
         if (charSequence == null || !SettingsEnum.HIDE_FEED_FLYOUT_PANEL.getBoolean())
             return charSequence;
@@ -38,6 +44,28 @@ public class FlyoutPanelPatch {
         }
 
         return charSequence;
+    }
+
+    /**
+     * hide feed flyout panel for tablet
+     *
+     * @param textView     flyout text view
+     * @param charSequence raw text
+     */
+    public static void hideFeedFlyoutPanel(TextView textView, CharSequence charSequence) {
+        if (charSequence == null || !SettingsEnum.HIDE_FEED_FLYOUT_PANEL.getBoolean())
+            return;
+
+        if (textView.getParent() == null || !(textView.getParent() instanceof View parentView))
+            return;
+
+        String[] blockList = SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.getString().split("\\n");
+        String targetString = charSequence.toString();
+
+        for (String filter : blockList) {
+            if (targetString.equals(filter) && !filter.isEmpty())
+                ReVancedUtils.hideViewByLayoutParams(parentView);
+        }
     }
 
     public static void onFlyoutMenuCreate(final RecyclerView recyclerView) {
