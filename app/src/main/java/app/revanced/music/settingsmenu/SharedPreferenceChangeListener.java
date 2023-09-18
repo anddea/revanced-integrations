@@ -65,6 +65,9 @@ public class SharedPreferenceChangeListener {
         } else if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path)) {
             EditTextDialogBuilder.editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, activity);
             return true;
+        } else if (dataString.equals("revanced_extended_settings_import_export")) {
+            ImportExportDialogBuilder.editTextDialogBuilder(activity);
+            return true;
         }
 
         return false;

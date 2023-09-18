@@ -13,10 +13,20 @@ import static app.revanced.music.utils.SharedPrefHelper.saveFloat;
 import static app.revanced.music.utils.SharedPrefHelper.saveInteger;
 import static app.revanced.music.utils.SharedPrefHelper.saveLong;
 import static app.revanced.music.utils.SharedPrefHelper.saveString;
+import static app.revanced.music.utils.StringRef.str;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
+
+import app.revanced.music.utils.LogHelper;
+import app.revanced.music.utils.ReVancedUtils;
 
 public enum SettingsEnum {
 
@@ -125,6 +135,11 @@ public enum SettingsEnum {
     SB_LAST_VIP_CHECK("sb_last_vip_check", LONG, 0L);
 
 
+    /**
+     * If a setting path has this prefix, then remove it before importing/exporting.
+     */
+    private static final String OPTIONAL_REVANCED_SETTINGS_PREFIX = "revanced_";
+
     static {
         loadAllSettings();
     }
@@ -155,6 +170,87 @@ public enum SettingsEnum {
         }
     }
 
+    private static SettingsEnum[] valuesSortedForExport() {
+        SettingsEnum[] sorted = values();
+        Arrays.sort(sorted, Comparator.comparing((SettingsEnum o) -> o.path));
+        return sorted;
+    }
+
+    @NonNull
+    public static String exportJSON() {
+        try {
+            JSONObject json = new JSONObject();
+            for (SettingsEnum setting : valuesSortedForExport()) {
+                String importExportKey = setting.getImportExportKey();
+                if (json.has(importExportKey)) {
+                    throw new IllegalArgumentException("duplicate key found: " + importExportKey);
+                }
+                if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
+                    json.put(importExportKey, setting.getObjectValue());
+                }
+            }
+
+            if (json.length() == 0) {
+                return "";
+            }
+            String export = json.toString(0);
+            // Remove the outer JSON braces to make the output more compact,
+            // and leave less chance of the user forgetting to copy it
+            return export.substring(2, export.length() - 2);
+        } catch (JSONException e) {
+            LogHelper.printException(SettingsEnum.class, "Export failure", e); // should never happen
+            return "";
+        }
+    }
+
+    /**
+     * @return if any settings that require a reboot were changed.
+     */
+    public static boolean importJSON(@NonNull String settingsJsonString) {
+        try {
+            if (!settingsJsonString.matches("[\\s\\S]*\\{")) {
+                settingsJsonString = '{' + settingsJsonString + '}'; // Restore outer JSON braces
+            }
+            JSONObject json = new JSONObject(settingsJsonString);
+
+            boolean rebootSettingChanged = false;
+            int numberOfSettingsImported = 0;
+            for (SettingsEnum setting : values()) {
+                String key = setting.getImportExportKey();
+                if (json.has(key)) {
+                    Object value = switch (setting.returnType) {
+                        case BOOLEAN -> json.getBoolean(key);
+                        case INTEGER -> json.getInt(key);
+                        case LONG -> json.getLong(key);
+                        case FLOAT -> (float) json.getDouble(key);
+                        case STRING -> json.getString(key);
+                    };
+                    if (!setting.getObjectValue().equals(value)) {
+                        rebootSettingChanged |= setting.rebootApp;
+                        setting.saveValue(value);
+                    }
+                    numberOfSettingsImported++;
+                } else if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
+                    LogHelper.printDebug(SettingsEnum.class, "Resetting to default: " + setting);
+                    rebootSettingChanged |= setting.rebootApp;
+                    setting.saveValue(setting.defaultValue);
+                }
+            }
+
+            ReVancedUtils.showToastShort(numberOfSettingsImported == 0
+                    ? str("revanced_extended_settings_import_reset")
+                    : str("revanced_extended_settings_import_success", numberOfSettingsImported));
+
+            return rebootSettingChanged;
+        } catch (JSONException | IllegalArgumentException ex) {
+            ReVancedUtils.showToastShort(str("revanced_extended_settings_import_failure_parse", ex.getMessage()));
+            LogHelper.printException(SettingsEnum.class, "", ex);
+        } catch (Exception ex) {
+            LogHelper.printException(SettingsEnum.class, "Import failure: " + ex.getMessage(), ex); // should never happen
+        }
+        return false;
+    }
+
     private void load() {
         switch (returnType) {
             case BOOLEAN ->
@@ -173,6 +269,7 @@ public enum SettingsEnum {
 
     public void saveValue(@NonNull Object newValue) {
         Objects.requireNonNull(newValue);
+        returnType.validate(newValue);
         switch (returnType) {
             case BOOLEAN -> saveBoolean(path, (boolean) newValue);
             case LONG -> saveLong(path, (long) newValue);
@@ -199,15 +296,71 @@ public enum SettingsEnum {
         return (Float) value;
     }
 
+    // Begin import / export
+
     public String getString() {
         return (String) value;
     }
+
+    /**
+     * @return the value of this setting as as generic object type.
+     */
+    @NonNull
+    public Object getObjectValue() {
+        return value;
+    }
+
+    /**
+     * @return if the currently set value is the same as {@link #defaultValue}
+     */
+    public boolean isSetToDefault() {
+        return value.equals(defaultValue);
+    }
+
+    /**
+     * This could be yet another field,
+     * for now use a simple switch statement since this method is not used outside this class.
+     */
+    private boolean includeWithImportExport() {
+        return switch (this) { // Not useful to export, no reason to include it.
+            case FIRST_RUN, RYD_USER_ID, SB_LAST_VIP_CHECK -> false;
+            default -> true;
+        };
+    }
+
+    /**
+     * The path, minus any 'revanced' prefix to keep json concise.
+     */
+    private String getImportExportKey() {
+        if (path.startsWith(OPTIONAL_REVANCED_SETTINGS_PREFIX)) {
+            return path.substring(OPTIONAL_REVANCED_SETTINGS_PREFIX.length());
+        }
+        return path;
+    }
+
+    // End import / export
 
     public enum ReturnType {
         BOOLEAN,
         INTEGER,
         LONG,
         FLOAT,
-        STRING,
+        STRING;
+
+        public void validate(@Nullable Object obj) throws IllegalArgumentException {
+            if (!matches(obj)) {
+                throw new IllegalArgumentException("'" + obj + "' does not match:" + this);
+            }
+        }
+
+        public boolean matches(@Nullable Object obj) {
+            return switch (this) {
+                case BOOLEAN -> obj instanceof Boolean;
+                case INTEGER -> obj instanceof Integer;
+                case LONG -> obj instanceof Long;
+                case FLOAT -> obj instanceof Float;
+                case STRING -> obj instanceof String;
+            };
+        }
     }
 }
