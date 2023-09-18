@@ -18,4 +18,8 @@ public class AccountPatch {
             textView.setVisibility(visibility);
         }
     }
+
+    public static int hideTermsContainer() {
+        return SettingsEnum.HIDE_TERMS_CONTAINER.getBoolean() ? View.GONE : View.VISIBLE;
+    }
 }

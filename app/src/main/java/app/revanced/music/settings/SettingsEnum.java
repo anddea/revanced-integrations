@@ -32,6 +32,7 @@ public enum SettingsEnum {
 
     // Account
     HIDE_HANDLE("revanced_hide_handle", BOOLEAN, TRUE, true),
+    HIDE_TERMS_CONTAINER("revanced_hide_terms_container", BOOLEAN, FALSE, true),
 
 
     // Action Bar
