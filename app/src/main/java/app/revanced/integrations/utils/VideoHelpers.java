@@ -27,10 +27,12 @@ import java.util.Objects;
 
 import app.revanced.integrations.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.patches.video.VideoInformation;
+import app.revanced.integrations.patches.video.VideoQualityPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class VideoHelpers {
 
+    public static String currentQuality = "";
     public static float currentSpeed;
 
     public static void copyUrl(@NonNull Context context, Boolean withTimestamp) {
@@ -111,7 +113,7 @@ public class VideoHelpers {
         final String[] speedEntryValues = CustomPlaybackSpeedPatch.getListEntryValues();
 
         AlertDialog speedDialog = new AlertDialog.Builder(context)
-                .setTitle(setTitle(str("camera_speed_button_label")))
+                .setTitle(getFormattedSpeedString(str("camera_speed_button_label")))
                 .setItems(speedEntries, (dialog, index) -> overrideSpeedBridge(Float.parseFloat(speedEntryValues[index] + "f")))
                 .show();
 
@@ -125,15 +127,18 @@ public class VideoHelpers {
         speedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
-    public static String setTitle(@Nullable String prefix) {
-        final String speed = ReVancedUtils.isRightToLeftTextLayout()
-                ? "\u2066x\u2069" + currentSpeed  // u202E = right to left character
-                : currentSpeed + "x"; // u202D = left to right character
+    public static String getFormattedQualityString(@Nullable String prefix) {
+        final String qualityString = getQualityString();
 
-        if (prefix == null)
-            return speed;
+        return prefix == null ? qualityString : String.format("%s\u2009•\u2009%s", prefix, qualityString);
+    }
 
-        return String.format("%s\u2009•\u2009%s", prefix, speed);
+    public static String getFormattedSpeedString(@Nullable String prefix) {
+        final String speedString = ReVancedUtils.isRightToLeftTextLayout()
+                ? "\u2066x\u2069" + currentSpeed
+                : currentSpeed + "x";
+
+        return prefix == null ? speedString : String.format("%s\u2009•\u2009%s", prefix, speedString);
     }
 
     private static void overrideSpeedBridge(final float speed) {
@@ -143,5 +148,14 @@ public class VideoHelpers {
 
     public static float getCurrentSpeed() {
         return currentSpeed;
+    }
+
+    public static String getQualityString() {
+        if (currentQuality.isEmpty()) {
+            VideoQualityPatch.overrideQuality(720);
+            return "720p";
+        }
+
+        return currentQuality.split("p")[0] + "p";
     }
 }
