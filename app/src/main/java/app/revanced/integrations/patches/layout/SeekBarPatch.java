@@ -1,19 +1,48 @@
 package app.revanced.integrations.patches.layout;
 
-import static app.revanced.integrations.utils.VideoHelpers.setTitle;
-
 import android.graphics.Color;
+import android.view.View;
+import android.view.ViewParent;
+import android.widget.TextView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.VideoHelpers;
 
 public class SeekBarPatch {
     /**
      * Default color of seekbar.
      */
     public static final int ORIGINAL_SEEKBAR_COLOR = 0xFFFF0000;
+
+    public static String appendTimeStampInformation(String original) {
+        if (!SettingsEnum.APPEND_TIME_STAMP_INFORMATION.getBoolean())
+            return original;
+
+        final String regex = "\\((.*?)\\)";
+        final Matcher matcher = Pattern.compile(regex).matcher(original);
+
+        if (matcher.find()) {
+            String matcherGroup = matcher.group(1);
+            String appendString = String.format(
+                    "\u2009(%s)",
+                    SettingsEnum.APPEND_TIME_STAMP_INFORMATION_TYPE.getBoolean()
+                            ? VideoHelpers.getFormattedQualityString(matcherGroup)
+                            : VideoHelpers.getFormattedSpeedString(matcherGroup)
+            );
+            return original.replaceAll(regex, "") +appendString;
+        } else {
+            String appendString = String.format(
+                    "\u2009(%s)",
+                    SettingsEnum.APPEND_TIME_STAMP_INFORMATION_TYPE.getBoolean()
+                            ? VideoHelpers.getFormattedQualityString(null)
+                            : VideoHelpers.getFormattedSpeedString(null)
+            );
+            return original + appendString;
+        }
+    }
 
     public static boolean enableNewThumbnailPreview() {
         return SettingsEnum.ENABLE_NEW_THUMBNAIL_PREVIEW.getBoolean();
@@ -29,6 +58,23 @@ public class SeekBarPatch {
 
     public static boolean hideSeekbar() {
         return SettingsEnum.HIDE_SEEKBAR.getBoolean();
+    }
+
+    public static void setContainerClickListener(View view) {
+        if (!SettingsEnum.APPEND_TIME_STAMP_INFORMATION.getBoolean())
+            return;
+
+        if (!(view.getParent() instanceof View containerView))
+            return;
+
+        final SettingsEnum appendTypeSetting = SettingsEnum.APPEND_TIME_STAMP_INFORMATION_TYPE;
+        final boolean previousBoolean = appendTypeSetting.getBoolean();
+
+        containerView.setOnLongClickListener(timeStampContainerView -> {
+            appendTypeSetting.saveValue(!previousBoolean);
+            return true;
+        }
+        );
     }
 
     /**
@@ -80,15 +126,4 @@ public class SeekBarPatch {
         return colorValue;
     }
 
-    public static String enableTimeStampSpeed(String totalTime) {
-        if (SettingsEnum.ENABLE_TIME_STAMP_SPEED.getBoolean()) {
-            var regex = "\\((.*?)\\)";
-            Matcher matcher = Pattern.compile(regex).matcher(totalTime);
-            if (matcher.find())
-                totalTime = totalTime.replaceAll(regex, "") + String.format("\u2009(%s)", setTitle(matcher.group(1)));
-            else
-                totalTime = totalTime + String.format("\u2009(%s)", setTitle(null));
-        }
-        return totalTime;
-    }
 }
