@@ -21,6 +21,22 @@ import app.revanced.integrations.settings.SettingsEnum;
 public class FirstRun {
     private static final String PREFERENCE_KEY = "integrations";
 
+    private static void buildDialog(@NonNull Activity activity) {
+        new AlertDialog.Builder(activity)
+                .setMessage(str("revanced_reboot_first_run"))
+                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) ->
+                        runOnMainThreadDelayed(() -> {
+                            activity.finishAffinity();
+                            activity.startActivity(activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName()));
+                            Runtime.getRuntime().exit(0);
+                            }, 1500
+                        )
+                )
+                .setNegativeButton(str("sign_in_cancel"), null)
+                .setCancelable(false)
+                .show();
+    }
+
     /**
      * For some reason, when I first install the app, my SponsorBlock settings are not initialized.
      * To solve this, forcibly initialize SponsorBlock.
@@ -45,28 +61,17 @@ public class FirstRun {
      * The version of the current integrations is saved to YouTube's SharedPreferences to identify if the app was first installed.
      */
     public static void initializationRVX(@NonNull Context context) {
-        var integrationVersion = getString(YOUTUBE, PREFERENCE_KEY, null);
+        final String integrationVersion = getString(YOUTUBE, PREFERENCE_KEY, null);
 
         if (!Objects.equals(integrationVersion, BuildConfig.VERSION_NAME))
             saveString(YOUTUBE, PREFERENCE_KEY, BuildConfig.VERSION_NAME);
 
-        if (integrationVersion != null) return;
+        if (integrationVersion != null)
+            return;
 
-        // show dialog
         Activity activity = (Activity) context;
 
-        new AlertDialog.Builder(activity)
-                .setMessage(str("revanced_reboot_first_run"))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) ->
-                        runOnMainThreadDelayed(() -> {
-                            activity.finishAffinity();
-                            activity.startActivity(activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName()));
-                            System.exit(0);
-                        }, 1000L)
-                )
-                .setNegativeButton(str("sign_in_cancel"), null)
-                .setCancelable(false)
-                .show();
+        runOnMainThreadDelayed(() -> buildDialog(activity), 1500);
 
         // set spoof player parameter default value
         SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!activity.getPackageName().equals("com.google.android.youtube"));
