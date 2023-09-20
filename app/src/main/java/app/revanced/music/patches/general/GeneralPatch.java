@@ -37,6 +37,10 @@ public class GeneralPatch {
         return SettingsEnum.HIDE_CAST_BUTTON.getBoolean() ? View.GONE : original;
     }
 
+    public static void hideCastButton(View view) {
+        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_CAST_BUTTON.getBoolean(), view);
+    }
+
     public static void hideCategoryBar(View view) {
         hideViewBy0dpUnderCondition(SettingsEnum.HIDE_CATEGORY_BAR.getBoolean(), view);
     }
