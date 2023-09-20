@@ -5,7 +5,24 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 
 final class QuickActionFilter extends Filter {
+    private static final String QUICK_ACTION_PATH = "quick_actions.eml";
+    private final StringFilterGroup quickActionRule;
+
+    private final StringFilterGroup bufferFilterPathRule;
+    private final ByteArrayFilterGroupList bufferButtonsGroupList = new ByteArrayFilterGroupList();
+
     public QuickActionFilter() {
+        quickActionRule = new StringFilterGroup(
+                null,
+                QUICK_ACTION_PATH
+        );
+        identifierFilterGroups.addAll(quickActionRule);
+
+        bufferFilterPathRule = new StringFilterGroup(
+                null,
+                "|fullscreen_video_action_button.eml|"
+        );
+
         pathFilterGroups.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
@@ -18,10 +35,11 @@ final class QuickActionFilter extends Filter {
                 new StringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
                         "fullscreen_related_videos"
-                )
+                ),
+                bufferFilterPathRule
         );
 
-        protobufBufferFilterGroups.addAll(
+        bufferButtonsGroupList.addAll(
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
                         "yt_outline_thumb_up"
@@ -53,12 +71,33 @@ final class QuickActionFilter extends Filter {
         );
     }
 
+    private boolean isEveryFilterGroupEnabled() {
+        for (FilterGroup rule : pathFilterGroups)
+            if (!rule.isEnabled()) return false;
+
+        for (FilterGroup rule : bufferButtonsGroupList)
+            if (!rule.isEnabled()) return false;
+
+        return true;
+    }
+
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (path.startsWith("quick_actions.eml|"))
-            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+        if (!path.startsWith(QUICK_ACTION_PATH)) {
+            return false;
+        }
 
-        return false;
+        if (matchedGroup == quickActionRule && !isEveryFilterGroupEnabled()) {
+            return false;
+        }
+
+        if (matchedGroup == bufferFilterPathRule) {
+            if (!bufferButtonsGroupList.check(protobufBufferArray).isFiltered()) {
+                return false;
+            }
+        }
+
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }
