@@ -395,7 +395,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
     private void addAboutCategory(Context context, PreferenceScreen screen) {
         PreferenceCategory category = new PreferenceCategory(context);
         screen.addPreference(category);
-        category.setTitle(str("about"));
+        category.setTitle(str("sb_about"));
 
         {
             Preference preference = new Preference(context);
