@@ -1,12 +1,10 @@
 package app.revanced.integrations.patches.misc;
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-
 import java.util.Arrays;
 import java.util.List;
 
+import app.revanced.integrations.patches.misc.requests.StoryBoardRendererRequester;
+import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
@@ -33,14 +31,19 @@ public class SpoofPlayerParameterPatch {
      */
     private static final String SHORTS_PLAYER_PARAMETERS = "8AEB";
 
-    private static boolean isPlayingShorts;
+    private static String storyboardRendererSpec = "";
+
 
     /**
      * Injection point.
+     * <p>
+     * {@link VideoInformation#getVideoId()} cannot be used because it is injected after PlayerResponse.
+     * Therefore, we use the videoId called from PlaybackStartDescriptor.
      *
+     * @param videoId    Original video id value.
      * @param parameters Original player parameter value.
      */
-    public static String spoofParameter(String parameters) {
+    public static String spoofParameter(String videoId, String parameters) {
         LogHelper.printDebug(SpoofPlayerParameterPatch.class, "Original player parameter value: " + parameters);
 
         if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
@@ -48,8 +51,7 @@ public class SpoofPlayerParameterPatch {
         }
 
         // Shorts do not need to be spoofed.
-        // noinspection AssignmentUsedAsCondition
-        if (isPlayingShorts = parameters.startsWith(SHORTS_PLAYER_PARAMETERS)) {
+        if (parameters.startsWith(SHORTS_PLAYER_PARAMETERS)) {
             return parameters;
         }
 
@@ -69,6 +71,9 @@ public class SpoofPlayerParameterPatch {
             // This will cause playback issues in the feed, but it's better than manipulating the history.
             return parameters;
         } else {
+            // StoryboardRenderer is always empty when playing video with INCOGNITO_PARAMETERS parameter.
+            // Fetch StoryboardRenderer without parameter.
+            StoryBoardRendererRequester.fetchStoryboardsRenderer(videoId);
             // Spoof the player parameter to prevent playback issues.
             return INCOGNITO_PARAMETERS;
         }
@@ -83,16 +88,16 @@ public class SpoofPlayerParameterPatch {
 
     /**
      * Injection point.
-     *
-     * @param view seekbar thumbnail view.  Includes both shorts and regular videos.
      */
-    public static void seekbarImageViewCreated(ImageView view) {
-        if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) return;
-        if (isPlayingShorts) return;
+    public static String getStoryboardRendererSpec() {
+        return storyboardRendererSpec;
+    }
 
-        view.setVisibility(View.GONE);
-        // Also hide the border around the thumbnail (otherwise a 1 pixel wide bordered frame is visible).
-        ViewGroup parentLayout = (ViewGroup) view.getParent();
-        parentLayout.setPadding(0, 0, 0, 0);
+    public static void setStoryboardRendererSpec(String newlyLoadedStoryboardRendererSpec) {
+        if (storyboardRendererSpec.equals(newlyLoadedStoryboardRendererSpec))
+            return;
+
+        storyboardRendererSpec = newlyLoadedStoryboardRendererSpec;
+        LogHelper.printDebug(SpoofPlayerParameterPatch.class, "New StoryBoard Renderer Spec Loaded: " + newlyLoadedStoryboardRendererSpec);
     }
 }
