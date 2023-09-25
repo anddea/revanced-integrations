@@ -24,6 +24,10 @@ public class PlayerPatch {
         return SettingsEnum.ENABLE_ZEN_MODE.getBoolean();
     }
 
+    public static boolean rememberRepeatState(boolean original) {
+        return SettingsEnum.REMEMBER_REPEAT_SATE.getBoolean() || original;
+    }
+
     public static boolean rememberShuffleState() {
         return SettingsEnum.REMEMBER_SHUFFLE_SATE.getBoolean();
     }

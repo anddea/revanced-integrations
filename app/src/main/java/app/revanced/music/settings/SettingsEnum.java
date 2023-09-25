@@ -119,6 +119,7 @@ public enum SettingsEnum {
     ENABLE_NEW_LAYOUT("revanced_enable_new_layout", BOOLEAN, TRUE, true),
     ENABLE_OLD_STYLE_MINI_PLAYER("revanced_enable_old_style_mini_player", BOOLEAN, TRUE, true),
     ENABLE_ZEN_MODE("revanced_enable_zen_mode", BOOLEAN, FALSE),
+    REMEMBER_REPEAT_SATE("revanced_remember_repeat_state", BOOLEAN, TRUE),
     REMEMBER_SHUFFLE_SATE("revanced_remember_shuffle_state", BOOLEAN, TRUE),
     SHUFFLE_SATE("revanced_shuffle_state", INTEGER, 1),
 
