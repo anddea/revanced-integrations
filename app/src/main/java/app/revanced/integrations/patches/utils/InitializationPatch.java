@@ -26,7 +26,7 @@ public class InitializationPatch {
                         runOnMainThreadDelayed(() -> {
                                     activity.finishAffinity();
                                     activity.startActivity(activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName()));
-                                    Runtime.getRuntime().exit(0);
+                                    System.exit(0);
                                 }, 1500
                         )
                 )
