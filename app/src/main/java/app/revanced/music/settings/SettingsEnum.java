@@ -98,7 +98,7 @@ public enum SettingsEnum {
     // Misc
     ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE),
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, TRUE, true),
-    FIRST_RUN("revanced_first_run", BOOLEAN, FALSE),
+    SETTINGS_INITIALIZED("revanced_settings_initialized", BOOLEAN, FALSE),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, FALSE, true),
 
 
@@ -338,7 +338,7 @@ public enum SettingsEnum {
      */
     private boolean includeWithImportExport() {
         return switch (this) { // Not useful to export, no reason to include it.
-            case FIRST_RUN, RYD_USER_ID, SB_LAST_VIP_CHECK -> false;
+            case RYD_USER_ID, SB_LAST_VIP_CHECK, SETTINGS_INITIALIZED -> false;
             default -> true;
         };
     }

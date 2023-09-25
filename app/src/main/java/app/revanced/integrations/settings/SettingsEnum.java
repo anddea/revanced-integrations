@@ -343,7 +343,7 @@ public enum SettingsEnum {
     SB_SEEN_GUIDELINES("sb_seen_guidelines", BOOLEAN, FALSE, SPONSOR_BLOCK),
     SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS("sb_local_time_saved_number_segments", INTEGER, 0, SPONSOR_BLOCK),
     SB_LOCAL_TIME_SAVED_MILLISECONDS("sb_local_time_saved_milliseconds", LONG, 0L, SPONSOR_BLOCK),
-    SB_FIRST_RUN("sb_first_run", BOOLEAN, FALSE, SPONSOR_BLOCK);
+    SB_INITIALIZED("sb_initialized", BOOLEAN, FALSE, SPONSOR_BLOCK);
 
 
     private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);

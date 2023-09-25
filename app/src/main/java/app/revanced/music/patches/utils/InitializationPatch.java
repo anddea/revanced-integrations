@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.settingsmenu.SharedPreferenceChangeListener;
 
-public class FirstRun {
+public class InitializationPatch {
 
     /**
      * The new layout is not loaded normally when the app is first installed.
@@ -23,11 +23,11 @@ public class FirstRun {
      * <p>
      * To fix this, show the reboot dialog when the app is installed for the first time.
      */
-    public static void initializationRVX(@NonNull Context context) {
-        if (SettingsEnum.FIRST_RUN.getBoolean())
+    public static void initializeReVancedSettings(@NonNull Context context) {
+        if (SettingsEnum.SETTINGS_INITIALIZED.getBoolean())
             return;
 
-        SettingsEnum.FIRST_RUN.saveValue(true);
+        SettingsEnum.SETTINGS_INITIALIZED.saveValue(true);
 
         // show dialog
         Activity activity = (Activity) context;
