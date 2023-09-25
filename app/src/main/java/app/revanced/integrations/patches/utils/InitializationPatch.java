@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import app.revanced.integrations.BuildConfig;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.SegmentPlaybackController;
+import app.revanced.integrations.utils.ReVancedHelper;
 
 public class InitializationPatch {
     private static final String PREFERENCE_KEY = "integrations";
@@ -74,5 +75,13 @@ public class InitializationPatch {
             return;
         SegmentPlaybackController.initialize(null);
         SettingsEnum.SB_INITIALIZED.saveValue(true);
+    }
+
+    public static void setDeviceInformation(@NonNull Context context) {
+        ReVancedHelper.setApplicationLabel(context);
+        ReVancedHelper.setIsTablet(context);
+        ReVancedHelper.setPackageName(context);
+        ReVancedHelper.setVersionCode(context);
+        ReVancedHelper.setVersionName(context);
     }
 }

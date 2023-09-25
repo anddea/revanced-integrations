@@ -9,26 +9,18 @@ import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Objects;
-
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class ReVancedHelper {
-    private static final String DEFAULT_APP_NAME = "ReVanced_Extended";
-    private static final int DEFAULT_VERSION_CODE = 1537867200; // 18.20.39
-    private static final String DEFAULT_VERSION_NAME = "18.20.39";
     private static final int HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE = 1538379200; // 18.24.33
+    public static String applicationLabel = "ReVanced_Extended";
+    public static boolean isTablet = false;
+    public static String packageName = "app.rvx.android.youtube";
+    public static int versionCode = 1537867200; // 18.20.39
+    public static String versionName = "18.20.39";
 
     private ReVancedHelper() {
     } // utility class
-
-    @NonNull
-    public static String getAppName(@NonNull Context context) {
-        var packageInfo = getPackageInfo(context);
-        return packageInfo == null
-                ? DEFAULT_APP_NAME
-                : (String) packageInfo.applicationInfo.loadLabel(getPackageManager(context));
-    }
 
     @Nullable
     private static PackageInfo getPackageInfo(@NonNull Context context) {
@@ -46,28 +38,12 @@ public class ReVancedHelper {
     }
 
     @NonNull
-    private static int getVersionCode(@NonNull Context context) {
-        final PackageInfo packageInfo = getPackageInfo(context);
-        return packageInfo == null
-                ? DEFAULT_VERSION_CODE
-                : packageInfo.versionCode;
-    }
-
-    @NonNull
-    public static String getVersionName(@NonNull Context context) {
-        final PackageInfo packageInfo = getPackageInfo(context);
-        return packageInfo == null
-                ? DEFAULT_VERSION_NAME
-                : packageInfo.versionName;
-    }
-
-    @NonNull
     public static String[] getStringArray(@NonNull Context context, @NonNull String key) {
         return context.getResources().getStringArray(identifier(key, ResourceType.ARRAY));
     }
 
     public static boolean isFullscreenHidden() {
-        boolean isFullscreenHidden = isTablet() &&
+        boolean isFullscreenHidden = isTablet &&
                 !SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
         final SettingsEnum[] hideFullscreenSettings = {
                 SettingsEnum.ENABLE_TABLET_LAYOUT,
@@ -107,12 +83,36 @@ public class ReVancedHelper {
         return spoofedVersion <= targetVersion;
     }
 
-    public static boolean isSupportHookDownloadButton(@NonNull Context context) {
-        return isSpoofedTargetVersionGez("18.24.00") || getVersionCode(context) >= HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE;
+    public static boolean isSupportHookDownloadButton() {
+        return isSpoofedTargetVersionGez("18.24.00") || versionCode >= HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE;
     }
 
-    public static boolean isTablet() {
-        final Context context = Objects.requireNonNull(ReVancedUtils.getContext());
-        return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
+    public static void setApplicationLabel(@NonNull Context context) {
+        final PackageInfo packageInfo = getPackageInfo(context);
+        if (packageInfo != null) {
+            applicationLabel = (String) packageInfo.applicationInfo.loadLabel(getPackageManager(context));
+        }
+    }
+
+    public static void setIsTablet(@NonNull Context context) {
+        isTablet = context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
+    }
+
+    public static void setPackageName(@NonNull Context context) {
+        packageName = context.getPackageName();
+    }
+
+    public static void setVersionCode(@NonNull Context context) {
+        final PackageInfo packageInfo = getPackageInfo(context);
+        if (packageInfo != null) {
+            versionCode = packageInfo.versionCode;
+        }
+    }
+
+    public static void setVersionName(@NonNull Context context) {
+        final PackageInfo packageInfo = getPackageInfo(context);
+        if (packageInfo != null) {
+            versionName = packageInfo.versionName;
+        }
     }
 }

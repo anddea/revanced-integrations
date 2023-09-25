@@ -191,11 +191,11 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      */
     public void LayoutOverrideLinks() {
         enableDisablePreferences(
-                ReVancedHelper.isTablet(),
+                ReVancedHelper.isTablet,
                 SettingsEnum.ENABLE_TABLET_LAYOUT
         );
         enableDisablePreferences(
-                !ReVancedHelper.isTablet(),
+                !ReVancedHelper.isTablet,
                 SettingsEnum.ENABLE_PHONE_LAYOUT
         );
     }
@@ -204,7 +204,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      * Enable/Disable Preferences not working in tablet layout
      */
     public void TabletLayoutLinks() {
-        final boolean isTabletDevice = ReVancedHelper.isTablet() &&
+        final boolean isTabletDevice = ReVancedHelper.isTablet &&
                 !SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
         final boolean isEnabledTabletLayout = SettingsEnum.ENABLE_TABLET_LAYOUT.getBoolean();
 
@@ -530,8 +530,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
         Activity activity = getActivity();
 
-        var appName = ReVancedHelper.getAppName(activity);
-        var versionName = ReVancedHelper.getVersionName(activity);
+        var appName = ReVancedHelper.applicationLabel;
+        var versionName = ReVancedHelper.versionName;
         var formatDate = dateFormat.format(new Date(System.currentTimeMillis()));
         var fileName = String.format("%s_v%s_%s.json", appName, versionName, formatDate);
 
