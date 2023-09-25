@@ -166,7 +166,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         FullScreenPanelPreferenceLinks();
         LayoutOverrideLinks();
         NavigationPreferenceLinks();
-        ProtobufSpoofPreferenceLinks();
         QuickActionsPreferenceLinks();
         TabletLayoutLinks();
         setBackupRestorePreference();
@@ -270,17 +269,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         enableDisablePreferences(
                 SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean(),
                 SettingsEnum.HIDE_CREATE_BUTTON
-        );
-    }
-
-    /**
-     * Enable/Disable Preference related to Protobuf Spoof settings
-     */
-    public void ProtobufSpoofPreferenceLinks() {
-        enableDisablePreferences(
-                SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean(),
-                SettingsEnum.BYPASS_AMBIENT_MODE_RESTRICTIONS,
-                SettingsEnum.HIDE_FILMSTRIP_OVERLAY
         );
     }
 
