@@ -53,6 +53,13 @@ public class SpoofPlayerParameterPatch {
             return parameters;
         }
 
+        // Clip's player parameters contain important information such as where the video starts, where it ends, and whether it loops.
+        // For this reason, the player parameters of a clip are usually very long (150~300 characters).
+        // Clips are 60 seconds or less in length, so no spoofing.
+        if (parameters.length() > 150) {
+            return parameters;
+        }
+
         final boolean isPlayingFeed = PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL
                 && AUTOPLAY_PARAMETERS.stream().anyMatch(parameters::contains);
 
