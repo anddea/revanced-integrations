@@ -23,4 +23,18 @@ public class PlayerPatch {
     public static boolean enableZenMode() {
         return SettingsEnum.ENABLE_ZEN_MODE.getBoolean();
     }
+
+    public static boolean rememberShuffleState() {
+        return SettingsEnum.REMEMBER_SHUFFLE_SATE.getBoolean();
+    }
+
+    public static int getShuffleState() {
+        return SettingsEnum.SHUFFLE_SATE.getInt();
+    }
+
+    public static void setShuffleState(int buttonState) {
+        if (!SettingsEnum.REMEMBER_SHUFFLE_SATE.getBoolean())
+            return;
+        SettingsEnum.SHUFFLE_SATE.saveValue(buttonState);
+    }
 }
