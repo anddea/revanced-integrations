@@ -58,11 +58,11 @@ public class VideoHelpers {
         final long s = duration.getSeconds() % 60;
 
         final String timeStamp = h > 0
-                ? String.format(":\u2009%02d:%02d:%02d", h, m, s)
-                : String.format(":\u2009%02d:%02d", m, s);
+                ? String.format("%02d:%02d:%02d", h, m, s)
+                : String.format("%02d:%02d", m, s);
 
         ReVancedUtils.setClipboard(timeStamp);
-        showToastShort(context, str("revanced_copy_video_timestamp_success") + timeStamp);
+        showToastShort(context, str("revanced_copy_video_timestamp_success") + ":\u2009" + timeStamp);
     }
 
     public static void download(@NonNull Context context) {
