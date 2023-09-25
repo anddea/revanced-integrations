@@ -3,7 +3,6 @@ package app.revanced.music.patches.ads;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
@@ -180,12 +179,11 @@ final class StringFilterGroupList extends FilterGroupList<String, StringFilterGr
 abstract class Filter {
     /**
      * All group filters must be set before the constructor call completes.
-     * Otherwise {@link #isFiltered(String, String, FilterGroupList, FilterGroup, int)}
+     * Otherwise {@link #isFiltered(String, FilterGroupList, FilterGroup, int)}
      * will never be called for any matches.
      */
 
     protected final StringFilterGroupList pathFilterGroups = new StringFilterGroupList();
-    protected final StringFilterGroupList identifierFilterGroups = new StringFilterGroupList();
 
 
     /**
@@ -201,13 +199,11 @@ abstract class Filter {
      * @return True if the litho item should be filtered out.
      */
     @SuppressWarnings("rawtypes")
-    boolean isFiltered(String path, @Nullable String identifier,
+    boolean isFiltered(String path,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) {
             if (pathFilterGroups == matchedList) {
                 LogHelper.printDebug(LithoFilterPatch.class, getClass().getSimpleName() + " Filtered path: " + path);
-            } else if (identifierFilterGroups == matchedList) {
-                LogHelper.printDebug(LithoFilterPatch.class, getClass().getSimpleName() + " Filtered identifier: " + identifier);
             }
         }
         return true;
@@ -221,23 +217,19 @@ public final class LithoFilterPatch {
             new DummyFilter() // Replaced by patch.
     };
     private static final StringTrieSearch pathSearchTree = new StringTrieSearch();
-    private static final StringTrieSearch identifierSearchTree = new StringTrieSearch();
 
     static {
         for (Filter filter : filters) {
             filterGroupLists(pathSearchTree, filter, filter.pathFilterGroups);
-            filterGroupLists(identifierSearchTree, filter, filter.identifierFilterGroups);
         }
 
         LogHelper.printDebug(LithoFilterPatch.class, "Using: "
                 + pathSearchTree.numberOfPatterns() + " path filters"
-                + " (" + pathSearchTree.getEstimatedMemorySize() + " KB), "
-                + identifierSearchTree.numberOfPatterns() + " identifier filters"
-                + " (" + identifierSearchTree.getEstimatedMemorySize() + " KB), ");
+                + " (" + pathSearchTree.getEstimatedMemorySize() + " KB)");
     }
 
-    private static <T> void filterGroupLists(TrieSearch<T> pathSearchTree,
-                                             Filter filter, FilterGroupList<T, ? extends FilterGroup<T>> list) {
+    private static <T> void filterGroupLists(TrieSearch<T> pathSearchTree, Filter filter,
+                                             FilterGroupList<T, ? extends FilterGroup<T>> list) {
         for (FilterGroup<T> group : list) {
             if (!group.includeInSearch()) {
                 continue;
@@ -246,8 +238,7 @@ public final class LithoFilterPatch {
                 pathSearchTree.addPattern(pattern, (textSearched, matchedStartIndex, callbackParameter) -> {
                             if (!group.isEnabled()) return false;
                             LithoFilterParameters parameters = (LithoFilterParameters) callbackParameter;
-                            return filter.isFiltered(parameters.path, parameters.identifier,
-                                    list, group, matchedStartIndex);
+                            return filter.isFiltered(parameters.path, list, group, matchedStartIndex);
                         }
                 );
             }
@@ -258,19 +249,16 @@ public final class LithoFilterPatch {
      * Injection point.  Called off the main thread.
      */
     @SuppressWarnings("unused")
-    public static boolean filter(@NonNull StringBuilder pathBuilder, @Nullable String lithoIdentifier) {
+    public static boolean filter(@NonNull StringBuilder pathBuilder) {
         try {
             // It is assumed that protobufBuffer is empty as well in this case.
             if (pathBuilder.length() == 0)
                 return false;
 
-            LithoFilterParameters parameter = new LithoFilterParameters(pathBuilder, lithoIdentifier);
+            LithoFilterParameters parameter = new LithoFilterParameters(pathBuilder);
             LogHelper.printDebug(LithoFilterPatch.class, "Searching " + parameter);
 
             if (pathSearchTree.matches(parameter.path, parameter)) return true;
-            if (parameter.identifier != null) {
-                if (identifierSearchTree.matches(parameter.identifier, parameter)) return true;
-            }
         } catch (Exception ex) {
             LogHelper.printException(LithoFilterPatch.class, "Litho filter failure", ex);
         }
@@ -283,11 +271,9 @@ public final class LithoFilterPatch {
      */
     private static final class LithoFilterParameters {
         final String path;
-        final String identifier;
 
-        LithoFilterParameters(StringBuilder lithoPath, String lithoIdentifier) {
+        LithoFilterParameters(StringBuilder lithoPath) {
             this.path = lithoPath.toString();
-            this.identifier = lithoIdentifier;
         }
 
         @NonNull
@@ -295,7 +281,7 @@ public final class LithoFilterPatch {
         public String toString() {
             // Estimated percentage of the buffer that are Strings.
 
-            return "\nID: " + identifier + "\nPath: " + path;
+            return "\nPath: " + path;
         }
     }
 }
