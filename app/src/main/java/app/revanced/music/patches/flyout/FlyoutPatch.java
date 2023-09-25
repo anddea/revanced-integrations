@@ -119,6 +119,7 @@ public class FlyoutPatch {
     }
 
     private enum FlyoutPanelComponent {
+        SAVE_EPISODE_FOR_LATER("BOOKMARK_BORDER", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_EPISODE_FOR_LATER.getBoolean()),
         SHUFFLE("SHUFFLE", SettingsEnum.HIDE_FLYOUT_PANEL_SHUFFLE.getBoolean()),
         RADIO("MIX", SettingsEnum.HIDE_FLYOUT_PANEL_START_RADIO.getBoolean()),
         EDIT_PLAYLIST("EDIT", SettingsEnum.HIDE_FLYOUT_PANEL_EDIT_PLAYLIST.getBoolean()),
@@ -128,6 +129,8 @@ public class FlyoutPatch {
         REMOVE_FROM_LIBRARY("LIBRARY_REMOVE", SettingsEnum.HIDE_FLYOUT_PANEL_REMOVE_FROM_LIBRARY.getBoolean()),
         DOWNLOAD("OFFLINE_DOWNLOAD", SettingsEnum.HIDE_FLYOUT_PANEL_DOWNLOAD.getBoolean()),
         SAVE_TO_PLAYLIST("ADD_TO_PLAYLIST", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_TO_PLAYLIST.getBoolean()),
+        GO_TO_EPISODE("INFO", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_EPISODE.getBoolean()),
+        GO_TO_PODCAST("BROADCAST", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_PODCAST.getBoolean()),
         GO_TO_ALBUM("ALBUM", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_ALBUM.getBoolean()),
         GO_TO_ARTIST("ARTIST", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_ARTIST.getBoolean()),
         VIEW_SONG_CREDIT("PEOPLE_GROUP", SettingsEnum.HIDE_FLYOUT_PANEL_VIEW_SONG_CREDIT.getBoolean()),
