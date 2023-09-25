@@ -12,6 +12,7 @@ import app.revanced.integrations.patches.utils.PatchStatus;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ReVancedHelper;
 
 
 public class LowLevelFilter {
@@ -110,10 +111,12 @@ public class LowLevelFilter {
         }
 
         // Since the header of the horizontal video shelf is not removed, it must be removed through the low level filter
-        if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() &&
-                horizontalShelf.stream().anyMatch(path::contains) &&
-                horizontalShelfHeader.stream().allMatch(allValue::contains)
-        ) count++;
+        if (SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean() && horizontalShelf.stream().anyMatch(path::contains)) {
+            if (ReVancedHelper.isTablet)
+                count++;
+            else if (horizontalShelfHeader.stream().allMatch(allValue::contains))
+                count++;
+        }
 
         return count > 0;
     }
