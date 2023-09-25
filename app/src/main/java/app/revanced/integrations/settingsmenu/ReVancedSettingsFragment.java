@@ -77,12 +77,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.setValue(setting, switchPref.isChecked());
 
                 switch (setting) {
-                    case HIDE_FEED_FLYOUT_PANEL -> {
-                        final String value = SharedPrefHelper.getString(REVANCED, SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.path, "");
-
-                        if (value.isEmpty())
-                            SettingsEnum.HIDE_FEED_FLYOUT_PANEL_FILTER_STRINGS.saveValue(str("report_button") + "\n" + str("share"));
-                    }
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP ->
@@ -455,7 +449,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 externalDownloaderPreferenceScreen.addPreference(externalDownloaderPreference);
             }
 
-            if (isSupportHookDownloadButton(activity)) {
+            if (isSupportHookDownloadButton()) {
                 Preference experimentalPreference = new Preference(activity);
                 experimentalPreference.setTitle(" ");
                 experimentalPreference.setSummary(str("revanced_experimental_flag"));
