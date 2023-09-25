@@ -34,6 +34,7 @@ public class VideoHelpers {
 
     public static String currentQuality = "";
     public static float currentSpeed;
+    public static String qualityAutoString = "Auto";
 
     public static void copyUrl(@NonNull Context context, Boolean withTimestamp) {
         String url = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
@@ -153,7 +154,9 @@ public class VideoHelpers {
     public static String getQualityString() {
         if (currentQuality.isEmpty()) {
             VideoQualityPatch.overrideQuality(720);
-            return "720p";
+            return qualityAutoString;
+        } else if (currentQuality.equals(qualityAutoString)) {
+            return qualityAutoString;
         }
 
         return currentQuality.split("p")[0] + "p";
