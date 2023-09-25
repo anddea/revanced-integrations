@@ -52,9 +52,9 @@ public class VideoHelpers {
 
         final Duration duration = Duration.ofMillis(videoTime);
 
-        long h = duration.toHours();
-        long m = duration.toMinutes() % 60;
-        long s = duration.getSeconds() % 60;
+        final long h = duration.toHours();
+        final long m = duration.toMinutes() % 60;
+        final long s = duration.getSeconds() % 60;
 
         final String timeStamp = h > 0
                 ? String.format(":\u2009%02d:%02d:%02d", h, m, s)

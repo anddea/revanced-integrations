@@ -2,8 +2,6 @@ package app.revanced.integrations.patches.layout;
 
 import android.graphics.Color;
 import android.view.View;
-import android.view.ViewParent;
-import android.widget.TextView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +30,7 @@ public class SeekBarPatch {
                             ? VideoHelpers.getFormattedQualityString(matcherGroup)
                             : VideoHelpers.getFormattedSpeedString(matcherGroup)
             );
-            return original.replaceAll(regex, "") +appendString;
+            return original.replaceAll(regex, "") + appendString;
         } else {
             String appendString = String.format(
                     "\u2009(%s)",
@@ -71,9 +69,9 @@ public class SeekBarPatch {
         final boolean previousBoolean = appendTypeSetting.getBoolean();
 
         containerView.setOnLongClickListener(timeStampContainerView -> {
-            appendTypeSetting.saveValue(!previousBoolean);
-            return true;
-        }
+                    appendTypeSetting.saveValue(!previousBoolean);
+                    return true;
+                }
         );
     }
 

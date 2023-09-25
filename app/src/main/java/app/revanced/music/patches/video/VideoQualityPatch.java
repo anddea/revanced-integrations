@@ -53,7 +53,7 @@ public class VideoQualityPatch {
                 LogHelper.printDebug(VideoQualityPatch.class, "videoQualities: " + videoQualities);
             }
         } catch (Exception ex) {
-            LogHelper.printException(VideoQualityPatch.class,"Failed to set quality list", ex);
+            LogHelper.printException(VideoQualityPatch.class, "Failed to set quality list", ex);
         }
     }
 

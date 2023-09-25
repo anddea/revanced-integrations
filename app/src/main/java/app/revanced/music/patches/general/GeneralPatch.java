@@ -7,7 +7,6 @@ import android.view.View;
 import java.util.stream.Stream;
 
 import app.revanced.music.settings.SettingsEnum;
-import app.revanced.music.utils.LogHelper;
 
 public class GeneralPatch {
 
