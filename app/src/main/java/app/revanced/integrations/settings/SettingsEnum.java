@@ -38,6 +38,7 @@ public enum SettingsEnum {
 
 
     // Bottom Player
+    HIDE_ACTION_BUTTON("revanced_hide_action_buttons", BOOLEAN, FALSE),
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),
     HIDE_DISLIKE_BUTTON("revanced_hide_button_dislike", BOOLEAN, FALSE),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", BOOLEAN, FALSE),
@@ -72,6 +73,7 @@ public enum SettingsEnum {
     HIDE_PLAYER_FLYOUT_PANEL_AMBIENT("revanced_hide_player_flyout_panel_ambient_mode", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_AUDIO_TRACK("revanced_hide_player_flyout_panel_audio_track", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS("revanced_hide_player_flyout_panel_captions", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS_FOOTER("revanced_hide_player_flyout_panel_captions_footer", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_HELP("revanced_hide_player_flyout_panel_help", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_LISTENING_CONTROLS("revanced_hide_player_flyout_panel_listening_controls", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_LOCK_SCREEN("revanced_hide_player_flyout_panel_lock_screen", BOOLEAN, FALSE),
@@ -79,6 +81,7 @@ public enum SettingsEnum {
     HIDE_PLAYER_FLYOUT_PANEL_MORE("revanced_hide_player_flyout_panel_more_info", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_NERDS("revanced_hide_player_flyout_panel_stats_for_nerds", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_QUALITY("revanced_hide_player_flyout_panel_qualities", BOOLEAN, FALSE),
+    HIDE_PLAYER_FLYOUT_PANEL_QUALITY_FOOTER("revanced_hide_player_flyout_panel_quality_footer", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_REPORT("revanced_hide_player_flyout_panel_report", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_SPEED("revanced_hide_player_flyout_panel_speed", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR("revanced_hide_player_flyout_panel_watch_in_vr", BOOLEAN, FALSE),
@@ -109,6 +112,9 @@ public enum SettingsEnum {
 
 
     // General
+    ALT_THUMBNAIL("revanced_alt_thumbnail", BOOLEAN, FALSE),
+    ALT_THUMBNAIL_TYPE("revanced_alt_thumbnail_type", INTEGER, 2, parents(ALT_THUMBNAIL)),
+    ALT_THUMBNAIL_FAST_QUALITY("revanced_alt_thumbnail_fast_quality", BOOLEAN, FALSE, parents(ALT_THUMBNAIL)),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", BOOLEAN, FALSE, true),
     ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", BOOLEAN, FALSE, true),
@@ -147,6 +153,7 @@ public enum SettingsEnum {
     HIDE_GRAY_SEPARATOR("revanced_hide_gray_separator", BOOLEAN, TRUE),
     HIDE_INFO_PANEL("revanced_hide_info_panel", BOOLEAN, TRUE),
     HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
+    HIDE_REMINDER_BUTTON("revanced_hide_reminder_button", BOOLEAN, FALSE),
     HIDE_LATEST_POSTS("revanced_hide_latest_posts", BOOLEAN, TRUE),
     HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", BOOLEAN, TRUE),
     HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", BOOLEAN, FALSE),
@@ -204,8 +211,15 @@ public enum SettingsEnum {
     OVERLAY_BUTTON_COPY_VIDEO_URL("revanced_overlay_button_copy_video_url", BOOLEAN, TRUE),
     OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP("revanced_overlay_button_copy_video_url_timestamp", BOOLEAN, FALSE),
     OVERLAY_BUTTON_EXTERNAL_DOWNLOADER("revanced_overlay_button_external_downloader", BOOLEAN, TRUE),
+    OVERLAY_BUTTON_WHITELIST("revanced_overlay_button_whitelist", BOOLEAN, FALSE),
+    WHITELIST_API_KEY("revanced_whitelist_api_key", STRING, "", true),
     OVERLAY_BUTTON_SPEED_DIALOG("revanced_overlay_button_speed_dialog", BOOLEAN, TRUE),
     EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
+
+    // Channel Whitelist
+    ADS_WHITELIST("revanced_whitelist_ads", BOOLEAN, FALSE),
+    SPEED_WHITELIST("revanced_whitelist_speed", BOOLEAN, FALSE),
+    SB_WHITELIST("revanced_whitelisting_sponsorblock", BOOLEAN, FALSE),
 
     // Experimental Flags
     HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, FALSE, true),
@@ -265,6 +279,7 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_SHARE_BUTTON("revanced_hide_shorts_player_share_button", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", BOOLEAN, TRUE),
+    HIDE_SHORTS_PLAYER_PIVOT_BUTTON("revanced_hide_shorts_player_pivot_button", BOOLEAN, TRUE),
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", BOOLEAN, TRUE),
 
     // Experimental Flags

@@ -20,15 +20,14 @@ public final class ShortsFilter extends Filter {
                 "shorts_shelf",
                 "inline_shorts",
                 "shorts_grid",
-                "shorts_video_cell"
+                "shorts_video_cell",
+                "shorts_pivot_item"
         );
 
         shortsShelfHeader = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_SHELF,
                 "shelf_header.eml"
         );
-
-        identifierFilterGroups.addAll(shorts, shortsShelfHeader, thanksButton);
 
         final var joinButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON,
@@ -40,7 +39,13 @@ public final class ShortsFilter extends Filter {
                 "subscribe_button"
         );
 
-        pathFilterGroups.addAll(joinButton, subscribeButton);
+        final var pivotButton = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BUTTON,
+                "reel_pivot_button"
+        );
+
+        identifierFilterGroups.addAll(shorts, shortsShelfHeader, thanksButton, pivotButton);
+        pathFilterGroups.addAll(joinButton, subscribeButton, pivotButton);
     }
 
     @Override
