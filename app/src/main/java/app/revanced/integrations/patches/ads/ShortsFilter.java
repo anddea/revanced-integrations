@@ -20,8 +20,8 @@ public final class ShortsFilter extends Filter {
                 "shorts_shelf",
                 "inline_shorts",
                 "shorts_grid",
-                "shorts_video_cell",
-                "shorts_pivot_item"
+                "shorts_pivot_item",
+                "shorts_video_cell"
         );
 
         shortsShelfHeader = new StringFilterGroup(
@@ -39,13 +39,8 @@ public final class ShortsFilter extends Filter {
                 "subscribe_button"
         );
 
-        final var pivotButton = new StringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BUTTON,
-                "reel_pivot_button"
-        );
-
-        identifierFilterGroups.addAll(shorts, shortsShelfHeader, thanksButton, pivotButton);
-        pathFilterGroups.addAll(joinButton, subscribeButton, pivotButton);
+        identifierFilterGroups.addAll(shorts, shortsShelfHeader, thanksButton);
+        pathFilterGroups.addAll(joinButton, subscribeButton);
     }
 
     @Override
