@@ -80,6 +80,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "offer_module"
         );
 
+        final var notifyMe = new StringFilterGroup(
+                SettingsEnum.HIDE_NOTIFY_ME_BUTTON,
+                "set_reminder_button"
+        );
+
         final var ticketShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_TICKET_SHELF,
                 "ticket_horizontal_shelf",
@@ -92,11 +97,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "timed_reaction"
         );
 
-        final var reminderBtn = new StringFilterGroup(
-                SettingsEnum.HIDE_REMINDER_BUTTON,
-                "set_reminder_button"
-        );
-
         this.pathFilterGroups.addAll(
                 albumCard,
                 audioTrackButton,
@@ -107,9 +107,9 @@ public final class LayoutComponentsFilter extends Filter {
                 latestPosts,
                 medicalPanel,
                 movieShelf,
+                notifyMe,
                 ticketShelf,
-                timedReactions,
-                reminderBtn
+                timedReactions
         );
 
         this.identifierFilterGroups.addAll(
