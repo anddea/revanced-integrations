@@ -56,6 +56,10 @@ public class ShortsPatch {
         return SettingsEnum.HIDE_SHORTS_PLAYER_PAID_PROMOTION.getBoolean() ? null : viewStub;
     }
 
+    public static boolean hideShortsPlayerPivotButton() {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BUTTON.getBoolean();
+    }
+
     public static void hideShortsPlayerRemixButton(View view) {
         hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON.getBoolean(), view);
     }
