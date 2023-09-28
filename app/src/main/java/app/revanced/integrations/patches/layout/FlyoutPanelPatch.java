@@ -6,10 +6,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.facebook.litho.ComponentHost;
-
 import app.revanced.integrations.patches.ads.VideoQualityMenuFilter;
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class FlyoutPanelPatch {
@@ -83,18 +82,26 @@ public class FlyoutPanelPatch {
     }
 
     public static void onFlyoutMenuCreate(final RecyclerView recyclerView) {
-        if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) return;
+        if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean())
+            return;
 
-        recyclerView.getViewTreeObserver().addOnDrawListener(
-                () -> {
-                    // Check if the current view is the quality menu.
-                    if (VideoQualityMenuFilter.isVideoQualityMenuVisible) {
-                        VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
-                        ((ViewGroup) recyclerView.getParent().getParent().getParent()).setVisibility(View.GONE);
+        recyclerView.getViewTreeObserver().addOnDrawListener(() -> {
+            try {
+                // Check if the current view is the quality menu.
+                if (!VideoQualityMenuFilter.isVideoQualityMenuVisible)
+                    return;
 
-                        // Click the "Advanced" quality menu to show the "old" quality menu.
-                        ((ComponentHost) recyclerView.getChildAt(0)).getChildAt(3).performClick();
-                    }
-                });
+                VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
+                ((ViewGroup) recyclerView.getParent().getParent().getParent()).setVisibility(View.GONE);
+
+                // Click the "Advanced" quality menu to show the "old" quality menu.
+                View advancedQualityView = ((ViewGroup) recyclerView.getChildAt(0)).getChildAt(3);
+                if (advancedQualityView != null) {
+                    advancedQualityView.performClick();
+                }
+            } catch (Exception ex) {
+                LogHelper.printException(FlyoutPanelPatch.class, "onFlyoutMenuCreate failure", ex);
+            }
+        });
     }
 }
