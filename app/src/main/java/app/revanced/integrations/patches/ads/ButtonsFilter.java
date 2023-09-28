@@ -51,10 +51,6 @@ final class ButtonsFilter extends Filter {
                         SettingsEnum.HIDE_REWARDS_BUTTON,
                         "account_link_button"
                 ),
-                new StringFilterGroup(
-                        SettingsEnum.HIDE_ACTION_BUTTON,
-                        "|video_action_button.eml|"
-                ),
                 bufferFilterPathRule
         );
 
@@ -82,6 +78,10 @@ final class ButtonsFilter extends Filter {
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_THANKS_BUTTON,
                         "yt_outline_dollar_sign_heart"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_TRANSCRIPT_BUTTON,
+                        "yt_outline_subtitles"
                 )
         );
     }

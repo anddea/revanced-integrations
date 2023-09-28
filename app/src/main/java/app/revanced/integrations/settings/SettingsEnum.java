@@ -44,7 +44,6 @@ public enum SettingsEnum {
 
 
     // Bottom Player
-    HIDE_ACTION_BUTTON("revanced_hide_action_buttons", BOOLEAN, FALSE),
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),
     HIDE_DISLIKE_BUTTON("revanced_hide_button_dislike", BOOLEAN, FALSE),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", BOOLEAN, FALSE),
@@ -57,6 +56,7 @@ public enum SettingsEnum {
     HIDE_SHARE_BUTTON("revanced_hide_button_share", BOOLEAN, FALSE),
     HIDE_SHOP_BUTTON("revanced_hide_button_shop", BOOLEAN, FALSE),
     HIDE_THANKS_BUTTON("revanced_hide_button_thanks", BOOLEAN, FALSE),
+    HIDE_TRANSCRIPT_BUTTON("revanced_hide_button_transcript", BOOLEAN, FALSE),
 
 
     // Comments
