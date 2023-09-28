@@ -8,7 +8,6 @@ import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.whitelist.Whitelist;
 
 public class SpoofPlayerParameterPatch {
 
@@ -53,11 +52,6 @@ public class SpoofPlayerParameterPatch {
 
         // Shorts do not need to be spoofed.
         if (parameters.startsWith(SHORTS_PLAYER_PARAMETERS)) {
-            return parameters;
-        }
-
-        // Video with Ads don't need to be spoofed.
-        if (Whitelist.isChannelADSWhitelisted()) {
             return parameters;
         }
 

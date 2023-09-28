@@ -9,7 +9,6 @@ import static app.revanced.integrations.utils.StringRef.str;
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.whitelist.Whitelist;
 import app.revanced.integrations.utils.LogHelper;
 
 public class PlaybackSpeedPatch {
@@ -26,10 +25,8 @@ public class PlaybackSpeedPatch {
             if (getBoolean(REVANCED, "revanced_disable_default_playback_speed_live", true) && isLive)
                 return;
 
-            if (Whitelist.isChannelSPEEDWhitelisted())
-                return;
-
             selectedSpeed = getFloat(REVANCED, "revanced_default_playback_speed", 1.0f);
+
             overrideSpeed(selectedSpeed);
         } catch (Exception ex) {
             LogHelper.printException(PlaybackSpeedPatch.class, "Failed to setDefaultPlaybackSpeed", ex);
