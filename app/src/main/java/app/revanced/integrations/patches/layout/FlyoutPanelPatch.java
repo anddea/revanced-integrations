@@ -68,6 +68,20 @@ public class FlyoutPanelPatch {
         }
     }
 
+    public static void hideFooterCaptions(View view) {
+        ReVancedUtils.hideViewUnderCondition(
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS_FOOTER.getBoolean(),
+                view
+        );
+    }
+
+    public static void hideFooterQuality(View view) {
+        ReVancedUtils.hideViewUnderCondition(
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY_FOOTER.getBoolean(),
+                view
+        );
+    }
+
     public static void onFlyoutMenuCreate(final RecyclerView recyclerView) {
         if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean()) return;
 
