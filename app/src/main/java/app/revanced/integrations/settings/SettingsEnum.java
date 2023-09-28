@@ -37,6 +37,12 @@ public enum SettingsEnum {
     HIDE_WEB_SEARCH_RESULTS("revanced_hide_web_search_results", BOOLEAN, TRUE),
 
 
+    // Alternative Thumbnails
+    ALT_THUMBNAIL_ENABLED("revanced_alt_thumbnail_enabled", BOOLEAN, FALSE),
+    ALT_THUMBNAIL_TYPE("revanced_alt_thumbnail_type", INTEGER, 2, parents(ALT_THUMBNAIL_ENABLED)),
+    ALT_THUMBNAIL_FAST_QUALITY("revanced_alt_thumbnail_fast_quality", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_ENABLED)),
+
+
     // Bottom Player
     HIDE_ACTION_BUTTON("revanced_hide_action_buttons", BOOLEAN, FALSE),
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),
@@ -112,9 +118,6 @@ public enum SettingsEnum {
 
 
     // General
-    ALT_THUMBNAIL("revanced_alt_thumbnail", BOOLEAN, FALSE),
-    ALT_THUMBNAIL_TYPE("revanced_alt_thumbnail_type", INTEGER, 2, parents(ALT_THUMBNAIL)),
-    ALT_THUMBNAIL_FAST_QUALITY("revanced_alt_thumbnail_fast_quality", BOOLEAN, FALSE, parents(ALT_THUMBNAIL)),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", BOOLEAN, FALSE, true),
     ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", BOOLEAN, FALSE, true),
