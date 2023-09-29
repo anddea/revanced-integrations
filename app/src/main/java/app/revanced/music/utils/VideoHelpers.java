@@ -18,10 +18,13 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+import app.revanced.music.patches.player.PlayerPatch;
+import app.revanced.music.patches.utils.CheckMusicVideoPatch;
 import app.revanced.music.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.music.patches.video.PlaybackSpeedPatch;
 import app.revanced.music.patches.video.VideoInformation;
 import app.revanced.music.settings.SettingsEnum;
+import app.revanced.music.shared.VideoType;
 
 public class VideoHelpers {
     public static float currentSpeed = 1.0f;
@@ -91,6 +94,14 @@ public class VideoHelpers {
 
         Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(url));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void openInMusic(@NonNull Context context, @NonNull String songId) {
+        final String url = String.format("vnd.youtube.music://%s", songId);
+        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(url));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setPackage(ReVancedHelper.packageName);
         context.startActivity(intent);
     }
 

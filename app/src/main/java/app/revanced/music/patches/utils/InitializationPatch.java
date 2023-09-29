@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.settingsmenu.SharedPreferenceChangeListener;
+import app.revanced.music.utils.ReVancedHelper;
 
 public class InitializationPatch {
 
@@ -40,5 +41,9 @@ public class InitializationPatch {
                 .setNegativeButton(android.R.string.cancel, null)
                 .setCancelable(false)
                 .show();
+    }
+
+    public static void setDeviceInformation(@NonNull Context context) {
+        ReVancedHelper.setPackageName(context);
     }
 }

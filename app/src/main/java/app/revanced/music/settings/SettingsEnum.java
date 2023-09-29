@@ -125,6 +125,7 @@ public enum SettingsEnum {
     REMEMBER_REPEAT_SATE("revanced_remember_repeat_state", BOOLEAN, TRUE),
     REMEMBER_SHUFFLE_SATE("revanced_remember_shuffle_state", BOOLEAN, TRUE),
     SHUFFLE_SATE("revanced_shuffle_state", INTEGER, 1),
+    REPLACE_PLAYER_CAST_BUTTON("revanced_replace_player_cast_button", BOOLEAN, FALSE, true),
 
 
     // Video

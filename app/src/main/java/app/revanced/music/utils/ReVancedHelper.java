@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class ReVancedHelper {
+    public static String packageName = "app.rvx.android.apps.youtube.music";
 
     private ReVancedHelper() {
     } // utility class
@@ -42,6 +43,10 @@ public class ReVancedHelper {
         }
 
         return false;
+    }
+
+    public static void setPackageName(@NonNull Context context) {
+        packageName = context.getPackageName();
     }
 
     private static int dpToPx(float dp, Resources resources) {
