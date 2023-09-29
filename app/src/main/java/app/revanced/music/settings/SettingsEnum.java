@@ -222,17 +222,13 @@ public enum SettingsEnum {
         }
     }
 
-    /**
-     * @return if any settings that require a reboot were changed.
-     */
-    public static boolean importJSON(@NonNull String settingsJsonString) {
+    public static void importJSON(@NonNull String settingsJsonString) {
         try {
             if (!settingsJsonString.matches("[\\s\\S]*\\{")) {
                 settingsJsonString = '{' + settingsJsonString + '}'; // Restore outer JSON braces
             }
             JSONObject json = new JSONObject(settingsJsonString);
 
-            boolean rebootSettingChanged = false;
             int numberOfSettingsImported = 0;
             for (SettingsEnum setting : values()) {
                 String key = setting.getImportExportKey();
@@ -245,13 +241,11 @@ public enum SettingsEnum {
                         case STRING -> json.getString(key);
                     };
                     if (!setting.getObjectValue().equals(value)) {
-                        rebootSettingChanged |= setting.rebootApp;
                         setting.saveValue(value);
                     }
                     numberOfSettingsImported++;
                 } else if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
                     LogHelper.printDebug(SettingsEnum.class, "Resetting to default: " + setting);
-                    rebootSettingChanged |= setting.rebootApp;
                     setting.saveValue(setting.defaultValue);
                 }
             }
@@ -260,14 +254,12 @@ public enum SettingsEnum {
                     ? str("revanced_extended_settings_import_reset")
                     : str("revanced_extended_settings_import_success", numberOfSettingsImported));
 
-            return rebootSettingChanged;
         } catch (JSONException | IllegalArgumentException ex) {
             ReVancedUtils.showToastShort(str("revanced_extended_settings_import_failure_parse", ex.getMessage()));
             LogHelper.printException(SettingsEnum.class, "", ex);
         } catch (Exception ex) {
             LogHelper.printException(SettingsEnum.class, "Import failure: " + ex.getMessage(), ex); // should never happen
         }
-        return false;
     }
 
     private void load() {

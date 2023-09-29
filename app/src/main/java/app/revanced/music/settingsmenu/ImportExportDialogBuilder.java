@@ -57,10 +57,8 @@ public class ImportExportDialogBuilder {
             if (replacementSettings.equals(existingSettings)) {
                 return;
             }
-            final boolean rebootNeeded = SettingsEnum.importJSON(replacementSettings);
-            if (rebootNeeded) {
-                SharedPreferenceChangeListener.rebootDialog();
-            }
+            SettingsEnum.importJSON(replacementSettings);
+            SharedPreferenceChangeListener.rebootDialog();
         } catch (Exception ex) {
             LogHelper.printException(ImportExportDialogBuilder.class, "importSettings failure", ex);
         }
