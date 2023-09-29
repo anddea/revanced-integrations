@@ -60,6 +60,10 @@ public class ShortsPatch {
         return SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BUTTON.getBoolean();
     }
 
+    public static Object hideShortsPlayerPivotButton(Object object) {
+        return SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BUTTON.getBoolean() ? null : object;
+    }
+
     public static void hideShortsPlayerRemixButton(View view) {
         hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON.getBoolean(), view);
     }
