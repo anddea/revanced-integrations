@@ -18,13 +18,10 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-import app.revanced.music.patches.player.PlayerPatch;
-import app.revanced.music.patches.utils.CheckMusicVideoPatch;
 import app.revanced.music.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.music.patches.video.PlaybackSpeedPatch;
 import app.revanced.music.patches.video.VideoInformation;
 import app.revanced.music.settings.SettingsEnum;
-import app.revanced.music.shared.VideoType;
 
 public class VideoHelpers {
     public static float currentSpeed = 1.0f;

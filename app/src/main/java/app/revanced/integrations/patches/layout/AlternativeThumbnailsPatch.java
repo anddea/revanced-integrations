@@ -368,6 +368,7 @@ public final class AlternativeThumbnailsPatch {
          * User view tracking parameters, only present on some images.
          */
         final String urlTrackingParameters;
+
         private DecodedThumbnailUrl(String fullUrl, int videoIdStartIndex, int videoIdEndIndex,
                                     int imageSizeStartIndex, int imageSizeEndIndex, int imageExtensionEndIndex) {
             sanitizedUrl = fullUrl.substring(0, imageExtensionEndIndex);

@@ -25,7 +25,10 @@ enum class VideoType {
         fun setFromString(enumName: String) {
             val newType = nameToVideoType[enumName]
             if (newType != null && current != newType) {
-                LogHelper.printDebug(VideoType.Companion::class.java, "VideoType changed to: $newType")
+                LogHelper.printDebug(
+                    VideoType.Companion::class.java,
+                    "VideoType changed to: $newType"
+                )
                 current = newType
             }
         }

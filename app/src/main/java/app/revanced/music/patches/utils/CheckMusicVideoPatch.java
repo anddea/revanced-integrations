@@ -23,9 +23,9 @@ public class CheckMusicVideoPatch {
     /**
      * Injection point.
      *
-     * @param videoId    Original video id value from PlaybackStartDescriptor.
+     * @param videoId       Original video id value from PlaybackStartDescriptor.
      * @param playlistId    Original playlist id value from PlaybackStartDescriptor.
-     * @param playlistIndex    Original playlist index value from PlaybackStartDescriptor.
+     * @param playlistIndex Original playlist index value from PlaybackStartDescriptor.
      */
     @SuppressLint("DefaultLocale")
     public static void playbackStart(@NonNull String videoId, @NonNull String playlistId, final int playlistIndex) {

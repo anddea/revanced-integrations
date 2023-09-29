@@ -21,16 +21,16 @@ final class PlayerFlyoutPanelsFooterFilter extends Filter {
         );
 
         pathFilterGroups.addAll(
-            new StringFilterGroup(
-                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY_FOOTER,
-                "quality_sheet_footer.eml",
-                "|divider.eml|"
-            ),
-            new StringFilterGroup(
-                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS_FOOTER,
-                "|ContainerType|ContainerType|ContainerType|TextType|",
-                "|divider.eml|"
-            )
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY_FOOTER,
+                        "quality_sheet_footer.eml",
+                        "|divider.eml|"
+                ),
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS_FOOTER,
+                        "|ContainerType|ContainerType|ContainerType|TextType|",
+                        "|divider.eml|"
+                )
         );
     }
 
