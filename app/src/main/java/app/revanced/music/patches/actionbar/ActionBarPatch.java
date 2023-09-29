@@ -16,41 +16,63 @@ public class ActionBarPatch {
         return !SettingsEnum.HIDE_ACTION_BAR_LABEL.getBoolean() && original;
     }
 
+    private static void hideRadioButton(ViewGroup viewGroup, int childCount) {
+        if (!SettingsEnum.HIDE_ACTION_BAR_RADIO.getBoolean()) {
+            return;
+        }
+        View radioButton = viewGroup.getChildAt(childCount - 1);
+
+        if (radioButton != null) {
+            radioButton.setVisibility(View.GONE);
+        }
+    }
+
     public static void hookActionBar(ViewGroup viewGroup) {
+        if (!SettingsEnum.HOOK_ACTION_BAR_DOWNLOAD.getBoolean() && !SettingsEnum.HIDE_ACTION_BAR_RADIO.getBoolean()) {
+            return;
+        }
+
         viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        final int childCount = viewGroup.getChildCount();
-                        if (childCount == 0)
-                            return;
+                        try {
+                            int childCount = viewGroup.getChildCount();
+                            if (childCount == 0)
+                                return;
 
-                        if (SettingsEnum.HOOK_ACTION_BAR_DOWNLOAD.getBoolean()) {
-                            int downloadButtonIndex = -1;
-                            final String downloadButtonDescription = str("action_add_to_offline_songs");
-                            for (int i = 0; i < childCount; i++) {
-                                View childView = viewGroup.getChildAt(i);
-                                String description = childView.getContentDescription().toString();
-
-                                if (description.contains(downloadButtonDescription)) {
-                                    downloadButtonIndex = i;
-                                }
-
-                                LogHelper.printDebug(ActionBarPatch.class, "Button Description: " + description);
-                            }
-
-                            if (downloadButtonIndex != -1) {
-                                View downloadButton = viewGroup.getChildAt(downloadButtonIndex);
-                                downloadButton.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
-                            }
+                            hookDownloadButton(str("action_add_to_offline_songs"), viewGroup, childCount);
+                            hideRadioButton(viewGroup, childCount);
+                        } catch (Exception ex) {
+                            LogHelper.printException(ActionBarPatch.class, "hookActionBar failure", ex);
+                        } finally {
+                            viewGroup.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         }
-
-                        if (SettingsEnum.HIDE_ACTION_BAR_RADIO.getBoolean()) {
-                            viewGroup.getChildAt(viewGroup.getChildCount() - 1).setVisibility(View.GONE);
-                        }
-
-                        viewGroup.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                 });
+    }
+
+    private static void hookDownloadButton(String description, ViewGroup viewGroup, int childCount) {
+        if (!SettingsEnum.HOOK_ACTION_BAR_DOWNLOAD.getBoolean()) {
+            return;
+        }
+        int downloadButtonIndex = -1;
+        for (int i = 0; i < childCount; i++) {
+            View childView = viewGroup.getChildAt(i);
+            if (childView != null) {
+                String buttonDescription = childView.getContentDescription().toString();
+                if (buttonDescription.contains(description)) {
+                    downloadButtonIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (downloadButtonIndex != -1) {
+            View downloadButton = viewGroup.getChildAt(downloadButtonIndex);
+            if (downloadButton != null) {
+                downloadButton.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
+            }
+        }
     }
 }
