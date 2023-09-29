@@ -1,103 +1,126 @@
 package app.revanced.integrations.patches.misc.requests;
 
-import static app.revanced.integrations.patches.misc.requests.StoryBoardRendererRoutes.getPlayerResponseConnectionFromRoute;
+import static app.revanced.integrations.patches.misc.requests.PlayerRoutes.ANDROID_INNER_TUBE_BODY;
+import static app.revanced.integrations.patches.misc.requests.PlayerRoutes.GET_STORYBOARD_SPEC_RENDERER;
+import static app.revanced.integrations.patches.misc.requests.PlayerRoutes.TV_EMBED_INNER_TUBE_BODY;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-import app.revanced.integrations.patches.misc.SpoofPlayerParameterPatch;
+import app.revanced.integrations.patches.misc.StoryboardRenderer;
 import app.revanced.integrations.requests.Requester;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class StoryBoardRendererRequester {
-    /**
-     * TCP timeout
-     */
-    private static final int TIMEOUT_TCP_DEFAULT_MILLISECONDS = 2000;
-
-    /**
-     * HTTP response timeout
-     */
-    private static final int TIMEOUT_HTTP_DEFAULT_MILLISECONDS = 4000;
-
-    /**
-     * Response code of a successful API call
-     */
-    private static final int HTTP_STATUS_CODE_SUCCESS = 200;
-
-    /**
-     * Json string
-     */
-    private static final String INNER_TUBE_BODY = "{\"context\": {\"client\": { \"clientName\": \"ANDROID\", \"clientVersion\": \"18.31.40\", \"platform\": \"MOBILE\", \"osName\": \"Android\", \"osVersion\": \"12\", \"androidSdkVersion\": 31 } }, \"videoId\": \"%s\"}";
-
     private StoryBoardRendererRequester() {
     }
 
-    public static void fetchStoryboardsRenderer(@NonNull String videoId) {
-        ReVancedUtils.verifyOffMainThread();
-
+    @Nullable
+    private static JSONObject fetchPlayerResponse(@NonNull String requestBody) {
         try {
-            final byte[] innerTubeBody = String.format(INNER_TUBE_BODY, videoId).getBytes(StandardCharsets.UTF_8);
+            ReVancedUtils.verifyOffMainThread();
+            Objects.requireNonNull(requestBody);
 
-            HttpURLConnection connection = getConnectionFromRoute();
+            final byte[] innerTubeBody = requestBody.getBytes(StandardCharsets.UTF_8);
+
+            HttpURLConnection connection = PlayerRoutes.getPlayerResponseConnectionFromRoute(GET_STORYBOARD_SPEC_RENDERER);
             connection.getOutputStream().write(innerTubeBody, 0, innerTubeBody.length);
 
             final int responseCode = connection.getResponseCode();
+            if (responseCode == 200) return Requester.parseJSONObject(connection);
 
-            if (responseCode == HTTP_STATUS_CODE_SUCCESS) {
-                final JSONObject playerResponse = Requester.parseJSONObject(connection);
-                final JSONObject storyboards = playerResponse.getJSONObject("storyboards");
-                final String storyboardsRendererTag = storyboards.has("playerLiveStoryboardSpecRenderer")
-                        ? "playerLiveStoryboardSpecRenderer"
-                        : "playerStoryboardSpecRenderer";
-                final JSONObject storyboardsRenderer = storyboards.getJSONObject(storyboardsRendererTag);
-                final String storyboardsRendererSpec = storyboardsRenderer.getString("spec");
-
-                SpoofPlayerParameterPatch.setStoryboardRendererSpec(storyboardsRendererSpec);
-            } else {
-                handleConnectionError("API not available: " + responseCode, null);
-            }
+            LogHelper.printException(StoryBoardRendererRequester.class, "API not available: " + responseCode);
             connection.disconnect();
         } catch (SocketTimeoutException ex) {
-            handleConnectionError("API timed out", ex);
-        } catch (IOException ex) {
-            handleConnectionError(String.format("Failed to fetch StoryBoard URL (%s)", ex.getMessage()), ex);
+            LogHelper.printException(StoryBoardRendererRequester.class, "API timed out", ex);
         } catch (Exception ex) {
-            handleConnectionError("Failed to fetch StoryBoard URL", ex);
+            LogHelper.printException(StoryBoardRendererRequester.class, "Failed to fetch storyboard URL", ex);
         }
+
+        return null;
     }
 
-    private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex) {
-        if (ex != null) {
-            LogHelper.printException(StoryBoardRendererRequester.class, toastMessage, ex);
-        } else {
-            LogHelper.printException(StoryBoardRendererRequester.class, toastMessage);
+    private static boolean isPlayabilityStatusOk(@NonNull JSONObject playerResponse) {
+        try {
+            return playerResponse.getJSONObject("playabilityStatus").getString("status").equals("OK");
+        } catch (JSONException e) {
+            LogHelper.printDebug(StoryBoardRendererRequester.class, "Failed to get playabilityStatus for response: " + playerResponse);
         }
-        SpoofPlayerParameterPatch.setStoryboardRendererSpec("");
+
+        return false;
     }
 
-    // helpers
+    /**
+     * Fetches the storyboardRenderer from the innerTubeBody.
+     *
+     * @param innerTubeBody The innerTubeBody to use to fetch the storyboardRenderer.
+     * @return StoryboardRenderer or null if playabilityStatus is not OK.
+     */
+    @Nullable
+    private static StoryboardRenderer getStoryboardRendererUsingBody(@NonNull String innerTubeBody) {
+        final JSONObject playerResponse = fetchPlayerResponse(innerTubeBody);
+        if (playerResponse != null && isPlayabilityStatusOk(playerResponse))
+            return getStoryboardRendererUsingResponse(playerResponse);
 
-    private static HttpURLConnection getConnectionFromRoute() throws IOException {
-        HttpURLConnection connection = getPlayerResponseConnectionFromRoute();
-        connection.setRequestProperty("User-Agent", "com.google.android.youtube/18.31.40 (Linux; U; Android 12; GB) gzip");
-        connection.setRequestProperty("X-Goog-Api-Format-Version", "2");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Accept-Language", "en-GB, en;q=0.9");
-        connection.setRequestProperty("Pragma", "no-cache");
-        connection.setRequestProperty("Cache-Control", "no-cache");
-        connection.setUseCaches(false);
-        connection.setDoOutput(true);
-        connection.setConnectTimeout(TIMEOUT_TCP_DEFAULT_MILLISECONDS);
-        connection.setReadTimeout(TIMEOUT_HTTP_DEFAULT_MILLISECONDS);
-        return connection;
+        return null;
+    }
+
+    @Nullable
+    private static StoryboardRenderer getStoryboardRendererUsingResponse(@NonNull JSONObject playerResponse) {
+        try {
+            final JSONObject storyboards = playerResponse.getJSONObject("storyboards");
+            final boolean isLiveStream = storyboards.has("playerLiveStoryboardSpecRenderer");
+            final String storyboardsRendererTag = isLiveStream
+                    ? "playerLiveStoryboardSpecRenderer"
+                    : "playerStoryboardSpecRenderer";
+
+            final var rendererElement = storyboards.getJSONObject(storyboardsRendererTag);
+            StoryboardRenderer renderer = new StoryboardRenderer(
+                    rendererElement.getString("spec"),
+                    isLiveStream,
+                    rendererElement.has("recommendedLevel")
+                            ? rendererElement.getInt("recommendedLevel")
+                            : null
+            );
+
+            LogHelper.printDebug(StoryBoardRendererRequester.class, "Fetched: " + renderer);
+
+            return renderer;
+        } catch (JSONException e) {
+            LogHelper.printException(StoryBoardRendererRequester.class, "Failed to get storyboardRenderer", e);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static StoryboardRenderer getStoryboardRenderer(@NonNull String videoId) {
+        try {
+            Objects.requireNonNull(videoId);
+
+            var renderer = getStoryboardRendererUsingBody(String.format(ANDROID_INNER_TUBE_BODY, videoId));
+            if (renderer == null) {
+                LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using Android client");
+                renderer = getStoryboardRendererUsingBody(String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId));
+                if (renderer == null) {
+                    LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using TV embedded client");
+                }
+            }
+
+            return renderer;
+        } catch (Exception ex) {
+            LogHelper.printException(StoryBoardRendererRequester.class, "Failed to fetch storyboard URL", ex);
+        }
+
+        return null;
     }
 }
