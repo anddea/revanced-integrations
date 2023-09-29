@@ -14,12 +14,24 @@ final class PlayerFlyoutPanelsFilter extends Filter {
 
         flyoutFilterGroupList.addAll(
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY,
-                        "yt_outline_gear"
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_AMBIENT,
+                        "yt_outline_screen_light"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_AUDIO_TRACK,
+                        "yt_outline_person_radar"
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS,
                         "closed_caption"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_HELP,
+                        "yt_outline_question_circle"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LISTENING_CONTROLS,
+                        "yt_outline_adjust"
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LOCK_SCREEN,
@@ -30,40 +42,32 @@ final class PlayerFlyoutPanelsFilter extends Filter {
                         "yt_outline_arrow_repeat_1_"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_AMBIENT,
-                        "yt_outline_screen_light"
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_MORE,
+                        "yt_outline_info_circle"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_PLAYBACK_SPEED,
+                        "yt_outline_play_arrow_half_circle"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY,
+                        "yt_outline_gear"
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_REPORT,
                         "yt_outline_flag"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_HELP,
-                        "yt_outline_question_circle"
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_STABLE_VOLUME,
+                        "volume_stable"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_MORE,
-                        "yt_outline_info_circle"
-                ),
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_SPEED,
-                        "yt_outline_play_arrow_half_circle"
-                ),
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LISTENING_CONTROLS,
-                        "yt_outline_adjust"
-                ),
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_AUDIO_TRACK,
-                        "yt_outline_person_radar"
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_STATS_FOR_NERDS,
+                        "yt_outline_statistics_graph"
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR,
                         "yt_outline_vr"
-                ),
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_NERDS,
-                        "yt_outline_statistics_graph"
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC,
