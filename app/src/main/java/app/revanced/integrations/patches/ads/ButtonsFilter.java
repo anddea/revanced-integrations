@@ -26,13 +26,7 @@ final class ButtonsFilter extends Filter {
         );
         pathFilterGroups.addAll(
                 new StringFilterGroup(
-                        SettingsEnum.HIDE_LIKE_BUTTON,
-                        "|CellType|ContainerType|like_button",
-                        "|CellType|ContainerType|segmented_like_dislike_button"
-                ),
-                new StringFilterGroup(
-                        SettingsEnum.HIDE_DISLIKE_BUTTON,
-                        "|CellType|ContainerType|dislike_button",
+                        SettingsEnum.HIDE_LIKE_DISLIKE_BUTTON,
                         "|CellType|ContainerType|segmented_like_dislike_button"
                 ),
                 new StringFilterGroup(
