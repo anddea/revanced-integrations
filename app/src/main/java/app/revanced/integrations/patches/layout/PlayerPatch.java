@@ -47,7 +47,7 @@ public class PlayerPatch {
         return !SettingsEnum.HIDE_CHANNEL_WATERMARK.getBoolean();
     }
 
-    public static void hideEndScreen(View view) {
+    public static void hideEndScreenCards(View view) {
         if (SettingsEnum.HIDE_END_SCREEN_CARDS.getBoolean()) {
             view.setVisibility(View.GONE);
         }
