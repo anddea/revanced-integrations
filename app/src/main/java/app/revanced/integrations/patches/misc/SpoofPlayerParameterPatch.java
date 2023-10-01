@@ -17,6 +17,9 @@ import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+/**
+ * @noinspection ALL
+ */
 public class SpoofPlayerParameterPatch {
 
     /**
@@ -52,6 +55,10 @@ public class SpoofPlayerParameterPatch {
 
     private static volatile Future<StoryboardRenderer> rendererFuture;
 
+    private static volatile boolean isPlayingFeed;
+
+    private static volatile boolean isPlayingShorts;
+
 
     /**
      * Injection point.
@@ -70,7 +77,8 @@ public class SpoofPlayerParameterPatch {
         }
 
         // Shorts do not need to be spoofed.
-        if (parameters.startsWith(SHORTS_PLAYER_PARAMETERS)) {
+        isPlayingShorts = parameters.startsWith(SHORTS_PLAYER_PARAMETERS);
+        if (isPlayingShorts) {
             return parameters;
         }
 
@@ -81,7 +89,7 @@ public class SpoofPlayerParameterPatch {
             return parameters;
         }
 
-        final boolean isPlayingFeed = PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL
+        isPlayingFeed = PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL
                 && AUTOPLAY_PARAMETERS.stream().anyMatch(parameters::contains);
 
         if (isPlayingFeed) {
@@ -139,11 +147,12 @@ public class SpoofPlayerParameterPatch {
      */
     @Nullable
     public static String getStoryboardRendererSpec() {
-        if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
-            StoryboardRenderer renderer = getRenderer();
-            if (renderer != null)
-                return renderer.spec();
-        }
+        if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || isPlayingFeed || isPlayingShorts)
+            return null;
+
+        StoryboardRenderer renderer = getRenderer();
+        if (renderer != null)
+            return renderer.spec();
 
         return null;
     }
@@ -156,11 +165,12 @@ public class SpoofPlayerParameterPatch {
      */
     @Nullable
     public static String getStoryboardRendererSpec(String originalStoryboardRendererSpec) {
-        if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
-            StoryboardRenderer renderer = getRenderer();
-            if (renderer != null) {
-                return renderer.isLiveStream() ? null : renderer.spec();
-            }
+        if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || isPlayingFeed || isPlayingShorts)
+            return originalStoryboardRendererSpec;
+
+        StoryboardRenderer renderer = getRenderer();
+        if (renderer != null) {
+            return renderer.isLiveStream() ? null : renderer.spec();
         }
 
         return originalStoryboardRendererSpec;
@@ -170,13 +180,14 @@ public class SpoofPlayerParameterPatch {
      * Injection point.
      */
     public static int getRecommendedLevel(int originalLevel) {
-        if (SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
-            StoryboardRenderer renderer = getRenderer();
-            if (renderer != null) {
-                Integer recommendedLevel = renderer.recommendedLevel();
-                if (recommendedLevel != null)
-                    return recommendedLevel;
-            }
+        if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || isPlayingFeed || isPlayingShorts)
+            return originalLevel;
+
+        StoryboardRenderer renderer = getRenderer();
+        if (renderer != null) {
+            Integer recommendedLevel = renderer.recommendedLevel();
+            if (recommendedLevel != null)
+                return recommendedLevel;
         }
 
         return originalLevel;
