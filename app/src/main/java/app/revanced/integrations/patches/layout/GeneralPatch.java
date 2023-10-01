@@ -15,7 +15,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -112,13 +111,6 @@ public class GeneralPatch {
 
     public static void hideLoadMoreButton(View view) {
         hideViewBy0dpUnderCondition(SettingsEnum.HIDE_LOAD_MORE_BUTTON.getBoolean(), view);
-    }
-
-    public static boolean hideMixPlaylists(byte[] byteArray) {
-        if (!SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean()) return false;
-
-        final String charset = new String(byteArray, StandardCharsets.UTF_8);
-        return charset.contains("&list=");
     }
 
     public static void hideMixPlaylists(View view) {
