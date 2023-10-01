@@ -169,7 +169,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         QuickActionsPreferenceLinks();
         TabletLayoutLinks();
         setBackupRestorePreference();
-        setDoubleBackTimeout();
         setExternalDownloaderPreference();
         setOpenSettingsPreference();
         setPatchesInformation();
@@ -345,16 +344,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setSpoofAppVersionTarget" + th);
         }
-    }
-
-    /**
-     * Set interaction for double back timeout ListPreference
-     */
-    private void setDoubleBackTimeout() {
-        SettingsEnum doubleBackSetting = SettingsEnum.DOUBLE_BACK_TIMEOUT;
-
-        var value = SharedPrefHelper.getString(REVANCED, doubleBackSetting.path, "2");
-        doubleBackSetting.saveValue(Integer.parseInt(value));
     }
 
     /**
