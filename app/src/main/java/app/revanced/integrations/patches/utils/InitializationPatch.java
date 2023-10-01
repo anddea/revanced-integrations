@@ -28,7 +28,7 @@ public class InitializationPatch {
                                     activity.finishAffinity();
                                     activity.startActivity(activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName()));
                                     System.exit(0);
-                                }, 1500
+                                }, 500
                         )
                 )
                 .setNegativeButton(str("sign_in_cancel"), null)
@@ -41,8 +41,6 @@ public class InitializationPatch {
      * (Also reproduced on unPatched YouTube)
      * <p>
      * Side effects when new layout is not loaded:
-     * - Button container's layout is broken
-     * - Zoom to fill screen not working
      * - 8X zoom not working in fullscreen
      * <p>
      * To fix this, show the reboot dialog when the app is installed for the first time.
@@ -60,7 +58,7 @@ public class InitializationPatch {
 
         Activity activity = (Activity) context;
 
-        runOnMainThreadDelayed(() -> buildDialog(activity), 1500);
+        runOnMainThreadDelayed(() -> buildDialog(activity), 500);
 
         // set spoof player parameter default value
         SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!activity.getPackageName().equals("com.google.android.youtube"));
