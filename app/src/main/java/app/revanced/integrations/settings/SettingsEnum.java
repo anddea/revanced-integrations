@@ -222,6 +222,8 @@ public enum SettingsEnum {
 
 
     // Player
+    DISABLE_SPEED_OVERLAY("revanced_disable_speed_overlay", BOOLEAN, FALSE, true),
+    EDIT_SPEED_OVERLAY_VALUE("revanced_edit_speed_overlay_value", FLOAT, 2.0f, true),
     HIDE_AUDIO_TRACK_BUTTON("revanced_hide_audio_track_button", BOOLEAN, TRUE),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", BOOLEAN, TRUE, true),
     HIDE_CAPTIONS_BUTTON("revanced_hide_captions_button", BOOLEAN, FALSE),
@@ -234,7 +236,6 @@ public enum SettingsEnum {
     HIDE_PLAYER_OVERLAY_FILTER("revanced_hide_player_overlay_filter", BOOLEAN, FALSE, true),
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", BOOLEAN, FALSE),
     HIDE_SEEK_MESSAGE("revanced_hide_seek_message", BOOLEAN, FALSE, true),
-    HIDE_SPEED_OVERLAY("revanced_hide_speed_overlay", BOOLEAN, FALSE, true),
     HIDE_SUGGESTED_ACTION("revanced_hide_suggested_actions", BOOLEAN, TRUE, true),
     HIDE_YOUTUBE_MUSIC_BUTTON("revanced_hide_youtube_music_button", BOOLEAN, FALSE),
 

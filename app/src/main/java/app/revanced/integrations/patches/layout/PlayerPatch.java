@@ -78,10 +78,6 @@ public class PlayerPatch {
         return SettingsEnum.HIDE_SEEK_MESSAGE.getBoolean();
     }
 
-    public static boolean hideSpeedOverlay(boolean original) {
-        return !SettingsEnum.HIDE_SPEED_OVERLAY.getBoolean() && original;
-    }
-
     public static void hideSuggestedActions(View view) {
         hideViewUnderCondition(SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean(), view);
     }

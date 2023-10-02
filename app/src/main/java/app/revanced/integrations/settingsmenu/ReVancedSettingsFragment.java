@@ -167,6 +167,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         LayoutOverrideLinks();
         NavigationPreferenceLinks();
         QuickActionsPreferenceLinks();
+        SpeedOverlayPreferenceLinks();
         TabletLayoutLinks();
         setBackupRestorePreference();
         setExternalDownloaderPreference();
@@ -239,6 +240,16 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
                 SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON
+        );
+    }
+
+    /**
+     * Enable/Disable Preference related to Speed Overlay
+     */
+    public void SpeedOverlayPreferenceLinks() {
+        enableDisablePreferences(
+                SettingsEnum.DISABLE_SPEED_OVERLAY.getBoolean(),
+                SettingsEnum.EDIT_SPEED_OVERLAY_VALUE
         );
     }
 
