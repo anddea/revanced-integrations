@@ -81,10 +81,10 @@ public class FlyoutPatch {
         );
     }
 
-    public static void hideImageView(@NonNull View view) {
-        if (view instanceof ImageView) {
+    public static void hideImageView(boolean hidden, @NonNull ImageView imageView) {
+        if (hidden) {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
-            view.setLayoutParams(layoutParams);
+            imageView.setLayoutParams(layoutParams);
         }
     }
 
@@ -94,28 +94,18 @@ public class FlyoutPatch {
 
         final ViewGroup flyoutButtonContainers = (ViewGroup) viewGroup.getChildAt(0);
         final ImageView playbackSpeedButton = (ImageView) flyoutButtonContainers.getChildAt(0);
-        final View dislikeButton = flyoutButtonContainers.getChildAt(1);
-        final View likeButton = flyoutButtonContainers.getChildAt(2);
+        final ImageView dislikeButton = (ImageView) flyoutButtonContainers.getChildAt(1);
+        final ImageView likeButton = (ImageView) flyoutButtonContainers.getChildAt(2);
 
         playbackSpeedButton.setOnClickListener(imageView -> VideoHelpers.playbackSpeedDialogListener(imageView.getContext()));
         playbackSpeedButton.setColorFilter(cf);
 
-        final boolean showPlaybackSpeedButton = SettingsEnum.ENABLE_FLYOUT_PANEL_PLAYBACK_SPEED.getBoolean();
         final boolean hideLikeDislikeButton = SettingsEnum.HIDE_FLYOUT_PANEL_LIKE_DISLIKE.getBoolean();
+        final boolean hidePlaybackSpeedButton = !SettingsEnum.ENABLE_FLYOUT_PANEL_PLAYBACK_SPEED.getBoolean();
 
-        if (!showPlaybackSpeedButton && !hideLikeDislikeButton) {
-            // download: hidden, like/dislike: shown
-            hideImageView(playbackSpeedButton);
-        } else if (showPlaybackSpeedButton && hideLikeDislikeButton) {
-            // download: shown, like/dislike: hidden
-            hideImageView(dislikeButton);
-            hideImageView(likeButton);
-        } else if (!showPlaybackSpeedButton) {
-            // download: hidden, like/dislike: hidden
-            hideImageView(playbackSpeedButton);
-            hideImageView(dislikeButton);
-            hideImageView(likeButton);
-        }
+        hideImageView(hideLikeDislikeButton, dislikeButton);
+        hideImageView(hideLikeDislikeButton, likeButton);
+        hideImageView(hidePlaybackSpeedButton, playbackSpeedButton);
     }
 
     private enum FlyoutPanelComponent {
