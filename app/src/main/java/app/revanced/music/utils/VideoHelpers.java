@@ -40,7 +40,7 @@ public class VideoHelpers {
             return;
         }
 
-        startDownloaderActivity(context, downloaderPackageName, String.format("https://youtu.be/%s", VideoInformation.getVideoId()));
+        startDownloaderActivity(context, downloaderPackageName, String.format("https://music.youtube.com/watch?v=%s", VideoInformation.getVideoId()));
     }
 
     public static void startDownloaderActivity(@NonNull Context context, @NonNull String downloaderPackageName, @NonNull String content) {
