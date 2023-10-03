@@ -47,7 +47,6 @@ public enum SettingsEnum {
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", BOOLEAN, FALSE),
     HIDE_LIKE_DISLIKE_BUTTON("revanced_hide_button_like_dislike", BOOLEAN, FALSE),
-    HIDE_LIVE_CHAT_BUTTON("revanced_hide_button_live_chat", BOOLEAN, FALSE),
     HIDE_PLAYLIST_BUTTON("revanced_hide_button_playlist", BOOLEAN, FALSE),
     HIDE_REWARDS_BUTTON("revanced_hide_button_rewards", BOOLEAN, FALSE),
     HIDE_REMIX_BUTTON("revanced_hide_button_remix", BOOLEAN, FALSE),
