@@ -12,7 +12,6 @@ import app.revanced.integrations.swipecontrols.controller.ScreenBrightnessContro
 import app.revanced.integrations.swipecontrols.controller.SwipeZonesController
 import app.revanced.integrations.swipecontrols.controller.VolumeKeysController
 import app.revanced.integrations.swipecontrols.controller.gesture.ClassicSwipeController
-import app.revanced.integrations.swipecontrols.controller.gesture.PressToSwipeController
 import app.revanced.integrations.swipecontrols.controller.gesture.core.GestureController
 import app.revanced.integrations.swipecontrols.misc.Rectangle
 import app.revanced.integrations.swipecontrols.views.SwipeControlsOverlayLayout
@@ -169,9 +168,7 @@ class SwipeControlsHostActivity : Activity() {
      * create the gesture controller based on settings
      */
     private fun createGestureController() =
-        if (config.shouldEnablePressToSwipe)
-            PressToSwipeController(this)
-        else ClassicSwipeController(this)
+        ClassicSwipeController(this)
 
     companion object {
         /**
