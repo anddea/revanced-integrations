@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.ViewGroup
-import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.shared.PlayerType
 import app.revanced.integrations.swipecontrols.controller.AudioVolumeController
 import app.revanced.integrations.swipecontrols.controller.ScreenBrightnessController
@@ -141,9 +140,7 @@ class SwipeControlsHostActivity : Activity() {
         when (type) {
             PlayerType.WATCH_WHILE_FULLSCREEN -> screen?.restore()
             else -> {
-                if (SettingsEnum.ENABLE_SAVE_BRIGHTNESS.boolean) {
-                    screen?.restore()
-                }
+                screen?.restore()
                 screen?.save()
                 screen?.restoreDefaultBrightness()
             }
