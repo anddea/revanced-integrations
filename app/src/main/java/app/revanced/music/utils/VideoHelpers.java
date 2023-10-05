@@ -26,7 +26,6 @@ import app.revanced.music.settings.SettingsEnum;
 
 public class VideoHelpers {
     public static float currentSpeed = 1.0f;
-    private static int lastIndex = -1;
 
     public static void downloadMusic(@NonNull Context context) {
         String downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString();
@@ -58,13 +57,11 @@ public class VideoHelpers {
         final String[] playbackSpeedEntries = CustomPlaybackSpeedPatch.getListEntries();
         final String[] playbackSpeedEntryValues = CustomPlaybackSpeedPatch.getListEntryValues();
 
-        final int index = Arrays.asList(playbackSpeedEntryValues).indexOf(currentSpeed + "");
-        final int dialogEntryIndex = Math.max(index, lastIndex);
+        final int index = Arrays.binarySearch(playbackSpeedEntryValues, String.valueOf(currentSpeed));
 
         AlertDialog speedDialog = new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
-                .setSingleChoiceItems(playbackSpeedEntries, dialogEntryIndex, (mDialog, mIndex) -> {
+                .setSingleChoiceItems(playbackSpeedEntries, index, (mDialog, mIndex) -> {
                     overrideSpeedBridge(Float.parseFloat(playbackSpeedEntryValues[mIndex] + "f"));
-                    lastIndex = mIndex;
                     mDialog.dismiss();
                 })
                 .show();

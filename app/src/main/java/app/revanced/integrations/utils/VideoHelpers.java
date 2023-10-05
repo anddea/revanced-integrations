@@ -34,7 +34,6 @@ public class VideoHelpers {
 
     public static String currentQuality = "";
     public static float currentSpeed;
-    private static int lastIndex = -1;
     public static String qualityAutoString = "Auto";
 
     public static void copyUrl(@NonNull Context context, Boolean withTimestamp) {
@@ -117,12 +116,11 @@ public class VideoHelpers {
         final String[] playbackSpeedEntries = Arrays.copyOfRange(playbackSpeedWithAutoEntries, 1, playbackSpeedWithAutoEntries.length);
         final String[] playbackSpeedEntryValues = Arrays.copyOfRange(playbackSpeedWithAutoEntryValues, 1, playbackSpeedWithAutoEntryValues.length);
 
-        final int index = Arrays.asList(playbackSpeedEntryValues).indexOf(currentSpeed + "");
-        final int dialogEntryIndex = Math.max(index, lastIndex);
+        final int index = Arrays.binarySearch(playbackSpeedEntryValues, String.valueOf(currentSpeed));
+
         AlertDialog speedDialog = new AlertDialog.Builder(context)
-                .setSingleChoiceItems(playbackSpeedEntries, dialogEntryIndex, (mDialog, mIndex) -> {
+                .setSingleChoiceItems(playbackSpeedEntries, index, (mDialog, mIndex) -> {
                     overrideSpeedBridge(Float.parseFloat(playbackSpeedEntryValues[mIndex] + "f"));
-                    lastIndex = mIndex;
                     mDialog.dismiss();
                 })
                 .show();
