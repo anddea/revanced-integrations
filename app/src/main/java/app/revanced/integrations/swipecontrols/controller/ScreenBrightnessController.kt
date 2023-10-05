@@ -46,7 +46,8 @@ class ScreenBrightnessController(
      * restore the screen brightness saved using [save]
      */
     fun restore() {
-        rawScreenBrightness = SettingsEnum.SWIPE_BRIGHTNESS_VALUE.float
+        if (!SettingsEnum.SWIPE_BRIGHTNESS_AUTO.boolean)
+            rawScreenBrightness = SettingsEnum.SWIPE_BRIGHTNESS_VALUE.float
     }
 
     /**
