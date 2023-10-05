@@ -2,6 +2,7 @@ package app.revanced.music.returnyoutubedislike;
 
 import static app.revanced.music.utils.StringRef.str;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -10,6 +11,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.icu.text.CompactDecimalFormat;
+import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -351,9 +353,7 @@ public class ReturnYouTubeDislike {
             final Rect leftSeparatorBounds = new Rect(0, 0,
                     (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.2f, dp),
                     (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, dp));
-            String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout()
-                    ? "\u200F    "  // u200F = right to left character
-                    : "\u200E    "; // u200E = left to right character
+            String leftSeparatorString = "\u200E    "; // u200E = left to right character
             Spannable leftSeparatorSpan = new SpannableString(leftSeparatorString);
             ShapeDrawable shapeDrawable = new ShapeDrawable(new RectShape());
             shapeDrawable.getPaint().setColor(separatorColor);
@@ -441,35 +441,45 @@ public class ReturnYouTubeDislike {
         return destination;
     }
 
+    /** @noinspection deprecation*/
+    @SuppressLint("ObsoleteSdkInt")
     private static String formatDislikeCount(long dislikeCount) {
-        synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
-            if (dislikeCountFormatter == null) {
-                // Note: Java number formatters will use the locale specific number characters.
-                // such as Arabic which formats "1.234" into "۱,۲۳٤"
-                // But YouTube disregards locale specific number characters
-                // and instead shows english number characters everywhere.
-                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
+        // TODO: remove this when dropping support for versions below YT Music v6.20.51
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
+                if (dislikeCountFormatter == null) {
+                    // Note: Java number formatters will use the locale specific number characters.
+                    // such as Arabic which formats "1.234" into "۱,۲۳٤"
+                    // But YouTube disregards locale specific number characters
+                    // and instead shows english number characters everywhere.
+                    Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
+                    dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
+                }
+                return dislikeCountFormatter.format(dislikeCount);
             }
-            return dislikeCountFormatter.format(dislikeCount);
         }
-
-        // will never be reached, as the oldest supported YouTube app requires Android N or greater
+        return String.valueOf(dislikeCount);
     }
 
+    /** @noinspection deprecation*/
+    @SuppressLint("ObsoleteSdkInt")
     private static String formatDislikePercentage(float dislikePercentage) {
-        synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
-            if (dislikePercentageFormatter == null) {
-                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                dislikePercentageFormatter = NumberFormat.getPercentInstance(locale);
+        // TODO: remove this when dropping support for versions below YT Music v6.20.51
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
+                if (dislikePercentageFormatter == null) {
+                    Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
+                    dislikePercentageFormatter = NumberFormat.getPercentInstance(locale);
+                }
+                if (dislikePercentage >= 0.01) { // at least 1%
+                    dislikePercentageFormatter.setMaximumFractionDigits(0); // show only whole percentage points
+                } else {
+                    dislikePercentageFormatter.setMaximumFractionDigits(1); // show up to 1 digit precision
+                }
+                return dislikePercentageFormatter.format(dislikePercentage);
             }
-            if (dislikePercentage >= 0.01) { // at least 1%
-                dislikePercentageFormatter.setMaximumFractionDigits(0); // show only whole percentage points
-            } else {
-                dislikePercentageFormatter.setMaximumFractionDigits(1); // show up to 1 digit precision
-            }
-            return dislikePercentageFormatter.format(dislikePercentage);
         }
+        return String.valueOf(dislikePercentage);
     }
 
     public enum Vote {
@@ -491,7 +501,7 @@ public class ReturnYouTubeDislike {
         /**
          * How long to retain cached RYD fetches.
          */
-        static final long CACHE_TIMEOUT_MILLISECONDS = 4 * 60 * 1000; // 4 Minutes
+        static final long CACHE_TIMEOUT_MILLISECONDS = 10 * 60 * 1000; // 10 Minutes
 
         @NonNull
         final Future<RYDVoteData> future;
