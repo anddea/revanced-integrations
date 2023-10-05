@@ -17,7 +17,9 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.VideoHelpers;
 
 public class CopyVideoUrl {
-    public static boolean isButtonEnabled;
+    volatile static boolean isButtonEnabled;
+    volatile static boolean isShowing;
+    volatile static boolean isScrubbed;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
@@ -25,8 +27,6 @@ public class CopyVideoUrl {
     static int fadeDurationScheduled;
     static Animation fadeIn;
     static Animation fadeOut;
-    static boolean isShowing;
-    static boolean isScrubbed;
 
     public static void initialize(Object obj) {
         try {
@@ -62,7 +62,8 @@ public class CopyVideoUrl {
     public static void changeVisibility(boolean currentVisibility) {
         ImageView imageView = buttonView.get();
 
-        if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
+        if (isShowing == currentVisibility || constraintLayout == null || imageView == null)
+            return;
 
         isShowing = currentVisibility;
 
@@ -84,7 +85,8 @@ public class CopyVideoUrl {
     public static void changeVisibilityNegatedImmediate(boolean isUserScrubbing) {
         ImageView imageView = buttonView.get();
 
-        if (constraintLayout == null || imageView == null || !isUserScrubbing) return;
+        if (constraintLayout == null || imageView == null || !isUserScrubbing)
+            return;
 
         isShowing = false;
         isScrubbed = true;

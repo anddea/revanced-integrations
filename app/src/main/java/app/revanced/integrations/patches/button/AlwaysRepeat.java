@@ -20,7 +20,9 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
 public class AlwaysRepeat {
-    public static boolean isButtonEnabled;
+    volatile static boolean isButtonEnabled;
+    volatile static boolean isShowing;
+    volatile static boolean isScrubbed;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
     static ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#fffffc79"), PorterDuff.Mode.SRC_ATOP);
     @SuppressLint("StaticFieldLeak")
@@ -29,8 +31,6 @@ public class AlwaysRepeat {
     static int fadeDurationScheduled;
     static Animation fadeIn;
     static Animation fadeOut;
-    static boolean isShowing;
-    static boolean isScrubbed;
 
     public static void initialize(Object obj) {
         try {
@@ -67,7 +67,8 @@ public class AlwaysRepeat {
     public static void changeVisibility(boolean currentVisibility) {
         ImageView imageView = buttonView.get();
 
-        if (isShowing == currentVisibility || constraintLayout == null || imageView == null) return;
+        if (isShowing == currentVisibility || constraintLayout == null || imageView == null)
+            return;
 
         isShowing = currentVisibility;
 
@@ -89,7 +90,8 @@ public class AlwaysRepeat {
     public static void changeVisibilityNegatedImmediate(boolean isUserScrubbing) {
         ImageView imageView = buttonView.get();
 
-        if (constraintLayout == null || imageView == null || !isUserScrubbing) return;
+        if (constraintLayout == null || imageView == null || !isUserScrubbing)
+            return;
 
         isShowing = false;
         isScrubbed = true;
