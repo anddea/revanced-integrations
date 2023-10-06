@@ -69,7 +69,7 @@ public final class VideoInformation {
         seekTo(videoTime + millisecondsRelative);
     }
 
-    public static boolean shouldAlwaysRepeat() {
+    public static boolean videoEnded() {
         if (SettingsEnum.ALWAYS_REPEAT.getBoolean()) {
             final boolean seekResult = seekTo(0);
             if (SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean() && seekResult)
@@ -97,9 +97,10 @@ public final class VideoInformation {
      * @param newlyLoadedVideoId id of the current video
      */
     public static void setVideoId(@NonNull String newlyLoadedVideoId) {
-        if (!videoId.equals(newlyLoadedVideoId)) {
-            videoId = newlyLoadedVideoId;
-        }
+        if (videoId.equals(newlyLoadedVideoId))
+            return;
+
+        videoId = newlyLoadedVideoId;
     }
 
     /**
