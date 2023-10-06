@@ -2,7 +2,7 @@ package app.revanced.music.patches.utils;
 
 import androidx.annotation.Nullable;
 
-import app.revanced.music.shared.VideoType;
+import app.revanced.music.shared.PlayerType;
 
 @SuppressWarnings("unused")
 public class PlayerTypeHookPatch {
@@ -13,7 +13,7 @@ public class PlayerTypeHookPatch {
         if (musicPlayerType == null)
             return;
 
-        VideoType.setFromString(musicPlayerType.name());
+        PlayerType.setFromString(musicPlayerType.name());
     }
 }
 
