@@ -316,6 +316,8 @@ public enum SettingsEnum {
             parents(ENABLE_CUSTOM_PLAYBACK_SPEED)),
     ENABLE_SAVE_PLAYBACK_SPEED("revanced_enable_save_playback_speed", BOOLEAN, FALSE),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, TRUE),
+    SKIP_DUMMY_SEGMENT("revanced_skip_dummy_segment", BOOLEAN, FALSE),
+    SKIP_DUMMY_SEGMENT_TOAST("revanced_skip_dummy_segment_toast", BOOLEAN, TRUE),
 
 
     // Return YouTube Dislike

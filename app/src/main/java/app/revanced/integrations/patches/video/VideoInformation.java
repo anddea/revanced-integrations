@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.video;
 
+import static app.revanced.integrations.utils.StringRef.str;
+
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
@@ -11,6 +13,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.VideoState;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.integrations.utils.VideoHelpers;
 
 /**
  * Hooking class for the current playing video.
@@ -67,6 +70,25 @@ public final class VideoInformation {
 
     public static void seekToRelative(long millisecondsRelative) {
         seekTo(videoTime + millisecondsRelative);
+    }
+
+    public static void reloadVideo() {
+        ReVancedUtils.runOnMainThreadDelayed(() -> {
+                    if (videoLength < 10000)
+                        return;
+
+                    final long lastVideoTime = videoTime;
+                    final float playbackSpeed = VideoHelpers.getCurrentSpeed();
+                    final long speedAdjustedTimeThreshold = (long) (playbackSpeed * 1000);
+                    seekTo(10000);
+                    seekTo(lastVideoTime + speedAdjustedTimeThreshold);
+
+                    if (!SettingsEnum.SKIP_DUMMY_SEGMENT_TOAST.getBoolean())
+                        return;
+
+                    ReVancedUtils.showToastShort(str("revanced_skipped_dummy"));
+                }, 700
+        );
     }
 
     public static boolean videoEnded() {
