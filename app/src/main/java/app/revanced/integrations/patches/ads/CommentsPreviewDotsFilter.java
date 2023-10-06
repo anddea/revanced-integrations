@@ -7,7 +7,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 final class CommentsPreviewDotsFilter extends Filter {
 
     public CommentsPreviewDotsFilter() {
-        pathFilterGroups.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_PREVIEW_COMMENT,
                         "|ContainerType|ContainerType|ContainerType|"

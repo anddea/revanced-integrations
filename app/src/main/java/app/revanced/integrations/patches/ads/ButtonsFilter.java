@@ -17,14 +17,14 @@ final class ButtonsFilter extends Filter {
                 null,
                 VIDEO_ACTION_BAR_PATH
         );
-        identifierFilterGroups.addAll(actionBarRule);
+        identifierFilterGroupList.addAll(actionBarRule);
 
 
         bufferFilterPathRule = new StringFilterGroup(
                 null,
                 "|CellType|CollectionType|CellType|ContainerType|button.eml|"
         );
-        pathFilterGroups.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_LIKE_DISLIKE_BUTTON,
                         "|CellType|ContainerType|segmented_like_dislike_button"
@@ -77,7 +77,7 @@ final class ButtonsFilter extends Filter {
     }
 
     private boolean isEveryFilterGroupEnabled() {
-        for (FilterGroup rule : pathFilterGroups)
+        for (FilterGroup rule : pathFilterGroupList)
             if (!rule.isEnabled()) return false;
 
         for (FilterGroup rule : bufferButtonsGroupList)

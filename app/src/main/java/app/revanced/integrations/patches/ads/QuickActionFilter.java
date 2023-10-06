@@ -16,14 +16,14 @@ final class QuickActionFilter extends Filter {
                 null,
                 QUICK_ACTION_PATH
         );
-        identifierFilterGroups.addAll(quickActionRule);
+        identifierFilterGroupList.addAll(quickActionRule);
 
         bufferFilterPathRule = new StringFilterGroup(
                 null,
                 "|fullscreen_video_action_button.eml|"
         );
 
-        pathFilterGroups.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
                         "|like_button"
@@ -72,7 +72,7 @@ final class QuickActionFilter extends Filter {
     }
 
     private boolean isEveryFilterGroupEnabled() {
-        for (FilterGroup rule : pathFilterGroups)
+        for (FilterGroup rule : pathFilterGroupList)
             if (!rule.isEnabled()) return false;
 
         for (FilterGroup rule : bufferButtonsGroupList)

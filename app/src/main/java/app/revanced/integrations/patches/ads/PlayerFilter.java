@@ -10,7 +10,7 @@ final class PlayerFilter extends Filter {
                 "info_card_teaser_overlay.eml"
         );
 
-        this.pathFilterGroups.addAll(
+        this.pathFilterGroupList.addAll(
                 infoCard
         );
     }

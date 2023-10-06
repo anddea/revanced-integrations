@@ -97,7 +97,7 @@ public final class LayoutComponentsFilter extends Filter {
                 "timed_reaction"
         );
 
-        this.pathFilterGroups.addAll(
+        this.pathFilterGroupList.addAll(
                 albumCard,
                 audioTrackButton,
                 channelMemberShelf,
@@ -112,7 +112,7 @@ public final class LayoutComponentsFilter extends Filter {
                 timedReactions
         );
 
-        this.identifierFilterGroups.addAll(
+        this.identifierFilterGroupList.addAll(
                 chipsShelf,
                 graySeparator
         );

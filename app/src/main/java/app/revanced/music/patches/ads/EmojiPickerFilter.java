@@ -5,38 +5,17 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import app.revanced.music.settings.SettingsEnum;
-import app.revanced.music.utils.StringTrieSearch;
 
 
 public final class EmojiPickerFilter extends Filter {
-    private final StringTrieSearch exceptions = new StringTrieSearch();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public EmojiPickerFilter() {
-        exceptions.addPatterns(
-                "comment_thread",
-                "menu",
-                "root",
-                "-count",
-                "-space",
-                "-button"
+        this.pathFilterGroupList.addAll(
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_EMOJI_PICKER,
+                        "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"
+                )
         );
-
-        final var emojiPicker = new StringFilterGroup(
-                SettingsEnum.HIDE_EMOJI_PICKER,
-                "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"
-        );
-
-        this.pathFilterGroups.addAll(
-                emojiPicker
-        );
-    }
-
-    @Override
-    public boolean isFiltered(String path, FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (exceptions.matches(path))
-            return false;
-
-        return super.isFiltered(path, matchedList, matchedGroup, matchedIndex);
     }
 }

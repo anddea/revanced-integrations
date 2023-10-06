@@ -49,7 +49,7 @@ final class DescriptionsFilter extends Filter {
         );
 
 
-        this.pathFilterGroups.addAll(
+        this.pathFilterGroupList.addAll(
                 chapterSection,
                 infoCardsSection,
                 gameSection,

@@ -96,7 +96,7 @@ public final class AdsFilter extends Filter {
                 "web_link_panel"
         );
 
-        this.pathFilterGroups.addAll(
+        this.pathFilterGroupList.addAll(
                 generalAds,
                 imageShelf,
                 merchandise,
@@ -106,7 +106,7 @@ public final class AdsFilter extends Filter {
                 webSearchPanel
         );
 
-        this.identifierFilterGroups.addAll(
+        this.identifierFilterGroupList.addAll(
                 carouselAd
         );
     }

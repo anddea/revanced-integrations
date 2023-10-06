@@ -37,7 +37,7 @@ final class CommentsFilter extends Filter {
         );
 
 
-        this.pathFilterGroups.addAll(
+        this.pathFilterGroupList.addAll(
                 channelGuidelines,
                 comments,
                 emojiPicker,

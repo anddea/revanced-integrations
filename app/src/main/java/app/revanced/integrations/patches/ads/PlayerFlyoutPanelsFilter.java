@@ -10,7 +10,7 @@ final class PlayerFlyoutPanelsFilter extends Filter {
     private final ByteArrayFilterGroupList flyoutFilterGroupList = new ByteArrayFilterGroupList();
 
     public PlayerFlyoutPanelsFilter() {
-        identifierFilterGroups.addAll(new StringFilterGroup(null, "overflow_menu_item.eml|"));
+        identifierFilterGroupList.addAll(new StringFilterGroup(null, "overflow_menu_item.eml|"));
 
         flyoutFilterGroupList.addAll(
                 new ByteArrayAsStringFilterGroup(

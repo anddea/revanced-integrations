@@ -23,7 +23,7 @@ final class LayoutComponentsUniversalFilter extends Filter {
         );
 
 
-        this.pathFilterGroups.addAll(
+        this.pathFilterGroupList.addAll(
                 expandableMetadata,
                 feedSurvey,
                 grayDescription

@@ -19,12 +19,16 @@ public final class SuggestedActionFilter extends Filter {
                 "shorts"
         );
 
-        allValueFilterGroups.addAll(
+        allValueFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_SUGGESTED_ACTION,
                         "suggested_action"
                 )
         );
+    }
+
+    public static void hideSuggestedActions(View view) {
+        hideViewUnderCondition(SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean(), view);
     }
 
     @Override
@@ -34,9 +38,5 @@ public final class SuggestedActionFilter extends Filter {
             return false;
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
-    }
-
-    public static void hideSuggestedActions(View view) {
-        hideViewUnderCondition(SettingsEnum.HIDE_SUGGESTED_ACTION.getBoolean(), view);
     }
 }

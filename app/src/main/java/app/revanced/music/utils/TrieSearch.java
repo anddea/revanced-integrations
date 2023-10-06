@@ -44,13 +44,17 @@ public abstract class TrieSearch<T> {
         root.addPattern(pattern, patternLength, 0, callback);
     }
 
-    boolean matches(@NonNull T textToSearch, int textToSearchLength, @Nullable Object callbackParameter) {
-        if (patterns.size() == 0) {
+    final boolean matches(@NonNull T textToSearch, int textToSearchLength, int startIndex, int endIndex,
+                          @Nullable Object callbackParameter) {
+        if (endIndex > textToSearchLength) {
+            throw new IllegalArgumentException("endIndex: " + endIndex
+                    + " is greater than texToSearchLength: " + textToSearchLength);
+        }
+        if (patterns.isEmpty()) {
             return false; // No patterns were added.
         }
-        for (int i = 0; i < textToSearchLength; i++) {
-            if (root.matches(textToSearch, textToSearchLength, i, 0, callbackParameter))
-                return true;
+        for (int i = startIndex; i < endIndex; i++) {
+            if (root.matches(textToSearch, endIndex, i, 0, callbackParameter)) return true;
         }
         return false;
     }
@@ -59,7 +63,7 @@ public abstract class TrieSearch<T> {
      * @return Estimated memory size (in kilobytes) of this instance.
      */
     public int getEstimatedMemorySize() {
-        if (patterns.size() == 0) {
+        if (patterns.isEmpty()) {
             return 0;
         }
         // Assume the device has less than 32GB of ram (and can use pointer compression),
@@ -93,16 +97,23 @@ public abstract class TrieSearch<T> {
      * Searches through text, looking for any substring that matches any pattern in this tree.
      *
      * @param textToSearch      Text to search through.
+     * @param startIndex        Index to start searching, inclusive value.
+     * @param endIndex          Index to stop matching, exclusive value.
      * @param callbackParameter Optional parameter passed to the callbacks.
      * @return If any pattern matched, and it's callback halted searching.
      */
+    public abstract boolean matches(@NonNull T textToSearch, int startIndex, int endIndex, @Nullable Object callbackParameter);
+
+    public abstract boolean matches(@NonNull T textToSearch, int startIndex);
+
     public abstract boolean matches(@NonNull T textToSearch, @Nullable Object callbackParameter);
 
-    /**
-     * Identical to {@link #matches(Object, Object)} but with a null callback parameter.
-     */
+    public final boolean matches(@NonNull T textToSearch, int startIndex, int endIndex) {
+        return matches(textToSearch, startIndex, endIndex, null);
+    }
+
     public final boolean matches(@NonNull T textToSearch) {
-        return matches(textToSearch, null);
+        return matches(textToSearch, 0);
     }
 
     public interface TriePatternMatchedCallback<T> {
@@ -111,11 +122,12 @@ public abstract class TrieSearch<T> {
          *
          * @param textSearched      Text that was searched.
          * @param matchedStartIndex Start index of the search text, where the pattern was matched.
+         * @param matchedLength     Length of the match.
          * @param callbackParameter Optional parameter passed into {@link TrieSearch#matches(Object, Object)}.
          * @return True, if the search should stop here.
          * If false, searching will continue to look for other matches.
          */
-        boolean patternMatched(T textSearched, int matchedStartIndex, Object callbackParameter);
+        boolean patternMatched(T textSearched, int matchedStartIndex, int matchedLength, Object callbackParameter);
     }
 
     /**
@@ -130,18 +142,8 @@ public abstract class TrieSearch<T> {
      * <p>
      * This is done to reduce memory usage, which can be substantial if many long patterns are used.
      */
-    private static final class TrieCompressedPath<T> {
-        final T pattern;
-        final int patternLength;
-        final int patternStartIndex;
-        final TriePatternMatchedCallback<T> callback;
-
-        TrieCompressedPath(T pattern, int patternLength, int patternStartIndex, TriePatternMatchedCallback<T> callback) {
-            this.pattern = pattern;
-            this.patternLength = patternLength;
-            this.patternStartIndex = patternStartIndex;
-            this.callback = callback;
-        }
+    private record TrieCompressedPath<T>(T pattern, int patternLength, int patternStartIndex,
+                                         TriePatternMatchedCallback<T> callback) {
 
         boolean matches(TrieNode<T> enclosingNode, // Used only for the get character method.
                         T searchText, int searchTextLength, int searchTextIndex, Object callbackParameter) {
@@ -153,8 +155,8 @@ public abstract class TrieSearch<T> {
                     return false;
                 }
             }
-            return callback == null
-                    || callback.patternMatched(searchText, searchTextIndex - patternStartIndex, callbackParameter);
+            return callback == null || callback.patternMatched(searchText,
+                    searchTextIndex - patternStartIndex, patternLength, callbackParameter);
         }
     }
 
@@ -247,7 +249,7 @@ public abstract class TrieSearch<T> {
                     if (callback == null) {
                         return true; // No callback and all matches are valid.
                     }
-                    if (callback.patternMatched(searchText, matchStartIndex, callbackParameter)) {
+                    if (callback.patternMatched(searchText, matchStartIndex, currentMatchLength, callbackParameter)) {
                         return true; // Callback confirmed the match.
                     }
                 }

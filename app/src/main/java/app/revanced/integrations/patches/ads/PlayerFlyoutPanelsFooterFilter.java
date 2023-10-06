@@ -20,7 +20,7 @@ final class PlayerFlyoutPanelsFooterFilter extends Filter {
                 "quality_sheet_content.eml"
         );
 
-        pathFilterGroups.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY_FOOTER,
                         "quality_sheet_footer.eml",

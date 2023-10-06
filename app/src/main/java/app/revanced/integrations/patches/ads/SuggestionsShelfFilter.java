@@ -20,7 +20,7 @@ public final class SuggestionsShelfFilter extends Filter {
                     SettingsEnum.HIDE_SUGGESTIONS_SHELF,
                     "horizontal_tile_shelf.eml",
                     "horizontal_video_shelf.eml"
-    );
+            );
 
     private static final List<String> horizontalShelfHeader = Arrays.asList(
             "horizontalCollectionSwipeProtector=null",
@@ -28,16 +28,7 @@ public final class SuggestionsShelfFilter extends Filter {
     );
 
     public SuggestionsShelfFilter() {
-        pathFilterGroups.addAll(horizontalShelf);
-    }
-
-    @Override
-    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
-                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (ReVancedHelper.isTablet)
-            return true;
-        else
-            return horizontalShelfHeader.stream().allMatch(allValue::contains);
+        pathFilterGroupList.addAll(horizontalShelf);
     }
 
     /**
@@ -68,5 +59,14 @@ public final class SuggestionsShelfFilter extends Filter {
                         && !isSpoofedTargetVersionLez("17.31.00"),
                 view
         );
+    }
+
+    @Override
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (ReVancedHelper.isTablet)
+            return true;
+        else
+            return horizontalShelfHeader.stream().allMatch(allValue::contains);
     }
 }

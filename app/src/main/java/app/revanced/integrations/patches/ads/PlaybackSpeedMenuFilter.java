@@ -9,7 +9,7 @@ public final class PlaybackSpeedMenuFilter extends Filter {
     public static volatile boolean isPlaybackSpeedMenuVisible;
 
     public PlaybackSpeedMenuFilter() {
-        pathFilterGroups.addAll(new StringFilterGroup(
+        pathFilterGroupList.addAll(new StringFilterGroup(
                 SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED,
                 "playback_speed_sheet_content.eml-js"
         ));

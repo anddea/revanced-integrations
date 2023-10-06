@@ -7,7 +7,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 public final class CommunityPostFilter extends Filter {
 
     public CommunityPostFilter() {
-        allValueFilterGroups.addAll(
+        allValueFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_COMMUNITY_POSTS_HOME,
                         "horizontalCollectionSwipeProtector=null"
@@ -25,6 +25,6 @@ public final class CommunityPostFilter extends Filter {
         if (!path.startsWith("post_base_wrapper")) {
             return false;
         }
-        return allValueFilterGroups == matchedList;
+        return allValueFilterGroupList == matchedList;
     }
 }
