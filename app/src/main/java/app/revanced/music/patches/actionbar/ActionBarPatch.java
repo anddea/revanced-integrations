@@ -28,20 +28,16 @@ public class ActionBarPatch {
     }
 
     public static void hookActionBar(ViewGroup viewGroup) {
-        if (!SettingsEnum.HOOK_ACTION_BAR_DOWNLOAD.getBoolean() && !SettingsEnum.HIDE_ACTION_BAR_RADIO.getBoolean()) {
-            return;
-        }
-
         viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         try {
-                            int childCount = viewGroup.getChildCount();
+                            final int childCount = viewGroup.getChildCount();
                             if (childCount == 0)
                                 return;
 
-                            hookDownloadButton(str("action_add_to_offline_songs"), viewGroup, childCount);
+                            hookDownloadButton(viewGroup, childCount);
                             hideRadioButton(viewGroup, childCount);
                         } catch (Exception ex) {
                             LogHelper.printException(ActionBarPatch.class, "hookActionBar failure", ex);
@@ -52,27 +48,32 @@ public class ActionBarPatch {
                 });
     }
 
-    private static void hookDownloadButton(String description, ViewGroup viewGroup, int childCount) {
+    private static void hookDownloadButton(ViewGroup viewGroup, int childCount) {
         if (!SettingsEnum.HOOK_ACTION_BAR_DOWNLOAD.getBoolean()) {
             return;
         }
-        int downloadButtonIndex = -1;
-        for (int i = 0; i < childCount; i++) {
-            View childView = viewGroup.getChildAt(i);
-            if (childView != null) {
-                String buttonDescription = childView.getContentDescription().toString();
-                if (buttonDescription.contains(description)) {
-                    downloadButtonIndex = i;
-                    break;
+        int downloadButtonIndex = 3;
+        if (SettingsEnum.SPOOF_APP_VERSION.getBoolean() || childCount < 5) {
+            final String description = str("action_add_to_offline_songs");
+            downloadButtonIndex = -1;
+            for (int i = 0; i < childCount; i++) {
+                View childView = viewGroup.getChildAt(i);
+                if (childView != null) {
+                    String buttonDescription = childView.getContentDescription().toString();
+                    if (buttonDescription.contains(description)) {
+                        downloadButtonIndex = i;
+                        break;
+                    }
                 }
+            }
+            if (downloadButtonIndex == -1) {
+                return;
             }
         }
 
-        if (downloadButtonIndex != -1) {
-            View downloadButton = viewGroup.getChildAt(downloadButtonIndex);
-            if (downloadButton != null) {
-                downloadButton.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
-            }
+        View downloadButton = viewGroup.getChildAt(downloadButtonIndex);
+        if (downloadButton != null) {
+            downloadButton.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
         }
     }
 }
