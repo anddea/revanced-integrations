@@ -39,6 +39,8 @@ import app.revanced.integrations.utils.ReVancedUtils;
 public final class AlternativeThumbnailsPatch {
     private static final int TIMEOUT_DEFAULT_MILLISECONDS = 5000;
 
+    private static final String DE_ARROW_THUMBNAILS_API = "https://dearrow-thumb.ajay.app/api/v1/getThumbnail?videoID=";
+    
     static {
         // Fix any bad imported data.
         final int altThumbnailType = SettingsEnum.ALT_THUMBNAIL_TYPE.getInt();
@@ -83,7 +85,18 @@ public final class AlternativeThumbnailsPatch {
             // And even if alt webp images do exist, sometimes they can load much slower than the original jpg alt images.
             // (as much as 4x slower has been observed, despite the alt webp image being a smaller file).
 
-            StringBuilder builder = new StringBuilder(originalUrl.length() + 2);
+            StringBuilder builder = new StringBuilder(originalUrl.length() + 75);
+
+            // DeArrow Implementation
+            if (SettingsEnum.DE_ARROW_ENABLED.getBoolean()) {
+                builder.append(DE_ARROW_THUMBNAILS_API);
+                builder.append(decodedUrl.videoId).append("&redirectUrl=");
+                // This code is using to prevent strange behavior from Youtube
+                int responseCode = ReVancedUtils.submitOnBackgroundThread(() -> {
+                    HttpURLConnection connection = getHttpURLConnection(originalUrl);
+                    return connection.getResponseCode();
+                }).get();
+            }
             builder.append(decodedUrl.urlPrefix);
             builder.append(decodedUrl.videoId).append('/');
             builder.append(qualityToUse.getAltImageNameToUse());
@@ -97,6 +110,7 @@ public final class AlternativeThumbnailsPatch {
             // URL tracking parameters. Presumably they are to determine if a user has viewed a thumbnail.
             // This likely is used for recommendations, so they are retained if present.
             builder.append(decodedUrl.urlTrackingParameters);
+
             return builder.toString();
         } catch (Exception ex) {
             LogHelper.printException(AlternativeThumbnailsPatch.class, "Alt thumbnails failure", ex);
@@ -261,7 +275,7 @@ public final class AlternativeThumbnailsPatch {
                 verified = altVideoIdLookup.get(videoId);
                 if (verified == null) {
                     if (SettingsEnum.ALT_THUMBNAIL_FAST_QUALITY.getBoolean()) {
-                        // In fast quality, skip checking if the alt thumbnail exists.
+                        // For fast quality, skip checking if the alt thumbnail exists.
                         return true;
                     }
                     verified = new VerifiedQualities();
