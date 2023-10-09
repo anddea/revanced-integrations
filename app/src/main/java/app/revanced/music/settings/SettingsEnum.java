@@ -103,7 +103,7 @@ public enum SettingsEnum {
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, TRUE, true),
     SETTINGS_INITIALIZED("revanced_settings_initialized", BOOLEAN, FALSE),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, FALSE, true),
-
+    SPOOF_APP_VERSION_TARGET("revanced_spoof_app_version_target", STRING, "4.27.53", true),
 
     // Navigation
     ENABLE_BLACK_NAVIGATION_BAR("revanced_enable_black_navigation_bar", BOOLEAN, TRUE),

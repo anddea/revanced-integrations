@@ -5,6 +5,7 @@ import static app.revanced.music.settings.SettingsEnum.CUSTOM_PLAYBACK_SPEEDS;
 import static app.revanced.music.settings.SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME;
 import static app.revanced.music.settings.SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS;
 import static app.revanced.music.settings.SettingsEnum.SB_API_URL;
+import static app.revanced.music.settings.SettingsEnum.SPOOF_APP_VERSION_TARGET;
 import static app.revanced.music.settings.SettingsEnum.START_PAGE;
 import static app.revanced.music.settings.SettingsEnum.values;
 import static app.revanced.music.utils.StringRef.str;
@@ -66,6 +67,9 @@ public class SharedPreferenceChangeListener {
             return true;
         } else if (dataString.equals(START_PAGE.path)) {
             ListDialogBuilder.listDialogBuilder(START_PAGE, activity, 2, "revanced_start_page_entry", "revanced_start_page_entry_value");
+            return true;
+        } else if (dataString.equals(SPOOF_APP_VERSION_TARGET.path)) {
+            ListDialogBuilder.listDialogBuilder(SPOOF_APP_VERSION_TARGET, activity, 1, "revanced_spoof_app_version_target_entry", "revanced_spoof_app_version_target_entry_value");
             return true;
         } else if (dataString.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME.path)) {
             EditTextDialogBuilder.editTextDialogBuilder(EXTERNAL_DOWNLOADER_PACKAGE_NAME, activity);
