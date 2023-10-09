@@ -441,7 +441,9 @@ public class ReturnYouTubeDislike {
         return destination;
     }
 
-    /** @noinspection deprecation*/
+    /**
+     * @noinspection deprecation
+     */
     @SuppressLint("ObsoleteSdkInt")
     private static String formatDislikeCount(long dislikeCount) {
         // TODO: remove this when dropping support for versions below YT Music v6.20.51
@@ -461,7 +463,9 @@ public class ReturnYouTubeDislike {
         return String.valueOf(dislikeCount);
     }
 
-    /** @noinspection deprecation*/
+    /**
+     * @noinspection deprecation
+     */
     @SuppressLint("ObsoleteSdkInt")
     private static String formatDislikePercentage(float dislikePercentage) {
         // TODO: remove this when dropping support for versions below YT Music v6.20.51

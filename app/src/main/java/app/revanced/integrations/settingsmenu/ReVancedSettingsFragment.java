@@ -224,7 +224,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void AlternativeThumbnailsPreferenceLinks() {
         enableDisablePreferences(
                 SettingsEnum.ALT_THUMBNAIL_DEARROW.getBoolean(),
-                SettingsEnum.ALT_THUMBNAIL_FAST_QUALITY,
+                SettingsEnum.ALT_THUMBNAIL_SKIP_CHECKING,
                 SettingsEnum.ALT_THUMBNAIL_TYPE
         );
     }
