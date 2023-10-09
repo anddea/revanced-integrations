@@ -22,8 +22,8 @@ public class ListDialogBuilder {
             final String[] mEntries = getStringArray(activity, entryKey);
             final String[] mEntryValues = getStringArray(activity, entryValueKey);
 
-            final int index = Arrays.asList(mEntryValues).indexOf(setting.getString());
-            mClickedDialogEntryIndex = Math.max(index, defaultIndex);
+            final int findIndex = Arrays.binarySearch(mEntryValues, setting.getString());
+            mClickedDialogEntryIndex = findIndex >= 0 ? findIndex : defaultIndex;
 
             getDialogBuilder(activity)
                     .setTitle(str(setting.path + "_title"))
