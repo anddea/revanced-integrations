@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import app.revanced.integrations.patches.misc.VersionOverridePatch;
+import app.revanced.integrations.patches.misc.SpoofAppVersionPatch;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -104,7 +104,7 @@ public class ReturnYouTubeDislikePatch {
     /**
      * Injection point.  Called on main thread.
      * <p>
-     * Used when spoofing the older app versions of {@link VersionOverridePatch}.
+     * Used when spoofing the older app versions of {@link SpoofAppVersionPatch}.
      */
     public static void setOldUILayoutDislikes(int buttonViewResourceId, @Nullable TextView textView) {
         try {
