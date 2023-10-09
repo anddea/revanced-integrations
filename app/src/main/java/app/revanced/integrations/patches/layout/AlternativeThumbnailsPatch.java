@@ -38,9 +38,8 @@ import app.revanced.integrations.utils.ReVancedUtils;
  */
 public final class AlternativeThumbnailsPatch {
     private static final int TIMEOUT_DEFAULT_MILLISECONDS = 5000;
+    private static final String DE_ARROW_THUMBNAILS_API = "https://dearrow-thumb.ajay.app/api/v1/getThumbnail?videoID=%s&redirectUrl=";
 
-    private static final String DE_ARROW_THUMBNAILS_API = "https://dearrow-thumb.ajay.app/api/v1/getThumbnail?videoID=";
-    
     static {
         // Fix any bad imported data.
         final int altThumbnailType = SettingsEnum.ALT_THUMBNAIL_TYPE.getInt();
@@ -85,17 +84,11 @@ public final class AlternativeThumbnailsPatch {
             // And even if alt webp images do exist, sometimes they can load much slower than the original jpg alt images.
             // (as much as 4x slower has been observed, despite the alt webp image being a smaller file).
 
-            StringBuilder builder = new StringBuilder(originalUrl.length() + 75);
+            StringBuilder builder = new StringBuilder();
 
             // DeArrow Implementation
-            if (SettingsEnum.DE_ARROW_ENABLED.getBoolean()) {
-                builder.append(DE_ARROW_THUMBNAILS_API);
-                builder.append(decodedUrl.videoId).append("&redirectUrl=");
-                // This code is using to prevent strange behavior from Youtube
-                int responseCode = ReVancedUtils.submitOnBackgroundThread(() -> {
-                    HttpURLConnection connection = getHttpURLConnection(originalUrl);
-                    return connection.getResponseCode();
-                }).get();
+            if (SettingsEnum.ALT_THUMBNAIL_DEARROW.getBoolean()) {
+                builder.append(String.format(DE_ARROW_THUMBNAILS_API, decodedUrl.videoId));
             }
             builder.append(decodedUrl.urlPrefix);
             builder.append(decodedUrl.videoId).append('/');
@@ -149,6 +142,10 @@ public final class AlternativeThumbnailsPatch {
         } catch (Exception ex) {
             LogHelper.printException(AlternativeThumbnailsPatch.class, "Alt thumbnails callback failure", ex);
         }
+    }
+
+    private static boolean skipThumbNailChecking() {
+        return SettingsEnum.ALT_THUMBNAIL_SKIP_CHECKING.getBoolean() || SettingsEnum.ALT_THUMBNAIL_DEARROW.getBoolean();
     }
 
     private enum ThumbnailQuality {
@@ -208,7 +205,7 @@ public final class AlternativeThumbnailsPatch {
                 return null; // Not a thumbnail.
             }
 
-            final boolean useFastQuality = SettingsEnum.ALT_THUMBNAIL_FAST_QUALITY.getBoolean();
+            final boolean useFastQuality = skipThumbNailChecking();
             // SD is max resolution for fast alt images.
             return switch (quality) {
                 // SD alt images have somewhat worse quality with washed out color and poor contrast.
@@ -274,7 +271,7 @@ public final class AlternativeThumbnailsPatch {
             synchronized (altVideoIdLookup) {
                 verified = altVideoIdLookup.get(videoId);
                 if (verified == null) {
-                    if (SettingsEnum.ALT_THUMBNAIL_FAST_QUALITY.getBoolean()) {
+                    if (skipThumbNailChecking()) {
                         // For fast quality, skip checking if the alt thumbnail exists.
                         return true;
                     }
@@ -323,7 +320,7 @@ public final class AlternativeThumbnailsPatch {
             if (lowestQualityNotAvailable != null && lowestQualityNotAvailable.ordinal() <= quality.ordinal()) {
                 return false; // Previously verified as not existing.
             }
-            if (SettingsEnum.ALT_THUMBNAIL_FAST_QUALITY.getBoolean()) {
+            if (skipThumbNailChecking()) {
                 return true; // Unknown if it exists or not.  Use the URL anyways and update afterwards if loading fails.
             }
 

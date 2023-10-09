@@ -168,6 +168,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         NavigationPreferenceLinks();
         QuickActionsPreferenceLinks();
         SpeedOverlayPreferenceLinks();
+        AlternativeThumbnailsPreferenceLinks();
         TabletLayoutLinks();
         setBackupRestorePreference();
         setExternalDownloaderPreference();
@@ -221,6 +222,17 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
                 SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON,
                 SettingsEnum.SHOW_FULLSCREEN_TITLE
+        );
+    }
+
+    /**
+     * Enable/Disable Preference related to Alternative Thumbnails
+     */
+    public void AlternativeThumbnailsPreferenceLinks() {
+        enableDisablePreferences(
+                SettingsEnum.ALT_THUMBNAIL_DEARROW.getBoolean(),
+                SettingsEnum.ALT_THUMBNAIL_FAST_QUALITY,
+                SettingsEnum.ALT_THUMBNAIL_TYPE
         );
     }
 

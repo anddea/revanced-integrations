@@ -39,9 +39,10 @@ public enum SettingsEnum {
 
     // Alternative Thumbnails
     ALT_THUMBNAIL_ENABLED("revanced_alt_thumbnail_enabled", BOOLEAN, FALSE),
-    ALT_THUMBNAIL_TYPE("revanced_alt_thumbnail_type", INTEGER, 2, parents(ALT_THUMBNAIL_ENABLED)),
-    ALT_THUMBNAIL_FAST_QUALITY("revanced_alt_thumbnail_fast_quality", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_ENABLED)),
-    DE_ARROW_ENABLED("revanced_alt_thumbnail_dearrow_enabled", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_ENABLED)),
+    ALT_THUMBNAIL_DEARROW("revanced_alt_thumbnail_dearrow", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_ENABLED)),
+    ALT_THUMBNAIL_TYPE("revanced_alt_thumbnail_type", INTEGER, 1, parents(ALT_THUMBNAIL_ENABLED)),
+    ALT_THUMBNAIL_SKIP_CHECKING("revanced_alt_thumbnail_skip_checking", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_ENABLED)),
+
 
     // Bottom Player
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),
