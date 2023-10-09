@@ -13,12 +13,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -30,8 +26,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
-import android.view.Display;
-import android.view.WindowManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +37,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 
 import app.revanced.integrations.BuildConfig;
 import app.revanced.integrations.patches.button.AlwaysRepeat;
@@ -388,9 +381,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             final var EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_external_downloader_package_name";
             final var EXTERNAL_DOWNLOADER_WEBSITE_PREFERENCE_KEY = "revanced_external_downloader_website";
 
-            final String value = SharedPrefHelper.getString(REVANCED, SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.path, "com.deniscerri.ytdl");
-            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(value);
-
             Activity activity = getActivity();
 
             String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY);
@@ -399,9 +389,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             for (int index = 0; index < labelArray.length; index++) {
                 final int finalIndex = index;
-                final var label = labelArray[finalIndex];
-                final var packageName = packageNameArray[finalIndex];
-                final var uri = Uri.parse(websiteArray[finalIndex]);
+                final String label = labelArray[finalIndex].toString();
+                final String packageName = packageNameArray[finalIndex].toString();
+                final Uri uri = Uri.parse(websiteArray[finalIndex]);
                 final boolean isInstalled = isPackageEnabled(activity, packageName);
 
                 final var msg = isInstalled
@@ -409,40 +399,22 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                         : str("revanced_external_downloader_not_installed");
 
                 Preference externalDownloaderPreference = new Preference(activity);
+
                 externalDownloaderPreference.setTitle(label);
                 externalDownloaderPreference.setSummary(packageName);
                 externalDownloaderPreference.setOnPreferenceClickListener(preference -> {
-                    AlertDialog.Builder builder;
-                    builder = new AlertDialog.Builder(activity);
-
-                    builder.setTitle(label);
-                    builder.setMessage(msg);
-                    builder.setNegativeButton(str("playback_control_close"), null);
-                    builder.setNeutralButton(str("common_google_play_services_install_button"), null);
-                    builder.setPositiveButton(str("save_metadata_menu"), null);
-
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                    dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
-                        var intent = new Intent(Intent.ACTION_VIEW, uri);
-                        activity.startActivity(intent);
-                    });
-                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
-                        runOnMainThreadDelayed(() -> {
-                            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(packageName);
-                            if (!isInstalled)
-                                showToastShort(str("revanced_external_downloader_not_installed_warning", label));
-                        }, 0L);
-                    });
-
-                    Display display = activity.getWindowManager().getDefaultDisplay();
-                    Point size = new Point();
-                    display.getSize(size);
-
-                    WindowManager.LayoutParams params = Objects.requireNonNull(dialog.getWindow()).getAttributes();
-                    params.width = (int) (size.x * 0.8);
-                    dialog.getWindow().setAttributes(params);
-                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    new AlertDialog.Builder(activity)
+                            .setTitle(label)
+                            .setMessage(msg)
+                            .setNegativeButton(str("playback_control_close"), null)
+                            .setNeutralButton(str("common_google_play_services_install_button"), (dialog, id) -> {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                activity.startActivity(intent);
+                            })
+                            .setPositiveButton(str("save_metadata_menu"), (dialog, id) -> {
+                                SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(packageName);
+                            })
+                            .show();
 
                     return false;
                 });
@@ -457,7 +429,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SwitchPreference hookDownloadButtonPreference = new SwitchPreference(activity);
                 hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
                 hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
-                hookDownloadButtonPreference.setKey(SettingsEnum.HOOK_DOWNLOAD_BUTTON.path);
+                hookDownloadButtonPreference.setKey("revanced_hook_download_button");
+                hookDownloadButtonPreference.setDefaultValue(false);
 
                 externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
                 externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
@@ -540,7 +513,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      * Invoke the SAF(Storage Access Framework) to import settings
      */
     private void importActivity() {
-        var intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType(Build.VERSION.SDK_INT <= 28 ? "*/*" : "application/json");
         startActivityForResult(intent, READ_REQUEST_CODE);
@@ -617,13 +590,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
                 var prefsMap = prefs.getAll();
                 for (Map.Entry entry : prefsMap.entrySet()) {
-                    String key = entry.getKey().toString();
+                    String key = entry.getKey().toString().trim();
                     Object value = entry.getValue();
 
                     if (value instanceof Boolean) {
-                        editor.putBoolean(key, settingsJson.optBoolean(key, (boolean) entry.getValue()));
+                        editor.putBoolean(key, settingsJson.optBoolean(key, (boolean) value));
                     } else {
-                        editor.putString(key, settingsJson.optString(key, entry.getValue().toString()));
+                        editor.putString(key, settingsJson.optString(key, value.toString()));
                     }
                 }
             }

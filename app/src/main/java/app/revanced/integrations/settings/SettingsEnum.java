@@ -218,7 +218,7 @@ public enum SettingsEnum {
     EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
 
     // Experimental Flags
-    HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, FALSE, true),
+    HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, FALSE),
 
 
     // Player
