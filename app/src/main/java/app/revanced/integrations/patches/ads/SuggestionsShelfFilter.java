@@ -15,12 +15,10 @@ import app.revanced.integrations.utils.ReVancedHelper;
 
 public final class SuggestionsShelfFilter extends Filter {
 
-    private static final StringFilterGroup horizontalShelf =
-            new StringFilterGroup(
-                    SettingsEnum.HIDE_SUGGESTIONS_SHELF,
-                    "horizontal_tile_shelf.eml",
-                    "horizontal_video_shelf.eml"
-            );
+    private static final List<String> horizontalShelf = Arrays.asList(
+            "horizontal_tile_shelf.eml",
+            "horizontal_video_shelf.eml"
+    );
 
     private static final List<String> horizontalShelfHeader = Arrays.asList(
             "horizontalCollectionSwipeProtector=null",
@@ -28,7 +26,13 @@ public final class SuggestionsShelfFilter extends Filter {
     );
 
     public SuggestionsShelfFilter() {
-        pathFilterGroupList.addAll(horizontalShelf);
+        pathFilterGroupList.addAll(
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_SUGGESTIONS_SHELF,
+                        "horizontal_tile_shelf.eml",
+                        "horizontal_video_shelf.eml"
+                )
+        );
     }
 
     /**
@@ -45,7 +49,10 @@ public final class SuggestionsShelfFilter extends Filter {
      * @return whether horizontal video shelf contains
      */
     public static boolean filterSuggestionsShelfSubComponents(Object object) {
-        return horizontalShelf.check(object.toString()).isFiltered();
+        if (!SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean())
+            return false;
+
+        return horizontalShelf.stream().anyMatch(object.toString()::contains);
     }
 
     /**
