@@ -86,18 +86,25 @@ public class SpoofPlayerParameterPatch {
             return parameters;
         }
 
-        if (originalStoryboardRenderer = PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL
-                && AUTOPLAY_PARAMETERS.stream().anyMatch(parameters::contains)) {
-            // In order to prevent videos that are auto-played in feed to be added to history,
-            // only spoof the parameter if the video is not playing in the feed.
-            // This will cause playback issues in the feed, but it's better than manipulating the history.
-            return SCRIM_PARAMETER + SHORTS_PLAYER_PARAMETERS;
-        } else {
+        final boolean isPlayingFeed = PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL
+                && AUTOPLAY_PARAMETERS.stream().anyMatch(parameters::contains);
+
+        if (!isPlayingFeed) {
             // StoryboardRenderer is always empty when playing video with INCOGNITO_PARAMETERS parameter.
             // Fetch StoryboardRenderer without parameter.
             fetchStoryboardRenderer(videoId);
             // Spoof the player parameter to prevent playback issues.
             return INCOGNITO_PARAMETERS;
+        }
+
+        if (originalStoryboardRenderer = !SettingsEnum.SPOOF_PLAYER_PARAMETER_IN_FEED.getBoolean()) {
+            return parameters;
+        } else {
+            // StoryboardRenderer is always empty when playing video with INCOGNITO_PARAMETERS parameter.
+            // Fetch StoryboardRenderer without parameter.
+            fetchStoryboardRenderer(videoId);
+            // Spoof the player parameter to prevent playback issues.
+            return SCRIM_PARAMETER + INCOGNITO_PARAMETERS;
         }
     }
 
