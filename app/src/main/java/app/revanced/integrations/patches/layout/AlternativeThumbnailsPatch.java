@@ -71,6 +71,8 @@ public final class AlternativeThumbnailsPatch {
             if (!SettingsEnum.ALT_THUMBNAIL_ENABLED.getBoolean()) {
                 return originalUrl;
             }
+            if (originalUrl.contains("_live.")) return originalUrl; // Livestream video in feed.
+
             DecodedThumbnailUrl decodedUrl = DecodedThumbnailUrl.decodeImageUrl(originalUrl);
             if (decodedUrl == null) {
                 return originalUrl; // Not a thumbnail.
@@ -86,23 +88,25 @@ public final class AlternativeThumbnailsPatch {
 
             StringBuilder builder = new StringBuilder();
 
-            // DeArrow Implementation
-            if (SettingsEnum.ALT_THUMBNAIL_DEARROW.getBoolean()) {
-                builder.append(String.format(DE_ARROW_THUMBNAILS_API, decodedUrl.videoId));
-            }
             builder.append(decodedUrl.urlPrefix);
             builder.append(decodedUrl.videoId).append('/');
             builder.append(qualityToUse.getAltImageNameToUse());
             builder.append('.').append(decodedUrl.imageExtension);
 
-            String sanitizedReplacement = builder.toString();
-            if (!VerifiedQualities.verifyAltThumbnailExist(decodedUrl.videoId, qualityToUse, sanitizedReplacement)) {
-                return originalUrl;
-            }
-
             // URL tracking parameters. Presumably they are to determine if a user has viewed a thumbnail.
             // This likely is used for recommendations, so they are retained if present.
             builder.append(decodedUrl.urlTrackingParameters);
+
+            String sanitizedReplacement = builder.toString();
+            if (!VerifiedQualities.verifyAltThumbnailExist(decodedUrl.videoId, qualityToUse, sanitizedReplacement)) {
+                builder.setLength(0);
+                builder.append(originalUrl);
+            }
+
+            // DeArrow Implementation
+            if (SettingsEnum.ALT_THUMBNAIL_DEARROW.getBoolean()) {
+                builder.insert(0, String.format(DE_ARROW_THUMBNAILS_API, decodedUrl.videoId));
+            }
 
             return builder.toString();
         } catch (Exception ex) {
@@ -142,10 +146,6 @@ public final class AlternativeThumbnailsPatch {
         } catch (Exception ex) {
             LogHelper.printException(AlternativeThumbnailsPatch.class, "Alt thumbnails callback failure", ex);
         }
-    }
-
-    private static boolean skipThumbNailChecking() {
-        return SettingsEnum.ALT_THUMBNAIL_SKIP_CHECKING.getBoolean() || SettingsEnum.ALT_THUMBNAIL_DEARROW.getBoolean();
     }
 
     private enum ThumbnailQuality {
@@ -205,7 +205,7 @@ public final class AlternativeThumbnailsPatch {
                 return null; // Not a thumbnail.
             }
 
-            final boolean useFastQuality = skipThumbNailChecking();
+            final boolean useFastQuality = SettingsEnum.ALT_THUMBNAIL_SKIP_CHECKING.getBoolean();
             // SD is max resolution for fast alt images.
             return switch (quality) {
                 // SD alt images have somewhat worse quality with washed out color and poor contrast.
@@ -271,7 +271,7 @@ public final class AlternativeThumbnailsPatch {
             synchronized (altVideoIdLookup) {
                 verified = altVideoIdLookup.get(videoId);
                 if (verified == null) {
-                    if (skipThumbNailChecking()) {
+                    if (SettingsEnum.ALT_THUMBNAIL_SKIP_CHECKING.getBoolean()) {
                         // For fast quality, skip checking if the alt thumbnail exists.
                         return true;
                     }
@@ -320,7 +320,7 @@ public final class AlternativeThumbnailsPatch {
             if (lowestQualityNotAvailable != null && lowestQualityNotAvailable.ordinal() <= quality.ordinal()) {
                 return false; // Previously verified as not existing.
             }
-            if (skipThumbNailChecking()) {
+            if (SettingsEnum.ALT_THUMBNAIL_SKIP_CHECKING.getBoolean()) {
                 return true; // Unknown if it exists or not.  Use the URL anyways and update afterwards if loading fails.
             }
 
