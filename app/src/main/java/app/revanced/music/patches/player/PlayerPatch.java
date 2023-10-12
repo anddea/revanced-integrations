@@ -34,10 +34,6 @@ public class PlayerPatch {
         return SettingsEnum.ENABLE_NEW_PLAYER_BACKGROUND.getBoolean();
     }
 
-    public static boolean enableNewPlayerLayout() {
-        return SettingsEnum.ENABLE_NEW_PLAYER_LAYOUT.getBoolean() || SettingsEnum.ENABLE_NEW_PLAYER_BACKGROUND.getBoolean();
-    }
-
     public static boolean enableOldStyleMiniPlayer(boolean original) {
         return !SettingsEnum.ENABLE_OLD_STYLE_MINI_PLAYER.getBoolean() && original;
     }
