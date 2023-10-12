@@ -12,12 +12,11 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class ReVancedHelper {
-    private static final int HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE = 1538379200; // 18.24.33
     public static String applicationLabel = "ReVanced_Extended";
     public static boolean isTablet = false;
     public static String packageName = "app.rvx.android.youtube";
-    public static int versionCode = 1538125248; // 18.22.37
-    public static String versionName = "18.22.37";
+    public static int versionCode = 1539964352; // 18.36.39
+    public static String versionName = "18.36.39";
 
     private ReVancedHelper() {
     } // utility class
@@ -81,10 +80,6 @@ public class ReVancedHelper {
         final int spoofedVersion = Integer.parseInt(SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().replaceAll("\\.", ""));
         final int targetVersion = Integer.parseInt(versionName.replaceAll("\\.", ""));
         return spoofedVersion <= targetVersion;
-    }
-
-    public static boolean isSupportHookDownloadButton() {
-        return isSpoofedTargetVersionGez("18.24.00") || versionCode >= HOOK_DOWNLOAD_BUTTON_TARGET_VERSION_CODE;
     }
 
     public static void setApplicationLabel(@NonNull Context context) {

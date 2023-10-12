@@ -2,7 +2,6 @@ package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
-import static app.revanced.integrations.utils.ReVancedHelper.isSupportHookDownloadButton;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
@@ -409,20 +408,18 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 externalDownloaderPreferenceScreen.addPreference(externalDownloaderPreference);
             }
 
-            if (isSupportHookDownloadButton()) {
-                Preference experimentalPreference = new Preference(activity);
-                experimentalPreference.setTitle(" ");
-                experimentalPreference.setSummary(str("revanced_experimental_flag"));
+            Preference experimentalPreference = new Preference(activity);
+            experimentalPreference.setTitle(" ");
+            experimentalPreference.setSummary(str("revanced_experimental_flag"));
 
-                SwitchPreference hookDownloadButtonPreference = new SwitchPreference(activity);
-                hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
-                hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
-                hookDownloadButtonPreference.setKey("revanced_hook_download_button");
-                hookDownloadButtonPreference.setDefaultValue(false);
+            SwitchPreference hookDownloadButtonPreference = new SwitchPreference(activity);
+            hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
+            hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
+            hookDownloadButtonPreference.setKey("revanced_hook_download_button");
+            hookDownloadButtonPreference.setDefaultValue(false);
 
-                externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
-                externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
-            }
+            externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
+            externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setExternalDownloaderPreference" + th);
         }
