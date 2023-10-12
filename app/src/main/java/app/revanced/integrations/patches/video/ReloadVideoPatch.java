@@ -15,7 +15,7 @@ public class ReloadVideoPatch {
      * @param newlyLoadedVideoId id of the current video
      */
     public static void setVideoId(@NonNull String newlyLoadedVideoId) {
-        if (!SettingsEnum.SKIP_DUMMY_SEGMENT.getBoolean() || PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL) {
+        if (!SettingsEnum.SKIP_PRELOADED_BUFFER.getBoolean() || PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL) {
             return;
         }
 

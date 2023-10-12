@@ -83,10 +83,10 @@ public final class VideoInformation {
                     seekTo(10000);
                     seekTo(lastVideoTime + speedAdjustedTimeThreshold);
 
-                    if (!SettingsEnum.SKIP_DUMMY_SEGMENT_TOAST.getBoolean())
+                    if (!SettingsEnum.SKIP_PRELOADED_BUFFER_TOAST.getBoolean())
                         return;
 
-                    ReVancedUtils.showToastShort(str("revanced_skipped_dummy"));
+                    ReVancedUtils.showToastShort(str("revanced_skipped_preloaded_buffer"));
                 }, 700
         );
     }
