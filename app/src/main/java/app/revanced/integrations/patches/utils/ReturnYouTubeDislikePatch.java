@@ -1,6 +1,5 @@
 package app.revanced.integrations.patches.utils;
 
-import static app.revanced.integrations.patches.video.VideoInformation.getVideoId;
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.Vote;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
@@ -19,11 +18,12 @@ import androidx.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-import app.revanced.integrations.patches.misc.SpoofAppVersionPatch;
+import app.revanced.integrations.patches.ads.ReturnYouTubeDislikeFilterPatch;
+import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
-import app.revanced.integrations.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
@@ -33,55 +33,95 @@ import app.revanced.integrations.utils.ResourceType;
 /**
  * Handles all interaction of UI patch components.
  * <p>
- * Does not handle creating dislike spans or anything to do with {@link ReturnYouTubeDislikeApi}.
+ * Known limitation:
+ * Litho based Shorts player can experience temporarily frozen video playback if the RYD fetch takes too long.
+ * <p>
+ * Temporary work around:
+ * Enable app spoofing to version 18.20.39 or older, as that uses a non litho Shorts player.
+ * <p>
+ * Permanent fix (yet to be implemented), either of:
+ * - Modify patch to hook onto the Shorts Litho TextView, and update the dislikes asynchronously.
+ * - Find a way to force Litho to rebuild it's component tree
+ *   (and use that hook to force the shorts dislikes to update after the fetch is completed).
  */
 public class ReturnYouTubeDislikePatch {
+
+    /**
+     * RYD data for the current video on screen.
+     */
+    @Nullable
+    private static volatile ReturnYouTubeDislike currentVideoData;
+
+    /**
+     * The last litho based Shorts loaded.
+     * May be the same value as {@link #currentVideoData}, but usually is the next short to swipe to.
+     */
+    @Nullable
+    private static volatile ReturnYouTubeDislike lastLithoShortsVideoData;
+
+    /**
+     * Because the litho Shorts spans are created after ReturnYouTubeDislikeFilterPatch
+     * detects the video ids, after the user votes the litho will update
+     * but {@link #lastLithoShortsVideoData} is not the correct data to use.
+     * If this is true, then instead use {@link #currentVideoData}.
+     */
+    private static volatile boolean lithoShortsShouldUseCurrentData;
+
+    /**
+     * Last video id prefetched. Field is prevent prefetching the same video id multiple times in a row.
+     */
+    @Nullable
+    private static volatile String lastPrefetchedVideoId;
+
+    public static void onRYDStatusChange(boolean rydEnabled) {
+        if (!rydEnabled) {
+            // Must remove all values to protect against using stale data
+            // if the user enables RYD while a video is on screen.
+            currentVideoData = null;
+            lastLithoShortsVideoData = null;
+            lithoShortsShouldUseCurrentData = false;
+        }
+    }
+
+
+    //
+    // 17.x non litho regular video player.
+    //
 
     /**
      * Resource identifier of old UI dislike button.
      */
     private static final int OLD_UI_DISLIKE_BUTTON_RESOURCE_ID
             = identifier("dislike_button", ResourceType.ID);
-    /**
-     * Replacement text to use for "Dislikes" while RYD is fetching.
-     */
-    private static final Spannable SHORTS_LOADING_SPAN = new SpannableString("-");
-    /**
-     * Dislikes TextViews used by Shorts.
-     * <p>
-     * Multiple TextViews are loaded at once (for the prior and next videos to swipe to).
-     * Keep track of all of them, and later pick out the correct one based on their on screen position.
-     */
-    private static final List<WeakReference<TextView>> shortsTextViewRefs = new ArrayList<>();
-    @Nullable
-    private static String currentVideoId;
+
     /**
      * Dislikes text label used by old UI.
      */
     @NonNull
     private static WeakReference<TextView> oldUITextViewRef = new WeakReference<>(null);
+
     /**
      * Original old UI 'Dislikes' text before patch modifications.
      * Required to reset the dislikes when changing videos and RYD is not available.
      * Set only once during the first load.
      */
     private static Spanned oldUIOriginalSpan;
+
     /**
      * Replacement span that contains dislike value. Used by {@link #oldUiTextWatcher}.
      */
     @Nullable
     private static Spanned oldUIReplacementSpan;
+
     /**
      * Old UI dislikes can be set multiple times by YouTube.
-     * To prevent it from reverting changes made here, this listener overrides any future changes YouTube makes.
+     * To prevent reverting changes made here, this listener overrides any future changes YouTube makes.
      */
     private static final TextWatcher oldUiTextWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
-
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
-
         public void afterTextChanged(Editable s) {
             if (oldUIReplacementSpan == null || oldUIReplacementSpan.toString().equals(s.toString())) {
                 return;
@@ -91,11 +131,15 @@ public class ReturnYouTubeDislikePatch {
     };
 
     private static void updateOldUIDislikesTextView() {
+        ReturnYouTubeDislike videoData = currentVideoData;
+        if (videoData == null) {
+            return;
+        }
         TextView oldUITextView = oldUITextViewRef.get();
         if (oldUITextView == null) {
             return;
         }
-        oldUIReplacementSpan = ReturnYouTubeDislike.getDislikesSpanForRegularVideo(oldUIOriginalSpan, false);
+        oldUIReplacementSpan = videoData.getDislikesSpanForRegularVideo(oldUIOriginalSpan, false);
         if (!oldUIReplacementSpan.equals(oldUITextView.getText())) {
             oldUITextView.setText(oldUIReplacementSpan);
         }
@@ -104,7 +148,7 @@ public class ReturnYouTubeDislikePatch {
     /**
      * Injection point.  Called on main thread.
      * <p>
-     * Used when spoofing the older app versions of {@link SpoofAppVersionPatch}.
+     * Used when spoofing to 16.x and 17.x versions.
      */
     public static void setOldUILayoutDislikes(int buttonViewResourceId, @Nullable TextView textView) {
         try {
@@ -113,6 +157,7 @@ public class ReturnYouTubeDislikePatch {
                     || textView == null) {
                 return;
             }
+            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "setOldUILayoutDislikes");
 
             if (oldUIOriginalSpan == null) {
                 // Use value of the first instance, as it appears TextViews can be recycled
@@ -137,6 +182,41 @@ public class ReturnYouTubeDislikePatch {
         }
     }
 
+
+    //
+    // Litho player for both regular videos and Shorts.
+    //
+
+    public static CharSequence onCharSequenceLoaded(@NonNull Object conversionContext,
+                                                    @NonNull CharSequence original) {
+        try {
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+                return original;
+            }
+            if (!SettingsEnum.RYD_SHORTS.getBoolean()) {
+                // Must clear the current video here, otherwise if the user opens a regular video
+                // then opens a litho short (while keeping the regular video on screen), then closes the short,
+                // the original video may show the incorrect dislike value.
+                currentVideoData = null;
+                return original;
+            }
+
+            String conversionContextString = conversionContext.toString();
+            if (!conversionContextString.contains("|shorts_dislike_button.eml|"))
+                return original;
+
+            ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(VideoInformation.getVideoId());
+            videoData.setVideoIdIsShort(true);
+            lastLithoShortsVideoData = videoData;
+            lithoShortsShouldUseCurrentData = false;
+
+            return videoData.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onLithoTextLoaded failure", ex);
+        }
+        return original;
+    }
+
     /**
      * Injection point.
      * <p>
@@ -146,9 +226,9 @@ public class ReturnYouTubeDislikePatch {
      * This method is sometimes called on the main thread, but it usually is called _off_ the main thread.
      * This method can be called multiple times for the same UI element (including after dislikes was added).
      *
-     * @param textRef  Cache reference to the like/dislike char sequence,
-     *                 which may or may not be the same as the original span parameter.
-     *                 If dislikes are added, the atomic reference must be set to the replacement span.
+     * @param textRef Cache reference to the like/dislike char sequence,
+     *                which may or may not be the same as the original span parameter.
+     *                If dislikes are added, the atomic reference must be set to the replacement span.
      * @param original Original span that was created or reused by Litho.
      * @return The original span (if nothing should change), or a replacement span that contains dislikes.
      */
@@ -157,21 +237,56 @@ public class ReturnYouTubeDislikePatch {
                                                  @NonNull AtomicReference<CharSequence> textRef,
                                                  @NonNull CharSequence original) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean() || PlayerType.getCurrent().isNoneOrHidden()) {
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
                 return original;
             }
 
             String conversionContextString = conversionContext.toString();
-            final boolean isSegmentedButton;
+            // Remove this log statement after the a/b new litho dislikes is fixed.
+            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "conversionContext: " + conversionContextString);
+
+            final Spanned replacement;
             if (conversionContextString.contains("|segmented_like_dislike_button.eml|")) {
-                isSegmentedButton = true;
-            } else if (conversionContextString.contains("|dislike_button.eml|")) {
-                isSegmentedButton = false;
+                // Regular video
+                ReturnYouTubeDislike videoData = currentVideoData;
+                if (videoData == null) {
+                    return original; // User enabled RYD while a video was on screen.
+                }
+                replacement = videoData.getDislikesSpanForRegularVideo((Spannable) original, true);
+                // When spoofing between 17.09.xx and 17.30.xx the UI is the old layout but uses litho
+                // and the dislikes is "|dislike_button.eml|"
+                // but spoofing to that range gives a broken UI layout so no point checking for that.
+            } else if (conversionContextString.contains("|shorts_dislike_button.eml|")) {
+                // Litho Shorts player.
+                if (!SettingsEnum.RYD_SHORTS.getBoolean()) {
+                    // Must clear the current video here, otherwise if the user opens a regular video
+                    // then opens a litho short (while keeping the regular video on screen), then closes the short,
+                    // the original video may show the incorrect dislike value.
+                    currentVideoData = null;
+                    return original;
+                }
+                ReturnYouTubeDislike videoData = lastLithoShortsVideoData;
+                if (videoData == null) {
+                    // The Shorts litho video id filter did not detect the video id.
+                    // This is normal if in incognito mode, but otherwise is not normal.
+                    LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Cannot modify Shorts litho span, data is null");
+                    return original;
+                }
+                // Use the correct dislikes data after voting.
+                if (lithoShortsShouldUseCurrentData) {
+                    lithoShortsShouldUseCurrentData = false;
+                    videoData = currentVideoData;
+                    if (videoData == null) {
+                        LogHelper.printException(ReturnYouTubeDislikePatch.class, "currentVideoData is null"); // Should never happen
+                        return original;
+                    }
+                    LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Using current video data for litho span");
+                }
+                replacement = videoData.getDislikeSpanForShort((Spannable) original);
             } else {
                 return original;
             }
 
-            Spanned replacement = ReturnYouTubeDislike.getDislikesSpanForRegularVideo((Spannable) original, isSegmentedButton);
             textRef.set(replacement);
             return replacement;
         } catch (Exception ex) {
@@ -180,15 +295,33 @@ public class ReturnYouTubeDislikePatch {
         return original;
     }
 
+
+    //
+    // Non litho Shorts player.
+    //
+
+    /**
+     * Replacement text to use for "Dislikes" while RYD is fetching.
+     */
+    private static final Spannable SHORTS_LOADING_SPAN = new SpannableString("-");
+
+    /**
+     * Dislikes TextViews used by Shorts.
+     * <p>
+     * Multiple TextViews are loaded at once (for the prior and next videos to swipe to).
+     * Keep track of all of them, and later pick out the correct one based on their on screen position.
+     */
+    private static final List<WeakReference<TextView>> shortsTextViewRefs = new ArrayList<>();
+
     private static void clearRemovedShortsTextViews() {
         shortsTextViewRefs.removeIf(ref -> ref.get() == null);
     }
 
     /**
-     * Injection point.  Called when a Shorts dislike is updated.
+     * Injection point.  Called when a Shorts dislike is updated.  Always on main thread.
      * Handles update asynchronously, otherwise Shorts video will be frozen while the UI thread is blocked.
      *
-     * @return if RYD is enabled and the TextView was updated
+     * @return if RYD is enabled and the TextView was updated.
      */
     public static boolean setShortsDislikes(@NonNull View likeDislikeView) {
         try {
@@ -198,19 +331,22 @@ public class ReturnYouTubeDislikePatch {
             if (!SettingsEnum.RYD_SHORTS.getBoolean()) {
                 // Must clear the data here, in case a new video was loaded while PlayerType
                 // suggested the video was not a short (can happen when spoofing to an old app version).
-                ReturnYouTubeDislike.setCurrentVideoId(null);
+                currentVideoData = null;
                 return false;
             }
+            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "setShortsDislikes");
 
             TextView textView = (TextView) likeDislikeView;
-            textView.setText(SHORTS_LOADING_SPAN); // Change 'Dislike' text to the loading text
+            textView.setText(SHORTS_LOADING_SPAN); // Change 'Dislike' text to the loading text.
             shortsTextViewRefs.add(new WeakReference<>(textView));
 
             if (likeDislikeView.isSelected() && isShortTextViewOnScreen(textView)) {
-                ReturnYouTubeDislike.setUserVote(Vote.DISLIKE);
+                LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Shorts dislike is already selected");
+                ReturnYouTubeDislike videoData = currentVideoData;
+                if (videoData != null) videoData.setUserVote(Vote.DISLIKE);
             }
 
-            // For the first short played, the shorts dislike hook is called after the video id hook.
+            // For the first short played, the Shorts dislike hook is called after the video id hook.
             // But for most other times this hook is called before the video id (which is not ideal).
             // Must update the TextViews here, and also after the videoId changes.
             updateOnScreenShortsTextViews(false);
@@ -232,14 +368,20 @@ public class ReturnYouTubeDislikePatch {
             if (shortsTextViewRefs.isEmpty()) {
                 return;
             }
+            ReturnYouTubeDislike videoData = currentVideoData;
+            if (videoData == null) {
+                return;
+            }
 
-            String videoId = getVideoId();
+            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "updateShortsTextViews");
 
             Runnable update = () -> {
-                Spanned shortsDislikesSpan = ReturnYouTubeDislike.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
+                Spanned shortsDislikesSpan = videoData.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
                 ReVancedUtils.runOnMainThreadNowOrLater(() -> {
-                    if (!videoId.equals(getVideoId())) {
+                    String videoId = videoData.getVideoId();
+                    if (!videoId.equals(VideoInformation.getVideoId())) {
                         // User swiped to new video before fetch completed
+                        LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Ignoring stale dislikes data for short: " + videoId);
                         return;
                     }
 
@@ -254,18 +396,19 @@ public class ReturnYouTubeDislikePatch {
                         }
                         if (isShortTextViewOnScreen(textView)
                                 && (forceUpdate || textView.getText().toString().equals(SHORTS_LOADING_SPAN.toString()))) {
+                            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Setting Shorts TextView to: " + shortsDislikesSpan);
                             textView.setText(shortsDislikesSpan);
                         }
                     }
                 });
             };
-            if (ReturnYouTubeDislike.fetchCompleted()) {
+            if (videoData.fetchCompleted()) {
                 update.run(); // Network call is completed, no need to wait on background thread.
             } else {
                 ReVancedUtils.runOnBackgroundThread(update);
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "updateVisibleShortsTextViews failure", ex);
+            LogHelper.printException(ReturnYouTubeDislikePatch.class, "updateOnScreenShortsTextViews failure", ex);
         }
     }
 
@@ -283,33 +426,104 @@ public class ReturnYouTubeDislikePatch {
         return location[0] < windowRect.width() && location[1] < windowRect.height();
     }
 
+
+    //
+    // Video Id and voting hooks (all players).
+    //
+
     /**
-     * Injection point.
+     * Injection point.  Uses 'playback response' video id hook to preload RYD.
+     */
+    public static void preloadVideoId(@NonNull String videoId) {
+        if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+            return;
+        }
+        if (!SettingsEnum.RYD_SHORTS.getBoolean() && PlayerType.getCurrent().isNoneOrHidden()) {
+            return;
+        }
+        if (videoId.equals(lastPrefetchedVideoId)) {
+            return;
+        }
+        lastPrefetchedVideoId = videoId;
+        LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Prefetching RYD for video: " + videoId);
+        ReturnYouTubeDislike.getFetchForVideoId(videoId);
+    }
+
+    /**
+     * Injection point.  Uses 'current playing' video id hook.  Always called on main thread.
      */
     public static void newVideoLoaded(@NonNull String videoId) {
+        newVideoLoaded(videoId, false);
+    }
+
+    /**
+     * Called both on and off main thread.
+     *
+     * @param isShortsLithoVideoId If the video id is from {@link ReturnYouTubeDislikeFilterPatch}.
+     *                             if true, then the video id can be null indicating the filter did
+     *                             not find any video id.
+     */
+    public static void newVideoLoaded(@Nullable String videoId, boolean isShortsLithoVideoId) {
         try {
             if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
 
-            if (!videoId.equals(currentVideoId)) {
-                currentVideoId = videoId;
+            PlayerType currentPlayerType = PlayerType.getCurrent();
+            final boolean isNoneHiddenOrSlidingMinimized = currentPlayerType.isNoneHiddenOrSlidingMinimized();
+            if (isNoneHiddenOrSlidingMinimized && !SettingsEnum.RYD_SHORTS.getBoolean()) {
+                // Must clear here, otherwise the wrong data can be used for a minimized regular video.
+                currentVideoData = null;
+                return;
+            }
 
-                final boolean noneHiddenOrMinimized = PlayerType.getCurrent().isNoneOrHidden();
-                if (noneHiddenOrMinimized && !SettingsEnum.RYD_SHORTS.getBoolean()) {
-                    ReturnYouTubeDislike.setCurrentVideoId(null);
+            if (isShortsLithoVideoId) {
+                // Litho Shorts video.
+                if (videoIdIsSame(lastLithoShortsVideoData, videoId)) {
                     return;
                 }
-
-                ReturnYouTubeDislike.newVideoLoaded(videoId);
-
-                if (noneHiddenOrMinimized) {
-                    // Shorts TextView hook can be called out of order with the video id hook.
-                    // Must manually update again here.
-                    updateOnScreenShortsTextViews(true);
+                if (videoId == null) {
+                    // Litho filter did not detect the video id.  App is in incognito mode,
+                    // or the proto buffer structure was changed and the video id is no longer present.
+                    // Must clear both currently playing and last litho data otherwise the
+                    // next regular video may use the wrong data.
+                    LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Litho filter did not find any video ids");
+                    currentVideoData = null;
+                    lastLithoShortsVideoData = null;
+                    lithoShortsShouldUseCurrentData = false;
+                    return;
                 }
+                ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(videoId);
+                videoData.setVideoIdIsShort(true);
+                lastLithoShortsVideoData = videoData;
+                lithoShortsShouldUseCurrentData = false;
+            } else {
+                Objects.requireNonNull(videoId);
+                // All other playback (including non-litho Shorts).
+                if (videoIdIsSame(currentVideoData, videoId)) {
+                    return;
+                }
+                currentVideoData = ReturnYouTubeDislike.getFetchForVideoId(videoId);
+                // Pre-emptively set the data to short status.
+                // Required to prevent Shorts data from being used on a minimized video in incognito mode.
+                if (isNoneHiddenOrSlidingMinimized) {
+                    Objects.requireNonNull(currentVideoData).setVideoIdIsShort(true);
+                }
+            }
+
+            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "New video id: " + videoId + " playerType: " + currentPlayerType);
+
+            // Current video id hook can be called out of order with the non litho Shorts text view hook.
+            // Must manually update again here.
+            if (isNoneHiddenOrSlidingMinimized) {
+                updateOnScreenShortsTextViews(true);
             }
         } catch (Exception ex) {
             LogHelper.printException(ReturnYouTubeDislikePatch.class, "newVideoLoaded failure", ex);
         }
+    }
+
+    private static boolean videoIdIsSame(@Nullable ReturnYouTubeDislike fetch, @Nullable String videoId) {
+        return (fetch == null && videoId == null)
+                || (fetch != null && fetch.getVideoId().equals(videoId));
     }
 
     /**
@@ -324,15 +538,27 @@ public class ReturnYouTubeDislikePatch {
             if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
                 return;
             }
-            if (!SettingsEnum.RYD_SHORTS.getBoolean() && PlayerType.getCurrent().isNoneHiddenOrMinimized()) {
+            final boolean isNoneHiddenOrMinimized = PlayerType.getCurrent().isNoneHiddenOrMinimized();
+            if (isNoneHiddenOrMinimized && !SettingsEnum.RYD_SHORTS.getBoolean()) {
                 return;
+            }
+            ReturnYouTubeDislike videoData = currentVideoData;
+            if (videoData == null) {
+                LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Cannot send vote, as current video data is null");
+                return; // User enabled RYD while a regular video was minimized.
             }
 
             for (Vote v : Vote.values()) {
                 if (v.value == vote) {
-                    ReturnYouTubeDislike.sendVote(v);
+                    videoData.sendVote(v);
 
-                    updateOldUIDislikesTextView();
+                    if (isNoneHiddenOrMinimized) {
+                        if (lastLithoShortsVideoData != null) {
+                            lithoShortsShouldUseCurrentData = true;
+                        }
+                        updateOldUIDislikesTextView();
+                    }
+
                     return;
                 }
             }

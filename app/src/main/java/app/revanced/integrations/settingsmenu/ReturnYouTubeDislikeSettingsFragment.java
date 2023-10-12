@@ -12,6 +12,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 
+import app.revanced.integrations.patches.utils.ReturnYouTubeDislikePatch;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.SharedPrefHelper;
@@ -65,7 +66,7 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         enabledPreference.setOnPreferenceChangeListener((pref, newValue) -> {
             final boolean rydIsEnabled = (Boolean) newValue;
             SettingsEnum.RYD_ENABLED.saveValue(rydIsEnabled);
-            ReturnYouTubeDislike.onEnabledChange(rydIsEnabled);
+            ReturnYouTubeDislikePatch.onRYDStatusChange(rydIsEnabled);
 
             updateUIState();
             return true;
@@ -91,7 +92,7 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         percentagePreference.setSummaryOff(str("revanced_ryd_dislike_percentage_summary_off"));
         percentagePreference.setOnPreferenceChangeListener((pref, newValue) -> {
             SettingsEnum.RYD_DISLIKE_PERCENTAGE.saveValue(newValue);
-            ReturnYouTubeDislike.clearCache();
+            ReturnYouTubeDislike.clearAllUICaches();
             updateUIState();
             return true;
         });
@@ -104,7 +105,7 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         compactLayoutPreference.setSummaryOff(str("revanced_ryd_compact_layout_summary_off"));
         compactLayoutPreference.setOnPreferenceChangeListener((pref, newValue) -> {
             SettingsEnum.RYD_COMPACT_LAYOUT.saveValue(newValue);
-            ReturnYouTubeDislike.clearCache();
+            ReturnYouTubeDislike.clearAllUICaches();
             updateUIState();
             return true;
         });

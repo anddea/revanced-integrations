@@ -7,7 +7,12 @@ import app.revanced.integrations.settings.SettingsEnum;
 public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
 
+    private final StringFilterGroup infoPanel;
     private final StringFilterGroup shelfHeader;
+
+    private final StringFilterGroup videoActionButton;
+    private final ByteArrayFilterGroupList videoActionButtonGroupList = new ByteArrayFilterGroupList();
+
 
     public ShortsFilter() {
         final var thanksButton = new StringFilterGroup(
@@ -28,6 +33,8 @@ public final class ShortsFilter extends Filter {
                 "shelf_header.eml"
         );
 
+        identifierFilterGroupList.addAll(shorts, shelfHeader, thanksButton);
+
         final var joinButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON,
                 "sponsor_button"
@@ -38,14 +45,65 @@ public final class ShortsFilter extends Filter {
                 "subscribe_button"
         );
 
-        identifierFilterGroupList.addAll(shorts, shelfHeader, thanksButton);
-        pathFilterGroupList.addAll(joinButton, subscribeButton);
+        infoPanel = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_INFO_PANEL,
+                "reel_multi_format_link",
+                "shorts_info_panel_overview"
+        );
+
+        videoActionButton = new StringFilterGroup(
+                null,
+                "ContainerType|shorts_video_action_button"
+        );
+
+        pathFilterGroupList.addAll(joinButton, subscribeButton, infoPanel, videoActionButton);
+
+        final var shortsCommentButton = new ByteArrayAsStringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON,
+                "reel_comment_button"
+        );
+
+        final var shortsDislikeButton = new ByteArrayAsStringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_DISLIKE_BUTTON,
+                "shorts_dislike_button"
+        );
+
+
+        final var shortsLikeButton = new ByteArrayAsStringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON,
+                "shorts_like_button"
+        );
+
+        final var shortsRemixButton = new ByteArrayAsStringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON,
+                "reel_remix_button"
+        );
+
+        final var shortsShareButton = new ByteArrayAsStringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_SHARE_BUTTON,
+                "reel_share_button"
+        );
+
+        videoActionButtonGroupList.addAll(
+                shortsCommentButton, shortsDislikeButton, shortsLikeButton, shortsRemixButton, shortsShareButton
+        );
     }
 
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (matchedList == pathFilterGroupList) {
+            // Always filter if matched.
+            if (matchedGroup == infoPanel)
+                return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+
+            // Video action buttons have the same path.
+            if (matchedGroup == videoActionButton) {
+                if (videoActionButtonGroupList.check(protobufBufferArray).isFiltered())
+                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+                return false;
+            }
+
             // Filter other path groups from pathFilterGroupList, only when reelChannelBar is visible
             // to avoid false positives.
             if (!path.startsWith(REEL_CHANNEL_BAR_PATH))
