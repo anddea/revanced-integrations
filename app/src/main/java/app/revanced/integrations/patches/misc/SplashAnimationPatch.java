@@ -1,38 +1,28 @@
 package app.revanced.integrations.patches.misc;
 
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
-import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
-
+import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
 public class SplashAnimationPatch {
 
-    /**
-     * Context overrides when you open YouTube in an external browser.
-     * This is expected to affect SplashAnimationPatch.
-     */
-    public static boolean enableNewSplashAnimationBoolean() {
+    public static boolean enableNewSplashAnimationBoolean(boolean original) {
         try {
-            return getBoolean(REVANCED, "revanced_enable_new_splash_animation", false);
+            return SettingsEnum.ENABLE_NEW_SPLASH_ANIMATION.getBoolean();
         } catch (Exception ex) {
             LogHelper.printException(SplashAnimationPatch.class, "Failed to load enableNewSplashAnimation", ex);
         }
-        return false;
+        return original;
     }
 
-    /**
-     * Context overrides when you open YouTube in an external browser.
-     * This is expected to affect SplashAnimationPatch.
-     */
-    public static int enableNewSplashAnimationInt() {
+    public static int enableNewSplashAnimationInt(int original) {
         try {
-            return getBoolean(REVANCED, "revanced_enable_new_splash_animation", false)
-                    ? 3
-                    : 0;
+            if (original == 0) {
+                return SettingsEnum.ENABLE_NEW_SPLASH_ANIMATION.getBoolean() ? 3 : 0;
+            }
         } catch (Exception ex) {
             LogHelper.printException(SplashAnimationPatch.class, "Failed to load enableNewSplashAnimation", ex);
         }
 
-        return 0;
+        return original;
     }
 }
