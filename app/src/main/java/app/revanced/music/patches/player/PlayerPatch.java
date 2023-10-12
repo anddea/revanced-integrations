@@ -30,8 +30,8 @@ public class PlayerPatch {
         return SettingsEnum.ENABLE_FORCE_MINIMIZED_PLAYER.getBoolean() || original;
     }
 
-    public static boolean enableNewLayout() {
-        return SettingsEnum.ENABLE_NEW_LAYOUT.getBoolean();
+    public static boolean enableNewPlayerLayout() {
+        return SettingsEnum.ENABLE_NEW_PLAYER_LAYOUT.getBoolean();
     }
 
     public static boolean enableOldStyleMiniPlayer(boolean original) {

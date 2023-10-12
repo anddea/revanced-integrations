@@ -119,7 +119,7 @@ public enum SettingsEnum {
     // Player
     ENABLE_COLOR_MATCH_PLAYER("revanced_enable_color_match_player", BOOLEAN, TRUE),
     ENABLE_FORCE_MINIMIZED_PLAYER("revanced_enable_force_minimized_player", BOOLEAN, TRUE),
-    ENABLE_NEW_LAYOUT("revanced_enable_new_layout", BOOLEAN, TRUE, true),
+    ENABLE_NEW_PLAYER_LAYOUT("revanced_enable_new_player_layout", BOOLEAN, TRUE, true),
     ENABLE_OLD_STYLE_MINI_PLAYER("revanced_enable_old_style_mini_player", BOOLEAN, TRUE, true),
     ENABLE_ZEN_MODE("revanced_enable_zen_mode", BOOLEAN, FALSE),
     REMEMBER_REPEAT_SATE("revanced_remember_repeat_state", BOOLEAN, TRUE),
