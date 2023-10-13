@@ -63,17 +63,6 @@ public final class ShortsFilter extends Filter {
                 "reel_comment_button"
         );
 
-        final var shortsDislikeButton = new ByteArrayAsStringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_DISLIKE_BUTTON,
-                "shorts_dislike_button"
-        );
-
-
-        final var shortsLikeButton = new ByteArrayAsStringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON,
-                "shorts_like_button"
-        );
-
         final var shortsRemixButton = new ByteArrayAsStringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON,
                 "reel_remix_button"
@@ -84,9 +73,7 @@ public final class ShortsFilter extends Filter {
                 "reel_share_button"
         );
 
-        videoActionButtonGroupList.addAll(
-                shortsCommentButton, shortsDislikeButton, shortsLikeButton, shortsRemixButton, shortsShareButton
-        );
+        videoActionButtonGroupList.addAll(shortsCommentButton, shortsRemixButton, shortsShareButton);
     }
 
     @Override
