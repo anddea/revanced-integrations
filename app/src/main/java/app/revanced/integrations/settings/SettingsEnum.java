@@ -119,6 +119,7 @@ public enum SettingsEnum {
 
     // General
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE, true),
+    ENABLE_GRADIENT_LOADING_SCREEN("revanced_enable_gradient_loading_screen", BOOLEAN, FALSE, true),
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", BOOLEAN, FALSE, true),
     ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", BOOLEAN, FALSE, true),
     ENABLE_WIDE_SEARCH_BAR("revanced_enable_wide_search_bar", BOOLEAN, FALSE, true),
