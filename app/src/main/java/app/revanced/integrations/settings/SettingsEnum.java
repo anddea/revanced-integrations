@@ -178,6 +178,7 @@ public enum SettingsEnum {
     ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE),
     ENABLE_DEBUG_BUFFER_LOGGING("revanced_enable_debug_buffer_logging", BOOLEAN, FALSE),
     ENABLE_EXTERNAL_BROWSER("revanced_enable_external_browser", BOOLEAN, TRUE, true),
+    ENABLE_LANGUAGE_SWITCH("revanced_enable_language_switch", BOOLEAN, TRUE, true),
     ENABLE_NEW_SPLASH_ANIMATION("revanced_enable_new_splash_animation", BOOLEAN, FALSE, true),
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", BOOLEAN, TRUE),
     DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", INTEGER, 2, true),
