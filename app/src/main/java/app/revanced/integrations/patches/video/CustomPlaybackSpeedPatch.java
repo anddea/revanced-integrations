@@ -21,7 +21,7 @@ public class CustomPlaybackSpeedPatch {
     /**
      * Maximum playback speed, exclusive value.  Custom speeds must be less than this value.
      */
-    public static final float MAXIMUM_PLAYBACK_SPEED = 10;
+    public static final float MAXIMUM_PLAYBACK_SPEED = 8;
 
     /**
      * Custom playback speeds.
