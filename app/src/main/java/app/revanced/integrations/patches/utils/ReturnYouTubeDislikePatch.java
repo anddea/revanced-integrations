@@ -107,6 +107,10 @@ public class ReturnYouTubeDislikePatch {
     @Nullable
     private static Spanned oldUIReplacementSpan;
     /**
+     * Whether to use incognito mode.
+     */
+    public static volatile boolean isIncognito;
+    /**
      * Old UI dislikes can be set multiple times by YouTube.
      * To prevent reverting changes made here, this listener overrides any future changes YouTube makes.
      */
@@ -200,7 +204,7 @@ public class ReturnYouTubeDislikePatch {
     public static CharSequence onCharSequenceLoaded(@NonNull Object conversionContext,
                                                     @NonNull CharSequence original) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+            if (!SettingsEnum.RYD_ENABLED.getBoolean() || !isIncognito) {
                 return original;
             }
             if (!SettingsEnum.RYD_SHORTS.getBoolean()) {
