@@ -20,7 +20,6 @@ import java.util.Objects;
 
 import app.revanced.integrations.sponsorblock.SponsorBlockSettings;
 import app.revanced.integrations.utils.SharedPrefHelper;
-import app.revanced.integrations.utils.StringRef;
 
 
 public enum SettingsEnum {
@@ -185,12 +184,12 @@ public enum SettingsEnum {
     DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", INTEGER, 2, true),
 
     // Experimental Flags
-    DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", BOOLEAN, FALSE, true, "revanced_reboot_warning_quic"),
+    DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", BOOLEAN, FALSE, true),
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, FALSE, true),
-    ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", BOOLEAN, FALSE, true, "revanced_reboot_warning_phone"),
-    ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", BOOLEAN, FALSE, true, "revanced_reboot_warning_tablet"),
-    ENABLE_VP9_CODEC("revanced_enable_vp9_codec", BOOLEAN, FALSE, true, "revanced_reboot_warning_vp9"),
-    ENABLE_HDR_CODEC("revanced_enable_hdr_codec", BOOLEAN, FALSE, true, "revanced_reboot_warning_hdr"),
+    ENABLE_PHONE_LAYOUT("revanced_enable_phone_layout", BOOLEAN, FALSE, true),
+    ENABLE_TABLET_LAYOUT("revanced_enable_tablet_layout", BOOLEAN, FALSE, true),
+    ENABLE_VP9_CODEC("revanced_enable_vp9_codec", BOOLEAN, FALSE, true),
+    ENABLE_HDR_CODEC("revanced_enable_hdr_codec", BOOLEAN, FALSE, true),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, FALSE, true),
     SPOOF_APP_VERSION_TARGET("revanced_spoof_app_version_target", STRING, "18.17.43", true,
             parents(SPOOF_APP_VERSION)),
@@ -381,12 +380,7 @@ public enum SettingsEnum {
      * If the app should be rebooted, if this setting is changed
      */
     public final boolean rebootApp;
-    /**
-     * Confirmation message to display, if the user tries to change the setting from the default value.
-     * Can only be used for {@link ReturnType#BOOLEAN} setting types.
-     */
-    @Nullable
-    public final StringRef userDialogMessage;
+
     @Nullable
     private final SettingsEnum[] parents;
     // Must be volatile, as some settings are read/write from different threads.
@@ -395,55 +389,40 @@ public enum SettingsEnum {
     private volatile Object value;
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue) {
-        this(path, returnType, defaultValue, REVANCED, false, null, null);
+        this(path, returnType, defaultValue, REVANCED, false, null);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue,
                  boolean rebootApp) {
-        this(path, returnType, defaultValue, REVANCED, rebootApp, null, null);
+        this(path, returnType, defaultValue, REVANCED, rebootApp, null);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue,
                  SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, REVANCED, false, null, parents);
-    }
-
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue,
-                 boolean rebootApp, String userDialogMessage) {
-        this(path, returnType, defaultValue, REVANCED, rebootApp, userDialogMessage, null);
+        this(path, returnType, defaultValue, REVANCED, false, parents);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue,
                  boolean rebootApp, SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, REVANCED, rebootApp, null, parents);
+        this(path, returnType, defaultValue, REVANCED, rebootApp, parents);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName) {
-        this(path, returnType, defaultValue, prefName, false, null, null);
+        this(path, returnType, defaultValue, prefName, false, null);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName,
                  SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, prefName, false, null, parents);
+        this(path, returnType, defaultValue, prefName, false, parents);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName,
-                 boolean rebootApp, @Nullable String userDialogMessage, @Nullable SettingsEnum[] parents) {
+                 boolean rebootApp, @Nullable SettingsEnum[] parents) {
         this.path = Objects.requireNonNull(path);
         this.returnType = Objects.requireNonNull(returnType);
         this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
         this.sharedPref = Objects.requireNonNull(prefName);
         this.rebootApp = rebootApp;
-
-        if (userDialogMessage == null) {
-            this.userDialogMessage = null;
-        } else {
-            if (returnType != ReturnType.BOOLEAN) {
-                throw new IllegalArgumentException("must be Boolean type: " + path);
-            }
-            this.userDialogMessage = new StringRef(userDialogMessage);
-        }
-
         this.parents = parents;
 
         if (parents != null) {

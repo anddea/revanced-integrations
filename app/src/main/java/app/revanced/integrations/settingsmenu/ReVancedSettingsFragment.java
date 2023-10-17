@@ -91,9 +91,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             enableDisablePreferences();
 
-            if (setting.userDialogMessage != null)
-                rebootDialogWarning(setting);
-            else if (setting.rebootApp)
+            if (setting.rebootApp)
                 rebootDialog();
         }
     };
@@ -617,25 +615,5 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
                 .setNegativeButton(str("sign_in_cancel"), null)
                 .show();
-    }
-
-    void rebootDialogWarning(SettingsEnum setting) {
-        if (setting.getBoolean()) {
-            Activity activity = getActivity();
-
-            new AlertDialog.Builder(activity)
-                    .setMessage(setting.userDialogMessage.toString() + "\n\n" + str("revanced_reboot_warning_general"))
-                    .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
-                    .setNegativeButton(str("offline_undo_snackbar_button_text"), (dialog, id) -> {
-                        SwitchPreference switchPref = (SwitchPreference) findPreference(setting.path);
-                        switchPref.setChecked(false);
-                        setting.saveValue(false);
-                        dialog.dismiss();
-                    })
-                    .setCancelable(false)
-                    .show();
-        } else {
-            rebootDialog();
-        }
     }
 }
