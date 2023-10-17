@@ -158,7 +158,7 @@ public class VideoHelpers {
     }
 
     public static boolean isPiPAvailable(boolean original) {
-        return isPiPAvailable && original;
+        return original && isPiPAvailable;
     }
 
     public static float getCurrentSpeed() {
