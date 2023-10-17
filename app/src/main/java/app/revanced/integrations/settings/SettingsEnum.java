@@ -44,6 +44,11 @@ public enum SettingsEnum {
 
 
     // Bottom Player
+
+    // Channel Bar
+    HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
+
+    // Button Container
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),
     HIDE_DOWNLOAD_BUTTON("revanced_hide_button_download", BOOLEAN, FALSE),
     HIDE_LIKE_DISLIKE_BUTTON("revanced_hide_button_like_dislike", BOOLEAN, FALSE),
@@ -55,7 +60,6 @@ public enum SettingsEnum {
     HIDE_SHOP_BUTTON("revanced_hide_button_shop", BOOLEAN, FALSE),
     HIDE_THANKS_BUTTON("revanced_hide_button_thanks", BOOLEAN, FALSE),
     HIDE_TRANSCRIPT_BUTTON("revanced_hide_button_transcript", BOOLEAN, FALSE),
-
 
     // Comments
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
@@ -155,7 +159,6 @@ public enum SettingsEnum {
     HIDE_GRAY_DESCRIPTION("revanced_hide_gray_description", BOOLEAN, TRUE),
     HIDE_GRAY_SEPARATOR("revanced_hide_gray_separator", BOOLEAN, TRUE),
     HIDE_INFO_PANEL("revanced_hide_info_panel", BOOLEAN, TRUE),
-    HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
     HIDE_NOTIFY_ME_BUTTON("revanced_hide_notify_me_button", BOOLEAN, FALSE),
     HIDE_LATEST_POSTS("revanced_hide_latest_posts", BOOLEAN, TRUE),
     HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", BOOLEAN, TRUE),
