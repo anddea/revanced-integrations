@@ -38,6 +38,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "member_recognition_shelf"
         );
 
+        final var channelProfileLinks = new StringFilterGroup(
+                SettingsEnum.HIDE_CHANNEL_PROFILE_LINKS,
+                "channel_header_links"
+        );
+
         final var chipsShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_CHIPS_SHELF,
                 "chips_shelf"
@@ -101,6 +106,7 @@ public final class LayoutComponentsFilter extends Filter {
                 albumCard,
                 audioTrackButton,
                 channelMemberShelf,
+                channelProfileLinks,
                 custom,
                 infoPanel,
                 joinMembership,
