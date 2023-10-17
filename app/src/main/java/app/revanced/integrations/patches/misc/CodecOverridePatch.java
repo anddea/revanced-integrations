@@ -6,33 +6,27 @@ public class CodecOverridePatch {
 
     public static String getManufacturer(String manufacturer) {
         if (SettingsEnum.ENABLE_VP9_CODEC.getBoolean()) {
-            // Force VP9 Codec
-            manufacturer = "Google";
+            return "Google";
         } else if (SettingsEnum.ENABLE_HDR_CODEC.getBoolean()) {
-            // Force HDR Codec
-            manufacturer = "Samsung";
+            return "Samsung";
         }
         return manufacturer;
     }
 
     public static String getBrand(String brand) {
         if (SettingsEnum.ENABLE_VP9_CODEC.getBoolean()) {
-            // Force VP9 Codec
-            brand = "google";
+            return "google";
         } else if (SettingsEnum.ENABLE_HDR_CODEC.getBoolean()) {
-            // Force HDR Codec
-            brand = "samsung";
+            return "samsung";
         }
-        return model;
+        return brand;
     }
 
     public static String getModel(String model) {
         if (SettingsEnum.ENABLE_VP9_CODEC.getBoolean()) {
-            // Force VP9 Codec
-            model = "Pixel 7 Pro";
+            return "Pixel 7 Pro";
         } else if (SettingsEnum.ENABLE_HDR_CODEC.getBoolean()) {
-            // Force HDR Codec
-            model = "SM-G955W";
+            return "SM-G955W";
         }
         return model;
     }
