@@ -220,8 +220,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      */
     public void EnableHDRCodecPreferenceLinks() {
         enableDisablePreferences(
-                SettingsEnum.ENABLE_HDR_CODEC.getBoolean(),
-                SettingsEnum.ENABLE_VP9_CODEC,
+                SettingsEnum.ENABLE_VIDEO_CODEC.getBoolean() && SettingsEnum.ENABLE_VIDEO_CODEC_TYPE.getBoolean(),
                 SettingsEnum.DISABLE_HDR_VIDEO
         );
     }
