@@ -106,6 +106,12 @@ public class GeneralPatch {
         return SettingsEnum.HIDE_SNACK_BAR.getBoolean();
     }
 
+    public static void hideToolBarButton(String enumString, View view) {
+        for (ToolBarButton button : ToolBarButton.values())
+            if (enumString.equals(button.name))
+                hideViewUnderCondition(button.enabled, view);
+    }
+
     public static void hideTrendingSearches(ImageView imageView, boolean isTrendingSearches) {
         View parent = (View) imageView.getParent();
 
@@ -114,5 +120,18 @@ public class GeneralPatch {
         else
             parent.setVisibility(View.VISIBLE);
 
+    }
+
+    private enum ToolBarButton {
+        CREATE("CREATION_ENTRY", SettingsEnum.HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON.getBoolean()),
+        NOTIFICATION("TAB_ACTIVITY", SettingsEnum.HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON.getBoolean());
+
+        private final boolean enabled;
+        private final String name;
+
+        ToolBarButton(String name, boolean enabled) {
+            this.enabled = enabled;
+            this.name = name;
+        }
     }
 }
