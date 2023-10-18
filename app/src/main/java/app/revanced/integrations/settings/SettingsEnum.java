@@ -285,11 +285,14 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_PIVOT_BUTTON("revanced_hide_shorts_player_pivot_button", BOOLEAN, TRUE),
+    HIDE_SHORTS_TOOLBAR_BANNER("revanced_hide_shorts_toolbar_banner", BOOLEAN, FALSE, true),
+    HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON("revanced_hide_shorts_toolbar_camera_button", BOOLEAN, FALSE, true),
+    HIDE_SHORTS_TOOLBAR_MENU_BUTTON("revanced_hide_shorts_toolbar_menu_button", BOOLEAN, FALSE, true),
+    HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON("revanced_hide_shorts_toolbar_search_button", BOOLEAN, FALSE, true),
     HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", BOOLEAN, TRUE),
 
     // Experimental Flags
     HIDE_SHORTS_PLAYER_NAVIGATION_BAR("revanced_hide_shorts_player_navigation_bar", BOOLEAN, FALSE, true),
-    HIDE_SHORTS_PLAYER_TOOLBAR("revanced_hide_shorts_player_toolbar", BOOLEAN, FALSE, true),
 
 
     // Swipe controls

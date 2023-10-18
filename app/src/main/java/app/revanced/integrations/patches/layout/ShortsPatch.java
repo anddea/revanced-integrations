@@ -80,11 +80,27 @@ public class ShortsPatch {
         return SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() ? 0 : original;
     }
 
-    public static void hideShortsPlayerToolBar(Toolbar toolbar) {
-        if (!SettingsEnum.HIDE_SHORTS_PLAYER_TOOLBAR.getBoolean())
-            return;
-        final int visibility = isShortsTab() ? View.GONE : View.VISIBLE;
-        toolbar.setVisibility(visibility);
+    public static boolean hideShortsToolBarBanner() {
+        return SettingsEnum.HIDE_SHORTS_TOOLBAR_BANNER.getBoolean();
     }
 
+    public static void hideShortsToolBarButton(String enumString, View view) {
+        for (ToolBarButton button : ToolBarButton.values())
+            if (enumString.equals(button.name))
+                hideViewUnderCondition(button.enabled, view);
+    }
+
+    private enum ToolBarButton {
+        SEARCH("SEARCH_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON.getBoolean()),
+        CAMERA("SHORTS_HEADER_CAMERA_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON.getBoolean()),
+        MENU("MORE_VERT_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_MENU_BUTTON.getBoolean());
+
+        private final boolean enabled;
+        private final String name;
+
+        ToolBarButton(String name, boolean enabled) {
+            this.enabled = enabled;
+            this.name = name;
+        }
+    }
 }
