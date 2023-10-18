@@ -1,6 +1,7 @@
 package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
+import static app.revanced.integrations.utils.ReVancedHelper.isAdditionalSettingsEnabled;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
@@ -165,6 +166,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setOpenSettingsPreference();
         setPatchesInformation();
         setPlaybackSpeed();
+        setPlayerFlyoutPanelAdditionalSettings();
         setSpoofAppVersionTarget();
         setVideoQuality(false);
         setVideoQuality(true);
@@ -330,6 +332,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
         }
+    }
+
+    private void setPlayerFlyoutPanelAdditionalSettings() {
+        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_ADDITIONAL_SETTINGS.saveValue(isAdditionalSettingsEnabled());
     }
 
     /**

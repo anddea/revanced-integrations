@@ -10,8 +10,14 @@ final class PlayerFlyoutPanelsFilter extends Filter {
     // Handle the searching in this class instead of adding to the global filter group (which searches all the time)
     private final ByteArrayFilterGroupList flyoutFilterGroupList = new ByteArrayFilterGroupList();
 
+    private final ByteArrayFilterGroupList exceptionFilterGroup = new ByteArrayFilterGroupList();
+
     public PlayerFlyoutPanelsFilter() {
-        identifierFilterGroupList.addAll(new StringFilterGroup(null, "overflow_menu_item.eml|"));
+        exceptionFilterGroup.addAll(
+                new ByteArrayAsStringFilterGroup(null, "quality_sheet")
+        );
+
+        pathFilterGroupList.addAll(new StringFilterGroup(null, "overflow_menu_item.eml|")); // Using pathFilterGroupList due to new flyout panel(A/B)
 
         flyoutFilterGroupList.addAll(
                 new ByteArrayAsStringFilterGroup(
@@ -31,10 +37,6 @@ final class PlayerFlyoutPanelsFilter extends Filter {
                         "yt_outline_question_circle"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LISTENING_CONTROLS,
-                        "yt_outline_adjust"
-                ),
-                new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LOCK_SCREEN,
                         "yt_outline_lock"
                 ),
@@ -51,7 +53,11 @@ final class PlayerFlyoutPanelsFilter extends Filter {
                         "yt_outline_play_arrow_half_circle"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_QUALITY,
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_PREMIUM_CONTROLS,
+                        "yt_outline_adjust"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_ADDITIONAL_SETTINGS,
                         "yt_outline_gear"
                 ),
                 new ByteArrayAsStringFilterGroup(
@@ -81,7 +87,7 @@ final class PlayerFlyoutPanelsFilter extends Filter {
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         // In YouTube v18.33.xx+, Shorts also use the player flyout panel
-        if (PlayerType.getCurrent().isNoneOrHidden())
+        if (PlayerType.getCurrent().isNoneOrHidden() || exceptionFilterGroup.check(protobufBufferArray).isFiltered())
             return false;
         // Only 1 group is added to the parent class, so the matched group must be the overflow menu.
         if (matchedIndex == 0 && flyoutFilterGroupList.check(protobufBufferArray).isFiltered()) {

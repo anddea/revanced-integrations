@@ -41,6 +41,23 @@ public class ReVancedHelper {
         return context.getResources().getStringArray(identifier(key, ResourceType.ARRAY));
     }
 
+    public static boolean isAdditionalSettingsEnabled() {
+        boolean additionalSettingsEnabled = false;
+        final SettingsEnum[] additionalSettings = {
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_AMBIENT,
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_HELP,
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LOOP,
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_PREMIUM_CONTROLS,
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_STATS_FOR_NERDS,
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR,
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC,
+        };
+        for (SettingsEnum s : additionalSettings) {
+            additionalSettingsEnabled |= s.getBoolean();
+        }
+        return additionalSettingsEnabled;
+    }
+
     public static boolean isFullscreenHidden() {
         boolean isFullscreenHidden = isTablet &&
                 !SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean();
