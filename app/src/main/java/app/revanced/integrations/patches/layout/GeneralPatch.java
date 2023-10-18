@@ -82,12 +82,12 @@ public class GeneralPatch {
         hideViewBy0dpUnderCondition(SettingsEnum.HIDE_CROWDFUNDING_BOX.getBoolean(), view);
     }
 
-    public static int hideEmailAddress(int originalValue) {
-        return SettingsEnum.HIDE_EMAIL_ADDRESS.getBoolean() ? 8 : originalValue;
-    }
-
     public static boolean hideFloatingMicrophone(boolean original) {
         return SettingsEnum.HIDE_FLOATING_MICROPHONE.getBoolean() || original;
+    }
+
+    public static int hideHandle(int originalValue) {
+        return SettingsEnum.HIDE_HANDLE.getBoolean() ? 8 : originalValue;
     }
 
     public static void hideLatestVideosButton(View view) {
