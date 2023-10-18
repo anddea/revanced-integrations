@@ -4,15 +4,11 @@ import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCo
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
-import android.annotation.SuppressLint;
-import android.text.Spanned;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageView;
-
-import androidx.annotation.NonNull;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
@@ -21,8 +17,6 @@ import app.revanced.integrations.utils.ResourceType;
 public class GeneralPatch {
     private static final String PREMIUM_HEADER_NAME = "ytPremiumWordmarkHeader";
     public static boolean captionsButtonStatus;
-    @SuppressLint("StaticFieldLeak")
-    public static View compactLink;
 
     public static boolean disableAutoCaptions() {
         return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden();
@@ -47,14 +41,17 @@ public class GeneralPatch {
         return SettingsEnum.ENABLE_WIDE_SEARCH_BAR.getBoolean();
     }
 
-    public static void hideAccountMenu(@NonNull Spanned span) {
-        if (!(compactLink instanceof ViewGroup viewGroup) || !SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean())
+    public static void hideAccountMenu(View view, CharSequence charSequence) {
+        if (!SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean())
+            return;
+
+        if (!(view.getParent().getParent() instanceof ViewGroup viewGroup))
             return;
 
         String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS.getString().split("\\n");
 
         for (String filter : blockList) {
-            if (span.toString().contains(filter) && !filter.isEmpty()) {
+            if (charSequence.toString().contains(filter) && !filter.isEmpty()) {
                 if (!(viewGroup.getLayoutParams() instanceof MarginLayoutParams))
                     viewGroup.setLayoutParams(new LayoutParams(0, 0));
             }
