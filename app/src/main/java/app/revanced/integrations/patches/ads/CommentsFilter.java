@@ -1,10 +1,18 @@
 package app.revanced.integrations.patches.ads;
 
+import androidx.annotation.Nullable;
+
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.StringTrieSearch;
 
 final class CommentsFilter extends Filter {
+    private final StringTrieSearch exceptions = new StringTrieSearch();
 
     public CommentsFilter() {
+        exceptions.addPatterns(
+                "macro_markers_list_item"
+        );
+
         final var channelGuidelines = new StringFilterGroup(
                 SettingsEnum.HIDE_CHANNEL_GUIDELINES,
                 "channel_guidelines_entry_banner",
@@ -44,5 +52,14 @@ final class CommentsFilter extends Filter {
                 previewComment,
                 thanksButton
         );
+    }
+
+    @Override
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (exceptions.matches(path))
+            return false;
+
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }
