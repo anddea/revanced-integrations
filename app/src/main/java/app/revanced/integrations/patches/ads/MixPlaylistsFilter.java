@@ -14,8 +14,9 @@ public final class MixPlaylistsFilter extends Filter {
             );
 
     public MixPlaylistsFilter() {
-        exceptions.addPattern(
-                "V.ED" // playlist browse id
+        exceptions.addPatterns(
+                "V.ED", // playlist browse id
+                "java.lang.ref.WeakReference"
         );
     }
 
