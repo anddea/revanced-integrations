@@ -76,6 +76,10 @@ public class PlayerPatch {
         return SettingsEnum.HIDE_SEEK_MESSAGE.getBoolean();
     }
 
+    public static boolean hideSeekUndoMessage() {
+        return SettingsEnum.HIDE_SEEK_UNDO_MESSAGE.getBoolean();
+    }
+
     public static void hideSuggestedVideoOverlay(ViewGroup viewGroup) {
         if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean())
             return;
