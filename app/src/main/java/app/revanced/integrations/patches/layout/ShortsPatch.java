@@ -93,7 +93,8 @@ public class ShortsPatch {
     private enum ToolBarButton {
         SEARCH("SEARCH_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON.getBoolean()),
         CAMERA("SHORTS_HEADER_CAMERA_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON.getBoolean()),
-        MENU("MORE_VERT_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_MENU_BUTTON.getBoolean());
+        MENU("MORE_VERT_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_MENU_BUTTON.getBoolean()),
+        MENU_TABLET("MORE_VERT", SettingsEnum.HIDE_SHORTS_TOOLBAR_MENU_BUTTON.getBoolean());
 
         private final boolean enabled;
         private final String name;
