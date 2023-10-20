@@ -8,7 +8,6 @@ public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
 
     private final StringFilterGroup infoPanel;
-    private final StringFilterGroup shelfHeader;
 
     private final StringFilterGroup videoActionButton;
     private final ByteArrayFilterGroupList videoActionButtonGroupList = new ByteArrayFilterGroupList();
@@ -28,12 +27,7 @@ public final class ShortsFilter extends Filter {
                 "shorts_video_cell"
         );
 
-        shelfHeader = new StringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_SHELF,
-                "shelf_header.eml"
-        );
-
-        identifierFilterGroupList.addAll(shorts, shelfHeader, thanksButton);
+        identifierFilterGroupList.addAll(shorts, thanksButton);
 
         final var joinButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON,
@@ -96,11 +90,6 @@ public final class ShortsFilter extends Filter {
             // Filter other path groups from pathFilterGroupList, only when reelChannelBar is visible
             // to avoid false positives.
             if (!path.startsWith(REEL_CHANNEL_BAR_PATH))
-                return false;
-        } else if (matchedGroup == shelfHeader) {
-            // Because the header is used in watch history and possibly other places, check for the index,
-            // which is 0 when the shelf header is used for Shorts.
-            if (matchedIndex != 0)
                 return false;
         }
 
