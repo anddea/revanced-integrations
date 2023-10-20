@@ -70,6 +70,14 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.setValue(setting, switchPref.isChecked());
 
                 switch (setting) {
+                    case HIDE_PLAYER_FLYOUT_PANEL_AMBIENT,
+                            HIDE_PLAYER_FLYOUT_PANEL_HELP,
+                            HIDE_PLAYER_FLYOUT_PANEL_LOOP,
+                            HIDE_PLAYER_FLYOUT_PANEL_PREMIUM_CONTROLS,
+                            HIDE_PLAYER_FLYOUT_PANEL_STATS_FOR_NERDS,
+                            HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR,
+                            HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC ->
+                            setPlayerFlyoutPanelAdditionalSettings();
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP ->

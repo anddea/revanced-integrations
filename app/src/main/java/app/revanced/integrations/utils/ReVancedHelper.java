@@ -42,7 +42,7 @@ public class ReVancedHelper {
     }
 
     public static boolean isAdditionalSettingsEnabled() {
-        boolean additionalSettingsEnabled = false;
+        boolean additionalSettingsEnabled = true;
         final SettingsEnum[] additionalSettings = {
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_AMBIENT,
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_HELP,
@@ -53,7 +53,7 @@ public class ReVancedHelper {
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC,
         };
         for (SettingsEnum s : additionalSettings) {
-            additionalSettingsEnabled |= s.getBoolean();
+            additionalSettingsEnabled &= s.getBoolean();
         }
         return additionalSettingsEnabled;
     }
