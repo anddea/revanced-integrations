@@ -47,6 +47,7 @@ public enum SettingsEnum {
 
     // Channel Bar
     HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
+    HIDE_START_TRIAL_BUTTON("revanced_hide_start_trial_button", BOOLEAN, TRUE),
 
     // Button Container
     HIDE_CREATE_CLIP_BUTTON("revanced_hide_button_create_clip", BOOLEAN, FALSE),

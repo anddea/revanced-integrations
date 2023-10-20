@@ -90,6 +90,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "set_reminder_button"
         );
 
+        final var startTrial = new StringFilterGroup(
+                SettingsEnum.HIDE_START_TRIAL_BUTTON,
+                "channel_purchase_button"
+        );
+
         final var ticketShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_TICKET_SHELF,
                 "ticket_horizontal_shelf",
@@ -114,6 +119,7 @@ public final class LayoutComponentsFilter extends Filter {
                 medicalPanel,
                 movieShelf,
                 notifyMe,
+                startTrial,
                 ticketShelf,
                 timedReactions
         );
