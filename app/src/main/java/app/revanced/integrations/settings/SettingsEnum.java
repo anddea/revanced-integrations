@@ -232,7 +232,6 @@ public enum SettingsEnum {
 
 
     // Player
-    DISABLE_SPEED_OVERLAY("revanced_disable_speed_overlay", BOOLEAN, FALSE, true),
     EDIT_SPEED_OVERLAY_VALUE("revanced_edit_speed_overlay_value", FLOAT, 2.0f, true),
     HIDE_AUDIO_TRACK_BUTTON("revanced_hide_audio_track_button", BOOLEAN, TRUE),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", BOOLEAN, TRUE, true),

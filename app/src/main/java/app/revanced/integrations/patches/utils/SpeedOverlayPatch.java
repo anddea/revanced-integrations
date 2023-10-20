@@ -32,9 +32,6 @@ public class SpeedOverlayPatch {
 
     private static void loadSpeeds() {
         try {
-            if (SettingsEnum.DISABLE_SPEED_OVERLAY.getBoolean())
-                return;
-
             float speed = getFloat(REVANCED, SettingsEnum.EDIT_SPEED_OVERLAY_VALUE.path, 2.0f);
             if (speed == 2.0f)
                 return;
@@ -47,14 +44,7 @@ public class SpeedOverlayPatch {
         }
     }
 
-    public static boolean disableSpeedOverlay(boolean original) {
-        return !SettingsEnum.DISABLE_SPEED_OVERLAY.getBoolean() && original;
-    }
-
     public static float getSpeed(final float original) {
-        if (SettingsEnum.DISABLE_SPEED_OVERLAY.getBoolean())
-            return original;
-
         try {
             return getFloat(REVANCED, SettingsEnum.EDIT_SPEED_OVERLAY_VALUE.path, 2.0f);
         } catch (Exception ignored) {
@@ -63,9 +53,6 @@ public class SpeedOverlayPatch {
     }
 
     public static CharSequence getSpeedText(TextView textView, CharSequence original, int speedMasterEduTextId) {
-        if (SettingsEnum.DISABLE_SPEED_OVERLAY.getBoolean())
-            return original;
-
         if (textView == null || textView.getId() != speedMasterEduTextId)
             return original;
 
