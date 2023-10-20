@@ -21,6 +21,10 @@ public class PlayerPatch {
         return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_SEEK.getBoolean();
     }
 
+    public static boolean disableSeekUndoVibrate() {
+        return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_SEEK_UNDO.getBoolean();
+    }
+
     public static boolean disableScrubbingVibrate() {
         return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_SCRUBBING.getBoolean();
     }
