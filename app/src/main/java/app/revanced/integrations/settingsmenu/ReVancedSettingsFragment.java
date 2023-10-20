@@ -221,6 +221,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
                 SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON,
+                SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON,
+                SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON,
                 SettingsEnum.SHOW_FULLSCREEN_TITLE
         );
     }
