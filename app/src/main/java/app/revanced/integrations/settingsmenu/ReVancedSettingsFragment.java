@@ -228,8 +228,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON,
-                SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
+                SettingsEnum.HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON,
                 SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON,
                 SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON,
@@ -260,8 +260,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON,
-                SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
+                SettingsEnum.HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON
         );
     }
@@ -279,8 +279,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON,
-                SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
+                SettingsEnum.HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON
         );
     }

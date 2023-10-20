@@ -113,8 +113,8 @@ public enum SettingsEnum {
     HIDE_QUICK_ACTIONS_LIKE_BUTTON("revanced_hide_quick_actions_like", BOOLEAN, FALSE),
     HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON("revanced_hide_quick_actions_live_chat", BOOLEAN, FALSE),
     HIDE_QUICK_ACTIONS_MORE_BUTTON("revanced_hide_quick_actions_more", BOOLEAN, FALSE),
-    HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON("revanced_hide_quick_actions_playlist", BOOLEAN, FALSE),
     HIDE_QUICK_ACTIONS_RELATED_VIDEO("revanced_hide_quick_actions_related_videos", BOOLEAN, FALSE),
+    HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON("revanced_hide_quick_actions_save_to_playlist", BOOLEAN, FALSE),
     HIDE_QUICK_ACTIONS_SHARE_BUTTON("revanced_hide_quick_actions_share", BOOLEAN, FALSE),
 
     // Experimental Flags

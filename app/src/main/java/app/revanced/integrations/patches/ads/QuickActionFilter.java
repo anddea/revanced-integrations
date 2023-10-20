@@ -57,7 +57,8 @@ final class QuickActionFilter extends Filter {
                         "yt_outline_message_bubble_overlap"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_QUICK_ACTIONS_PLAYLIST_BUTTON,
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON,
                         "yt_outline_library_add"
                 ),
                 new ByteArrayAsStringFilterGroup(
