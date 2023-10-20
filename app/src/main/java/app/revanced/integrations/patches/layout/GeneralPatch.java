@@ -10,11 +10,19 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageView;
 
+import java.util.Arrays;
+import java.util.List;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ResourceType;
 
 public class GeneralPatch {
+    private static final List<String> toolBarButtonList = Arrays.asList(
+            "CREATION_ENTRY",   // Create button (Phone)
+            "FAB_CAMERA",       // Create button (Tablet)
+            "TAB_ACTIVITY"      // Notification button
+    );
     private static final String PREMIUM_HEADER_NAME = "ytPremiumWordmarkHeader";
     public static boolean captionsButtonStatus;
 
@@ -107,9 +115,11 @@ public class GeneralPatch {
     }
 
     public static void hideToolBarButton(String enumString, View view) {
-        for (ToolBarButton button : ToolBarButton.values())
-            if (enumString.equals(button.name))
-                hideViewUnderCondition(button.enabled, view);
+        hideViewUnderCondition(
+                toolBarButtonList.stream().anyMatch(enumString::contains)
+                        && SettingsEnum.HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON.getBoolean(),
+                view
+        );
     }
 
     public static void hideTrendingSearches(ImageView imageView, boolean isTrendingSearches) {
@@ -120,18 +130,5 @@ public class GeneralPatch {
         else
             parent.setVisibility(View.VISIBLE);
 
-    }
-
-    private enum ToolBarButton {
-        CREATE("CREATION_ENTRY", SettingsEnum.HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON.getBoolean()),
-        NOTIFICATION("TAB_ACTIVITY", SettingsEnum.HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON.getBoolean());
-
-        private final boolean enabled;
-        private final String name;
-
-        ToolBarButton(String name, boolean enabled) {
-            this.enabled = enabled;
-            this.name = name;
-        }
     }
 }
