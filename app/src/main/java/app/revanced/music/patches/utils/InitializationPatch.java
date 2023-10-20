@@ -41,6 +41,9 @@ public class InitializationPatch {
                 .setNegativeButton(android.R.string.cancel, null)
                 .setCancelable(false)
                 .show();
+
+        // set save playback speed default value
+        SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.RememberPlaybackSpeed());
     }
 
     public static void setDeviceInformation(@NonNull Context context) {

@@ -62,6 +62,9 @@ public class InitializationPatch {
 
         // set spoof player parameter default value
         SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!activity.getPackageName().equals("com.google.android.youtube"));
+
+        // set save playback speed default value
+        SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.DefaultPlaybackSpeed());
     }
 
     /**
