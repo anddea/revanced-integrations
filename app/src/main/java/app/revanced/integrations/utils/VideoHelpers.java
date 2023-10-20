@@ -165,6 +165,14 @@ public class VideoHelpers {
         return currentSpeed;
     }
 
+    public static int getCurrentQuality(int original) {
+        try {
+            return Integer.parseInt(currentQuality.split("p")[0]);
+        } catch (Exception ignored) {
+        }
+        return original;
+    }
+
     public static String getQualityString() {
         if (currentQuality.isEmpty()) {
             VideoQualityPatch.overrideQuality(720);

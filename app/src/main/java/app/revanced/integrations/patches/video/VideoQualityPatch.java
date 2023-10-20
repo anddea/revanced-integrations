@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.video;
 
 import static app.revanced.integrations.utils.StringRef.str;
+import static app.revanced.integrations.utils.VideoHelpers.getCurrentQuality;
 
 import androidx.annotation.Nullable;
 
@@ -97,7 +98,10 @@ public class VideoQualityPatch {
      * @param selectedQuality user selected quality
      */
     public static void userChangedQuality(final int selectedQuality) {
-        changeDefaultQuality(selectedQuality);
+        ReVancedUtils.runOnMainThreadDelayed(() ->
+                        changeDefaultQuality(getCurrentQuality(selectedQuality)),
+                300
+        );
     }
 
     /**
