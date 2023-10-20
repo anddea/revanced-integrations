@@ -59,6 +59,7 @@ public final class AdsFilter extends Filter {
                 "banner_text_icon",
                 "brand_video_shelf",
                 "brand_video_singleton",
+                "button_banner",
                 "carousel_footered_layout",
                 "carousel_headered_layout",
                 "full_width_square_image_layout",
