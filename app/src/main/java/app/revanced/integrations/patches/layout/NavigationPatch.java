@@ -3,6 +3,7 @@ package app.revanced.integrations.patches.layout;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,9 +19,11 @@ public class NavigationPatch {
     }
 
     public static void changeHomePage(Activity activity) {
-        var intent = activity.getIntent();
-        if (SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean() &&
-                Objects.equals(intent.getAction(), "android.intent.action.MAIN")) {
+        if (!SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean())
+            return;
+
+        final Intent intent = activity.getIntent();
+        if (Objects.equals(intent.getAction(), "android.intent.action.MAIN")) {
             intent.setAction("com.google.android.youtube.action.open.subscriptions");
             intent.setPackage(activity.getPackageName());
             activity.startActivity(intent);
@@ -39,24 +42,40 @@ public class NavigationPatch {
         if (lastPivotTab == null)
             return;
 
-        clickLibraryButton(view);
+        final String pivotTabString = lastPivotTab.name();
+        openLibraryTab(view, pivotTabString);
 
         for (NavigationButton button : NavigationButton.values())
-            if (button.name.equals(lastPivotTab.name()))
+            if (button.name.equals(pivotTabString))
                 hideViewUnderCondition(button.enabled, view);
-    }
-
-    private static void clickLibraryButton(View view) {
-        if (SettingsEnum.OPEN_LIBRARY_STARTUP.getBoolean() && NavigationButton.LIBRARY.name.equals(lastPivotTab.name()))
-            view.performClick();
     }
 
     public static void hideNavigationLabel(TextView view) {
         hideViewUnderCondition(SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean(), view);
     }
 
+    public static void hideYouButton(View view) {
+        openYouTab(view);
+        // hideViewUnderCondition(SettingsEnum.HIDE_YOU_BUTTON.getBoolean(), view);
+    }
+
     public static boolean enableTabletNavBar(boolean original) {
         return SettingsEnum.ENABLE_TABLET_NAVIGATION_BAR.getBoolean() || original;
+    }
+
+    private static void openLibraryTab(View view, String pivotTabString) {
+        if (!SettingsEnum.OPEN_LIBRARY_YOU_STARTUP.getBoolean())
+            return;
+
+        if (NavigationButton.LIBRARY.name.equals(pivotTabString))
+            view.performClick();
+    }
+
+    private static void openYouTab(View view) {
+        if (!SettingsEnum.OPEN_LIBRARY_YOU_STARTUP.getBoolean())
+            return;
+
+        view.performClick();
     }
 
     private enum NavigationButton {
