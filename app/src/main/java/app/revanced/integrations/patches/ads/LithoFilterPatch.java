@@ -412,9 +412,13 @@ public final class LithoFilterPatch {
     /**
      * Injection point.  Called off the main thread, and commonly called by multiple threads at the same time.
      */
-    @SuppressWarnings("unused")
-    public static boolean filter(@NonNull String lithoPath, @Nullable String lithoIdentifier,
-                                 @NonNull String allValue) {
+    public static boolean filter(@NonNull StringBuilder pathBuilder, @NonNull String identifier, @NonNull Object object) {
+        var path = pathBuilder.toString();
+        var allValue = object.toString();
+
+        if (pathBuilder.length() == 0 || path.isEmpty() || allValue.isEmpty())
+            return false;
+
         try {
             ByteBuffer protobufBuffer = bufferThreadLocal.get();
             if (protobufBuffer == null) {
@@ -422,7 +426,7 @@ public final class LithoFilterPatch {
                 return false;
             }
 
-            LithoFilterParameters parameter = new LithoFilterParameters(lithoPath, lithoIdentifier, allValue, protobufBuffer.array());
+            LithoFilterParameters parameter = new LithoFilterParameters(path, identifier, allValue, protobufBuffer.array());
             LogHelper.printDebug(LithoFilterPatch.class, "Searching " + parameter);
 
             if (parameter.identifier != null) {
@@ -435,19 +439,6 @@ public final class LithoFilterPatch {
         }
 
         return false;
-    }
-
-    /**
-     * Injection point.
-     */
-    public static boolean filters(@NonNull StringBuilder pathBuilder, @NonNull String identifier, @NonNull Object object) {
-        var path = pathBuilder.toString();
-        var allValue = object.toString();
-
-        if (pathBuilder.length() == 0 || path.isEmpty() || allValue.isEmpty())
-            return false;
-
-        return LowLevelFilter.filters(path) || filter(path, identifier, allValue);
     }
 
     /**
