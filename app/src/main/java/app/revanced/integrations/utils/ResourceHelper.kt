@@ -1,8 +1,6 @@
 package app.revanced.integrations.utils
 
 import android.content.res.Resources
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.utils.ResourceUtils.identifier
@@ -23,13 +21,12 @@ object ResourceHelper {
         }
 
     @JvmStatic
-    @Suppress("DEPRECATION")
     fun hidePlayerButtonBackground(view: View?) {
         PlayerButton.PLAYER.apply {
             if (view == null || !settings.boolean) return
             for (id in filter) {
                 if (view.id == identifier(id, ResourceType.ID))
-                    view.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    view.background.alpha = 0
             }
         }
     }
