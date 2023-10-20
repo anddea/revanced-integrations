@@ -9,9 +9,13 @@ public final class LayoutComponentsFilter extends Filter {
     private final StringTrieSearch exceptions = new StringTrieSearch();
     private final CustomFilterGroup custom;
 
+    private final StringFilterGroup notifyMe;
+    private final StringFilterGroup officialHeader;
+
     public LayoutComponentsFilter() {
         exceptions.addPatterns(
                 "related_video_with_context",
+                "shorts",
                 "comment_thread", // skip blocking anything in the comments
                 "|comment.", // skip blocking anything in the comments replies
                 "library_recent_shelf"
@@ -85,9 +89,14 @@ public final class LayoutComponentsFilter extends Filter {
                 "offer_module"
         );
 
-        final var notifyMe = new StringFilterGroup(
+        notifyMe = new StringFilterGroup(
                 SettingsEnum.HIDE_NOTIFY_ME_BUTTON,
                 "set_reminder_button"
+        );
+
+        officialHeader = new StringFilterGroup(
+                SettingsEnum.HIDE_OFFICIAL_HEADER,
+                "shelf_header.eml"
         );
 
         final var startTrial = new StringFilterGroup(
@@ -119,6 +128,7 @@ public final class LayoutComponentsFilter extends Filter {
                 medicalPanel,
                 movieShelf,
                 notifyMe,
+                officialHeader,
                 startTrial,
                 ticketShelf,
                 timedReactions
@@ -133,8 +143,16 @@ public final class LayoutComponentsFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        // The groups are excluded from the filter due to the exceptions list below.
+        // Filter them separately here.
+        if (matchedGroup == notifyMe)
+            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+
         if (matchedGroup != custom && exceptions.matches(path))
             return false; // Exceptions are not filtered.
+
+        if (matchedGroup == officialHeader && matchedIndex != 0)
+            return false;
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }

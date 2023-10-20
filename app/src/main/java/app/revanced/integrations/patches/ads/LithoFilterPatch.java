@@ -447,7 +447,7 @@ public final class LithoFilterPatch {
         if (pathBuilder.length() == 0 || path.isEmpty() || allValue.isEmpty())
             return false;
 
-        return LowLevelFilter.filters(path, allValue) || filter(path, identifier, allValue);
+        return LowLevelFilter.filters(path) || filter(path, identifier, allValue);
     }
 
     /**
