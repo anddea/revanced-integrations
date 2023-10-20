@@ -20,19 +20,21 @@ public class SpeedOverlayPatch {
      */
     public static final float MAXIMUM_PLAYBACK_SPEED = 8;
 
+    private static final SettingsEnum customSpeedOverlaySetting = SettingsEnum.CUSTOM_SPEED_OVERLAY;
+
     static {
         loadSpeeds();
     }
 
     private static void resetSpeed(@NonNull String toastMessage) {
         ReVancedUtils.showToastLong(toastMessage);
-        SettingsEnum.EDIT_SPEED_OVERLAY_VALUE.saveValue(SettingsEnum.EDIT_SPEED_OVERLAY_VALUE.defaultValue);
+        customSpeedOverlaySetting.saveValue(customSpeedOverlaySetting.defaultValue);
         loadSpeeds();
     }
 
     private static void loadSpeeds() {
         try {
-            float speed = getFloat(REVANCED, SettingsEnum.EDIT_SPEED_OVERLAY_VALUE.path, 2.0f);
+            float speed = getFloat(REVANCED, customSpeedOverlaySetting.path, 2.0f);
             if (speed == 2.0f)
                 return;
 
@@ -46,7 +48,7 @@ public class SpeedOverlayPatch {
 
     public static float getSpeed(final float original) {
         try {
-            return getFloat(REVANCED, SettingsEnum.EDIT_SPEED_OVERLAY_VALUE.path, 2.0f);
+            return getFloat(REVANCED, customSpeedOverlaySetting.path, 2.0f);
         } catch (Exception ignored) {
             return original;
         }
@@ -56,7 +58,7 @@ public class SpeedOverlayPatch {
         if (textView == null || textView.getId() != speedMasterEduTextId)
             return original;
 
-        final String speedString = getString(REVANCED, SettingsEnum.EDIT_SPEED_OVERLAY_VALUE.path, "2.0");
+        final String speedString = getString(REVANCED, customSpeedOverlaySetting.path, "2.0");
 
         if (speedString.equals("2.0"))
             return original;
