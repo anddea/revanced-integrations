@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.layout;
 
+import static app.revanced.integrations.utils.StringRef.str;
+
 import android.annotation.SuppressLint;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,11 +9,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ResourceHelper;
 
 public class PlayerPatch {
+    private static final int DEFAULT_OPACITY = (int) SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.defaultValue;
+
     @SuppressLint("StaticFieldLeak")
     private static ViewGroup coreContainer;
+
+    public static void changePlayerOpacity(ImageView imageView) {
+        int opacity = SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.getInt();
+
+        if (opacity < 0 || opacity > 100) {
+            ReVancedUtils.showToastShort(str("revanced_custom_player_overlay_opacity_warning"));
+            SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.saveValue(DEFAULT_OPACITY);
+            opacity = DEFAULT_OPACITY;
+        }
+
+        imageView.setImageAlpha((opacity * 255) / 100);
+    }
 
     public static boolean disableChapterVibrate() {
         return SettingsEnum.DISABLE_HAPTIC_FEEDBACK_CHAPTERS.getBoolean();
