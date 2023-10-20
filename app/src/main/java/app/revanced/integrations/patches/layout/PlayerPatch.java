@@ -71,11 +71,6 @@ public class PlayerPatch {
         return ResourceHelper.hidePlayerButton(view, originalValue);
     }
 
-    public static void hidePlayerOverlayFilter(ImageView view) {
-        if (!SettingsEnum.HIDE_PLAYER_OVERLAY_FILTER.getBoolean()) return;
-        view.setImageResource(android.R.color.transparent);
-    }
-
     public static boolean hideSeekMessage() {
         return SettingsEnum.HIDE_SEEK_MESSAGE.getBoolean();
     }
