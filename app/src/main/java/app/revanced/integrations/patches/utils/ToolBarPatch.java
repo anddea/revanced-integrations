@@ -9,6 +9,7 @@ public class ToolBarPatch {
         final String enumString = buttonEnum.name();
         if (enumString.isEmpty() || !(imageView.getParent() instanceof View view))
             return;
+
         hookToolBar(enumString, view);
     }
 

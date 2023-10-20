@@ -162,6 +162,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     private void initializeReVancedSettings() {
+        AmbientModePreferenceLinks();
         EnableHDRCodecPreferenceLinks();
         FullScreenPanelPreferenceLinks();
         LayoutOverrideLinks();
@@ -178,6 +179,16 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setSpoofAppVersionTarget();
         setVideoQuality(false);
         setVideoQuality(true);
+    }
+
+    /**
+     * Enable/Disable Preference related to Ambient Mode
+     */
+    public void AmbientModePreferenceLinks() {
+        enableDisablePreferences(
+                SettingsEnum.DISABLE_AMBIENT_MODE.getBoolean(),
+                SettingsEnum.BYPASS_AMBIENT_MODE_RESTRICTIONS
+        );
     }
 
     /**
