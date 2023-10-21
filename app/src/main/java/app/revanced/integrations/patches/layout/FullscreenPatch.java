@@ -9,6 +9,10 @@ import app.revanced.integrations.utils.ReVancedUtils;
 
 public class FullscreenPatch {
 
+    public static boolean disableAmbientMode() {
+        return !SettingsEnum.DISABLE_AMBIENT_MODE_IN_FULLSCREEN.getBoolean();
+    }
+
     public static boolean disableLandScapeMode(boolean original) {
         return SettingsEnum.DISABLE_LANDSCAPE_MODE.getBoolean() || original;
     }

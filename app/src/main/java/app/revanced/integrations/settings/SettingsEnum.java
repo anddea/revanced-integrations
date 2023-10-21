@@ -99,6 +99,7 @@ public enum SettingsEnum {
 
 
     // Fullscreen
+    DISABLE_AMBIENT_MODE_IN_FULLSCREEN("revanced_disable_ambient_mode_in_fullscreen", BOOLEAN, FALSE, true),
     ENABLE_COMPACT_CONTROLS_OVERLAY("revanced_enable_compact_controls_overlay", BOOLEAN, FALSE, true),
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", BOOLEAN, FALSE, true),
     HIDE_END_SCREEN_OVERLAY("revanced_hide_end_screen_overlay", BOOLEAN, FALSE, true),
