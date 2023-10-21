@@ -514,7 +514,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         Activity activity = getActivity();
 
         var appName = ReVancedHelper.applicationLabel;
-        var versionName = ReVancedHelper.versionName;
+        var versionName = ReVancedHelper.appVersionName;
         var formatDate = dateFormat.format(new Date(System.currentTimeMillis()));
         var fileName = String.format("%s_v%s_%s.json", appName, versionName, formatDate);
 

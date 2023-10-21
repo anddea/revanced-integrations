@@ -15,8 +15,8 @@ public class ReVancedHelper {
     public static String applicationLabel = "ReVanced_Extended";
     public static boolean isTablet = false;
     public static String packageName = "app.rvx.android.youtube";
-    public static int versionCode = 1540361664; // 18.39.41
-    public static String versionName = "18.39.41";
+    public static int appVersionCode = 1540361664; // 18.39.41
+    public static String appVersionName = "18.39.41";
 
     private ReVancedHelper() {
     } // utility class
@@ -42,6 +42,11 @@ public class ReVancedHelper {
     }
 
     public static boolean isAdditionalSettingsEnabled() {
+        // In the old player flyout panels, the video quality icon and additional quality icon are the same
+        // Therefore, additional Settings should not be blocked in old player flyout panels
+        if (isSpoofedTargetVersionLez("18.22.00"))
+            return false;
+
         boolean additionalSettingsEnabled = true;
         final SettingsEnum[] additionalSettings = {
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_AMBIENT,
@@ -117,14 +122,14 @@ public class ReVancedHelper {
     public static void setVersionCode(@NonNull Context context) {
         final PackageInfo packageInfo = getPackageInfo(context);
         if (packageInfo != null) {
-            versionCode = packageInfo.versionCode;
+            appVersionCode = packageInfo.versionCode;
         }
     }
 
     public static void setVersionName(@NonNull Context context) {
         final PackageInfo packageInfo = getPackageInfo(context);
         if (packageInfo != null) {
-            versionName = packageInfo.versionName;
+            appVersionName = packageInfo.versionName;
         }
     }
 }
