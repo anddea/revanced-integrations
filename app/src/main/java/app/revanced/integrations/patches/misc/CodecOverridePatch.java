@@ -32,20 +32,4 @@ public class CodecOverridePatch {
     public static boolean shouldForceCodec(boolean original) {
         return SettingsEnum.ENABLE_VIDEO_CODEC.getBoolean() || original;
     }
-
-    public static int overrideMinHeight(int original) {
-        return SettingsEnum.ENABLE_VIDEO_CODEC.getBoolean() ? 64 : original;
-    }
-
-    public static int overrideMaxHeight(int original) {
-        return SettingsEnum.ENABLE_VIDEO_CODEC.getBoolean() ? 4096 : original;
-    }
-
-    public static int overrideMinWidth(int original) {
-        return SettingsEnum.ENABLE_VIDEO_CODEC.getBoolean() ? 64 : original;
-    }
-
-    public static int overrideMaxWidth(int original) {
-        return SettingsEnum.ENABLE_VIDEO_CODEC.getBoolean() ? 4096 : original;
-    }
 }
