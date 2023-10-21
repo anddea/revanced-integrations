@@ -5,11 +5,11 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 
 public final class BrowseStoreButtonFilter extends Filter {
-    private final StringFilterGroup browseButtonPhone;
-    private final StringFilterGroup browseButtonTablet;
     private static final String BROWSE_BUTTON_PHONE_PATH = "|ContainerType|button.eml|";
     private static final String BROWSE_BUTTON_TABLET_PATH = "|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|button.eml|";
     private static final String JOIN_BUTTON_PATH = "|ContainerType|ContainerType|ContainerType|button.eml|";
+    private final StringFilterGroup browseButtonPhone;
+    private final StringFilterGroup browseButtonTablet;
 
     public BrowseStoreButtonFilter() {
         browseButtonPhone = new StringFilterGroup(

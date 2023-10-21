@@ -186,7 +186,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void AmbientModePreferenceLinks() {
         enableDisablePreferences(
                 SettingsEnum.DISABLE_AMBIENT_MODE.getBoolean(),
-                SettingsEnum.BYPASS_AMBIENT_MODE_RESTRICTIONS
+                SettingsEnum.BYPASS_AMBIENT_MODE_RESTRICTIONS,
+                SettingsEnum.DISABLE_AMBIENT_MODE_IN_FULLSCREEN
         );
     }
 

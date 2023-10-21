@@ -63,21 +63,25 @@ public class ReturnYouTubeDislikePatch {
      */
     private static final List<WeakReference<TextView>> shortsTextViewRefs = new ArrayList<>();
     /**
+     * Whether to use incognito mode.
+     */
+    public static volatile boolean isIncognito;
+    /**
      * RYD data for the current video on screen.
      */
     @Nullable
     private static volatile ReturnYouTubeDislike currentVideoData;
+
+
+    //
+    // 17.x non litho regular video player.
+    //
     /**
      * The last litho based Shorts loaded.
      * May be the same value as {@link #currentVideoData}, but usually is the next short to swipe to.
      */
     @Nullable
     private static volatile ReturnYouTubeDislike lastLithoShortsVideoData;
-
-
-    //
-    // 17.x non litho regular video player.
-    //
     /**
      * Because the litho Shorts spans are created after ReturnYouTubeDislikeFilterPatch
      * detects the video ids, after the user votes the litho will update
@@ -106,10 +110,6 @@ public class ReturnYouTubeDislikePatch {
      */
     @Nullable
     private static Spanned oldUIReplacementSpan;
-    /**
-     * Whether to use incognito mode.
-     */
-    public static volatile boolean isIncognito;
     /**
      * Old UI dislikes can be set multiple times by YouTube.
      * To prevent reverting changes made here, this listener overrides any future changes YouTube makes.

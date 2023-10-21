@@ -15,10 +15,6 @@ public class NavBarIndexPatch {
     public static void setLastNavBarIndex() {
         currentNavBarIndex = lastNavBarIndex;
     }
-
-    public static boolean isShortsTab() {
-        return currentNavBarIndex == 1;
-    }
 }
 
 
