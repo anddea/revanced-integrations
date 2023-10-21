@@ -222,6 +222,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS,
                 SettingsEnum.HIDE_END_SCREEN_OVERLAY,
                 SettingsEnum.HIDE_FULLSCREEN_PANELS,
+                SettingsEnum.HIDE_LATEST_VIDEOS_BUTTON,
                 SettingsEnum.HIDE_MIX_PLAYLISTS,
                 SettingsEnum.HIDE_QUICK_ACTIONS,
                 SettingsEnum.HIDE_QUICK_ACTIONS_COMMENT_BUTTON,
