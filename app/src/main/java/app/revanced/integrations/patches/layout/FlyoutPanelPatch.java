@@ -88,16 +88,19 @@ public class FlyoutPanelPatch {
         recyclerView.getViewTreeObserver().addOnDrawListener(() -> {
             try {
                 // Check if the current view is the quality menu.
-                if (!VideoQualityMenuFilter.isVideoQualityMenuVisible)
+                if (!VideoQualityMenuFilter.isVideoQualityMenuVisible || recyclerView.getChildCount() == 0)
                     return;
 
-                VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
-                ((ViewGroup) recyclerView.getParent().getParent().getParent()).setVisibility(View.GONE);
+                final ViewGroup AdvancedQualityParentView = (ViewGroup) recyclerView.getChildAt(0);
+                if (AdvancedQualityParentView.getChildCount() < 4)
+                    return;
 
-                // Click the "Advanced" quality menu to show the "old" quality menu.
-                View advancedQualityView = ((ViewGroup) recyclerView.getChildAt(0)).getChildAt(3);
-                if (advancedQualityView != null) {
-                    advancedQualityView.performClick();
+                final View AdvancedQualityView = AdvancedQualityParentView.getChildAt(3);
+                final View QuickQualityView = (View) recyclerView.getParent().getParent().getParent();
+                if (AdvancedQualityView != null && QuickQualityView != null) {
+                    QuickQualityView.setVisibility(View.GONE);
+                    AdvancedQualityView.performClick();
+                    VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
                 }
             } catch (Exception ex) {
                 LogHelper.printException(FlyoutPanelPatch.class, "onFlyoutMenuCreate failure", ex);
