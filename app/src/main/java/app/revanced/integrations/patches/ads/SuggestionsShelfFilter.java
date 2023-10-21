@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.ReVancedHelper;
 
 public final class SuggestionsShelfFilter extends Filter {
 
@@ -71,9 +70,6 @@ public final class SuggestionsShelfFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (ReVancedHelper.isTablet)
-            return true;
-        else
-            return horizontalShelfHeader.stream().allMatch(allValue::contains);
+        return horizontalShelfHeader.stream().allMatch(allValue::contains);
     }
 }
