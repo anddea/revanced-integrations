@@ -128,6 +128,7 @@ public enum SettingsEnum {
     ENABLE_PREMIUM_HEADER("revanced_override_premium_header", BOOLEAN, FALSE, true),
     ENABLE_TABLET_MINI_PLAYER("revanced_enable_tablet_mini_player", BOOLEAN, FALSE, true),
     ENABLE_WIDE_SEARCH_BAR("revanced_enable_wide_search_bar", BOOLEAN, FALSE, true),
+    ENABLE_WIDE_SEARCH_BAR_IN_YOU_TAB("revanced_enable_wide_search_bar_in_you_tab", BOOLEAN, FALSE, true),
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", BOOLEAN, FALSE),
     HIDE_ACCOUNT_MENU_FILTER_STRINGS("revanced_hide_account_menu_filter_strings", STRING, "YouTube Music\nYouTube Kids", true,
             parents(HIDE_ACCOUNT_MENU)),

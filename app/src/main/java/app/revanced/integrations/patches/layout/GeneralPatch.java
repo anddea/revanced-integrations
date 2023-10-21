@@ -49,6 +49,10 @@ public class GeneralPatch {
         return SettingsEnum.ENABLE_WIDE_SEARCH_BAR.getBoolean();
     }
 
+    public static boolean enableWideSearchBarInYouTab(boolean original) {
+        return !SettingsEnum.ENABLE_WIDE_SEARCH_BAR_IN_YOU_TAB.getBoolean() && original;
+    }
+
     public static void hideAccountMenu(View view, CharSequence charSequence) {
         if (!SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean())
             return;
