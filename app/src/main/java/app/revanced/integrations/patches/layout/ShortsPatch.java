@@ -1,11 +1,9 @@
 package app.revanced.integrations.patches.layout;
 
-import static app.revanced.integrations.patches.utils.NavBarIndexPatch.isShortsTab;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 
 import android.annotation.SuppressLint;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -19,10 +17,6 @@ public class ShortsPatch {
 
     public static boolean disableStartupShortsPlayer() {
         return SettingsEnum.DISABLE_STARTUP_SHORTS_PLAYER.getBoolean();
-    }
-
-    public static boolean enableNewCommentPopupPanels() {
-        return SettingsEnum.ENABLE_NEW_COMMENT_POPUP_PANELS.getBoolean();
     }
 
     public static View hideShortsPlayerNavigationBar(View view) {
