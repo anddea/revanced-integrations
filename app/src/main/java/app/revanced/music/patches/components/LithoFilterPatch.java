@@ -1,5 +1,7 @@
 package app.revanced.music.patches.components;
 
+import static app.revanced.music.utils.StringRef.str;
+
 import android.os.Build;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import java.util.function.Consumer;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
+import app.revanced.music.utils.ReVancedUtils;
 import app.revanced.music.utils.StringTrieSearch;
 import app.revanced.music.utils.TrieSearch;
 
@@ -133,8 +136,20 @@ class StringFilterGroup extends FilterGroup<String> {
 
 final class CustomFilterGroup extends StringFilterGroup {
 
-    public CustomFilterGroup(final SettingsEnum setting, final SettingsEnum filter) {
-        super(setting, filter.getString().split("\\s+"));
+    private static String[] getFilterPatterns(SettingsEnum setting) {
+        String[] patterns = setting.getString().split("\\s+");
+        for (String pattern : patterns) {
+            if (!StringTrieSearch.isValidPattern(pattern)) {
+                ReVancedUtils.showToastShort(str("revanced_custom_filter_strings_warning"));
+                setting.saveValue(setting.defaultValue);
+                return getFilterPatterns(setting);
+            }
+        }
+        return patterns;
+    }
+
+    public CustomFilterGroup(SettingsEnum setting, SettingsEnum filter) {
+        super(setting, getFilterPatterns(filter));
     }
 }
 

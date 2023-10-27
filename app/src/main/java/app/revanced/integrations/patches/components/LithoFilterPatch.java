@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.components;
 
+import static app.revanced.integrations.utils.StringRef.str;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -14,6 +16,7 @@ import java.util.function.Consumer;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ByteTrieSearch;
 import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.StringTrieSearch;
 import app.revanced.integrations.utils.TrieSearch;
 
@@ -133,8 +136,20 @@ class StringFilterGroup extends FilterGroup<String> {
 
 final class CustomFilterGroup extends StringFilterGroup {
 
-    public CustomFilterGroup(final SettingsEnum setting, final SettingsEnum filter) {
-        super(setting, filter.getString().split("\\s+"));
+    private static String[] getFilterPatterns(SettingsEnum setting) {
+        String[] patterns = setting.getString().split("\\s+");
+        for (String pattern : patterns) {
+            if (!StringTrieSearch.isValidPattern(pattern)) {
+                ReVancedUtils.showToastShort(str("revanced_custom_filter_strings_warning"));
+                setting.saveValue(setting.defaultValue);
+                return getFilterPatterns(setting);
+            }
+        }
+        return patterns;
+    }
+
+    public CustomFilterGroup(SettingsEnum setting, SettingsEnum filter) {
+        super(setting, getFilterPatterns(filter));
     }
 }
 
