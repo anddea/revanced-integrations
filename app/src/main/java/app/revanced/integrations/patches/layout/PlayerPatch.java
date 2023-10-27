@@ -103,19 +103,7 @@ public class PlayerPatch {
         if (coreContainer != viewGroup)
             coreContainer = viewGroup;
 
-        viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-
-            // Text Container View [R.id.text_container] is placed on the 1st ChildView.
-            if (viewGroup.getChildCount() < 1 || !(viewGroup.getChildAt(0) instanceof LinearLayout textContainer))
-                return;
-
-            // Close Button [R.id.close_button] is placed on the 2nd ChildView.
-            if (textContainer.getChildCount() < 2 || !(textContainer.getChildAt(1) instanceof ImageView imageView))
-                return;
-
-            // Click the Close Button.
-            imageView.performClick();
-        });
+        viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> hideSuggestedVideoOverlay());
     }
 
     public static void hideSuggestedVideoOverlay() {
@@ -123,7 +111,9 @@ public class PlayerPatch {
             return;
 
         try {
-            ((LinearLayout) coreContainer.getChildAt(0)).getChildAt(1).performClick();
+            final View closeButton = ((LinearLayout) coreContainer.getChildAt(0)).getChildAt(1);
+            if (closeButton != null)
+                closeButton.performClick();
         } catch (Exception ignored) {
         }
     }
