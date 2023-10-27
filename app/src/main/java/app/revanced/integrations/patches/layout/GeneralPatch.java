@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
+import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ResourceType;
 
 public class GeneralPatch {
@@ -25,6 +27,12 @@ public class GeneralPatch {
     );
     private static final String PREMIUM_HEADER_NAME = "ytPremiumWordmarkHeader";
     public static boolean captionsButtonStatus;
+    private static FrameLayout.LayoutParams layoutParams;
+    private static int minimumHeight = 1;
+    private static int paddingLeft = 12;
+    private static int paddingTop = 0;
+    private static int paddingRight = 12;
+    private static int paddingBottom = 0;
 
     public static boolean disableAutoCaptions() {
         return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden();
@@ -107,7 +115,40 @@ public class GeneralPatch {
     }
 
     public static void hideLoadMoreButton(View view) {
-        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_LOAD_MORE_BUTTON.getBoolean(), view);
+        if (!SettingsEnum.HIDE_LOAD_MORE_BUTTON.getBoolean())
+            return;
+
+        if (!(view instanceof ViewGroup viewGroup))
+            return;
+
+        if (!(viewGroup.getChildAt(0) instanceof ViewGroup expandButtonContainer))
+            return;
+
+        if (layoutParams == null
+                && expandButtonContainer.getLayoutParams() instanceof FrameLayout.LayoutParams lp) {
+            layoutParams = lp;
+            paddingLeft = view.getPaddingLeft();
+            paddingTop = view.getPaddingTop();
+            paddingRight = view.getPaddingRight();
+            paddingBottom = view.getPaddingBottom();
+        }
+
+        ReVancedUtils.runOnMainThreadDelayed(() -> {
+                    if (minimumHeight == 1) {
+                        minimumHeight = view.getMinimumHeight();
+                    }
+                    if (expandButtonContainer.getChildAt(0).getVisibility() != View.VISIBLE && layoutParams != null) {
+                        view.setMinimumHeight(minimumHeight);
+                        view.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+                        expandButtonContainer.setLayoutParams(layoutParams);
+                    } else {
+                        view.setMinimumHeight(0);
+                        view.setPadding(0, 0, 0, 0);
+                        expandButtonContainer.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
+                    }
+                },
+                0
+        );
     }
 
     public static void hideMixPlaylists(View view) {
