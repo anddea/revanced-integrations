@@ -6,6 +6,11 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.StringTrieSearch;
 
 final class CommentsFilter extends Filter {
+    private static final String COMMENT_COMPOSER_PATH = "comment_composer.eml";
+    private static final String VIDEO_METADATA_CAROUSEL_PATH = "video_metadata_carousel.eml";
+
+    private final StringFilterGroup commentsPreviewDots;
+    private final StringFilterGroup emojiPicker;
     private final StringTrieSearch exceptions = new StringTrieSearch();
 
     public CommentsFilter() {
@@ -22,11 +27,16 @@ final class CommentsFilter extends Filter {
 
         final var comments = new StringFilterGroup(
                 SettingsEnum.HIDE_COMMENTS_SECTION,
-                "video_metadata_carousel",
-                "_comments"
+                VIDEO_METADATA_CAROUSEL_PATH,
+                "comments_"
         );
 
-        final var emojiPicker = new StringFilterGroup(
+        commentsPreviewDots = new StringFilterGroup(
+                SettingsEnum.HIDE_PREVIEW_COMMENT,
+                "|ContainerType|ContainerType|ContainerType|"
+        );
+
+        emojiPicker = new StringFilterGroup(
                 SettingsEnum.HIDE_EMOJI_PICKER,
                 "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"
         );
@@ -41,13 +51,14 @@ final class CommentsFilter extends Filter {
 
         final var thanksButton = new StringFilterGroup(
                 SettingsEnum.HIDE_COMMENTS_THANKS_BUTTON,
-                "super_thanks_button"
+                "|ContainerType|ContainerType|ContainerType|super_thanks_button.eml"
         );
 
 
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 channelGuidelines,
                 comments,
+                commentsPreviewDots,
                 emojiPicker,
                 previewComment,
                 thanksButton
@@ -59,6 +70,14 @@ final class CommentsFilter extends Filter {
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (exceptions.matches(path))
             return false;
+
+        if (matchedGroup == emojiPicker) {
+            if (!path.startsWith(COMMENT_COMPOSER_PATH))
+                return false;
+        } else if (matchedGroup == commentsPreviewDots) {
+            if (!path.startsWith(VIDEO_METADATA_CAROUSEL_PATH))
+                return false;
+        }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
