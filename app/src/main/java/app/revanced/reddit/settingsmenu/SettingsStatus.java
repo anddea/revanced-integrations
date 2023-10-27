@@ -6,6 +6,7 @@ public class SettingsStatus {
     public static boolean openLinksDirectly = false;
     public static boolean openLinksExternally = false;
     public static boolean placeButton = false;
+    public static boolean recentlyVisitedShelf = false;
     public static boolean sanitizeUrlQuery = false;
     public static boolean screenshotPopup = false;
 
@@ -28,6 +29,10 @@ public class SettingsStatus {
 
     public static void PlaceButton() {
         placeButton = true;
+    }
+
+    public static void RecentlyVisitedShelf() {
+        recentlyVisitedShelf = true;
     }
 
     public static void SanitizeUrlQuery() {
