@@ -35,7 +35,8 @@ final class DescriptionsFilter extends Filter {
 
         final var musicSection = new StringFilterGroup(
                 SettingsEnum.HIDE_MUSIC_SECTION,
-                "music_section"
+                "music_section",
+                "video_attributes_section"
         );
 
         final var placeSection = new StringFilterGroup(
