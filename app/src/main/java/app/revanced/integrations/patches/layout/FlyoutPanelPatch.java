@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import app.revanced.integrations.patches.ads.VideoQualityMenuFilter;
+import app.revanced.integrations.patches.components.VideoQualityMenuFilter;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;

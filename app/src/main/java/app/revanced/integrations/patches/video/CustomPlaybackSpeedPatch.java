@@ -12,7 +12,7 @@ import com.facebook.litho.ComponentHost;
 
 import java.util.Arrays;
 
-import app.revanced.integrations.patches.ads.PlaybackSpeedMenuFilter;
+import app.revanced.integrations.patches.components.PlaybackSpeedMenuFilter;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;

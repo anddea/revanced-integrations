@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-import app.revanced.integrations.patches.ads.ReturnYouTubeDislikeFilterPatch;
+import app.revanced.integrations.patches.components.ReturnYouTubeDislikeFilterPatch;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.settings.SettingsEnum;
