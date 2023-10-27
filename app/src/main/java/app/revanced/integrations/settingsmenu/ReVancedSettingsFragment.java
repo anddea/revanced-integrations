@@ -75,9 +75,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                             HIDE_PLAYER_FLYOUT_PANEL_HELP,
                             HIDE_PLAYER_FLYOUT_PANEL_LOOP,
                             HIDE_PLAYER_FLYOUT_PANEL_PREMIUM_CONTROLS,
+                            HIDE_PLAYER_FLYOUT_PANEL_STABLE_VOLUME,
                             HIDE_PLAYER_FLYOUT_PANEL_STATS_FOR_NERDS,
                             HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR,
-                            HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC ->
+                            HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC,
+                            SPOOF_APP_VERSION,
+                            SPOOF_APP_VERSION_TARGET->
                             setPlayerFlyoutPanelAdditionalSettings();
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();

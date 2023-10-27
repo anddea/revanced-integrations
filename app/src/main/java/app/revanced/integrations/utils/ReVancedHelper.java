@@ -53,6 +53,7 @@ public class ReVancedHelper {
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_HELP,
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_LOOP,
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_PREMIUM_CONTROLS,
+                SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_STABLE_VOLUME,
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_STATS_FOR_NERDS,
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR,
                 SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC,
