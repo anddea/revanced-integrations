@@ -16,6 +16,7 @@ public final class SuggestedActionFilter extends Filter {
     public SuggestedActionFilter() {
         exceptions.addPatterns(
                 "channel_bar",
+                "lock_mode_suggested_action",
                 "shorts"
         );
 
