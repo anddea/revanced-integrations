@@ -55,6 +55,7 @@ import app.revanced.integrations.utils.SharedPrefHelper;
  * @noinspection ALL
  */
 public class ReVancedSettingsFragment extends PreferenceFragment {
+    private static boolean settingImportInProgress = false;
     private final int READ_REQUEST_CODE = 42;
     private final int WRITE_REQUEST_CODE = 43;
     @SuppressLint("SuspiciousIndentation")
@@ -99,6 +100,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             }
 
             enableDisablePreferences();
+
+            if (settingImportInProgress)
+                return;
 
             if (setting.rebootApp)
                 rebootDialog();
@@ -589,6 +593,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      * TODO: Implemented as a more ideal serialize method
      */
     private void importJson(Uri uri) {
+        settingImportInProgress = true;
         Context context = this.getContext();
         SharedPreferences prefs = context.getSharedPreferences(REVANCED.getName(), Context.MODE_PRIVATE);
         String json;
@@ -622,6 +627,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             editor.apply();
             bufferedReader.close();
             fileReader.close();
+            setPlayerFlyoutPanelAdditionalSettings();
 
             showToastShort(context, str("settings_import_successful"));
             runOnMainThreadDelayed(() -> reboot(getActivity()), 1000L);
