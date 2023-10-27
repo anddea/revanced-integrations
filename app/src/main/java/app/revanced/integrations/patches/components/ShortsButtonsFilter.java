@@ -10,15 +10,11 @@ final class ShortsButtonsFilter extends Filter {
                 "shorts_dislike_button"
         );
 
-
         final var shortsLikeButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON,
                 "shorts_like_button"
         );
 
-        this.pathFilterGroupList.addAll(
-                shortsDislikeButton,
-                shortsLikeButton
-        );
+        pathFilterGroupList.addAll(shortsDislikeButton, shortsLikeButton);
     }
 }
