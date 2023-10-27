@@ -3,20 +3,35 @@ package app.revanced.integrations.patches.components;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.StringTrieSearch;
 
 public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
+    private static final String SEARCH_RESULTS_CONVERSION_CONTEXT = "heightConstraint=null";
 
+    private final StringTrieSearch exceptions = new StringTrieSearch();
     private final StringFilterGroup infoPanel;
+    private final StringFilterGroup shelfHeader;
 
     private final StringFilterGroup videoActionButton;
     private final ByteArrayFilterGroupList videoActionButtonGroupList = new ByteArrayFilterGroupList();
 
 
     public ShortsFilter() {
+        exceptions.addPatterns(
+                "lock_mode_suggested_action"
+        );
+
         final var thanksButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON,
                 "suggested_action"
+        );
+
+        // Feed Shorts shelf header.
+        // Use a different filter group for this pattern, as it requires an additional check after matching.
+        shelfHeader = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_SHELF,
+                "shelf_header.eml"
         );
 
         final var shorts = new StringFilterGroup(
@@ -27,7 +42,7 @@ public final class ShortsFilter extends Filter {
                 "shorts_video_cell"
         );
 
-        identifierFilterGroupList.addAll(shorts, thanksButton);
+        identifierFilterGroupList.addAll(shorts, shelfHeader, thanksButton);
 
         final var joinButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON,
@@ -49,7 +64,7 @@ public final class ShortsFilter extends Filter {
 
         videoActionButton = new StringFilterGroup(
                 null,
-                "ContainerType|shorts_video_action_button"
+                "shorts_video_action_button"
         );
 
         pathFilterGroupList.addAll(joinButton, subscribeButton, infoPanel, videoActionButton);
@@ -69,12 +84,17 @@ public final class ShortsFilter extends Filter {
                 "reel_share_button"
         );
 
-        videoActionButtonGroupList.addAll(shortsCommentButton, shortsRemixButton, shortsShareButton);
+        videoActionButtonGroupList.addAll(
+                shortsCommentButton, shortsRemixButton, shortsShareButton
+        );
     }
 
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (exceptions.matches(path))
+            return false;
+
         if (matchedList == pathFilterGroupList) {
             // Always filter if matched.
             if (matchedGroup == infoPanel)
@@ -90,6 +110,9 @@ public final class ShortsFilter extends Filter {
             // Filter other path groups from pathFilterGroupList, only when reelChannelBar is visible
             // to avoid false positives.
             if (!path.startsWith(REEL_CHANNEL_BAR_PATH))
+                return false;
+        } else if (matchedGroup == shelfHeader) {
+            if (!allValue.contains(SEARCH_RESULTS_CONVERSION_CONTEXT))
                 return false;
         }
 
