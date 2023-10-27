@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.ReVancedHelper;
 
 public final class SuggestionsShelfFilter extends Filter {
 
@@ -54,6 +55,10 @@ public final class SuggestionsShelfFilter extends Filter {
         return horizontalShelf.stream().anyMatch(object.toString()::contains);
     }
 
+    public static void isYouButtonEnabled(View unusedView) {
+        SettingsEnum.IS_YOU_BUTTON_ENABLED.saveValue(true);
+    }
+
     /**
      * Injection point.
      * <p>
@@ -70,6 +75,9 @@ public final class SuggestionsShelfFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        return horizontalShelfHeader.stream().allMatch(allValue::contains);
+        if (ReVancedHelper.isTablet && !SettingsEnum.IS_YOU_BUTTON_ENABLED.getBoolean())
+            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+        else
+            return horizontalShelfHeader.stream().allMatch(allValue::contains);
     }
 }

@@ -10,6 +10,7 @@ import static app.revanced.integrations.settings.SettingsEnum.ReturnType.STRING;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.RYD;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
+import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -219,6 +220,9 @@ public enum SettingsEnum {
     HIDE_SUBSCRIPTIONS_BUTTON("revanced_hide_subscriptions_button", BOOLEAN, FALSE, true),
     OPEN_LIBRARY_YOU_STARTUP("revanced_open_library_you_startup", BOOLEAN, FALSE, true),
     SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", BOOLEAN, TRUE, true),
+
+    // Settings not exported
+    IS_YOU_BUTTON_ENABLED("revanced_you_button_enabled", BOOLEAN, FALSE, YOUTUBE),
 
 
     // Overlay Button
