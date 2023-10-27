@@ -237,6 +237,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON,
                 SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON,
                 SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON,
+                SettingsEnum.QUICK_ACTIONS_MARGIN_TOP,
                 SettingsEnum.SHOW_FULLSCREEN_TITLE
         );
     }

@@ -1,6 +1,9 @@
 package app.revanced.integrations.patches.layout;
 
+import static app.revanced.integrations.utils.StringRef.str;
+
 import android.view.View;
+import android.widget.FrameLayout;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
@@ -8,6 +11,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class FullscreenPatch {
+    private static final int DEFAULT_MARGIN_TOP = (int) SettingsEnum.QUICK_ACTIONS_MARGIN_TOP.defaultValue;
 
     public static boolean disableAmbientMode() {
         return !SettingsEnum.DISABLE_AMBIENT_MODE_IN_FULLSCREEN.getBoolean();
@@ -43,6 +47,26 @@ public class FullscreenPatch {
                 SettingsEnum.HIDE_FULLSCREEN_PANELS.getBoolean() || SettingsEnum.HIDE_QUICK_ACTIONS.getBoolean(),
                 view
         );
+    }
+
+    public static void setQuickActionMargin(FrameLayout frameLayout) {
+        int marginTop = SettingsEnum.QUICK_ACTIONS_MARGIN_TOP.getInt();
+
+        if (marginTop < 0 || marginTop > 100) {
+            ReVancedUtils.showToastShort(str("revanced_quick_actions_margin_top_warning"));
+            SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.saveValue(DEFAULT_MARGIN_TOP);
+            marginTop = DEFAULT_MARGIN_TOP;
+        }
+
+        if (!(frameLayout.getLayoutParams() instanceof FrameLayout.MarginLayoutParams marginLayoutParams))
+            return;
+        marginLayoutParams.setMargins(
+                marginLayoutParams.leftMargin,
+                marginTop,
+                marginLayoutParams.rightMargin,
+                marginLayoutParams.bottomMargin
+        );
+        frameLayout.requestLayout();
     }
 
     public static boolean showFullscreenTitle() {
