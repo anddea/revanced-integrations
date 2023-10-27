@@ -114,6 +114,7 @@ public class ReturnYouTubeDislikeApi {
     }
 
     private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex) {
+        ReVancedUtils.showToastShort(toastMessage);
         if (ex != null) {
             LogHelper.printException(ReturnYouTubeDislikeApi.class, toastMessage, ex);
         }
