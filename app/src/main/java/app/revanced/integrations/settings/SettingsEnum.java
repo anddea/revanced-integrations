@@ -133,7 +133,7 @@ public enum SettingsEnum {
     ENABLE_WIDE_SEARCH_BAR("revanced_enable_wide_search_bar", BOOLEAN, FALSE, true),
     ENABLE_WIDE_SEARCH_BAR_IN_YOU_TAB("revanced_enable_wide_search_bar_in_you_tab", BOOLEAN, FALSE, true),
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", BOOLEAN, FALSE),
-    HIDE_ACCOUNT_MENU_FILTER_STRINGS("revanced_hide_account_menu_filter_strings", STRING, "YouTube Music\nYouTube Kids", true,
+    HIDE_ACCOUNT_MENU_FILTER_STRINGS("revanced_hide_account_menu_filter_strings", STRING, "", true,
             parents(HIDE_ACCOUNT_MENU)),
     HIDE_AUTO_PLAYER_POPUP_PANELS("revanced_hide_auto_player_popup_panels", BOOLEAN, TRUE, true),
     HIDE_CATEGORY_BAR_IN_FEED("revanced_hide_category_bar_in_feed", BOOLEAN, FALSE, true),

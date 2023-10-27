@@ -61,6 +61,22 @@ public class GeneralPatch {
         return !SettingsEnum.ENABLE_WIDE_SEARCH_BAR_IN_YOU_TAB.getBoolean() && original;
     }
 
+    public static void hideAccountList(View view, CharSequence charSequence) {
+        if (!SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean())
+            return;
+
+        if (!(view.getParent().getParent().getParent() instanceof ViewGroup viewGroup))
+            return;
+
+        String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS.getString().split("\\n");
+
+        for (String filter : blockList) {
+            if (charSequence.toString().contains(filter) && !filter.isEmpty()) {
+                viewGroup.setLayoutParams(new LayoutParams(0, 0));
+            }
+        }
+    }
+
     public static void hideAccountMenu(View view, CharSequence charSequence) {
         if (!SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean())
             return;
@@ -72,10 +88,16 @@ public class GeneralPatch {
 
         for (String filter : blockList) {
             if (charSequence.toString().contains(filter) && !filter.isEmpty()) {
-                if (!(viewGroup.getLayoutParams() instanceof MarginLayoutParams))
+                if (viewGroup.getLayoutParams() instanceof MarginLayoutParams)
+                    hideAccountMenu(viewGroup);
+                else
                     viewGroup.setLayoutParams(new LayoutParams(0, 0));
             }
         }
+    }
+
+    private static void hideAccountMenu(ViewGroup viewGroup) {
+        viewGroup.setVisibility(View.GONE);
     }
 
     public static boolean hideAutoPlayerPopupPanels() {
