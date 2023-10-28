@@ -427,11 +427,8 @@ public final class LithoFilterPatch {
     /**
      * Injection point.  Called off the main thread, and commonly called by multiple threads at the same time.
      */
-    public static boolean filter(@NonNull StringBuilder pathBuilder, @NonNull String identifier, @NonNull Object object) {
-        var path = pathBuilder.toString();
-        var allValue = object.toString();
-
-        if (pathBuilder.length() == 0 || path.isEmpty() || allValue.isEmpty())
+    public static boolean filter(final StringBuilder pathBuilder, final String identifier, final Object object) {
+        if (pathBuilder.length() == 0)
             return false;
 
         try {
@@ -440,6 +437,9 @@ public final class LithoFilterPatch {
                 LogHelper.printException(LithoFilterPatch.class, "Proto buffer is null"); // Should never happen
                 return false;
             }
+
+            final String path = pathBuilder.toString();
+            final String allValue = object.toString();
 
             LithoFilterParameters parameter = new LithoFilterParameters(path, identifier, allValue, protobufBuffer.array());
             LogHelper.printDebug(LithoFilterPatch.class, "Searching " + parameter);
