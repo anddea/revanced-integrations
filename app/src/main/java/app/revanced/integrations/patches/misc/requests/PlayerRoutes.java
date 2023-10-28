@@ -1,5 +1,7 @@
 package app.revanced.integrations.patches.misc.requests;
 
+import static app.revanced.integrations.utils.ReVancedHelper.appVersionName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +32,7 @@ final class PlayerRoutes {
 
             JSONObject client = new JSONObject();
             client.put("clientName", "ANDROID");
-            client.put("clientVersion", "18.39.41");
+            client.put("clientVersion", appVersionName);
             client.put("androidSdkVersion", 31);
 
             context.put("client", client);
@@ -77,7 +79,7 @@ final class PlayerRoutes {
      */
     static HttpURLConnection getPlayerResponseConnectionFromRoute(Route.CompiledRoute route) throws IOException {
         var connection = Requester.getConnectionFromCompiledRoute(YT_API_URL, route);
-        connection.setRequestProperty("User-Agent", "com.google.android.youtube/18.39.41 (Linux; U; Android 12; GB) gzip");
+        connection.setRequestProperty("User-Agent", String.format("com.google.android.youtube/%s (Linux; U; Android 12; GB) gzip", appVersionName));
         connection.setRequestProperty("X-Goog-Api-Format-Version", "2");
         connection.setRequestProperty("Content-Type", "application/json");
 

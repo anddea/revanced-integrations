@@ -15,8 +15,8 @@ public class ReVancedHelper {
     public static String applicationLabel = "ReVanced_Extended";
     public static boolean isTablet = false;
     public static String packageName = "app.rvx.android.youtube";
-    public static int appVersionCode = 1540361664; // 18.39.41
-    public static String appVersionName = "18.39.41";
+    public static int appVersionCode = 1540619712; // 18.41.39
+    public static String appVersionName = "18.41.39";
 
     private ReVancedHelper() {
     } // utility class
