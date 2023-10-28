@@ -2,7 +2,6 @@ package app.revanced.integrations.patches.layout;
 
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
-import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import java.util.List;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ReVancedUtils;
-import app.revanced.integrations.utils.ResourceType;
 
 public class GeneralPatch {
     private static final List<String> toolBarButtonList = Arrays.asList(
@@ -25,7 +23,6 @@ public class GeneralPatch {
             "FAB_CAMERA",       // Create button (Tablet)
             "TAB_ACTIVITY"      // Notification button
     );
-    private static final String PREMIUM_HEADER_NAME = "ytPremiumWordmarkHeader";
     public static boolean captionsButtonStatus;
     private static FrameLayout.LayoutParams layoutParams;
     private static int minimumHeight = 1;
@@ -40,13 +37,6 @@ public class GeneralPatch {
 
     public static boolean enableGradientLoadingScreen() {
         return SettingsEnum.ENABLE_GRADIENT_LOADING_SCREEN.getBoolean();
-    }
-
-    public static int enablePremiumHeader(int originalValue) {
-        if (SettingsEnum.ENABLE_PREMIUM_HEADER.getBoolean())
-            return identifier(PREMIUM_HEADER_NAME, ResourceType.ATTR);
-
-        return originalValue;
     }
 
     public static boolean enableTabletMiniPlayer(boolean original) {
