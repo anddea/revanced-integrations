@@ -629,7 +629,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             editor.apply();
             bufferedReader.close();
             fileReader.close();
-            setPlayerFlyoutPanelAdditionalSettings();
 
             showToastShort(context, str("settings_import_successful"));
             runOnMainThreadDelayed(() -> reboot(getActivity()), 1000L);
