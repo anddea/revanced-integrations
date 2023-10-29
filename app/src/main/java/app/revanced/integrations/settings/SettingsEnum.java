@@ -243,6 +243,7 @@ public enum SettingsEnum {
 
     // Player
     CUSTOM_PLAYER_OVERLAY_OPACITY("revanced_custom_player_overlay_opacity", INTEGER, 100, true),
+    DISABLE_SPEED_OVERLAY("revanced_disable_speed_overlay", BOOLEAN, FALSE, true),
     HIDE_AUDIO_TRACK_BUTTON("revanced_hide_audio_track_button", BOOLEAN, TRUE),
     HIDE_AUTOPLAY_BUTTON("revanced_hide_autoplay_button", BOOLEAN, TRUE, true),
     HIDE_CAPTIONS_BUTTON("revanced_hide_captions_button", BOOLEAN, FALSE),
