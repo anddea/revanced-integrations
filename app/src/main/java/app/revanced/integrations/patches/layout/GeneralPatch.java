@@ -59,9 +59,10 @@ public class GeneralPatch {
             return;
 
         String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS.getString().split("\\n");
+        String targetString = charSequence.toString();
 
         for (String filter : blockList) {
-            if (charSequence.toString().contains(filter) && !filter.isEmpty()) {
+            if (targetString.equals(filter) && !filter.isEmpty()) {
                 viewGroup.setLayoutParams(new LayoutParams(0, 0));
             }
         }
@@ -75,9 +76,10 @@ public class GeneralPatch {
             return;
 
         String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS.getString().split("\\n");
+        String targetString = charSequence.toString();
 
         for (String filter : blockList) {
-            if (charSequence.toString().contains(filter) && !filter.isEmpty()) {
+            if (targetString.equals(filter) && !filter.isEmpty()) {
                 if (viewGroup.getLayoutParams() instanceof MarginLayoutParams)
                     hideAccountMenu(viewGroup);
                 else
