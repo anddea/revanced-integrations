@@ -63,6 +63,7 @@ public enum SettingsEnum {
     HIDE_FLYOUT_PANEL_GO_TO_ARTIST("revanced_hide_flyout_panel_go_to_artist", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_GO_TO_EPISODE("revanced_hide_flyout_panel_go_to_episode", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_GO_TO_PODCAST("revanced_hide_flyout_panel_go_to_podcast", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_HELP("revanced_hide_flyout_panel_help", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_LIKE_DISLIKE("revanced_hide_flyout_panel_like_dislike", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_PLAY_NEXT("revanced_hide_flyout_panel_play_next", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_QUALITY("revanced_hide_flyout_panel_quality", BOOLEAN, FALSE),
