@@ -225,6 +225,7 @@ public enum SettingsEnum {
 
     // Settings not exported
     IS_YOU_BUTTON_ENABLED("revanced_you_button_enabled", BOOLEAN, FALSE, YOUTUBE),
+    INITIALIZED("revanced_initialized", BOOLEAN, FALSE, YOUTUBE),
 
 
     // Overlay Button

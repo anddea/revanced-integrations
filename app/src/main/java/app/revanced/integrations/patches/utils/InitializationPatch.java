@@ -48,23 +48,25 @@ public class InitializationPatch {
      * The version of the current integrations is saved to YouTube's SharedPreferences to identify if the app was first installed.
      */
     public static void initializeReVancedSettings(@NonNull Context context) {
-        final String integrationVersion = getString(YOUTUBE, PREFERENCE_KEY, "");
-
-        if (!integrationVersion.equals(BuildConfig.VERSION_NAME))
-            saveString(YOUTUBE, PREFERENCE_KEY, BuildConfig.VERSION_NAME);
-
-        if (!integrationVersion.isEmpty())
+        if (SettingsEnum.INITIALIZED.getBoolean())
             return;
 
         Activity activity = (Activity) context;
 
         runOnMainThreadDelayed(() -> buildDialog(activity), 500);
 
-        // set spoof player parameter default value
-        SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!activity.getPackageName().equals("com.google.android.youtube"));
+        runOnMainThreadDelayed(() ->
+                {
+                    // set initialize value
+                    SettingsEnum.INITIALIZED.saveValue(true);
 
-        // set save playback speed default value
-        SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.DefaultPlaybackSpeed());
+                    // set spoof player parameter default value
+                    SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!activity.getPackageName().equals("com.google.android.youtube"));
+
+                    // set save playback speed default value
+                    SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.DefaultPlaybackSpeed());
+                }, 1000
+        );
     }
 
     /**

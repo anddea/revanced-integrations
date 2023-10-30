@@ -1,26 +1,22 @@
 package app.revanced.integrations.patches.misc;
 
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
-import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
-import static app.revanced.integrations.utils.SharedPrefHelper.getString;
-
-import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.settings.SettingsEnum;
 
 public class SpoofAppVersionPatch {
-
     /**
-     * Context is overridden when trying to play a YouTube video from the Google Play Store,
-     * Which is speculated to affect SpoofAppVersionPatch
+     * This is the most recent version of YouTube without RollingNumber applied.
+     * When launching YouTube for the first time,
+     * Request should be made to this YouTube version so a/b tests related to RollingNumber will not be fetched.
      */
-    public static String getVersionOverride(String version) {
+    private static final String ROLLING_NUMBER_NOT_APPLIED_VERSION = "18.39.41";
 
-        try {
-            return getBoolean(REVANCED, "revanced_spoof_app_version", false)
-                    ? getString(REVANCED, "revanced_spoof_app_version_target", "18.17.43")
-                    : version;
-        } catch (Exception ex) {
-            LogHelper.printException(SpoofAppVersionPatch.class, "Failed to load getVersionOverride", ex);
-            return version;
-        }
+    public static String getVersionOverride(String appVersion) {
+        // if (!SettingsEnum.INITIALIZED.getBoolean())
+        //     return ROLLING_NUMBER_NOT_APPLIED_VERSION;
+
+        if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
+            return appVersion;
+
+        return SettingsEnum.SPOOF_APP_VERSION_TARGET.getString();
     }
 }
