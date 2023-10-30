@@ -136,6 +136,10 @@ class StringFilterGroup extends FilterGroup<String> {
 
 final class CustomFilterGroup extends StringFilterGroup {
 
+    public CustomFilterGroup(SettingsEnum setting, SettingsEnum filter) {
+        super(setting, getFilterPatterns(filter));
+    }
+
     private static String[] getFilterPatterns(SettingsEnum setting) {
         String[] patterns = setting.getString().split("\\s+");
         for (String pattern : patterns) {
@@ -146,10 +150,6 @@ final class CustomFilterGroup extends StringFilterGroup {
             }
         }
         return patterns;
-    }
-
-    public CustomFilterGroup(SettingsEnum setting, SettingsEnum filter) {
-        super(setting, getFilterPatterns(filter));
     }
 }
 

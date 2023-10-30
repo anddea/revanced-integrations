@@ -1,9 +1,6 @@
 package app.revanced.integrations.patches.utils;
 
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
-import static app.revanced.integrations.utils.SharedPrefHelper.getString;
-import static app.revanced.integrations.utils.SharedPrefHelper.saveString;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.app.Activity;
@@ -12,7 +9,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import app.revanced.integrations.BuildConfig;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.sponsorblock.SegmentPlaybackController;
 import app.revanced.integrations.utils.ReVancedHelper;
