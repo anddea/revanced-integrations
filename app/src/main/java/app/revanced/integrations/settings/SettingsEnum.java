@@ -173,6 +173,7 @@ public enum SettingsEnum {
     HIDE_LATEST_POSTS("revanced_hide_latest_posts", BOOLEAN, TRUE),
     HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", BOOLEAN, TRUE),
     HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", BOOLEAN, FALSE),
+    HIDE_SEARCH_BAR("revanced_hide_search_bar", BOOLEAN, FALSE),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
 

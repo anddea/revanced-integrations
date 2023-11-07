@@ -92,6 +92,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "set_reminder_button"
         );
 
+        final var searchBar = new StringFilterGroup(
+                SettingsEnum.HIDE_SEARCH_BAR,
+                "search_bar_entry_point"
+        );
+
         final var startTrial = new StringFilterGroup(
                 SettingsEnum.HIDE_START_TRIAL_BUTTON,
                 "channel_purchase_button"
@@ -121,7 +126,8 @@ public final class LayoutComponentsFilter extends Filter {
 
         this.identifierFilterGroupList.addAll(
                 chipsShelf,
-                graySeparator
+                graySeparator,
+                searchBar
         );
     }
 
