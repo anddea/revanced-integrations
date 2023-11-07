@@ -1,6 +1,7 @@
 package app.revanced.integrations.swipecontrols.controller.gesture
 
 import android.view.MotionEvent
+import app.revanced.integrations.shared.LockModeState
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserver
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserverImpl
 import app.revanced.integrations.swipecontrols.SwipeControlsHostActivity
@@ -92,8 +93,12 @@ class ClassicSwipeController(
         distanceX: Double,
         distanceY: Double
     ): Boolean {
+        // cancel if locked
+        if (LockModeState.current.isLocked())
+            return false
         // cancel if not vertical
-        if (currentSwipe != SwipeDetector.SwipeDirection.VERTICAL) return false
+        if (currentSwipe != SwipeDetector.SwipeDirection.VERTICAL)
+            return false
         return when (from.toPoint()) {
             in controller.zones.volume -> {
                 scrollVolume(distanceY)
