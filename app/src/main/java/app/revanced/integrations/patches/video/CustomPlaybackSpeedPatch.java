@@ -135,15 +135,17 @@ public class CustomPlaybackSpeedPatch {
                         PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible = false;
 
                         ViewGroup parentView3rd = (ViewGroup) recyclerView.getParent().getParent().getParent();
-                        ViewGroup parentView4rd = (ViewGroup) parentView3rd.getParent();
+                        ViewGroup parentView4th = (ViewGroup) parentView3rd.getParent();
 
-                        // Dismiss View [R.id.touch_outside] is the 1st ChildView of the 4rd ParentView.
+                        // Dismiss View [R.id.touch_outside] is the 1st ChildView of the 4th ParentView.
                         // This only shows in phone layout
-                        parentView4rd.getChildAt(0).performClick();
+                        final View touchOutsideView = parentView4th.getChildAt(0);
+                        touchOutsideView.setSoundEffectsEnabled(false);
+                        touchOutsideView.performClick();
 
                         // In tablet layout, there is no Dismiss View, instead we just hide all two parent views.
                         parentView3rd.setVisibility(View.GONE);
-                        parentView4rd.setVisibility(View.GONE);
+                        parentView4th.setVisibility(View.GONE);
 
                         // It works without issues for both tablet and phone layouts,
                         // So no code is needed to check whether the current device is a tablet or phone.

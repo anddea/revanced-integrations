@@ -67,15 +67,21 @@ public class NavigationPatch {
         if (!SettingsEnum.OPEN_LIBRARY_YOU_STARTUP.getBoolean())
             return;
 
-        if (NavigationButton.LIBRARY.name.equals(pivotTabString))
-            view.performClick();
+        if (!NavigationButton.LIBRARY.name.equals(pivotTabString))
+            return;
+
+        view.setSoundEffectsEnabled(false);
+        view.performClick();
+        view.setSoundEffectsEnabled(true);
     }
 
     private static void openYouTab(View view) {
         if (!SettingsEnum.OPEN_LIBRARY_YOU_STARTUP.getBoolean())
             return;
 
+        view.setSoundEffectsEnabled(false);
         view.performClick();
+        view.setSoundEffectsEnabled(true);
     }
 
     private enum NavigationButton {

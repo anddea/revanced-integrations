@@ -19,8 +19,10 @@ public class FlyoutPanelPatch {
 
         listView.setVisibility(View.GONE);
 
-        ReVancedUtils.runOnMainThreadDelayed(() ->
-                        listView.performItemClick(null, 4, 0),
+        ReVancedUtils.runOnMainThreadDelayed(() -> {
+                    listView.setSoundEffectsEnabled(false);
+                    listView.performItemClick(null, 4, 0);
+                },
                 1
         );
     }
@@ -99,6 +101,7 @@ public class FlyoutPanelPatch {
                 final View QuickQualityView = (View) recyclerView.getParent().getParent().getParent();
                 if (AdvancedQualityView != null && QuickQualityView != null) {
                     QuickQualityView.setVisibility(View.GONE);
+                    AdvancedQualityView.setSoundEffectsEnabled(false);
                     AdvancedQualityView.performClick();
                     VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
                 }
