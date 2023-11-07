@@ -2,21 +2,18 @@ package app.revanced.integrations.patches.layout;
 
 import static app.revanced.integrations.utils.StringRef.str;
 
-import android.annotation.SuppressLint;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ResourceHelper;
 
 public class PlayerPatch {
     private static final int DEFAULT_OPACITY = (int) SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.defaultValue;
-
-    @SuppressLint("StaticFieldLeak")
-    private static ViewGroup coreContainer;
 
     public static void changePlayerOpacity(ImageView imageView) {
         int opacity = SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.getInt();
@@ -104,21 +101,16 @@ public class PlayerPatch {
         if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean())
             return;
 
-        if (coreContainer != viewGroup)
-            coreContainer = viewGroup;
-
-        viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> hideSuggestedVideoOverlay());
-    }
-
-    public static void hideSuggestedVideoOverlay() {
-        if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || coreContainer == null)
-            return;
-
-        try {
-            final View closeButton = ((LinearLayout) coreContainer.getChildAt(0)).getChildAt(1);
-            if (closeButton != null)
-                closeButton.performClick();
-        } catch (Exception ignored) {
-        }
+        viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            try {
+                final View closeButton = ((LinearLayout) viewGroup.getChildAt(0)).getChildAt(1);
+                if (closeButton != null) {
+                    closeButton.setSoundEffectsEnabled(false);
+                    closeButton.performClick();
+                }
+            } catch (Exception ex) {
+                LogHelper.printException(PlayerPatch.class, "hideSuggestedVideoOverlay failure", ex);
+            }
+        });
     }
 }
