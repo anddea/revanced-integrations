@@ -169,6 +169,11 @@ public class GeneralPatch {
         hideViewBy0dpUnderCondition(SettingsEnum.HIDE_MIX_PLAYLISTS.getBoolean(), view);
     }
 
+    public static boolean hideSearchTermThumbnail() {
+        return SettingsEnum.HIDE_SEARCH_TERM_THUMBNAIL.getBoolean();
+    }
+
+
     public static boolean hideSnackBar() {
         return SettingsEnum.HIDE_SNACK_BAR.getBoolean();
     }
