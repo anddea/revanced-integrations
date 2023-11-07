@@ -103,12 +103,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "ticket_shelf"
         );
 
-        final var timedReactions = new StringFilterGroup(
-                SettingsEnum.HIDE_TIMED_REACTIONS,
-                "emoji_control_panel",
-                "timed_reaction"
-        );
-
         this.pathFilterGroupList.addAll(
                 albumCard,
                 audioTrackButton,
@@ -122,8 +116,7 @@ public final class LayoutComponentsFilter extends Filter {
                 movieShelf,
                 notifyMe,
                 startTrial,
-                ticketShelf,
-                timedReactions
+                ticketShelf
         );
 
         this.identifierFilterGroupList.addAll(

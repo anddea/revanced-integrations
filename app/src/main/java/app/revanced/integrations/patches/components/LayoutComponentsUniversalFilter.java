@@ -22,11 +22,17 @@ final class LayoutComponentsUniversalFilter extends Filter {
                 "endorsement_header_footer"
         );
 
+        final var timedReactions = new StringFilterGroup(
+                SettingsEnum.HIDE_TIMED_REACTIONS,
+                "emoji_control_panel",
+                "timed_reaction"
+        );
 
         this.pathFilterGroupList.addAll(
                 expandableMetadata,
                 feedSurvey,
-                grayDescription
+                grayDescription,
+                timedReactions
         );
     }
 }
