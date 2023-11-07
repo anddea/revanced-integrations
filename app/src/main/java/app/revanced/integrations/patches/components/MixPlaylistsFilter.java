@@ -7,6 +7,12 @@ public final class MixPlaylistsFilter extends Filter {
 
     private static final StringTrieSearch exceptions = new StringTrieSearch();
 
+    private static final ByteArrayAsStringFilterGroup byteArrayExceptions =
+            new ByteArrayAsStringFilterGroup(
+                    null,
+                    "cell_description_body"
+            );
+
     private static final ByteArrayAsStringFilterGroup mixPlaylists =
             new ByteArrayAsStringFilterGroup(
                     SettingsEnum.HIDE_MIX_PLAYLISTS,
@@ -30,6 +36,7 @@ public final class MixPlaylistsFilter extends Filter {
         if (exceptions.matches(allValue.toString()))
             return false;
 
-        return mixPlaylists.check(bytes).isFiltered();
+        return mixPlaylists.check(bytes).isFiltered()
+                && !byteArrayExceptions.check(bytes).isFiltered();
     }
 }
