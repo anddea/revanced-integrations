@@ -5,7 +5,6 @@ import static app.revanced.music.utils.ReVancedHelper.getLayoutParams;
 import static app.revanced.music.utils.StringRef.str;
 
 import android.app.Activity;
-import android.content.Context;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.widget.EditText;
@@ -17,6 +16,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
+import app.revanced.music.utils.ReVancedUtils;
 
 public class ImportExportDialogBuilder {
     private static String existingSettings;
@@ -41,7 +41,7 @@ public class ImportExportDialogBuilder {
                     .setView(container)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(str("revanced_extended_settings_import_copy"), (dialog, which) -> {
-                        setClipboard(activity, textView.getText().toString());
+                        ReVancedUtils.setClipboard(textView.getText().toString(), str("revanced_share_copy_settings_success"));
                     })
                     .setPositiveButton(str("revanced_extended_settings_import"), (dialog, which) -> {
                         importSettings(textView.getText().toString());
@@ -62,11 +62,5 @@ public class ImportExportDialogBuilder {
         } catch (Exception ex) {
             LogHelper.printException(ImportExportDialogBuilder.class, "importSettings failure", ex);
         }
-    }
-
-    private static void setClipboard(@NonNull Activity base, @NonNull String text) {
-        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) base.getSystemService(Context.CLIPBOARD_SERVICE);
-        android.content.ClipData clip = android.content.ClipData.newPlainText("ReVanced", text);
-        clipboard.setPrimaryClip(clip);
     }
 }

@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class ReVancedHelper {
+    public static String applicationLabel = "RVX Music";
     public static String packageName = "app.rvx.android.apps.youtube.music";
 
     private ReVancedHelper() {
@@ -43,6 +44,13 @@ public class ReVancedHelper {
         }
 
         return false;
+    }
+
+    public static void setApplicationLabel(@NonNull Context context) {
+        final PackageInfo packageInfo = getPackageInfo(context);
+        if (packageInfo != null) {
+            applicationLabel = (String) packageInfo.applicationInfo.loadLabel(getPackageManager(context));
+        }
     }
 
     public static void setPackageName(@NonNull Context context) {

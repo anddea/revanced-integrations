@@ -47,6 +47,7 @@ public class InitializationPatch {
     }
 
     public static void setDeviceInformation(@NonNull Context context) {
+        ReVancedHelper.setApplicationLabel(context);
         ReVancedHelper.setPackageName(context);
     }
 }

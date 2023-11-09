@@ -3,6 +3,7 @@ package app.revanced.music.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -114,6 +115,23 @@ public class ReVancedUtils {
             isRightToLeftTextLayout = new Bidi(displayLanguage, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT).isRightToLeft();
         }
         return isRightToLeftTextLayout;
+    }
+
+    public static void setClipboard(@NonNull String text) {
+        setClipboard(text, null);
+    }
+
+    public static void setClipboard(@NonNull String text, @Nullable String toastMessage) {
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText(ReVancedHelper.applicationLabel, text);
+        clipboard.setPrimaryClip(clip);
+
+        // Do not show a toast if using Android 13+ as it shows it's own toast.
+        // But if the user copied with a timestamp then show a toast.
+        // Unfortunately this will show 2 toasts on Android 13+, but no way around this.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 && toastMessage != null) {
+            showToastShort(toastMessage);
+        }
     }
 
     public static void showToastShort(Context context, String messageToToast) {
