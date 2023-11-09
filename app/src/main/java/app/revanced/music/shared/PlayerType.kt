@@ -33,7 +33,7 @@ enum class PlayerType {
         }
 
         /**
-         * The current video type.
+         * The current player type.
          */
         @JvmStatic
         var current

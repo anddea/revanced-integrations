@@ -83,32 +83,27 @@ public class SegmentPlaybackController {
 
     /**
      * Injection point.
-     * Initializes SponsorBlock when the video player starts playing a new video.
      */
-    public static void initialize(Object ignoredPlayerController) {
-        try {
-            ReVancedUtils.verifyOnMainThread();
-            SponsorBlockSettings.initialize();
-            clearData();
-            LogHelper.printDebug(SegmentPlaybackController.class, "Initialized SponsorBlock");
-        } catch (Exception ex) {
-            LogHelper.printException(SegmentPlaybackController.class, "Failed to initialize SponsorBlock", ex);
-        }
+    public static void setCurrentVideoId(@Nullable String videoId) {
+        setCurrentVideoId(videoId, false);
     }
 
     /**
      * Injection point.
      */
-    public static void setCurrentVideoId(@Nullable String videoId) {
+    public static void setCurrentVideoId(@Nullable String videoId, boolean isPlaying) {
         try {
+            if (videoId == null || isPlaying)
+                return;
+
+            if (!SettingsEnum.SB_ENABLED.getBoolean()) {
+                return;
+            }
             if (Objects.equals(currentVideoId, videoId)) {
                 return;
             }
             SponsorBlockSettings.initialize();
             clearData();
-            if (videoId == null || !SettingsEnum.SB_ENABLED.getBoolean()) {
-                return;
-            }
 
             currentVideoId = videoId;
             LogHelper.printDebug(SegmentPlaybackController.class, "setCurrentVideoId: " + videoId);
