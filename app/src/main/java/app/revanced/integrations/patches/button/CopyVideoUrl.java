@@ -34,9 +34,9 @@ public class CopyVideoUrl {
             isButtonEnabled = setValue();
             ImageView imageView = findView(CopyVideoUrl.class, constraintLayout, "copy_video_url_button");
 
-            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(view.getContext(), false));
+            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(false));
             imageView.setOnLongClickListener(view -> {
-                VideoHelpers.copyUrl(view.getContext(), true);
+                VideoHelpers.copyUrl(true);
                 return true;
             });
             buttonView = new WeakReference<>(imageView);

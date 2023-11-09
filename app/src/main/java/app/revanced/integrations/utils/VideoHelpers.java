@@ -37,22 +37,25 @@ public class VideoHelpers {
     public static String qualityAutoString = "Auto";
     private static volatile boolean isPiPAvailable = true;
 
-    public static void copyUrl(@NonNull Context context, Boolean withTimestamp) {
-        String url = String.format("https://youtu.be/%s", VideoInformation.getVideoId());
-        if (withTimestamp) {
-            long seconds = VideoInformation.getVideoTime() / 1000;
-            url += String.format("?t=%s", seconds);
+    public static void copyUrl(boolean withTimestamp) {
+        StringBuilder builder = new StringBuilder("https://youtu.be/");
+        builder.append(VideoInformation.getVideoId());
+        final long currentVideoTimeInSeconds = VideoInformation.getVideoTime() / 1000;
+        if (withTimestamp && currentVideoTimeInSeconds > 0) {
+            builder.append("?t=");
+            builder.append(currentVideoTimeInSeconds);
         }
 
-        ReVancedUtils.setClipboard(url);
-        showToastShort(context, str("share_copy_url_success"));
+        ReVancedUtils.setClipboard(builder.toString(), withTimestamp
+                ? str("revanced_share_copy_url_timestamp_success")
+                : str("revanced_share_copy_url_success")
+        );
     }
 
     @SuppressLint("DefaultLocale")
-    public static void copyTimeStamp(@NonNull Context context) {
-        final long videoTime = VideoInformation.getVideoTime();
-
-        final Duration duration = Duration.ofMillis(videoTime);
+    public static void copyTimeStamp() {
+        final long currentVideoTime = VideoInformation.getVideoTime();
+        final Duration duration = Duration.ofMillis(currentVideoTime);
 
         final long h = duration.toHours();
         final long m = duration.toMinutes() % 60;
@@ -62,8 +65,7 @@ public class VideoHelpers {
                 ? String.format("%02d:%02d:%02d", h, m, s)
                 : String.format("%02d:%02d", m, s);
 
-        ReVancedUtils.setClipboard(timeStamp);
-        showToastShort(context, str("revanced_copy_video_timestamp_success") + ":\u2009" + timeStamp);
+        ReVancedUtils.setClipboard(timeStamp, str("revanced_share_copy_timestamp_success", timeStamp));
     }
 
     public static void download(@NonNull Context context) {
