@@ -27,8 +27,8 @@ public class PlayerPatch {
         imageView.setImageAlpha((opacity * 255) / 100);
     }
 
-    public static boolean disableSpeedOverlay() {
-        return SettingsEnum.DISABLE_SPEED_OVERLAY.getBoolean();
+    public static boolean disableSpeedOverlay(boolean original) {
+        return !SettingsEnum.DISABLE_SPEED_OVERLAY.getBoolean() && original;
     }
 
     public static boolean disableChapterVibrate() {
