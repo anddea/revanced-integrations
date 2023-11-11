@@ -28,9 +28,9 @@ public class CheckMusicVideoPatch {
      * @param playlistIndex Original playlist index value from PlaybackStartDescriptor.
      */
     @SuppressLint("DefaultLocale")
-    public static void playbackStart(@NonNull String videoId, @NonNull String playlistId, final int playlistIndex) {
+    public static void playbackStart(@NonNull String videoId, @NonNull String playlistId, final int playlistIndex, boolean isPlaying) {
         try {
-            if (!SettingsEnum.REPLACE_PLAYER_CAST_BUTTON.getBoolean())
+            if (!SettingsEnum.REPLACE_PLAYER_CAST_BUTTON.getBoolean() || isPlaying)
                 return;
 
             if (currentVideoId.equals(videoId)) {
