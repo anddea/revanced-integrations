@@ -37,7 +37,7 @@ import app.revanced.integrations.utils.ResourceType;
  * Litho based Shorts player can experience temporarily frozen video playback if the RYD fetch takes too long.
  * <p>
  * Temporary work around:
- * Enable app spoofing to version 18.20.39 or older, as that uses a non litho Shorts player.
+ * Enable app spoofing to version 18.33.40 or older, as that uses a non litho Shorts player.
  * <p>
  * Permanent fix (yet to be implemented), either of:
  * - Modify patch to hook onto the Shorts Litho TextView, and update the dislikes asynchronously.
@@ -63,6 +63,7 @@ public class ReturnYouTubeDislikePatch {
      */
     private static final List<WeakReference<TextView>> shortsTextViewRefs = new ArrayList<>();
     /**
+     * Injection point.
      * Whether to use incognito mode.
      */
     public static volatile boolean isIncognito;
@@ -72,10 +73,6 @@ public class ReturnYouTubeDislikePatch {
     @Nullable
     private static volatile ReturnYouTubeDislike currentVideoData;
 
-
-    //
-    // 17.x non litho regular video player.
-    //
     /**
      * The last litho based Shorts loaded.
      * May be the same value as {@link #currentVideoData}, but usually is the next short to swipe to.
@@ -129,6 +126,7 @@ public class ReturnYouTubeDislikePatch {
         }
     };
 
+
     public static void onRYDStatusChange(boolean rydEnabled) {
         if (!rydEnabled) {
             // Must remove all values to protect against using stale data
@@ -141,7 +139,7 @@ public class ReturnYouTubeDislikePatch {
 
 
     //
-    // Litho player for both regular videos and Shorts.
+    // 17.x non litho regular video player.
     //
 
     private static void updateOldUIDislikesTextView() {
@@ -198,38 +196,8 @@ public class ReturnYouTubeDislikePatch {
 
 
     //
-    // Non litho Shorts player.
+    // Litho player for both regular videos and Shorts.
     //
-
-    public static CharSequence onCharSequenceLoaded(@NonNull Object conversionContext,
-                                                    @NonNull CharSequence original) {
-        try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean() || !isIncognito) {
-                return original;
-            }
-            if (!SettingsEnum.RYD_SHORTS.getBoolean()) {
-                // Must clear the current video here, otherwise if the user opens a regular video
-                // then opens a litho short (while keeping the regular video on screen), then closes the short,
-                // the original video may show the incorrect dislike value.
-                currentVideoData = null;
-                return original;
-            }
-
-            String conversionContextString = conversionContext.toString();
-            if (!conversionContextString.contains("|shorts_dislike_button.eml|"))
-                return original;
-
-            ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(VideoInformation.getVideoId());
-            videoData.setVideoIdIsShort(true);
-            lastLithoShortsVideoData = videoData;
-            lithoShortsShouldUseCurrentData = false;
-
-            return videoData.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
-        } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onLithoTextLoaded failure", ex);
-        }
-        return original;
-    }
 
     /**
      * Injection point.
@@ -308,6 +276,54 @@ public class ReturnYouTubeDislikePatch {
         }
         return original;
     }
+
+
+    //
+    // Litho Shorts player in the incognito mode.
+    //
+
+    /**
+     * Injection point.
+     * <p>
+     * It is used only when fetching the dislikes count of Shorts video in the incognito mode.
+     *
+     * @param original Original span that was created or reused by Litho.
+     * @return The original span (if nothing should change), or a replacement span that contains dislikes.
+     */
+    public static CharSequence onCharSequenceLoaded(@NonNull Object conversionContext,
+                                                    @NonNull CharSequence original) {
+        try {
+            if (!SettingsEnum.RYD_ENABLED.getBoolean() || !isIncognito) {
+                return original;
+            }
+            if (!SettingsEnum.RYD_SHORTS.getBoolean()) {
+                // Must clear the current video here, otherwise if the user opens a regular video
+                // then opens a litho short (while keeping the regular video on screen), then closes the short,
+                // the original video may show the incorrect dislike value.
+                currentVideoData = null;
+                return original;
+            }
+
+            String conversionContextString = conversionContext.toString();
+            if (!conversionContextString.contains("|shorts_dislike_button.eml|"))
+                return original;
+
+            ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(VideoInformation.getVideoId());
+            videoData.setVideoIdIsShort(true);
+            lastLithoShortsVideoData = videoData;
+            lithoShortsShouldUseCurrentData = false;
+
+            return videoData.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onLithoTextLoaded failure", ex);
+        }
+        return original;
+    }
+
+
+    //
+    // Non litho Shorts player.
+    //
 
     private static void clearRemovedShortsTextViews() {
         shortsTextViewRefs.removeIf(ref -> ref.get() == null);
