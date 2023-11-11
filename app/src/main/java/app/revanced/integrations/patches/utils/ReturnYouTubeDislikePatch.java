@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.utils;
 
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.Vote;
+import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.isPreviouslyCreatedSegmentedSpan;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.graphics.Rect;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -125,6 +127,18 @@ public class ReturnYouTubeDislikePatch {
             s.replace(0, s.length(), oldUIReplacementSpan); // Causes a recursive call back into this listener
         }
     };
+    /**
+     * Field where the RollingNumber is saved. (type: String)
+     */
+    private static volatile Field rollingNumberField;
+    /**
+     * Class to handle RollingNumber.
+     */
+    private static WeakReference<Object> rollingNumberRef;
+    /**
+     * Spanned text to apply to RollingNumber textview
+     */
+    private static Spanned rollingNumberSpan;
 
 
     public static void onRYDStatusChange(boolean rydEnabled) {
@@ -134,6 +148,7 @@ public class ReturnYouTubeDislikePatch {
             currentVideoData = null;
             lastLithoShortsVideoData = null;
             lithoShortsShouldUseCurrentData = false;
+            rollingNumberSpan = null;
         }
     }
 
@@ -224,9 +239,6 @@ public class ReturnYouTubeDislikePatch {
             }
 
             String conversionContextString = conversionContext.toString();
-            // Remove this log statement after the a/b new litho dislikes is fixed.
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "conversionContext: " + conversionContextString);
-
             final Spanned replacement;
             if (conversionContextString.contains("|segmented_like_dislike_button.eml|")) {
                 // Regular video
@@ -440,6 +452,91 @@ public class ReturnYouTubeDislikePatch {
 
 
     //
+    // Litho regular video player with RollingNumber.
+    //
+
+    /**
+     * Injection point.
+     * <p>
+     * Access RollingNumber field using Java Reflection.
+     *
+     * @param rollingNumberClass     class to handle RollingNumber.
+     * @param rollingNumberFieldName field where the RollingNumber is saved. (type: String)
+     */
+    public static void initialize(@NonNull Object rollingNumberClass, @NonNull String rollingNumberFieldName) {
+        try {
+            rollingNumberRef = new WeakReference<>(Objects.requireNonNull(rollingNumberClass));
+
+            Field field = rollingNumberClass.getClass().getDeclaredField(rollingNumberFieldName);
+            field.setAccessible(true);
+            rollingNumberField = field;
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislikePatch.class, "initialize failure", ex);
+        }
+    }
+
+    /**
+     * Injection point.
+     * <p>
+     * Called when a rolling number text component is initially created.
+     */
+    public static void onRollingNumberTextLoaded(@NonNull Object conversionContext) {
+        try {
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+                return;
+            }
+            String conversionContextString = conversionContext.toString();
+            if (!conversionContextString.contains("|segmented_like_dislike_button.eml|")) {
+                return;
+            }
+
+            if (rollingNumberField == null || rollingNumberRef == null) {
+                return;
+            }
+            final Object rollingNumberFieldObject = rollingNumberField.get(rollingNumberRef.get());
+            if (rollingNumberFieldObject == null) {
+                return;
+            }
+            final String originalRollingNumberString = rollingNumberFieldObject.toString();
+            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Original Rolling Number: " + originalRollingNumberString);
+            ReturnYouTubeDislike videoData = currentVideoData;
+            if (videoData == null) {
+                return; // User enabled RYD while a video was on screen.
+            }
+            // Spanned text is not used in the text view of RollingNumber,
+            // So it is applied in [updateRollingNumberTextView]
+            rollingNumberSpan = videoData.getDislikesSpanForRegularVideo(new SpannableString(originalRollingNumberString), true);
+
+            // If we do not set the value to the [rollingNumberField] here, TextView's layout becomes weird.
+            // Since the type of [rollingNumberField] is String, it must be converted to String.
+            rollingNumberField.set(rollingNumberRef.get(), rollingNumberSpan.toString());
+        } catch (Exception ex) {
+            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onRollingNumberTextLoaded failure", ex);
+        }
+    }
+
+    /**
+     * Injection point.
+     *
+     * @param textView TextView with RollingNumber.
+     */
+    public static void updateRollingNumberTextView(@NonNull TextView textView) {
+        if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+            return;
+        }
+        if (rollingNumberSpan == null) {
+            return;
+        }
+
+        // Spanned text is not used in the TextView.
+        // Therefore, check if the TextView contains one of the custom created spans, and apply spanned text.
+        if (isPreviouslyCreatedSegmentedSpan(textView.getText().toString())) {
+            textView.setText(rollingNumberSpan);
+        }
+    }
+
+
+    //
     // Video Id and voting hooks (all players).
     //
 
@@ -516,6 +613,7 @@ public class ReturnYouTubeDislikePatch {
                 if (videoIdIsSame(currentVideoData, videoId)) {
                     return;
                 }
+                rollingNumberSpan = null;
                 ReturnYouTubeDislike data = ReturnYouTubeDislike.getFetchForVideoId(videoId);
                 // Pre-emptively set the data to short status.
                 // Required to prevent Shorts data from being used on a minimized video in incognito mode.
