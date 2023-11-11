@@ -340,6 +340,8 @@ public enum SettingsEnum {
     DISABLE_HDR_VIDEO("revanced_disable_hdr_video", BOOLEAN, FALSE, true),
     DISABLE_DEFAULT_PLAYBACK_SPEED_LIVE("revanced_disable_default_playback_speed_live", BOOLEAN, TRUE),
     ENABLE_CUSTOM_PLAYBACK_SPEED("revanced_enable_custom_playback_speed", BOOLEAN, FALSE, true),
+    CUSTOM_PLAYBACK_SPEED_PANEL_TYPE("revanced_custom_playback_speed_panel_type", BOOLEAN, FALSE,
+            parents(ENABLE_CUSTOM_PLAYBACK_SPEED)),
     CUSTOM_PLAYBACK_SPEEDS("revanced_custom_playback_speeds", STRING,
             "0.25\n0.5\n0.75\n1.0\n1.25\n1.5\n1.75\n2.0\n2.25\n2.5", true,
             parents(ENABLE_CUSTOM_PLAYBACK_SPEED)),

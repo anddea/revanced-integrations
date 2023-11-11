@@ -2,6 +2,7 @@ package app.revanced.integrations.patches.video;
 
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import app.revanced.integrations.patches.components.PlaybackSpeedMenuFilter;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
+import app.revanced.integrations.utils.VideoHelpers;
 
 public class CustomPlaybackSpeedPatch {
     /**
@@ -30,6 +32,10 @@ public class CustomPlaybackSpeedPatch {
     public static String[] customSpeedEntryValues;
     public static String[] defaultSpeedEntries = {str("quality_auto"), "0.25x", "0.5x", "0.75x", str("shorts_speed_control_normal_label"), "1.25x", "1.5x", "1.75x", "2.0x"};
     public static String[] defaultSpeedEntryValues = {"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
+    /**
+     * Last time the method was used
+     */
+    private static long lastTimeUsed = 0;
 
     static {
         loadSpeeds();
@@ -163,12 +169,33 @@ public class CustomPlaybackSpeedPatch {
                 // If YouTube makes changes on the server side in the future,
                 // So we need to check the tablet layout and phone layout, use [ReVancedHelper.isTablet()].
 
-                // Close the new Playback speed menu and show the old one.
-                showOldPlaybackSpeedMenu();
+                // Show custom playback speed menu.
+                showCustomPlaybackSpeedMenu(recyclerView.getContext());
             } catch (Exception ex) {
                 LogHelper.printException(CustomPlaybackSpeedPatch.class, "onFlyoutMenuCreate failure", ex);
             }
         });
+    }
+
+    /**
+     * This method is sometimes used multiple times
+     * To prevent this, ignore method reuse within 1 second.
+     *
+     * @param context Context for [playbackSpeedDialogListener]
+     */
+    private static void showCustomPlaybackSpeedMenu(@NonNull Context context) {
+        // Ignores method reuse in less than 1 second.
+        if (lastTimeUsed != 0 && System.currentTimeMillis() - lastTimeUsed < 1000)
+            return;
+        lastTimeUsed = System.currentTimeMillis();
+
+        if (SettingsEnum.CUSTOM_PLAYBACK_SPEED_PANEL_TYPE.getBoolean()) {
+            // Open playback speed dialog
+            VideoHelpers.playbackSpeedDialogListener(context);
+        } else {
+            // Open old style flyout panel
+            showOldPlaybackSpeedMenu();
+        }
     }
 
     private static void showOldPlaybackSpeedMenu() {
