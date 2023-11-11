@@ -102,6 +102,7 @@ public enum SettingsEnum {
     // Misc
     ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE),
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, TRUE, true),
+    SANITIZE_SHARING_LINKS("revanced_sanitize_sharing_links", BOOLEAN, TRUE, true),
     SETTINGS_INITIALIZED("revanced_settings_initialized", BOOLEAN, FALSE),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, FALSE, true),
     SPOOF_APP_VERSION_TARGET("revanced_spoof_app_version_target", STRING, "4.27.53", true),
