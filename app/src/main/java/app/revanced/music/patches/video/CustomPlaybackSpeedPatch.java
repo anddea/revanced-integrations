@@ -78,7 +78,7 @@ public class CustomPlaybackSpeedPatch {
                 String speedString = String.valueOf(speed);
                 customSpeedEntries[i] = speed != 1.0f
                         ? speedString + "x"
-                        : str("offline_audio_quality_normal");
+                        : str("revanced_playback_speed_normal");
                 customSpeedEntryValues[i] = speedString;
                 i++;
             }
