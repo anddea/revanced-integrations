@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
-import com.facebook.litho.ComponentHost;
-
 import java.util.Arrays;
 
 import app.revanced.integrations.patches.components.PlaybackSpeedMenuFilter;
@@ -124,38 +122,53 @@ public class CustomPlaybackSpeedPatch {
     }
 
     public static void onFlyoutMenuCreate(final RecyclerView recyclerView) {
-        if (!SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean()) return;
+        if (!SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED.getBoolean())
+            return;
 
-        recyclerView.getViewTreeObserver().addOnDrawListener(
-                () -> {
-                    // For some reason, the custom playback speed flyout panel is activated when the user opens the share panel. (A/B tests)
-                    // Check the child count of playback speed flyout panel to prevent this issue.
-                    // Child count of playback speed flyout panel is always 8.
-                    if (PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible && ((ComponentHost) recyclerView.getChildAt(0)).getChildCount() == 8) {
-                        PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible = false;
+        recyclerView.getViewTreeObserver().addOnDrawListener(() -> {
+            try {
+                // Check if the current view is the playback speed menu.
+                if (!PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible || recyclerView.getChildCount() == 0)
+                    return;
 
-                        ViewGroup parentView3rd = (ViewGroup) recyclerView.getParent().getParent().getParent();
-                        ViewGroup parentView4th = (ViewGroup) parentView3rd.getParent();
+                // For some reason, the custom playback speed flyout panel is activated when the user opens the share panel. (A/B tests)
+                // Check the child count of playback speed flyout panel to prevent this issue.
+                // Child count of playback speed flyout panel is always 8.
+                final ViewGroup PlaybackSpeedParentView = (ViewGroup) recyclerView.getChildAt(0);
+                if (PlaybackSpeedParentView == null || PlaybackSpeedParentView.getChildCount() != 8)
+                    return;
 
-                        // Dismiss View [R.id.touch_outside] is the 1st ChildView of the 4th ParentView.
-                        // This only shows in phone layout
-                        final View touchOutsideView = parentView4th.getChildAt(0);
-                        touchOutsideView.setSoundEffectsEnabled(false);
-                        touchOutsideView.performClick();
+                PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible = false;
 
-                        // In tablet layout, there is no Dismiss View, instead we just hide all two parent views.
-                        parentView3rd.setVisibility(View.GONE);
-                        parentView4th.setVisibility(View.GONE);
+                ViewGroup parentView3rd = (ViewGroup) recyclerView.getParent().getParent().getParent();
+                ViewGroup parentView4th = (ViewGroup) parentView3rd.getParent();
 
-                        // It works without issues for both tablet and phone layouts,
-                        // So no code is needed to check whether the current device is a tablet or phone.
-                        // If YouTube makes changes on the server side in the future,
-                        // So we need to check the tablet layout and phone layout, use [ReVancedHelper.isTablet()].
+                // Dismiss View [R.id.touch_outside] is the 1st ChildView of the 4th ParentView.
+                // This only shows in phone layout
+                final View touchOutsideView = parentView4th.getChildAt(0);
+                if (touchOutsideView != null) {
+                    touchOutsideView.setSoundEffectsEnabled(false);
+                    touchOutsideView.performClick();
+                    // Dismiss View [R.id.touch_outside] is not only used in the playback speed menu,
+                    // So re-enable sound effect.
+                    touchOutsideView.setSoundEffectsEnabled(true);
+                }
 
-                        // Close the new Playback speed menu and show the old one.
-                        showOldPlaybackSpeedMenu();
-                    }
-                });
+                // In tablet layout, there is no Dismiss View, instead we just hide all two parent views.
+                parentView3rd.setVisibility(View.GONE);
+                parentView4th.setVisibility(View.GONE);
+
+                // It works without issues for both tablet and phone layouts,
+                // So no code is needed to check whether the current device is a tablet or phone.
+                // If YouTube makes changes on the server side in the future,
+                // So we need to check the tablet layout and phone layout, use [ReVancedHelper.isTablet()].
+
+                // Close the new Playback speed menu and show the old one.
+                showOldPlaybackSpeedMenu();
+            } catch (Exception ex) {
+                LogHelper.printException(CustomPlaybackSpeedPatch.class, "onFlyoutMenuCreate failure", ex);
+            }
+        });
     }
 
     private static void showOldPlaybackSpeedMenu() {
