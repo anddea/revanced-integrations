@@ -2,6 +2,8 @@ package app.revanced.integrations.patches.misc;
 
 import android.net.Uri;
 
+import java.util.Objects;
+
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class OpenLinksDirectlyPatch {
@@ -9,8 +11,10 @@ public class OpenLinksDirectlyPatch {
 
     public static Uri enableBypassRedirect(String uri) {
         final Uri parsed = Uri.parse(uri);
+        if (!SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.getBoolean())
+            return parsed;
 
-        if (SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.getBoolean() && parsed.getPath().equals(YOUTUBE_REDIRECT_PATH)) {
+        if (Objects.equals(parsed.getPath(), YOUTUBE_REDIRECT_PATH)) {
             return Uri.parse(Uri.decode(parsed.getQueryParameter("q")));
         }
 

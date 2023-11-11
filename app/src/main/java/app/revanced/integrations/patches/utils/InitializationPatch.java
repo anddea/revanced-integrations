@@ -14,7 +14,6 @@ import app.revanced.integrations.sponsorblock.SegmentPlaybackController;
 import app.revanced.integrations.utils.ReVancedHelper;
 
 public class InitializationPatch {
-    private static final String PREFERENCE_KEY = "integrations";
 
     private static void buildDialog(@NonNull Activity activity) {
         new AlertDialog.Builder(activity)
