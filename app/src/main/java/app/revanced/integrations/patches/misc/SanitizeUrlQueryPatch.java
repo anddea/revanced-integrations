@@ -21,7 +21,7 @@ public final class SanitizeUrlQueryPatch {
 
     /**
      * Strip query parameters from a given URL string.
-     *
+     * <p>
      * URL example containing tracking parameter:
      * https://youtu.be/ZWgr7qP6yhY?si=kKA_-9cygieuFY7R
      * https://youtu.be/ZWgr7qP6yhY?feature=shared
@@ -29,7 +29,7 @@ public final class SanitizeUrlQueryPatch {
      * https://youtube.com/watch?v=ZWgr7qP6yhY&feature=shared
      * https://youtube.com/playlist?list=PLBsP89CPrMeO7uztAu6YxSB10cRMpjgiY&si=N0U8xncY2ZmQoSMp
      * https://youtube.com/playlist?list=PLBsP89CPrMeO7uztAu6YxSB10cRMpjgiY&feature=shared
-     *
+     * <p>
      * Since we need to support support all these examples,
      * We cannot use [URL.getpath()] or [Uri.getQueryParameter()].
      *
