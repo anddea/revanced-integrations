@@ -226,7 +226,6 @@ public enum SettingsEnum {
     SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", BOOLEAN, TRUE, true),
 
     // Settings not exported
-    IS_YOU_BUTTON_ENABLED("revanced_you_button_enabled", BOOLEAN, FALSE, YOUTUBE),
     INITIALIZED("revanced_initialized", BOOLEAN, FALSE, YOUTUBE),
 
 
