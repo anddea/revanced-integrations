@@ -24,7 +24,7 @@ public final class SuggestionsShelfFilter extends Filter {
         );
 
         searchResult = new StringFilterGroup(
-                null,
+                SettingsEnum.HIDE_SUGGESTIONS_SHELF,
                 "compact_channel.eml",
                 "search_video_with_context.eml"
         );

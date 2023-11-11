@@ -178,6 +178,8 @@ public enum SettingsEnum {
     HIDE_SEARCH_BAR("revanced_hide_search_bar", BOOLEAN, FALSE),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
+    // Experimental Flags
+    HIDE_VIDEO_WITH_LOW_VIEW("revanced_hide_video_with_low_view", BOOLEAN, FALSE, true),
 
     // Description
     HIDE_CHAPTERS("revanced_hide_chapters", BOOLEAN, FALSE),
