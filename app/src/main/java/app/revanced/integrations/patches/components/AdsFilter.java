@@ -11,51 +11,46 @@ import app.revanced.integrations.utils.StringTrieSearch;
 public final class AdsFilter extends Filter {
     private final StringTrieSearch exceptions = new StringTrieSearch();
 
-
     public AdsFilter() {
         exceptions.addPatterns(
                 "comment_thread", // skip blocking anything in the comments
-                "download_",
-                "downloads_",
                 "home_video_with_context", // Don't filter anything in the home page video component.
                 "library_recent_shelf",
-                "playlist_add",
                 "related_video_with_context", // Don't filter anything in the related video component.
+                "video_description_header",
                 "|comment." // skip blocking anything in the comments replies
         );
 
-        final var carouselAd = new StringFilterGroup(
+        final StringFilterGroup carouselAd = new StringFilterGroup(
                 SettingsEnum.HIDE_GENERAL_ADS,
                 "carousel_ad"
         );
 
-        final var imageShelf = new StringFilterGroup(
+        final StringFilterGroup imageShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_IMAGE_SHELF,
                 "image_shelf"
         );
 
-        final var merchandise = new StringFilterGroup(
+        final StringFilterGroup merchandise = new StringFilterGroup(
                 SettingsEnum.HIDE_MERCHANDISE_SHELF,
                 "expandable_list_inner",
                 "product_carousel"
         );
 
-        final var paidContent = new StringFilterGroup(
+        final StringFilterGroup paidContent = new StringFilterGroup(
                 SettingsEnum.HIDE_PAID_PROMOTION,
                 "paid_content_overlay"
         );
 
-        final var selfSponsor = new StringFilterGroup(
+        final StringFilterGroup selfSponsor = new StringFilterGroup(
                 SettingsEnum.HIDE_SELF_SPONSOR_CARDS,
                 "cta_shelf_card"
         );
 
-        final var generalAds = new StringFilterGroup(
+        final StringFilterGroup generalAds = new StringFilterGroup(
                 SettingsEnum.HIDE_GENERAL_ADS,
                 "active_view_display_container",
-                "ads_",
                 "ads_video_with_context",
-                "ad_",
                 "banner_text_icon",
                 "brand_video_shelf",
                 "brand_video_singleton",
@@ -77,28 +72,24 @@ public final class AdsFilter extends Filter {
                 "video_display_carousel_buttoned_layout",
                 "video_display_full_layout",
                 "watch_metadata_app_promo",
-                "_ad",
-                "_ads",
                 "_ad_with",
-                "_buttoned_layout",
-                "|ads_",
-                "|ad_"
+                "_buttoned_layout"
         );
 
-        final var viewProducts = new StringFilterGroup(
+        final StringFilterGroup viewProducts = new StringFilterGroup(
                 SettingsEnum.HIDE_VIEW_PRODUCTS,
                 "expandable_product_grid",
                 "product_item",
                 "products_in_video"
         );
 
-        final var webSearchPanel = new StringFilterGroup(
+        final StringFilterGroup webSearchPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_WEB_SEARCH_RESULTS,
                 "web_link_panel",
                 "web_result_panel"
         );
 
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 generalAds,
                 imageShelf,
                 merchandise,
@@ -108,9 +99,7 @@ public final class AdsFilter extends Filter {
                 webSearchPanel
         );
 
-        this.identifierFilterGroupList.addAll(
-                carouselAd
-        );
+        identifierFilterGroupList.addAll(carouselAd);
     }
 
     /**
