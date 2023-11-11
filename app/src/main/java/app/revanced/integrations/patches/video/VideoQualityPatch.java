@@ -38,8 +38,7 @@ public class VideoQualityPatch {
             default -> wifiQualitySetting.saveValue(defaultQuality);
         }
 
-        ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName())
-                + "\u2009" + defaultQuality + "p");
+        ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName(), defaultQuality + "p"));
     }
 
     /**
