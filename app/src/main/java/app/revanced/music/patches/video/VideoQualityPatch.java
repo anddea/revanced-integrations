@@ -94,7 +94,6 @@ public class VideoQualityPatch {
             default -> wifiQualitySetting.saveValue(selectedQuality);
         }
 
-        ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName())
-                + "\u2009" + selectedQuality + "p");
+        ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName(), selectedQuality + "p"));
     }
 }
