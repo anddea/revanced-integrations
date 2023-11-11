@@ -8,7 +8,7 @@ final class HandlesFilter extends Filter {
     private static final String ACCOUNT_HEADER_PATH = "account_header.eml";
 
     public HandlesFilter() {
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_HANDLE,
                         "|CellType|ContainerType|ContainerType|ContainerType|TextType|"

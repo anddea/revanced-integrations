@@ -18,14 +18,14 @@ final class CommentsFilter extends Filter {
                 "macro_markers_list_item"
         );
 
-        final var channelGuidelines = new StringFilterGroup(
+        final StringFilterGroup channelGuidelines = new StringFilterGroup(
                 SettingsEnum.HIDE_CHANNEL_GUIDELINES,
                 "channel_guidelines_entry_banner",
                 "community_guidelines",
                 "sponsorships_comments_upsell"
         );
 
-        final var comments = new StringFilterGroup(
+        final StringFilterGroup comments = new StringFilterGroup(
                 SettingsEnum.HIDE_COMMENTS_SECTION,
                 VIDEO_METADATA_CAROUSEL_PATH,
                 "comments_"
@@ -41,7 +41,7 @@ final class CommentsFilter extends Filter {
                 "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"
         );
 
-        final var previewComment = new StringFilterGroup(
+        final StringFilterGroup previewComment = new StringFilterGroup(
                 SettingsEnum.HIDE_PREVIEW_COMMENT,
                 "|carousel_item",
                 "|carousel_listener",
@@ -49,7 +49,7 @@ final class CommentsFilter extends Filter {
                 "comments_entry_point_simplebox"
         );
 
-        final var thanksButton = new StringFilterGroup(
+        final StringFilterGroup thanksButton = new StringFilterGroup(
                 SettingsEnum.HIDE_COMMENTS_THANKS_BUTTON,
                 "|ContainerType|ContainerType|ContainerType|super_thanks_button.eml"
         );

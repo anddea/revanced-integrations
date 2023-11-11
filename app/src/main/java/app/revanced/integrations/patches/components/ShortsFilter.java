@@ -22,7 +22,7 @@ public final class ShortsFilter extends Filter {
                 "lock_mode_suggested_action"
         );
 
-        final var thanksButton = new StringFilterGroup(
+        final StringFilterGroup thanksButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON,
                 "suggested_action"
         );
@@ -34,7 +34,7 @@ public final class ShortsFilter extends Filter {
                 "shelf_header.eml"
         );
 
-        final var shorts = new StringFilterGroup(
+        final StringFilterGroup shorts = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_SHELF,
                 "shorts_shelf",
                 "inline_shorts",
@@ -42,14 +42,18 @@ public final class ShortsFilter extends Filter {
                 "shorts_video_cell"
         );
 
-        identifierFilterGroupList.addAll(shorts, shelfHeader, thanksButton);
+        identifierFilterGroupList.addAll(
+                shorts,
+                shelfHeader,
+                thanksButton
+        );
 
-        final var joinButton = new StringFilterGroup(
+        final StringFilterGroup joinButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON,
                 "sponsor_button"
         );
 
-        final var subscribeButton = new StringFilterGroup(
+        final StringFilterGroup subscribeButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON,
                 "shorts_paused_state",
                 "subscribe_button"
@@ -67,25 +71,35 @@ public final class ShortsFilter extends Filter {
                 "shorts_video_action_button"
         );
 
-        pathFilterGroupList.addAll(joinButton, subscribeButton, infoPanel, videoActionButton);
-
-        final var shortsCommentButton = new ByteArrayAsStringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON,
-                "reel_comment_button"
+        pathFilterGroupList.addAll(
+                joinButton,
+                subscribeButton,
+                infoPanel,
+                videoActionButton
         );
 
-        final var shortsRemixButton = new ByteArrayAsStringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON,
-                "reel_remix_button"
-        );
+        final ByteArrayAsStringFilterGroup shortsCommentButton =
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON,
+                        "reel_comment_button"
+                );
 
-        final var shortsShareButton = new ByteArrayAsStringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_SHARE_BUTTON,
-                "reel_share_button"
-        );
+        final ByteArrayAsStringFilterGroup shortsRemixButton =
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON,
+                        "reel_remix_button"
+                );
+
+        final ByteArrayAsStringFilterGroup shortsShareButton =
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_PLAYER_SHARE_BUTTON,
+                        "reel_share_button"
+                );
 
         videoActionButtonGroupList.addAll(
-                shortsCommentButton, shortsRemixButton, shortsShareButton
+                shortsCommentButton,
+                shortsRemixButton,
+                shortsShareButton
         );
     }
 

@@ -1,6 +1,5 @@
 package app.revanced.music.patches.components;
 
-
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -12,7 +11,7 @@ public final class PlaylistCardFilter extends Filter {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public PlaylistCardFilter() {
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_PLAYLIST_CARD,
                         "music_container_card_shelf"

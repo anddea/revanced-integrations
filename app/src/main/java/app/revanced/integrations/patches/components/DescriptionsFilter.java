@@ -18,39 +18,39 @@ final class DescriptionsFilter extends Filter {
                 "metadata"
         );
 
-        final var chapterSection = new StringFilterGroup(
+        final StringFilterGroup chapterSection = new StringFilterGroup(
                 SettingsEnum.HIDE_CHAPTERS,
                 "macro_markers_carousel."
         );
 
-        final var infoCardsSection = new StringFilterGroup(
+        final StringFilterGroup infoCardsSection = new StringFilterGroup(
                 SettingsEnum.HIDE_INFO_CARDS_SECTION,
                 "infocards_section"
         );
 
-        final var gameSection = new StringFilterGroup(
+        final StringFilterGroup gameSection = new StringFilterGroup(
                 SettingsEnum.HIDE_GAME_SECTION,
                 "gaming_section"
         );
 
-        final var musicSection = new StringFilterGroup(
+        final StringFilterGroup musicSection = new StringFilterGroup(
                 SettingsEnum.HIDE_MUSIC_SECTION,
                 "music_section",
                 "video_attributes_section"
         );
 
-        final var placeSection = new StringFilterGroup(
+        final StringFilterGroup placeSection = new StringFilterGroup(
                 SettingsEnum.HIDE_PLACE_SECTION,
                 "place_section"
         );
 
-        final var transcriptSection = new StringFilterGroup(
+        final StringFilterGroup transcriptSection = new StringFilterGroup(
                 SettingsEnum.HIDE_TRANSCIPT_SECTION,
                 "transcript_section"
         );
 
 
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 chapterSection,
                 infoCardsSection,
                 gameSection,

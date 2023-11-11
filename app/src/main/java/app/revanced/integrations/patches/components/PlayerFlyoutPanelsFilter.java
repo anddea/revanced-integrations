@@ -13,10 +13,7 @@ final class PlayerFlyoutPanelsFilter extends Filter {
     private final ByteArrayFilterGroupList exceptionFilterGroup = new ByteArrayFilterGroupList();
 
     public PlayerFlyoutPanelsFilter() {
-        exceptionFilterGroup.addAll(
-                new ByteArrayAsStringFilterGroup(null, "quality_sheet")
-        );
-
+        exceptionFilterGroup.addAll(new ByteArrayAsStringFilterGroup(null, "quality_sheet"));
         pathFilterGroupList.addAll(new StringFilterGroup(null, "overflow_menu_item.eml|")); // Using pathFilterGroupList due to new flyout panel(A/B)
 
         flyoutFilterGroupList.addAll(

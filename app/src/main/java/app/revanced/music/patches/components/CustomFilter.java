@@ -20,9 +20,7 @@ public final class CustomFilter extends Filter {
                 SettingsEnum.CUSTOM_FILTER_STRINGS
         );
 
-        this.pathFilterGroupList.addAll(
-                custom
-        );
+        pathFilterGroupList.addAll(custom);
     }
 
     @Override

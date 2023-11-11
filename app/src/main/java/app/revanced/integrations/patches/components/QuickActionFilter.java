@@ -12,16 +12,9 @@ final class QuickActionFilter extends Filter {
     private final ByteArrayFilterGroupList bufferButtonsGroupList = new ByteArrayFilterGroupList();
 
     public QuickActionFilter() {
-        quickActionRule = new StringFilterGroup(
-                null,
-                QUICK_ACTION_PATH
-        );
+        quickActionRule = new StringFilterGroup(null, QUICK_ACTION_PATH);
         identifierFilterGroupList.addAll(quickActionRule);
-
-        bufferFilterPathRule = new StringFilterGroup(
-                null,
-                "|fullscreen_video_action_button.eml|"
-        );
+        bufferFilterPathRule = new StringFilterGroup(null, "|fullscreen_video_action_button.eml|");
 
         pathFilterGroupList.addAll(
                 new StringFilterGroup(

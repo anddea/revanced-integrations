@@ -11,7 +11,7 @@ public final class ChannelGuidelinesFilter extends Filter {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public ChannelGuidelinesFilter() {
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_CHANNEL_GUIDELINES,
                         "community_guidelines"

@@ -9,10 +9,12 @@ public final class VideoQualityMenuFilter extends Filter {
     public static volatile boolean isVideoQualityMenuVisible;
 
     public VideoQualityMenuFilter() {
-        pathFilterGroupList.addAll(new StringFilterGroup(
-                SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT,
-                "quick_quality_sheet_content.eml-js"
-        ));
+        pathFilterGroupList.addAll(
+                new StringFilterGroup(
+                        SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT,
+                        "quick_quality_sheet_content.eml-js"
+                )
+        );
     }
 
     @Override

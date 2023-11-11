@@ -24,61 +24,61 @@ public final class LayoutComponentsFilter extends Filter {
                 SettingsEnum.CUSTOM_FILTER_STRINGS
         );
 
-        final var albumCard = new StringFilterGroup(
+        final StringFilterGroup albumCard = new StringFilterGroup(
                 SettingsEnum.HIDE_ALBUM_CARDS,
                 "browsy_bar",
                 "official_card"
         );
 
-        final var audioTrackButton = new StringFilterGroup(
+        final StringFilterGroup audioTrackButton = new StringFilterGroup(
                 SettingsEnum.HIDE_AUDIO_TRACK_BUTTON,
                 "multi_feed_icon_button"
         );
 
-        final var channelMemberShelf = new StringFilterGroup(
+        final StringFilterGroup channelMemberShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF,
                 "member_recognition_shelf"
         );
 
-        final var channelProfileLinks = new StringFilterGroup(
+        final StringFilterGroup channelProfileLinks = new StringFilterGroup(
                 SettingsEnum.HIDE_CHANNEL_PROFILE_LINKS,
                 "channel_header_links"
         );
 
-        final var chipsShelf = new StringFilterGroup(
+        final StringFilterGroup chipsShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_CHIPS_SHELF,
                 "chips_shelf"
         );
 
-        final var graySeparator = new StringFilterGroup(
+        final StringFilterGroup graySeparator = new StringFilterGroup(
                 SettingsEnum.HIDE_GRAY_SEPARATOR,
                 "cell_divider"
         );
 
-        final var infoPanel = new StringFilterGroup(
+        final StringFilterGroup infoPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_INFO_PANEL,
                 "compact_banner",
                 "publisher_transparency_panel",
                 "single_item_information_panel"
         );
 
-        final var joinMembership = new StringFilterGroup(
+        final StringFilterGroup joinMembership = new StringFilterGroup(
                 SettingsEnum.HIDE_JOIN_BUTTON,
                 "compact_sponsor_button"
         );
 
-        final var latestPosts = new StringFilterGroup(
+        final StringFilterGroup latestPosts = new StringFilterGroup(
                 SettingsEnum.HIDE_LATEST_POSTS,
                 "post_shelf"
         );
 
-        final var medicalPanel = new StringFilterGroup(
+        final StringFilterGroup medicalPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_MEDICAL_PANEL,
                 "emergency_onebox",
                 "medical_panel"
         );
 
-        final var movieShelf = new StringFilterGroup(
+        final StringFilterGroup movieShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_MOVIE_SHELF,
                 "compact_movie",
                 "horizontal_movie_shelf",
@@ -92,23 +92,23 @@ public final class LayoutComponentsFilter extends Filter {
                 "set_reminder_button"
         );
 
-        final var searchBar = new StringFilterGroup(
+        final StringFilterGroup searchBar = new StringFilterGroup(
                 SettingsEnum.HIDE_SEARCH_BAR,
                 "search_bar_entry_point"
         );
 
-        final var startTrial = new StringFilterGroup(
+        final StringFilterGroup startTrial = new StringFilterGroup(
                 SettingsEnum.HIDE_START_TRIAL_BUTTON,
                 "channel_purchase_button"
         );
 
-        final var ticketShelf = new StringFilterGroup(
+        final StringFilterGroup ticketShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_TICKET_SHELF,
                 "ticket_horizontal_shelf",
                 "ticket_shelf"
         );
 
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 albumCard,
                 audioTrackButton,
                 channelMemberShelf,
@@ -124,7 +124,7 @@ public final class LayoutComponentsFilter extends Filter {
                 ticketShelf
         );
 
-        this.identifierFilterGroupList.addAll(
+        identifierFilterGroupList.addAll(
                 chipsShelf,
                 graySeparator,
                 searchBar

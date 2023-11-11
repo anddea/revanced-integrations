@@ -11,7 +11,7 @@ public final class CarouselShelfFilter extends Filter {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public CarouselShelfFilter() {
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_CAROUSEL_SHELF,
                         "music_grid_item_carousel"

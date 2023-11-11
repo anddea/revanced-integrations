@@ -11,7 +11,7 @@ public final class AdsFilter extends Filter {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public AdsFilter() {
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_MUSIC_ADS,
                         "statement_banner"

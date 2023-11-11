@@ -11,7 +11,7 @@ public final class EmojiPickerFilter extends Filter {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public EmojiPickerFilter() {
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_EMOJI_PICKER,
                         "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"

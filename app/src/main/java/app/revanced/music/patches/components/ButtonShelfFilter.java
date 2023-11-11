@@ -11,7 +11,7 @@ public final class ButtonShelfFilter extends Filter {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public ButtonShelfFilter() {
-        this.pathFilterGroupList.addAll(
+        pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_BUTTON_SHELF,
                         "entry_point_button_shelf"
