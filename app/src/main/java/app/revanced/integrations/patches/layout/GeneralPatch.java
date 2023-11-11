@@ -39,6 +39,10 @@ public class GeneralPatch {
         return SettingsEnum.ENABLE_GRADIENT_LOADING_SCREEN.getBoolean();
     }
 
+    public static boolean enableMusicSearch() {
+        return SettingsEnum.ENABLE_MUSIC_SEARCH.getBoolean();
+    }
+
     public static boolean enableTabletMiniPlayer(boolean original) {
         return SettingsEnum.ENABLE_TABLET_MINI_PLAYER.getBoolean() || original;
     }
