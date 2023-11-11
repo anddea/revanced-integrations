@@ -36,10 +36,11 @@ public class PlaybackSpeedPatch {
     public static void userChangedSpeed(final float speed) {
         selectedSpeed = speed;
 
-        if (SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.getBoolean()) {
-            SettingsEnum.DEFAULT_PLAYBACK_SPEED.saveValue(speed);
-            showToastShort(str("revanced_save_playback_speed") + "\u2009" + speed + "x");
-        }
+        if (!SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.getBoolean())
+            return;
+
+        SettingsEnum.DEFAULT_PLAYBACK_SPEED.saveValue(speed);
+        showToastShort(str("revanced_save_playback_speed", speed + "x"));
     }
 
     public static void overrideSpeed(final float speedValue) {
