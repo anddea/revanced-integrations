@@ -198,6 +198,7 @@ public enum SettingsEnum {
     ENABLE_NEW_SPLASH_ANIMATION("revanced_enable_new_splash_animation", BOOLEAN, TRUE, true),
     ENABLE_OPEN_LINKS_DIRECTLY("revanced_enable_open_links_directly", BOOLEAN, TRUE),
     DOUBLE_BACK_TIMEOUT("revanced_double_back_timeout", INTEGER, 2, true),
+    SANITIZE_SHARING_LINKS("revanced_sanitize_sharing_links", BOOLEAN, true, true),
 
     // Experimental Flags
     DISABLE_QUIC_PROTOCOL("revanced_disable_quic_protocol", BOOLEAN, FALSE, true),
