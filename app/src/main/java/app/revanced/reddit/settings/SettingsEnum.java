@@ -50,7 +50,7 @@ public enum SettingsEnum {
             "Open links outside of the app directly in your browser"),
     SANITIZE_URL_QUERY("revanced_sanitize_url_query", BOOLEAN, TRUE,
             "Sanitize sharing links",
-            "Removes (tracking) query parameters from the URLs when sharing links");
+            "Removes tracking query parameters from the URLs when sharing links");
 
     private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
 
