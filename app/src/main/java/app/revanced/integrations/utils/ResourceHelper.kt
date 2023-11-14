@@ -22,12 +22,9 @@ object ResourceHelper {
 
     @JvmStatic
     fun hidePlayerButton(view: View, original: Int): Int {
-        arrayOf(
-            PlayerButton.COLLAPSE,
-            PlayerButton.PREVIOUS_NEXT
-        ).forEach {
-            if (it.settings.boolean) {
-                for (id in it.filter) {
+        PlayerButton.COLLAPSE.apply {
+            if (settings.boolean) {
+                for (id in filter) {
                     if (view.id == identifier(id, ResourceType.ID))
                         return 8
                 }
@@ -44,14 +41,5 @@ private enum class PlayerButton(
     COLLAPSE(
         SettingsEnum.HIDE_COLLAPSE_BUTTON,
         listOf("player_collapse_button")
-    ),
-    PREVIOUS_NEXT(
-        SettingsEnum.HIDE_PREVIOUS_NEXT_BUTTON,
-        listOf(
-            "player_control_next_button",
-            "player_control_next_button_touch_area",
-            "player_control_previous_button",
-            "player_control_previous_button_touch_area"
-        )
     );
 }
