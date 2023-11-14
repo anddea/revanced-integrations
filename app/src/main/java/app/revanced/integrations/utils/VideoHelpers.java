@@ -123,21 +123,12 @@ public class VideoHelpers {
 
         final int index = Arrays.binarySearch(playbackSpeedEntryValues, String.valueOf(currentSpeed));
 
-        AlertDialog speedDialog = new AlertDialog.Builder(context)
+        new AlertDialog.Builder(context)
                 .setSingleChoiceItems(playbackSpeedEntries, index, (mDialog, mIndex) -> {
                     overrideSpeedBridge(Float.parseFloat(playbackSpeedEntryValues[mIndex] + "f"));
                     mDialog.dismiss();
                 })
                 .show();
-
-        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        WindowManager.LayoutParams params = Objects.requireNonNull(speedDialog.getWindow()).getAttributes();
-        params.width = (int) (size.x * 0.45);
-        speedDialog.getWindow().setAttributes(params);
-        speedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
     public static String getFormattedQualityString(@Nullable String prefix) {

@@ -71,8 +71,6 @@ public class VideoHelpers {
         display.getSize(size);
 
         WindowManager.LayoutParams params = Objects.requireNonNull(speedDialog.getWindow()).getAttributes();
-        params.width = (int) (size.x * 0.5);
-
         if (CustomPlaybackSpeedPatch.getLength(7) > 7)
             params.height = (int) (size.y * 0.45);
 
