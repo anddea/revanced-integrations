@@ -61,11 +61,11 @@ public final class VideoInformation {
     public static boolean seekTo(long millisecond) {
         ReVancedUtils.verifyOnMainThread();
         try {
-            return (Boolean) seekMethod.invoke(playerControllerRef.get(), millisecond);
+            return (Boolean) seekMethod.invoke(playerControllerRef.get(), Math.min(millisecond, videoLength));
         } catch (Exception ex) {
             LogHelper.printException(VideoInformation.class, "Failed to seek", ex);
-            return false;
         }
+        return false;
     }
 
     public static void seekToRelative(long millisecondsRelative) {
