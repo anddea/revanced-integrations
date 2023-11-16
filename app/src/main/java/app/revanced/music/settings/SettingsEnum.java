@@ -68,6 +68,7 @@ public enum SettingsEnum {
     HIDE_FLYOUT_PANEL_PLAY_NEXT("revanced_hide_flyout_panel_play_next", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_QUALITY("revanced_hide_flyout_panel_quality", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_REMOVE_FROM_LIBRARY("revanced_hide_flyout_panel_remove_from_library", BOOLEAN, FALSE),
+    HIDE_FLYOUT_PANEL_REMOVE_FROM_PLAYLIST("revanced_hide_flyout_panel_remove_from_playlist", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_REPORT("revanced_hide_flyout_panel_report", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_SAVE_EPISODE_FOR_LATER("revanced_hide_flyout_panel_save_episode_for_later", BOOLEAN, FALSE),
     HIDE_FLYOUT_PANEL_SAVE_TO_LIBRARY("revanced_hide_flyout_panel_save_to_library", BOOLEAN, FALSE),
