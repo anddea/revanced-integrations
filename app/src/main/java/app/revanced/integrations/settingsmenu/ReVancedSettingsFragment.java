@@ -39,7 +39,6 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
 
-import app.revanced.integrations.BuildConfig;
 import app.revanced.integrations.patches.button.AlwaysRepeat;
 import app.revanced.integrations.patches.button.CopyVideoUrl;
 import app.revanced.integrations.patches.button.CopyVideoUrlTimestamp;
@@ -183,7 +182,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setBackupRestorePreference();
         setExternalDownloaderPreference();
         setOpenSettingsPreference();
-        setPatchesInformation();
         setPlaybackSpeed();
         setPlayerFlyoutPanelAdditionalSettings();
         setShortsToolBar();
@@ -395,16 +393,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         } catch (Throwable th) {
             LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setSpoofAppVersionTarget" + th);
         }
-    }
-
-    /**
-     * Add Preference for github support
-     * Also setSummary integrations version (BuildConfig.VERSION_NAME)
-     */
-    private void setPatchesInformation() {
-        Preference integrations = findPreference("revanced-integrations");
-        if (integrations != null)
-            integrations.setSummary(BuildConfig.VERSION_NAME);
     }
 
     /**
