@@ -44,6 +44,10 @@ public class GeneralPatch {
         hideViewBy0dpUnderCondition(SettingsEnum.HIDE_CATEGORY_BAR.getBoolean(), view);
     }
 
+    public static boolean hideHistoryButton(boolean original) {
+        return !SettingsEnum.HIDE_HISTORY_BUTTON.getBoolean() && original;
+    }
+
     public static boolean hideNewPlaylistButton() {
         return SettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
     }

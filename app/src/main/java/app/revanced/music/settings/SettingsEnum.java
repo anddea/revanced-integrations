@@ -95,6 +95,7 @@ public enum SettingsEnum {
     HIDE_CATEGORY_BAR("revanced_hide_category_bar", BOOLEAN, FALSE, true),
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
     HIDE_EMOJI_PICKER("revanced_hide_emoji_picker", BOOLEAN, FALSE),
+    HIDE_HISTORY_BUTTON("revanced_hide_history_button", BOOLEAN, FALSE),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, FALSE),
     HIDE_PLAYLIST_CARD("revanced_hide_playlist_card", BOOLEAN, FALSE, true),
     START_PAGE("revanced_start_page", STRING, "FEmusic_home", true),
