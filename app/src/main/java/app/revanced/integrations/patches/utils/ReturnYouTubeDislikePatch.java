@@ -140,6 +140,21 @@ public class ReturnYouTubeDislikePatch {
      */
     private static Spanned rollingNumberSpan;
 
+    private static final TextWatcher rollingNumberTextWatcher = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        public void afterTextChanged(Editable s) {
+            if (oldUIReplacementSpan == null || rollingNumberSpan.toString().equals(s.toString())) {
+                return;
+            }
+            s.replace(0, s.length(), rollingNumberSpan); // Causes a recursive call back into this listener
+        }
+    };
+
 
     public static void onRYDStatusChange(boolean rydEnabled) {
         if (!rydEnabled) {
@@ -527,12 +542,15 @@ public class ReturnYouTubeDislikePatch {
         if (rollingNumberSpan == null) {
             return;
         }
-
         // Spanned text is not used in the TextView.
         // Therefore, check if the TextView contains one of the custom created spans, and apply spanned text.
-        if (isPreviouslyCreatedSegmentedSpan(textView.getText().toString())) {
-            textView.setText(rollingNumberSpan);
+        if (!isPreviouslyCreatedSegmentedSpan(textView.getText().toString())) {
+            return;
         }
+
+        textView.setText(rollingNumberSpan);
+        textView.removeTextChangedListener(rollingNumberTextWatcher);
+        textView.addTextChangedListener(rollingNumberTextWatcher);
     }
 
 
@@ -613,7 +631,6 @@ public class ReturnYouTubeDislikePatch {
                 if (videoIdIsSame(currentVideoData, videoId)) {
                     return;
                 }
-                rollingNumberSpan = null;
                 ReturnYouTubeDislike data = ReturnYouTubeDislike.getFetchForVideoId(videoId);
                 // Pre-emptively set the data to short status.
                 // Required to prevent Shorts data from being used on a minimized video in incognito mode.
