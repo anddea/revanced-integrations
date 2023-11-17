@@ -187,6 +187,7 @@ public enum SettingsEnum {
     HIDE_GAME_SECTION("revanced_hide_game_section", BOOLEAN, FALSE),
     HIDE_MUSIC_SECTION("revanced_hide_music_section", BOOLEAN, FALSE),
     HIDE_PLACE_SECTION("revanced_hide_place_section", BOOLEAN, FALSE),
+    HIDE_PODCAST_SECTION("revanced_hide_podcast_section", BOOLEAN, FALSE),
     HIDE_TRANSCIPT_SECTION("revanced_hide_transcript_section", BOOLEAN, FALSE),
 
 

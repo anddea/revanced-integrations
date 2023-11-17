@@ -44,6 +44,11 @@ final class DescriptionsFilter extends Filter {
                 "place_section"
         );
 
+        final StringFilterGroup podcastSection = new StringFilterGroup(
+                SettingsEnum.HIDE_PODCAST_SECTION,
+                "playlist_section"
+        );
+
         final StringFilterGroup transcriptSection = new StringFilterGroup(
                 SettingsEnum.HIDE_TRANSCIPT_SECTION,
                 "transcript_section"
@@ -56,6 +61,7 @@ final class DescriptionsFilter extends Filter {
                 gameSection,
                 musicSection,
                 placeSection,
+                podcastSection,
                 transcriptSection
         );
     }
