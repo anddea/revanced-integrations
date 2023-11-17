@@ -52,7 +52,10 @@ public class GeneralPatch {
     }
 
     public static boolean enableWideSearchBarInYouTab(boolean original) {
-        return !SettingsEnum.ENABLE_WIDE_SEARCH_BAR_IN_YOU_TAB.getBoolean() && original;
+        if (!SettingsEnum.ENABLE_WIDE_SEARCH_BAR.getBoolean())
+            return original;
+        else
+            return !SettingsEnum.ENABLE_WIDE_SEARCH_BAR_IN_YOU_TAB.getBoolean() && original;
     }
 
     public static void hideAccountList(View view, CharSequence charSequence) {
