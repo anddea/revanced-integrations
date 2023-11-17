@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         //noinspection AndroidGradlePluginVersion
-        classpath("com.android.tools.build:gradle:8.3.0-alpha13")
+        classpath("com.android.tools.build:gradle:8.3.0-alpha14")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
 
         // NOTE: Do not place your application dependencies here; they belong
