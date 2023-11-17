@@ -26,6 +26,7 @@ public class StoryBoardRendererRequester {
 
     @Nullable
     private static JSONObject fetchPlayerResponse(@NonNull String requestBody) {
+        final long startTime = System.currentTimeMillis();
         try {
             ReVancedUtils.verifyOffMainThread();
             Objects.requireNonNull(requestBody);
@@ -44,6 +45,8 @@ public class StoryBoardRendererRequester {
             LogHelper.printException(StoryBoardRendererRequester.class, "API timed out", ex);
         } catch (Exception ex) {
             LogHelper.printException(StoryBoardRendererRequester.class, "Failed to fetch storyboard URL", ex);
+        } finally {
+            LogHelper.printDebug(StoryBoardRendererRequester.class, "Request took: " + (System.currentTimeMillis() - startTime) + "ms");
         }
 
         return null;

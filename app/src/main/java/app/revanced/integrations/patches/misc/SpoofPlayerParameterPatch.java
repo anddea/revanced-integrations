@@ -125,7 +125,7 @@ public class SpoofPlayerParameterPatch {
     private static StoryboardRenderer getRenderer() {
         if (rendererFuture != null) {
             try {
-                return rendererFuture.get(5000, TimeUnit.MILLISECONDS);
+                return rendererFuture.get(2000, TimeUnit.MILLISECONDS);
             } catch (TimeoutException ex) {
                 LogHelper.printDebug(SpoofPlayerParameterPatch.class, "Could not get renderer (get timed out)");
             } catch (ExecutionException | InterruptedException ex) {
