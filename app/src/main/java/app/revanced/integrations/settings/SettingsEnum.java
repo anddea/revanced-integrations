@@ -182,6 +182,7 @@ public enum SettingsEnum {
     HIDE_BROWSE_STORE_BUTTON("revanced_hide_browse_store_button", BOOLEAN, TRUE),
     HIDE_CHANNEL_MEMBER_SHELF("revanced_hide_channel_member_shelf", BOOLEAN, TRUE),
     HIDE_CHANNEL_PROFILE_LINKS("revanced_hide_channel_profile_links", BOOLEAN, TRUE),
+    HIDE_FOR_YOU_SHELF("revanced_hide_for_you_shelf", BOOLEAN, TRUE),
 
     // Description
     HIDE_CHAPTERS("revanced_hide_chapters", BOOLEAN, FALSE),

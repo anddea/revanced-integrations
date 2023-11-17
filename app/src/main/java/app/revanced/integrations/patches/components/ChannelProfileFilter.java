@@ -33,11 +33,17 @@ public final class ChannelProfileFilter extends Filter {
                 "channel_header_links"
         );
 
+        final StringFilterGroup forYouShelf = new StringFilterGroup(
+                SettingsEnum.HIDE_FOR_YOU_SHELF,
+                "mixed_content_shelf"
+        );
+
         pathFilterGroupList.addAll(
                 browseButtonPhone,
                 browseButtonTablet,
                 channelMemberShelf,
-                channelProfileLinks
+                channelProfileLinks,
+                forYouShelf
         );
     }
 
