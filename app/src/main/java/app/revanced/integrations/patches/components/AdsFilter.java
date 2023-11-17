@@ -13,9 +13,11 @@ public final class AdsFilter extends Filter {
 
     public AdsFilter() {
         exceptions.addPatterns(
-                "comment_thread", // skip blocking anything in the comments
+                "download_",
+                "downloads_",
                 "home_video_with_context", // Don't filter anything in the home page video component.
                 "library_recent_shelf",
+                "playlist_add",
                 "related_video_with_context", // Don't filter anything in the related video component.
                 "video_description_header",
                 "|comment." // skip blocking anything in the comments replies
@@ -50,7 +52,9 @@ public final class AdsFilter extends Filter {
         final StringFilterGroup generalAds = new StringFilterGroup(
                 SettingsEnum.HIDE_GENERAL_ADS,
                 "active_view_display_container",
+                "ads_",
                 "ads_video_with_context",
+                "ad_",
                 "banner_text_icon",
                 "brand_video_shelf",
                 "brand_video_singleton",
@@ -72,8 +76,12 @@ public final class AdsFilter extends Filter {
                 "video_display_carousel_buttoned_layout",
                 "video_display_full_layout",
                 "watch_metadata_app_promo",
+                "_ad",
+                "_ads",
                 "_ad_with",
-                "_buttoned_layout"
+                "_buttoned_layout",
+                "|ads_",
+                "|ad_"
         );
 
         final StringFilterGroup viewProducts = new StringFilterGroup(
