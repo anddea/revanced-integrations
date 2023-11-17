@@ -160,9 +160,6 @@ public enum SettingsEnum {
     CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true,
             parents(CUSTOM_FILTER)),
     HIDE_ALBUM_CARDS("revanced_hide_album_card", BOOLEAN, TRUE),
-    HIDE_BROWSE_STORE_BUTTON("revanced_hide_browse_store_button", BOOLEAN, TRUE),
-    HIDE_CHANNEL_MEMBER_SHELF("revanced_hide_channel_member_shelf", BOOLEAN, TRUE),
-    HIDE_CHANNEL_PROFILE_LINKS("revanced_hide_channel_profile_links", BOOLEAN, TRUE),
     HIDE_CHIPS_SHELF("revanced_hide_chips_shelf", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_HOME("revanced_hide_community_posts_home", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_hide_community_posts_subscriptions", BOOLEAN, FALSE),
@@ -180,6 +177,11 @@ public enum SettingsEnum {
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
     // Experimental Flags
     HIDE_VIDEO_WITH_LOW_VIEW("revanced_hide_video_with_low_view", BOOLEAN, FALSE, true),
+
+    // Channel Profile
+    HIDE_BROWSE_STORE_BUTTON("revanced_hide_browse_store_button", BOOLEAN, TRUE),
+    HIDE_CHANNEL_MEMBER_SHELF("revanced_hide_channel_member_shelf", BOOLEAN, TRUE),
+    HIDE_CHANNEL_PROFILE_LINKS("revanced_hide_channel_profile_links", BOOLEAN, TRUE),
 
     // Description
     HIDE_CHAPTERS("revanced_hide_chapters", BOOLEAN, FALSE),

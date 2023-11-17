@@ -35,16 +35,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "multi_feed_icon_button"
         );
 
-        final StringFilterGroup channelMemberShelf = new StringFilterGroup(
-                SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF,
-                "member_recognition_shelf"
-        );
-
-        final StringFilterGroup channelProfileLinks = new StringFilterGroup(
-                SettingsEnum.HIDE_CHANNEL_PROFILE_LINKS,
-                "channel_header_links"
-        );
-
         final StringFilterGroup chipsShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_CHIPS_SHELF,
                 "chips_shelf"
@@ -111,8 +101,6 @@ public final class LayoutComponentsFilter extends Filter {
         pathFilterGroupList.addAll(
                 albumCard,
                 audioTrackButton,
-                channelMemberShelf,
-                channelProfileLinks,
                 custom,
                 infoPanel,
                 joinMembership,

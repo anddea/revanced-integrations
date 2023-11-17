@@ -4,14 +4,14 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
-public final class BrowseStoreButtonFilter extends Filter {
+public final class ChannelProfileFilter extends Filter {
     private static final String BROWSE_BUTTON_PHONE_PATH = "|ContainerType|button.eml|";
     private static final String BROWSE_BUTTON_TABLET_PATH = "|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|button.eml|";
     private static final String JOIN_BUTTON_PATH = "|ContainerType|ContainerType|ContainerType|button.eml|";
     private final StringFilterGroup browseButtonPhone;
     private final StringFilterGroup browseButtonTablet;
 
-    public BrowseStoreButtonFilter() {
+    public ChannelProfileFilter() {
         browseButtonPhone = new StringFilterGroup(
                 SettingsEnum.HIDE_BROWSE_STORE_BUTTON,
                 "channel_profile_phone.eml",
@@ -23,9 +23,21 @@ public final class BrowseStoreButtonFilter extends Filter {
                 "channel_profile_tablet.eml"
         );
 
+        final StringFilterGroup channelMemberShelf = new StringFilterGroup(
+                SettingsEnum.HIDE_CHANNEL_MEMBER_SHELF,
+                "member_recognition_shelf"
+        );
+
+        final StringFilterGroup channelProfileLinks = new StringFilterGroup(
+                SettingsEnum.HIDE_CHANNEL_PROFILE_LINKS,
+                "channel_header_links"
+        );
+
         pathFilterGroupList.addAll(
                 browseButtonPhone,
-                browseButtonTablet
+                browseButtonTablet,
+                channelMemberShelf,
+                channelProfileLinks
         );
     }
 
@@ -38,6 +50,6 @@ public final class BrowseStoreButtonFilter extends Filter {
             return path.contains(BROWSE_BUTTON_TABLET_PATH);
         }
 
-        return false;
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }
