@@ -32,6 +32,9 @@ public final class MixPlaylistsFilter extends Filter {
      * Called from a different place then the other filters.
      */
     public static boolean filterMixPlaylists(final Object allValue, final byte[] bytes) {
+        if (bytes == null)
+            return false;
+
         // If MixPlaylists exist in a playlist, there is an issue where all lists are hidden
         if (exceptions.matches(allValue.toString()))
             return false;
