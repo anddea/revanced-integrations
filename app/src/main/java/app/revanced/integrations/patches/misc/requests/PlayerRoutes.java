@@ -22,6 +22,12 @@ final class PlayerRoutes {
     ).compile();
     static final String ANDROID_INNER_TUBE_BODY;
     static final String TV_EMBED_INNER_TUBE_BODY;
+
+    /**
+     * TCP connection and HTTP read timeout
+     */
+    private static final int CONNECTION_TIMEOUT_MILLISECONDS = 4 * 1000; // 4 Seconds.
+
     private static final String YT_API_URL = "https://www.youtube.com/youtubei/v1/";
 
     static {
@@ -78,7 +84,7 @@ final class PlayerRoutes {
      * @noinspection SameParameterValue
      */
     static HttpURLConnection getPlayerResponseConnectionFromRoute(Route.CompiledRoute route) throws IOException {
-        var connection = Requester.getConnectionFromCompiledRoute(YT_API_URL, route);
+        HttpURLConnection connection = Requester.getConnectionFromCompiledRoute(YT_API_URL, route);
         connection.setRequestProperty("User-Agent", String.format("com.google.android.youtube/%s (Linux; U; Android 12; GB) gzip", appVersionName));
         connection.setRequestProperty("X-Goog-Api-Format-Version", "2");
         connection.setRequestProperty("Content-Type", "application/json");
@@ -86,8 +92,8 @@ final class PlayerRoutes {
         connection.setUseCaches(false);
         connection.setDoOutput(true);
 
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
+        connection.setConnectTimeout(CONNECTION_TIMEOUT_MILLISECONDS);
+        connection.setReadTimeout(CONNECTION_TIMEOUT_MILLISECONDS);
         return connection;
     }
 

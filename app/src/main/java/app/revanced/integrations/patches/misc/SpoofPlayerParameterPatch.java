@@ -6,16 +6,11 @@ import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ReVancedUtils;
 
 /**
  * @noinspection ALL
@@ -53,7 +48,8 @@ public class SpoofPlayerParameterPatch {
      */
     private static volatile String lastPlayerResponseVideoId;
 
-    private static volatile Future<StoryboardRenderer> rendererFuture;
+    @Nullable
+    private static volatile StoryboardRenderer videoRenderer;
 
     private static volatile boolean originalStoryboardRenderer;
 
@@ -110,30 +106,13 @@ public class SpoofPlayerParameterPatch {
 
     private static void fetchStoryboardRenderer(String videoId) {
         if (!videoId.equals(lastPlayerResponseVideoId)) {
-            rendererFuture = ReVancedUtils.submitOnBackgroundThread(() -> getStoryboardRenderer(videoId));
             lastPlayerResponseVideoId = videoId;
+            // This will block starting video playback until the fetch completes.
+            // This is desired because if this returns without finishing the fetch,
+            // then video will start playback but the image will be frozen
+            // while the main thread call for the renderer waits for the fetch to complete.
+            videoRenderer = getStoryboardRenderer(videoId);
         }
-        // Block until the fetch is completed.  Without this, occasionally when a new video is opened
-        // the video will be frozen a few seconds while the audio plays.
-        // This is because the main thread is calling to get the storyboard but the fetch is not completed.
-        // To prevent this, call get() here and block until the fetch is completed.
-        // So later when the main thread calls to get the renderer it will never block as the future is done.
-        getRenderer();
-    }
-
-    @Nullable
-    private static StoryboardRenderer getRenderer() {
-        if (rendererFuture != null) {
-            try {
-                return rendererFuture.get(2000, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException ex) {
-                LogHelper.printDebug(SpoofPlayerParameterPatch.class, "Could not get renderer (get timed out)");
-            } catch (ExecutionException | InterruptedException ex) {
-                // Should never happen.
-                LogHelper.printException(SpoofPlayerParameterPatch.class, "Could not get renderer", ex);
-            }
-        }
-        return null;
     }
 
     /**
@@ -152,7 +131,7 @@ public class SpoofPlayerParameterPatch {
         if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || originalStoryboardRenderer)
             return null;
 
-        StoryboardRenderer renderer = getRenderer();
+        StoryboardRenderer renderer = videoRenderer;
         if (renderer != null)
             return renderer.spec();
 
@@ -170,7 +149,7 @@ public class SpoofPlayerParameterPatch {
         if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || originalStoryboardRenderer)
             return originalStoryboardRendererSpec;
 
-        StoryboardRenderer renderer = getRenderer();
+        StoryboardRenderer renderer = videoRenderer;
         if (renderer != null) {
             return renderer.isLiveStream() ? null : renderer.spec();
         }
@@ -185,7 +164,7 @@ public class SpoofPlayerParameterPatch {
         if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean() || originalStoryboardRenderer)
             return originalLevel;
 
-        StoryboardRenderer renderer = getRenderer();
+        StoryboardRenderer renderer = videoRenderer;
         if (renderer != null) {
             Integer recommendedLevel = renderer.recommendedLevel();
             if (recommendedLevel != null)

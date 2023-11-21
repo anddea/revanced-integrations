@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
@@ -21,11 +22,19 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class StoryBoardRendererRequester {
+
     private StoryBoardRendererRequester() {
     }
 
+    private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex,
+                                              boolean showToastOnIOException) {
+        if (showToastOnIOException)
+            ReVancedUtils.showToastShort(toastMessage);
+        LogHelper.printException(StoryBoardRendererRequester.class, toastMessage, ex);
+    }
+
     @Nullable
-    private static JSONObject fetchPlayerResponse(@NonNull String requestBody) {
+    private static JSONObject fetchPlayerResponse(@NonNull String requestBody, boolean showToastOnIOException) {
         final long startTime = System.currentTimeMillis();
         try {
             ReVancedUtils.verifyOffMainThread();
@@ -37,14 +46,21 @@ public class StoryBoardRendererRequester {
             connection.getOutputStream().write(innerTubeBody, 0, innerTubeBody.length);
 
             final int responseCode = connection.getResponseCode();
-            if (responseCode == 200) return Requester.parseJSONObject(connection);
+            if (responseCode == 200)
+                return Requester.parseJSONObject(connection);
 
-            LogHelper.printException(StoryBoardRendererRequester.class, "API not available: " + responseCode);
+            // Always show a toast for this, as a non 200 response means something is broken.
+            handleConnectionError("Spoof storyboard not available: " + responseCode,
+                    null, showToastOnIOException);
             connection.disconnect();
         } catch (SocketTimeoutException ex) {
-            LogHelper.printException(StoryBoardRendererRequester.class, "API timed out", ex);
+            handleConnectionError("Spoof storyboard temporarily not available (API timed out)",
+                    ex, showToastOnIOException);
+        } catch (IOException ex) {
+            handleConnectionError("Spoof storyboard temporarily not available: " + ex.getMessage(),
+                    ex, showToastOnIOException);
         } catch (Exception ex) {
-            LogHelper.printException(StoryBoardRendererRequester.class, "Failed to fetch storyboard URL", ex);
+            LogHelper.printException(StoryBoardRendererRequester.class, "Spoof storyboard fetch failed", ex); // Should never happen.
         } finally {
             LogHelper.printDebug(StoryBoardRendererRequester.class, "Request took: " + (System.currentTimeMillis() - startTime) + "ms");
         }
@@ -64,13 +80,13 @@ public class StoryBoardRendererRequester {
 
     /**
      * Fetches the storyboardRenderer from the innerTubeBody.
-     *
      * @param innerTubeBody The innerTubeBody to use to fetch the storyboardRenderer.
      * @return StoryboardRenderer or null if playabilityStatus is not OK.
      */
     @Nullable
-    private static StoryboardRenderer getStoryboardRendererUsingBody(@NonNull String innerTubeBody) {
-        final JSONObject playerResponse = fetchPlayerResponse(innerTubeBody);
+    private static StoryboardRenderer getStoryboardRendererUsingBody(@NonNull String innerTubeBody,
+                                                                     boolean showToastOnIOException) {
+        final JSONObject playerResponse = fetchPlayerResponse(innerTubeBody, showToastOnIOException);
         if (playerResponse != null && isPlayabilityStatusOk(playerResponse))
             return getStoryboardRendererUsingResponse(playerResponse);
 
@@ -107,23 +123,19 @@ public class StoryBoardRendererRequester {
 
     @Nullable
     public static StoryboardRenderer getStoryboardRenderer(@NonNull String videoId) {
-        try {
-            Objects.requireNonNull(videoId);
+        Objects.requireNonNull(videoId);
 
-            var renderer = getStoryboardRendererUsingBody(String.format(ANDROID_INNER_TUBE_BODY, videoId));
+        var renderer = getStoryboardRendererUsingBody(
+                String.format(ANDROID_INNER_TUBE_BODY, videoId), false);
+        if (renderer == null) {
+            LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using Android client");
+            renderer = getStoryboardRendererUsingBody(
+                    String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId), true);
             if (renderer == null) {
-                LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using Android client");
-                renderer = getStoryboardRendererUsingBody(String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId));
-                if (renderer == null) {
-                    LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using TV embedded client");
-                }
+                LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using TV embedded client");
             }
-
-            return renderer;
-        } catch (Exception ex) {
-            LogHelper.printException(StoryBoardRendererRequester.class, "Failed to fetch storyboard URL", ex);
         }
 
-        return null;
+        return renderer;
     }
 }

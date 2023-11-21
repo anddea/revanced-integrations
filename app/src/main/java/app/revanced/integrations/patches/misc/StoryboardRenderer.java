@@ -5,8 +5,7 @@ import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
-public record StoryboardRenderer(String spec, boolean isLiveStream,
-                                 @Nullable Integer recommendedLevel) {
+public record StoryboardRenderer(String spec, boolean isLiveStream, @Nullable Integer recommendedLevel) {
 
     @Override
     @NonNull
