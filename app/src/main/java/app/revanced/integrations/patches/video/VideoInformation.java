@@ -20,6 +20,7 @@ import app.revanced.integrations.utils.VideoHelpers;
  */
 public final class VideoInformation {
     private static final String SEEK_METHOD_NAME = "seekTo";
+    public static boolean isLiveStream = false;
 
     private static WeakReference<Object> playerControllerRef;
     private static Method seekMethod;
@@ -74,7 +75,7 @@ public final class VideoInformation {
 
     public static void reloadVideo() {
         ReVancedUtils.runOnMainThreadDelayed(() -> {
-                    if (videoLength < 10000)
+                    if (videoLength < 10000 || isLiveStream)
                         return;
 
                     final long lastVideoTime = videoTime;

@@ -15,14 +15,14 @@ public class PlaybackSpeedPatch {
     private static float selectedSpeed = 1.0f;
     private static String currentContentCpn;
 
-    public static void newVideoStarted(final String contentCpn, final boolean isLive) {
+    public static void newVideoStarted(final String contentCpn, final boolean isLiveStream) {
         try {
             if (contentCpn.isEmpty() || Objects.equals(currentContentCpn, contentCpn))
                 return;
 
             currentContentCpn = contentCpn;
 
-            if (getBoolean(REVANCED, "revanced_disable_default_playback_speed_live", true) && isLive)
+            if (getBoolean(REVANCED, "revanced_disable_default_playback_speed_live", true) && isLiveStream)
                 return;
 
             selectedSpeed = getFloat(REVANCED, "revanced_default_playback_speed", 1.0f);
