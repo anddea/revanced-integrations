@@ -142,7 +142,7 @@ public final class VideoInformation {
      * @param length The length of the video in milliseconds.
      */
     public static void setVideoLength(final long length) {
-        videoLength = length;
+        videoLength = length - 500;
     }
 
     /**
