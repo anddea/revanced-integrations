@@ -8,6 +8,7 @@ import app.revanced.integrations.utils.StringTrieSearch;
 final class DescriptionsFilter extends Filter {
 
     private final StringTrieSearch exceptions = new StringTrieSearch();
+    private final StringFilterGroup shoppingLinks;
 
     public DescriptionsFilter() {
         exceptions.addPatterns(
@@ -49,6 +50,11 @@ final class DescriptionsFilter extends Filter {
                 "playlist_section"
         );
 
+        shoppingLinks = new StringFilterGroup(
+                SettingsEnum.HIDE_SHOPPING_LINKS,
+                "expandable_list"
+        );
+
         final StringFilterGroup transcriptSection = new StringFilterGroup(
                 SettingsEnum.HIDE_TRANSCIPT_SECTION,
                 "transcript_section"
@@ -62,6 +68,7 @@ final class DescriptionsFilter extends Filter {
                 musicSection,
                 placeSection,
                 podcastSection,
+                shoppingLinks,
                 transcriptSection
         );
     }
@@ -70,6 +77,10 @@ final class DescriptionsFilter extends Filter {
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (exceptions.matches(path))
+            return false;
+
+        // Check for the index because of likelihood of false positives.
+        if (matchedGroup == shoppingLinks && matchedIndex != 0)
             return false;
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
