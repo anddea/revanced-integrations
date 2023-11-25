@@ -7,7 +7,7 @@ import app.revanced.integrations.utils.StringTrieSearch;
 
 public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
-    private static final String SEARCH_RESULTS_CONVERSION_CONTEXT = "heightConstraint=null";
+    private static final String SHORTS_SHELF_HEADER_CONVERSION_CONTEXT = "horizontalCollectionSwipeProtector=null";
 
     private final StringTrieSearch exceptions = new StringTrieSearch();
     private final StringFilterGroup infoPanel;
@@ -126,7 +126,9 @@ public final class ShortsFilter extends Filter {
             if (!path.startsWith(REEL_CHANNEL_BAR_PATH))
                 return false;
         } else if (matchedGroup == shelfHeader) {
-            if (!allValue.contains(SEARCH_RESULTS_CONVERSION_CONTEXT))
+            // Check ConversationContext to not hide shelf header in channel profile
+            // This value does not exist in the shelf header in the channel profile
+            if (!allValue.contains(SHORTS_SHELF_HEADER_CONVERSION_CONTEXT))
                 return false;
         }
 
