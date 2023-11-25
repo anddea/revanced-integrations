@@ -153,8 +153,18 @@ public abstract class TrieSearch<T> {
      * <p>
      * This is done to reduce memory usage, which can be substantial if many long patterns are used.
      */
-    private record TrieCompressedPath<T>(T pattern, int patternLength, int patternStartIndex,
-                                         TriePatternMatchedCallback<T> callback) {
+    private static final class TrieCompressedPath<T> {
+        final T pattern;
+        final int patternLength;
+        final int patternStartIndex;
+        final TriePatternMatchedCallback<T> callback;
+
+        TrieCompressedPath(T pattern, int patternLength, int patternStartIndex, TriePatternMatchedCallback<T> callback) {
+            this.pattern = pattern;
+            this.patternLength = patternLength;
+            this.patternStartIndex = patternStartIndex;
+            this.callback = callback;
+        }
         boolean matches(TrieNode<T> enclosingNode, // Used only for the get character method.
                         T searchText, int searchTextLength, int searchTextIndex, Object callbackParameter) {
             if (searchTextLength - searchTextIndex < patternLength - patternStartIndex) {

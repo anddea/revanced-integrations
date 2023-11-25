@@ -47,7 +47,7 @@ enum class PlayerType {
 
     companion object {
 
-        private val nameToPlayerType = entries.associateBy { it.name }
+        private val nameToPlayerType = values().associateBy { it.name }
 
         @JvmStatic
         fun setFromString(enumName: String) {

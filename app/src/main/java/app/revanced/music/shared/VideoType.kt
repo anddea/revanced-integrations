@@ -19,14 +19,14 @@ enum class VideoType {
 
     companion object {
 
-        private val nameToVideoType = entries.associateBy { it.name }
+        private val nameToVideoType = values().associateBy { it.name }
 
         @JvmStatic
         fun setFromString(enumName: String) {
             val newType = nameToVideoType[enumName]
             if (newType != null && current != newType) {
                 LogHelper.printDebug(
-                    VideoType.Companion::class.java,
+                    VideoType::class.java,
                     "VideoType changed to: $newType"
                 )
                 current = newType

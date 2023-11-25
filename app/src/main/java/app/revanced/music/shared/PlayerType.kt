@@ -18,14 +18,14 @@ enum class PlayerType {
 
     companion object {
 
-        private val nameToPlayerType = entries.associateBy { it.name }
+        private val nameToPlayerType = values().associateBy { it.name }
 
         @JvmStatic
         fun setFromString(enumName: String) {
             val newType = nameToPlayerType[enumName]
             if (newType != null && current != newType) {
                 LogHelper.printDebug(
-                    PlayerType.Companion::class.java,
+                    PlayerType::class.java,
                     "PlayerType changed to: $newType"
                 )
                 current = newType

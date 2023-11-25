@@ -13,7 +13,7 @@ enum class VideoState {
 
     companion object {
 
-        private val nameToVideoState = entries.associateBy { it.name }
+        private val nameToVideoState = values().associateBy { it.name }
 
         @JvmStatic
         fun setFromString(enumName: String) {
