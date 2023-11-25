@@ -229,6 +229,7 @@ public enum SettingsEnum {
     HIDE_HOME_BUTTON("revanced_hide_home_button", BOOLEAN, FALSE, true),
     HIDE_LIBRARY_BUTTON("revanced_hide_library_button", BOOLEAN, FALSE, true),
     HIDE_NAVIGATION_LABEL("revanced_hide_navigation_label", BOOLEAN, FALSE, true),
+    HIDE_NOTIFICATIONS_BUTTON("revanced_hide_notifications_button", BOOLEAN, FALSE, true),
     HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", BOOLEAN, FALSE, true),
     HIDE_SUBSCRIPTIONS_BUTTON("revanced_hide_subscriptions_button", BOOLEAN, FALSE, true),
     OPEN_LIBRARY_YOU_STARTUP("revanced_open_library_you_startup", BOOLEAN, FALSE, true),

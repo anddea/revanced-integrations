@@ -88,6 +88,7 @@ public class NavigationPatch {
         HOME("PIVOT_HOME", SettingsEnum.HIDE_HOME_BUTTON.getBoolean()),
         SHORTS("TAB_SHORTS", SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean()),
         SUBSCRIPTIONS("PIVOT_SUBSCRIPTIONS", SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean()),
+        NOTIFICATIONS("TAB_ACTIVITY", SettingsEnum.HIDE_NOTIFICATIONS_BUTTON.getBoolean()),
         LIBRARY("VIDEO_LIBRARY_WHITE", SettingsEnum.HIDE_LIBRARY_BUTTON.getBoolean());
 
         private final boolean enabled;

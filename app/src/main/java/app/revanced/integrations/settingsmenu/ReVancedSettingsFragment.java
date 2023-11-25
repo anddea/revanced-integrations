@@ -310,6 +310,10 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean(),
                 SettingsEnum.HIDE_CREATE_BUTTON
         );
+        enableDisablePreferences(
+                !SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean(),
+                SettingsEnum.HIDE_NOTIFICATIONS_BUTTON
+        );
     }
 
     /**
