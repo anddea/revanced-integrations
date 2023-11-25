@@ -6,14 +6,15 @@ plugins {
 }
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "32.0.0"
+    // noinspection GradleDependency
+    compileSdk = 33
+    buildToolsVersion = "33.0.2"
     namespace = "app.revanced.integrations"
 
     defaultConfig {
         applicationId = "app.revanced.integrations"
         minSdk = 26
-        //noinspection EditedTargetSdkVersion
+        // noinspection EditedTargetSdkVersion, ExpiredTargetSdkVersion
         targetSdk = 31
         multiDexEnabled = false
         versionName = project.version as String
