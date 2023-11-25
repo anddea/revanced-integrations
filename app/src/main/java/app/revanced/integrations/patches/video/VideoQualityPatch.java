@@ -88,7 +88,10 @@ public class VideoQualityPatch {
         if (preferredQuality == -2)
             return;
 
-        overrideQuality(preferredQuality);
+        ReVancedUtils.runOnMainThreadDelayed(() ->
+                        overrideQuality(preferredQuality),
+                500
+        );
     }
 
     /**
