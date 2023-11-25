@@ -48,7 +48,7 @@ public class VideoQualityPatch {
      * @param qualityValue preferred quality value
      */
     public static void overrideQuality(final int qualityValue) {
-        LogHelper.printDebug(VideoQualityPatch.class, "Quality changed to: " + qualityValue);
+        LogHelper.printDebug(() -> "Quality changed to: " + qualityValue);
         // Rest of the implementation added by patch.
     }
 
@@ -69,10 +69,10 @@ public class VideoQualityPatch {
                         }
                     }
                 }
-                LogHelper.printDebug(VideoQualityPatch.class, "videoQualities: " + videoQualities);
+                LogHelper.printDebug(() -> "videoQualities: " + videoQualities);
             }
         } catch (Exception ex) {
-            LogHelper.printException(VideoQualityPatch.class, "Failed to set quality list", ex);
+            LogHelper.printException(() -> "Failed to set quality list", ex);
         }
     }
 

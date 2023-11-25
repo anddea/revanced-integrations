@@ -8,22 +8,15 @@ import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.view.Display;
-import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Objects;
 
 import app.revanced.integrations.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.patches.video.VideoInformation;
@@ -100,7 +93,7 @@ public class VideoHelpers {
 
             return findIndex >= 0 ? labelArray[findIndex] : packageName;
         } catch (Exception e) {
-            LogHelper.printException(VideoHelpers.class, "Failed to set ExternalDownloaderName", e);
+            LogHelper.printException(() -> "Failed to set ExternalDownloaderName", e);
         }
         return packageName;
     }

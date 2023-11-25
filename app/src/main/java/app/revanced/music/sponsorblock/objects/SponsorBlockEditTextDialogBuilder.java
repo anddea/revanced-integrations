@@ -53,7 +53,7 @@ public class SponsorBlockEditTextDialogBuilder {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockEditTextDialogBuilder.class, "editTextDialogBuilder failure", ex);
+            LogHelper.printException(() -> "editTextDialogBuilder failure", ex);
         }
     }
 

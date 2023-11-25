@@ -40,7 +40,7 @@ public class ListDialogBuilder {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(ListDialogBuilder.class, "listDialogBuilder failure", ex);
+            LogHelper.printException(() -> "listDialogBuilder failure", ex);
         }
     }
 }

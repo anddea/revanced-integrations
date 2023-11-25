@@ -165,6 +165,7 @@ public abstract class TrieSearch<T> {
             this.patternStartIndex = patternStartIndex;
             this.callback = callback;
         }
+
         boolean matches(TrieNode<T> enclosingNode, // Used only for the get character method.
                         T searchText, int searchTextLength, int searchTextIndex, Object callbackParameter) {
             if (searchTextLength - searchTextIndex < patternLength - patternStartIndex) {

@@ -14,7 +14,7 @@ public final class NavigationButtonsPatch {
                 if (button.enabled && viewGroup.getChildCount() > button.index)
                     viewGroup.getChildAt(button.index).setVisibility(View.GONE);
         } catch (Exception exception) {
-            LogHelper.printException(NavigationButtonsPatch.class, "Failed to remove button view", exception);
+            LogHelper.printException(() -> "Failed to remove button view", exception);
         }
     }
 

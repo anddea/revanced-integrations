@@ -321,7 +321,7 @@ public class ReturnYouTubeDislike {
                 // But YouTube disregards locale specific number characters
                 // and instead shows english number characters everywhere.
                 Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                LogHelper.printDebug(ReturnYouTubeDislike.class, "Locale: " + locale);
+                LogHelper.printDebug(() -> "Locale: " + locale);
                 dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
             }
             return dislikeCountFormatter.format(dislikeCount);
@@ -335,7 +335,7 @@ public class ReturnYouTubeDislike {
         synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
             if (dislikePercentageFormatter == null) {
                 Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                LogHelper.printDebug(ReturnYouTubeDislike.class, "Locale: " + locale);
+                LogHelper.printDebug(() -> "Locale: " + locale);
                 dislikePercentageFormatter = NumberFormat.getPercentInstance(locale);
             }
             if (dislikePercentage >= 0.01) { // at least 1%
@@ -356,7 +356,7 @@ public class ReturnYouTubeDislike {
             fetchCache.values().removeIf(value -> {
                 final boolean expired = value.isExpired(now);
                 if (expired)
-                    LogHelper.printDebug(ReturnYouTubeDislike.class, "Removing expired fetch: " + value.videoId);
+                    LogHelper.printDebug(() -> "Removing expired fetch: " + value.videoId);
                 return expired;
             });
 
@@ -397,9 +397,9 @@ public class ReturnYouTubeDislike {
         try {
             return future.get(maxTimeToWait, TimeUnit.MILLISECONDS);
         } catch (TimeoutException ex) {
-            LogHelper.printDebug(ReturnYouTubeDislike.class, "Waited but future was not complete after: " + maxTimeToWait + "ms");
+            LogHelper.printDebug(() -> "Waited but future was not complete after: " + maxTimeToWait + "ms");
         } catch (ExecutionException | InterruptedException ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "Future failure ", ex); // will never happen
+            LogHelper.printException(() -> "Future failure ", ex); // will never happen
         }
         return null;
     }
@@ -413,7 +413,7 @@ public class ReturnYouTubeDislike {
 
     private synchronized void clearUICache() {
         if (replacementLikeDislikeSpan != null) {
-            LogHelper.printDebug(ReturnYouTubeDislike.class, "Clearing replacement span for: " + videoId);
+            LogHelper.printDebug(() -> "Clearing replacement span for: " + videoId);
         }
         replacementLikeDislikeSpan = null;
     }
@@ -437,7 +437,7 @@ public class ReturnYouTubeDislike {
     public synchronized Spanned getDislikesSpanForRegularVideo(@NonNull Spanned original,
                                                                boolean isSegmentedButton,
                                                                boolean isRollingNumber) {
-        return waitForFetchAndUpdateReplacementSpan(original, isSegmentedButton, isRollingNumber,false);
+        return waitForFetchAndUpdateReplacementSpan(original, isSegmentedButton, isRollingNumber, false);
     }
 
     /**
@@ -456,7 +456,7 @@ public class ReturnYouTubeDislike {
         try {
             RYDVoteData votingData = getFetchData(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH);
             if (votingData == null) {
-                LogHelper.printDebug(ReturnYouTubeDislike.class, "Cannot add dislike to UI (RYD data not available)");
+                LogHelper.printDebug(() -> "Cannot add dislike to UI (RYD data not available)");
                 return original;
             }
 
@@ -474,18 +474,18 @@ public class ReturnYouTubeDislike {
                     // 2. opened a short (without closing the regular video)
                     // 3. closed the short
                     // 4. regular video is now present, but the videoId and RYD data is still for the short
-                    LogHelper.printDebug(ReturnYouTubeDislike.class, "Ignoring regular video dislike span,"
+                    LogHelper.printDebug(() -> "Ignoring regular video dislike span,"
                             + " as data loaded was previously used for a Short: " + videoId);
                     return original;
                 }
 
                 if (originalDislikeSpan != null && replacementLikeDislikeSpan != null) {
                     if (spansHaveEqualTextAndColor(original, replacementLikeDislikeSpan)) {
-                        LogHelper.printDebug(ReturnYouTubeDislike.class, "Ignoring previously created dislikes span of data: " + videoId);
+                        LogHelper.printDebug(() -> "Ignoring previously created dislikes span of data: " + videoId);
                         return original;
                     }
                     if (spansHaveEqualTextAndColor(original, originalDislikeSpan)) {
-                        LogHelper.printDebug(ReturnYouTubeDislike.class, "Replacing span with previously created dislike span of data: " + videoId);
+                        LogHelper.printDebug(() -> "Replacing span with previously created dislike span of data: " + videoId);
                         return replacementLikeDislikeSpan;
                     }
                 }
@@ -493,7 +493,7 @@ public class ReturnYouTubeDislike {
                     // need to recreate using original, as original has prior outdated dislike values
                     if (originalDislikeSpan == null) {
                         // Should never happen.
-                        LogHelper.printDebug(ReturnYouTubeDislike.class, "Cannot add dislikes - original span is null. videoId: " + videoId);
+                        LogHelper.printDebug(() -> "Cannot add dislikes - original span is null. videoId: " + videoId);
                         return original;
                     }
                     original = originalDislikeSpan;
@@ -506,13 +506,13 @@ public class ReturnYouTubeDislike {
                 }
                 originalDislikeSpan = original;
                 replacementLikeDislikeSpan = createDislikeSpan(original, isSegmentedButton, isRollingNumber, votingData);
-                LogHelper.printDebug(ReturnYouTubeDislike.class, "Replaced: '" + originalDislikeSpan + "' with: '"
+                LogHelper.printDebug(() -> "Replaced: '" + originalDislikeSpan + "' with: '"
                         + replacementLikeDislikeSpan + "'" + " using video: " + videoId);
 
                 return replacementLikeDislikeSpan;
             }
         } catch (Exception e) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
+            LogHelper.printException(() -> "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
         }
         return original;
     }
@@ -534,11 +534,11 @@ public class ReturnYouTubeDislike {
                 try { // Must wrap in try/catch to properly log exceptions.
                     ReturnYouTubeDislikeApi.sendVote(videoId, vote);
                 } catch (Exception ex) {
-                    LogHelper.printException(ReturnYouTubeDislike.class, "Failed to send vote", ex);
+                    LogHelper.printException(() -> "Failed to send vote", ex);
                 }
             });
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "Error trying to send vote", ex);
+            LogHelper.printException(() -> "Error trying to send vote", ex);
         }
     }
 
@@ -550,7 +550,7 @@ public class ReturnYouTubeDislike {
     public void setUserVote(@NonNull Vote vote) {
         Objects.requireNonNull(vote);
         try {
-            LogHelper.printDebug(ReturnYouTubeDislike.class, "setUserVote: " + vote);
+            LogHelper.printDebug(() -> "setUserVote: " + vote);
 
             synchronized (this) {
                 userVote = vote;
@@ -562,14 +562,14 @@ public class ReturnYouTubeDislike {
                 RYDVoteData voteData = getFetchData(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH);
                 if (voteData == null) {
                     // RYD fetch failed.
-                    LogHelper.printDebug(ReturnYouTubeDislike.class, "Cannot update UI (vote data not available)");
+                    LogHelper.printDebug(() -> "Cannot update UI (vote data not available)");
                     return;
                 }
                 voteData.updateUsingVote(vote);
             } // Else, vote will be applied after fetch completes.
 
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "setUserVote failure", ex);
+            LogHelper.printException(() -> "setUserVote failure", ex);
         }
     }
 
@@ -591,6 +591,7 @@ public class ReturnYouTubeDislike {
  */
 class FixedWidthEmptySpan extends ReplacementSpan {
     final int fixedWidth;
+
     /**
      * @param fixedWith Fixed width in screen pixels.
      */
@@ -598,11 +599,13 @@ class FixedWidthEmptySpan extends ReplacementSpan {
         this.fixedWidth = fixedWith;
         if (fixedWith < 0) throw new IllegalArgumentException();
     }
+
     @Override
     public int getSize(@NonNull Paint paint, @NonNull CharSequence text,
                        int start, int end, @Nullable Paint.FontMetricsInt fontMetrics) {
         return fixedWidth;
     }
+
     @Override
     public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end,
                      float x, int top, int y, int bottom, @NonNull Paint paint) {
@@ -618,8 +621,8 @@ class VerticallyCenteredImageSpan extends ImageSpan {
 
     /**
      * @param useOriginalWidth Use the original layout width of the text this span is applied to,
-     * and not the bounds of the Drawable. Drawable is always displayed using it's own bounds,
-     * and this setting only affects the layout width of the entire span.
+     *                         and not the bounds of the Drawable. Drawable is always displayed using it's own bounds,
+     *                         and this setting only affects the layout width of the entire span.
      */
     public VerticallyCenteredImageSpan(Drawable drawable, boolean useOriginalWidth) {
         super(drawable);

@@ -171,7 +171,7 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
         // Since litho filtering is multi-threaded, this method can be concurrently called by multiple threads.
         if (search != null)
             return; // Thread race and another thread already initialized the search.
-        LogHelper.printDebug(LithoFilterPatch.class, "Creating prefix search tree for: " + this);
+        LogHelper.printDebug(() -> "Creating prefix search tree for: " + this);
         TrieSearch<V> search = createSearchGraph();
         for (T group : filterGroups) {
             if (!group.includeInSearch()) {
@@ -254,7 +254,7 @@ abstract class Filter {
     boolean isFiltered(String path, FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) {
             if (matchedList == pathFilterGroupList) {
-                LogHelper.printDebug(LithoFilterPatch.class, getClass().getSimpleName() + " Filtered path: " + path);
+                LogHelper.printDebug(() -> getClass().getSimpleName() + " Filtered path: " + path);
             }
         }
         return true;
@@ -274,7 +274,7 @@ public final class LithoFilterPatch {
             filterGroupLists(pathSearchTree, filter, filter.pathFilterGroupList);
         }
 
-        LogHelper.printDebug(LithoFilterPatch.class, "Using: "
+        LogHelper.printDebug(() -> "Using: "
                 + pathSearchTree.numberOfPatterns() + " path filters"
                 + " (" + pathSearchTree.getEstimatedMemorySize() + " KB)");
     }
@@ -307,12 +307,12 @@ public final class LithoFilterPatch {
                 return false;
 
             LithoFilterParameters parameter = new LithoFilterParameters(pathBuilder);
-            LogHelper.printDebug(LithoFilterPatch.class, "Searching " + parameter);
+            LogHelper.printDebug(() -> "Searching " + parameter);
 
             if (pathSearchTree.matches(parameter.path, parameter))
                 return true;
         } catch (Exception ex) {
-            LogHelper.printException(LithoFilterPatch.class, "Litho filter failure", ex);
+            LogHelper.printException(() -> "Litho filter failure", ex);
         }
 
         return false;

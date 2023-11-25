@@ -22,7 +22,7 @@ public final class OpenLinksDirectlyPatch {
 
             return Uri.parse(parsedUri);
         } catch (Exception e) {
-            LogHelper.printException(OpenLinksDirectlyPatch.class, "Can not parse URL", e);
+            LogHelper.printException(() -> "Can not parse URL", e);
             return uri;
         }
     }

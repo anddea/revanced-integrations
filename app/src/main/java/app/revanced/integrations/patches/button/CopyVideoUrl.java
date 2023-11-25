@@ -32,7 +32,7 @@ public class CopyVideoUrl {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(CopyVideoUrl.class, constraintLayout, "copy_video_url_button");
+            ImageView imageView = findView(constraintLayout, "copy_video_url_button");
 
             imageView.setOnClickListener(view -> VideoHelpers.copyUrl(false));
             imageView.setOnLongClickListener(view -> {
@@ -55,7 +55,7 @@ public class CopyVideoUrl {
             changeVisibility(false);
 
         } catch (Exception ex) {
-            LogHelper.printException(CopyVideoUrl.class, "Unable to set FrameLayout", ex);
+            LogHelper.printException(() -> "Unable to set FrameLayout", ex);
         }
     }
 

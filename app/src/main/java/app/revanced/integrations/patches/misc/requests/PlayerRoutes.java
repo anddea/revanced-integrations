@@ -46,7 +46,7 @@ final class PlayerRoutes {
             innerTubeBody.put("context", context);
             innerTubeBody.put("videoId", "%s");
         } catch (JSONException e) {
-            LogHelper.printException(PlayerRoutes.class, "Failed to create innerTubeBody", e);
+            LogHelper.printException(() -> "Failed to create innerTubeBody", e);
         }
 
         ANDROID_INNER_TUBE_BODY = innerTubeBody.toString();
@@ -71,7 +71,7 @@ final class PlayerRoutes {
             tvEmbedInnerTubeBody.put("context", context);
             tvEmbedInnerTubeBody.put("videoId", "%s");
         } catch (JSONException e) {
-            LogHelper.printException(PlayerRoutes.class, "Failed to create tvEmbedInnerTubeBody", e);
+            LogHelper.printException(() -> "Failed to create tvEmbedInnerTubeBody", e);
         }
 
         TV_EMBED_INNER_TUBE_BODY = tvEmbedInnerTubeBody.toString();

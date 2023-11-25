@@ -113,7 +113,7 @@ public class PlayerPatch {
                     closeButton.performClick();
                 }
             } catch (Exception ex) {
-                LogHelper.printException(PlayerPatch.class, "hideSuggestedVideoOverlay failure", ex);
+                LogHelper.printException(() -> "hideSuggestedVideoOverlay failure", ex);
             }
         });
     }

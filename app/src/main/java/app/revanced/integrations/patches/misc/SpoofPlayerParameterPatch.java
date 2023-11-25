@@ -64,7 +64,7 @@ public class SpoofPlayerParameterPatch {
      * @param parameters Original player parameter value.
      */
     public static String spoofParameter(String videoId, String parameters) {
-        LogHelper.printDebug(SpoofPlayerParameterPatch.class, "Original player parameter value: " + parameters);
+        LogHelper.printDebug(() -> "Original player parameter value: " + parameters);
 
         if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
             return parameters;

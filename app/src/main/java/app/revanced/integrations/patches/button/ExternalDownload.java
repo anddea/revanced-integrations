@@ -32,7 +32,7 @@ public class ExternalDownload {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(ExternalDownload.class, constraintLayout, "external_download_button");
+            ImageView imageView = findView(constraintLayout, "external_download_button");
 
             imageView.setOnClickListener(view -> VideoHelpers.download(view.getContext()));
             buttonView = new WeakReference<>(imageView);
@@ -51,7 +51,7 @@ public class ExternalDownload {
             changeVisibility(false);
 
         } catch (Exception e) {
-            LogHelper.printException(ExternalDownload.class, "Unable to set FrameLayout", e);
+            LogHelper.printException(() -> "Unable to set FrameLayout", e);
         }
     }
 

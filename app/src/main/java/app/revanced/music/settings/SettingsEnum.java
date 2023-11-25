@@ -222,7 +222,7 @@ public enum SettingsEnum {
             // and leave less chance of the user forgetting to copy it
             return export.substring(2, export.length() - 2);
         } catch (JSONException e) {
-            LogHelper.printException(SettingsEnum.class, "Export failure", e); // should never happen
+            LogHelper.printException(() -> "Export failure", e); // should never happen
             return "";
         }
     }
@@ -250,7 +250,7 @@ public enum SettingsEnum {
                     }
                     numberOfSettingsImported++;
                 } else if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
-                    LogHelper.printDebug(SettingsEnum.class, "Resetting to default: " + setting);
+                    LogHelper.printDebug(() -> "Resetting to default: " + setting);
                     setting.saveValue(setting.defaultValue);
                 }
             }
@@ -261,9 +261,9 @@ public enum SettingsEnum {
 
         } catch (JSONException | IllegalArgumentException ex) {
             ReVancedUtils.showToastShort(str("revanced_extended_settings_import_failure_parse", ex.getMessage()));
-            LogHelper.printException(SettingsEnum.class, "", ex);
+            LogHelper.printInfo(() -> "", ex);
         } catch (Exception ex) {
-            LogHelper.printException(SettingsEnum.class, "Import failure: " + ex.getMessage(), ex); // should never happen
+            LogHelper.printException(() -> "Import failure: " + ex.getMessage(), ex); // should never happen
         }
     }
 

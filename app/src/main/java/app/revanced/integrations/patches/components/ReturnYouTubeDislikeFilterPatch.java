@@ -57,11 +57,11 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
             }
             synchronized (lastVideoIds) {
                 if (lastVideoIds.put(videoId, Boolean.TRUE) == null) {
-                    LogHelper.printDebug(ReturnYouTubeDislikeFilterPatch.class, "New video id: " + videoId);
+                    LogHelper.printDebug(() -> "New video id: " + videoId);
                 }
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikeFilterPatch.class, "newPlayerResponseVideoId failure", ex);
+            LogHelper.printException(() -> "newPlayerResponseVideoId failure", ex);
         }
     }
 

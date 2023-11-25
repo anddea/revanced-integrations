@@ -29,7 +29,7 @@ public class PlaybackSpeedPatch {
 
             overrideSpeed(selectedSpeed);
         } catch (Exception ex) {
-            LogHelper.printException(PlaybackSpeedPatch.class, "Failed to setDefaultPlaybackSpeed", ex);
+            LogHelper.printException(() -> "Failed to setDefaultPlaybackSpeed", ex);
         }
     }
 

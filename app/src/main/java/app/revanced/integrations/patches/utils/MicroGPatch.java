@@ -12,6 +12,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
+import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class MicroGPatch {
@@ -36,6 +37,7 @@ public class MicroGPatch {
         try {
             context.getPackageManager().getPackageInfo(MICROG_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
         } catch (PackageManager.NameNotFoundException exception) {
+            LogHelper.printInfo(() -> "MicroG was not found", exception);
             startIntent(context, MICROG_DOWNLOAD_LINK, str("microg_not_installed_warning"), str("microg_not_installed_notice"));
 
             final Activity activity = (Activity) context;
@@ -46,6 +48,7 @@ public class MicroGPatch {
         try (final ContentProviderClient client = context.getContentResolver().acquireContentProviderClient(MICROG_PROVIDER)) {
             if (client != null)
                 return;
+            LogHelper.printInfo(() -> "MicroG is not running in the background");
             startIntent(context, DONT_KILL_MY_APP_LINK, str("microg_not_running_warning"));
         }
     }

@@ -104,10 +104,12 @@ class ClassicSwipeController(
                 scrollVolume(distanceY)
                 true
             }
+
             in controller.zones.brightness -> {
                 scrollBrightness(distanceY)
                 true
             }
+
             else -> false
         }
     }

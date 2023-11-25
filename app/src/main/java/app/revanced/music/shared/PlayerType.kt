@@ -23,11 +23,10 @@ enum class PlayerType {
         @JvmStatic
         fun setFromString(enumName: String) {
             val newType = nameToPlayerType[enumName]
-            if (newType != null && current != newType) {
-                LogHelper.printDebug(
-                    PlayerType::class.java,
-                    "PlayerType changed to: $newType"
-                )
+            if (newType == null) {
+                LogHelper.printException { "Unknown PlayerType encountered: $enumName" }
+            } else if (current != newType) {
+                LogHelper.printDebug { "PlayerType changed to: $newType" }
                 current = newType
             }
         }

@@ -31,7 +31,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 rebootDialog(getActivity());
 
         } catch (Exception ex) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "OnSharedPreferenceChangeListener failure", ex);
+            LogHelper.printException(() -> "OnSharedPreferenceChangeListener failure", ex);
         }
     };
 

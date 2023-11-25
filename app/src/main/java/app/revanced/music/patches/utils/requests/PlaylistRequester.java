@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 
-import app.revanced.music.patches.utils.CheckMusicVideoPatch;
 import app.revanced.music.requests.Requester;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
@@ -62,7 +61,7 @@ public class PlaylistRequester {
             if (songId.isEmpty()) {
                 handleConnectionError("Url is empty!");
             } else if (!songId.equals(videoId)) {
-                LogHelper.printDebug(CheckMusicVideoPatch.class, String.format("Fetched successfully\nVideoId: %s\nPlaylistId:%s\nSongId: %s", videoId, playlistId, songId));
+                LogHelper.printDebug(() -> String.format("Fetched successfully\nVideoId: %s\nPlaylistId:%s\nSongId: %s", videoId, playlistId, songId));
                 setSongId(songId);
             }
             connection.disconnect();
@@ -76,13 +75,13 @@ public class PlaylistRequester {
     }
 
     private static void handleConnectionError(@NonNull String errorMessage) {
-        LogHelper.printException(PlaylistRequester.class, errorMessage);
+        LogHelper.printInfo(() -> errorMessage);
         clearInformation();
     }
 
     private static void handleConnectionError(@NonNull String errorMessage, @Nullable Exception ex) {
         if (ex != null) {
-            LogHelper.printException(PlaylistRequester.class, errorMessage, ex);
+            LogHelper.printInfo(() -> errorMessage, ex);
         }
         clearInformation();
     }

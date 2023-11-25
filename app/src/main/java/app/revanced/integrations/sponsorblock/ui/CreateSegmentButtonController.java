@@ -49,7 +49,7 @@ public class CreateSegmentButtonController {
             isScrubbed = false;
             changeVisibilityImmediate(false);
         } catch (Exception ex) {
-            LogHelper.printException(CreateSegmentButtonController.class, "Unable to set RelativeLayout", ex);
+            LogHelper.printException(() -> "Unable to set RelativeLayout", ex);
         }
     }
 
@@ -105,7 +105,7 @@ public class CreateSegmentButtonController {
                 iView.setVisibility(View.GONE);
             }
         } catch (Exception ex) {
-            LogHelper.printException(CreateSegmentButtonController.class, "changeVisibility failure", ex);
+            LogHelper.printException(() -> "changeVisibility failure", ex);
         }
     }
 

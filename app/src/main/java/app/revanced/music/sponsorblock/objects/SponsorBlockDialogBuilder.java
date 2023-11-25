@@ -113,7 +113,7 @@ public class SponsorBlockDialogBuilder {
                     editor.apply();
                     ReVancedUtils.showToastShort(str("sb_color_reset"));
                 } catch (Exception ex) {
-                    LogHelper.printException(SponsorBlockDialogBuilder.class, "setNeutralButton failure", ex);
+                    LogHelper.printException(() -> "setNeutralButton failure", ex);
                 }
             });
             builder.setNegativeButton(android.R.string.cancel, null);
@@ -125,7 +125,7 @@ public class SponsorBlockDialogBuilder {
                     (dialog, id) -> mClickedDialogEntryIndex = id);
             builder.show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockDialogBuilder.class, "dialogBuilder failure", ex);
+            LogHelper.printException(() -> "dialogBuilder failure", ex);
         }
     }
 }

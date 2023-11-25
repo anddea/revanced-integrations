@@ -41,7 +41,7 @@ public class CheckMusicVideoPatch {
                 return;
             }
 
-            LogHelper.printDebug(CheckMusicVideoPatch.class, String.format("Playback Started\nVideo Id: %s\nPlaylist Id: %s\nPlaylist Index: %d", videoId, playlistId, playlistIndex));
+            LogHelper.printDebug(() -> String.format("Playback Started\nVideo Id: %s\nPlaylist Id: %s\nPlaylist Index: %d", videoId, playlistId, playlistIndex));
 
             currentVideoId = videoId;
             currentPlaylistId = playlistId;
@@ -49,7 +49,7 @@ public class CheckMusicVideoPatch {
 
             PlaylistRequester.fetchPlaylist(videoId, playlistId, playlistIndex);
         } catch (Exception ex) {
-            LogHelper.printException(CheckMusicVideoPatch.class, "playbackStart failure", ex);
+            LogHelper.printException(() -> "playbackStart failure", ex);
         }
     }
 

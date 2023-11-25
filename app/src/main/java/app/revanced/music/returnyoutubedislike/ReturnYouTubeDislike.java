@@ -175,7 +175,7 @@ public class ReturnYouTubeDislike {
                 return waitForFetchAndUpdateReplacementSpan(span);
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "onShortsComponentCreated failure", ex);
+            LogHelper.printException(() -> "onShortsComponentCreated failure", ex);
         }
         return span;
     }
@@ -230,7 +230,7 @@ public class ReturnYouTubeDislike {
             }
         } catch (TimeoutException ignored) {
         } catch (Exception e) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
+            LogHelper.printException(() -> "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
         }
         return oldSpannable;
     }
@@ -249,16 +249,16 @@ public class ReturnYouTubeDislike {
                 try { // must wrap in try/catch to properly log exceptions
                     String userId = getUserId();
                     if (userId != null) {
-                        ReturnYouTubeDislikeApi.sendVote(videoIdToVoteFor, userId, vote);
+                        ReturnYouTubeDislikeApi.sendVote(videoIdToVoteFor, vote);
                     }
                 } catch (Exception ex) {
-                    LogHelper.printException(ReturnYouTubeDislike.class, "Failed to send vote", ex);
+                    LogHelper.printException(() -> "Failed to send vote", ex);
                 }
             });
 
             setUserVote(vote);
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "Error trying to send vote", ex);
+            LogHelper.printException(() -> "Error trying to send vote", ex);
         }
     }
 
@@ -273,7 +273,7 @@ public class ReturnYouTubeDislike {
                     voteData = future.get(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH, TimeUnit.MILLISECONDS);
                 } catch (ExecutionException | InterruptedException | TimeoutException ex) {
                     // Should never happen
-                    LogHelper.printException(ReturnYouTubeDislike.class, "Could not update vote data", ex);
+                    LogHelper.printException(() -> "Could not update vote data", ex);
                     return;
                 }
                 if (voteData == null) {
@@ -291,7 +291,7 @@ public class ReturnYouTubeDislike {
                 }
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislike.class, "setUserVote failure", ex);
+            LogHelper.printException(() -> "setUserVote failure", ex);
         }
     }
 
@@ -526,7 +526,7 @@ public class ReturnYouTubeDislike {
             try {
                 return !future.isDone() || future.get(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH, TimeUnit.MILLISECONDS) != null;
             } catch (ExecutionException | InterruptedException | TimeoutException ex) {
-                LogHelper.printException(ReturnYouTubeDislike.class, "failed to lookup cache", ex); // will never happen
+                LogHelper.printException(() -> "failed to lookup cache", ex); // will never happen
             }
             return false;
         }

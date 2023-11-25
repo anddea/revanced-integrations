@@ -116,7 +116,7 @@ public final class NewSegmentLayout extends FrameLayout {
 
         button.setOnClickListener((v) -> {
             handler.apply();
-            LogHelper.printDebug(NewSegmentLayout.class, debugMessage);
+            LogHelper.printDebug(() -> debugMessage);
         });
     }
 

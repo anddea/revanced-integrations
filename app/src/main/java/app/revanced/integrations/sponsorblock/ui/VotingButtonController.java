@@ -50,7 +50,7 @@ public class VotingButtonController {
             isScrubbed = false;
             changeVisibilityImmediate(false);
         } catch (Exception ex) {
-            LogHelper.printException(VotingButtonController.class, "Unable to set RelativeLayout", ex);
+            LogHelper.printException(() -> "Unable to set RelativeLayout", ex);
         }
     }
 
@@ -106,7 +106,7 @@ public class VotingButtonController {
                 iView.setVisibility(View.GONE);
             }
         } catch (Exception ex) {
-            LogHelper.printException(VotingButtonController.class, "changeVisibility failure", ex);
+            LogHelper.printException(() -> "changeVisibility failure", ex);
         }
     }
 

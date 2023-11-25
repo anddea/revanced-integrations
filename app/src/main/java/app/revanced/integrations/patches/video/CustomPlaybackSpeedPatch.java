@@ -98,7 +98,7 @@ public class CustomPlaybackSpeedPatch {
                 i++;
             }
         } catch (Exception ex) {
-            LogHelper.printException(CustomPlaybackSpeedPatch.class, "parse error", ex);
+            LogHelper.printInfo(() -> "parse error", ex);
             resetCustomSpeeds(str("revanced_custom_playback_speeds_invalid"));
             loadSpeeds();
         }
@@ -172,7 +172,7 @@ public class CustomPlaybackSpeedPatch {
                 // Show custom playback speed menu.
                 showCustomPlaybackSpeedMenu(recyclerView.getContext());
             } catch (Exception ex) {
-                LogHelper.printException(CustomPlaybackSpeedPatch.class, "onFlyoutMenuCreate failure", ex);
+                LogHelper.printException(() -> "onFlyoutMenuCreate failure", ex);
             }
         });
     }

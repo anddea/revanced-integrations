@@ -21,11 +21,10 @@ enum class LockModeState {
         @JvmStatic
         fun setFromString(enumName: String) {
             val newType = nameToLockModeState[enumName]
-            if (newType != null && current != newType) {
-                LogHelper.printDebug(
-                    LockModeState.Companion::class.java,
-                    "LockModeState changed to: $newType"
-                )
+            if (newType == null) {
+                LogHelper.printException { "Unknown LockModeState encountered: $enumName" }
+            } else if (current != newType) {
+                LogHelper.printDebug { "LockModeState changed to: $newType" }
                 current = newType
             }
         }

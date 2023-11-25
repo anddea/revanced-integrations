@@ -38,7 +38,7 @@ public final class VideoInformation {
             seekMethod = playerController.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
             seekMethod.setAccessible(true);
         } catch (Exception ex) {
-            LogHelper.printException(VideoInformation.class, "Failed to initialize", ex);
+            LogHelper.printException(() -> "Failed to initialize", ex);
         }
     }
 
@@ -59,7 +59,7 @@ public final class VideoInformation {
      */
     public static void setVideoId(@NonNull String newlyLoadedVideoId) {
         if (!videoId.equals(newlyLoadedVideoId)) {
-            LogHelper.printDebug(VideoInformation.class, "New video id: " + newlyLoadedVideoId);
+            LogHelper.printDebug(() -> "New video id: " + newlyLoadedVideoId);
             videoId = newlyLoadedVideoId;
         }
     }
@@ -77,7 +77,7 @@ public final class VideoInformation {
     public static boolean seekTo(final long millisecond) {
         ReVancedUtils.verifyOnMainThread();
         try {
-            LogHelper.printDebug(VideoInformation.class, "Seeking to " + millisecond);
+            LogHelper.printDebug(() -> "Seeking to " + millisecond);
             Object seekResultObject = seekMethod.invoke(playerControllerRef.get(), millisecond);
 
             if (!(seekResultObject instanceof Boolean seekResult))
@@ -85,7 +85,7 @@ public final class VideoInformation {
 
             return seekResult;
         } catch (Exception ex) {
-            LogHelper.printException(VideoInformation.class, "Failed to seek", ex);
+            LogHelper.printException(() -> "Failed to seek", ex);
             return false;
         }
     }

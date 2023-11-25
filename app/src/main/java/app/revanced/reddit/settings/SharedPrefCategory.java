@@ -26,7 +26,7 @@ public enum SharedPrefCategory {
     }
 
     private void removeConflictingPreferenceKeyValue(@NonNull String key) {
-        LogHelper.printException(SharedPrefCategory.class, "Found conflicting preference: " + key);
+        LogHelper.printException(() -> "Found conflicting preference: " + key);
         preferences.edit().remove(key).apply();
     }
 

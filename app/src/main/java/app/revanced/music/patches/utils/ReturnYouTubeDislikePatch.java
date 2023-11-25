@@ -43,7 +43,7 @@ public class ReturnYouTubeDislikePatch {
                 ReturnYouTubeDislike.newVideoLoaded(videoId);
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "newVideoLoaded failure", ex);
+            LogHelper.printException(() -> "newVideoLoaded failure", ex);
         }
     }
 
@@ -66,9 +66,9 @@ public class ReturnYouTubeDislikePatch {
                     return;
                 }
             }
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "Unknown vote type: " + vote);
+            LogHelper.printException(() -> "Unknown vote type: " + vote);
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "sendVote failure", ex);
+            LogHelper.printException(() -> "sendVote failure", ex);
         }
     }
 }

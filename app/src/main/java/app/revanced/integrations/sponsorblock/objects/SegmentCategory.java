@@ -199,7 +199,7 @@ public enum SegmentCategory {
 
     public static void loadFromPreferences() {
         SharedPreferences preferences = getPreferences(SPONSOR_BLOCK);
-        LogHelper.printDebug(SegmentCategory.class, "loadFromPreferences");
+        LogHelper.printDebug(() -> "loadFromPreferences");
         for (SegmentCategory category : categoriesWithoutUnsubmitted()) {
             category.load(preferences);
         }
@@ -253,7 +253,7 @@ public enum SegmentCategory {
         } else {
             CategoryBehaviour preferenceBehavior = CategoryBehaviour.byStringKey(behaviorString);
             if (preferenceBehavior == null) {
-                LogHelper.printException(SegmentCategory.class, "Unknown behavior: " + behaviorString); // should never happen
+                LogHelper.printException(() -> "Unknown behavior: " + behaviorString); // should never happen
                 behaviour = defaultBehaviour;
             } else {
                 behaviour = preferenceBehavior;

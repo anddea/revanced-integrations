@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 
 import java.text.Bidi;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
@@ -145,25 +144,22 @@ public class ReVancedUtils {
     /**
      * Safe to call from any thread
      */
-    public static void showToastShort(@NonNull String messageToToast) {
+    public static void showToastShort(String messageToToast) {
         showToast(context, messageToToast, Toast.LENGTH_SHORT);
     }
 
     /**
      * Safe to call from any thread
      */
-    public static void showToastLong(@NonNull String messageToToast) {
+    public static void showToastLong(String messageToToast) {
         showToast(context, messageToToast, Toast.LENGTH_LONG);
     }
 
-    private static void showToast(Context context, @NonNull String messageToToast, int toastDuration) {
-        Objects.requireNonNull(messageToToast);
-        runOnMainThreadNowOrLater(() -> {
-                    // cannot use getContext(), otherwise if context is null it will cause infinite recursion of error logging
-                    assert context != null;
-                    Toast.makeText(context, messageToToast, toastDuration).show();
-                }
-        );
+    private static void showToast(Context context, String messageToToast, int toastDuration) {
+        // cannot use getContext(), otherwise if context is null it will cause infinite recursion of error logging
+        if (context == null || messageToToast == null || messageToToast.isEmpty())
+            return;
+        runOnMainThreadNowOrLater(() -> Toast.makeText(context, messageToToast, toastDuration).show());
     }
 
     /**
@@ -183,7 +179,7 @@ public class ReVancedUtils {
             try {
                 runnable.run();
             } catch (Exception ex) {
-                LogHelper.printException(ReVancedUtils.class, runnable.getClass() + ": " + ex.getMessage(), ex);
+                LogHelper.printException(() -> runnable.getClass() + ": " + ex.getMessage(), ex);
             }
         };
         new Handler(Looper.getMainLooper()).postDelayed(loggingRunnable, delayMillis);

@@ -40,7 +40,7 @@ public class BrowseIdPatch {
             field.setAccessible(true);
             browseIdField = field;
         } catch (Exception ex) {
-            LogHelper.printException(BrowseIdPatch.class, "Failed to initialize", ex);
+            LogHelper.printException(() -> "Failed to initialize", ex);
         }
     }
 
@@ -65,9 +65,9 @@ public class BrowseIdPatch {
                 return;
             }
             browseId = newlyLoadedBrowseId;
-            LogHelper.printDebug(BrowseIdPatch.class, "setBrowseIdFromField: " + browseId);
+            LogHelper.printDebug(() -> "setBrowseIdFromField: " + browseId);
         } catch (Exception ex) {
-            LogHelper.printException(BrowseIdPatch.class, "Failed to setBrowseIdFromField", ex);
+            LogHelper.printException(() -> "Failed to setBrowseIdFromField", ex);
         }
     }
 
@@ -89,7 +89,7 @@ public class BrowseIdPatch {
             browseId = newlyLoadedBrowseId;
             browseIdField.set(browseIdFieldReference, newlyLoadedBrowseId);
         } catch (Exception ex) {
-            LogHelper.printException(BrowseIdPatch.class, "Failed to setBrowseIdToField", ex);
+            LogHelper.printException(() -> "Failed to setBrowseIdToField", ex);
         }
     }
 

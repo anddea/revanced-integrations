@@ -118,7 +118,7 @@ public class SponsorBlockSettings {
 
             ReVancedUtils.showToastLong(str("sb_settings_import_successful"));
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockSettings.class, "failed to import settings", ex); // use info level, as we are showing our own toast
+            LogHelper.printInfo(() -> "failed to import settings", ex); // use info level, as we are showing our own toast
             ReVancedUtils.showToastLong(str("sb_settings_import_failed", ex.getMessage()));
         }
     }
@@ -127,7 +127,7 @@ public class SponsorBlockSettings {
     public static String exportSettings() {
         ReVancedUtils.verifyOnMainThread();
         try {
-            LogHelper.printDebug(SponsorBlockSettings.class, "Creating SponsorBlock export settings string");
+            LogHelper.printDebug(() -> "Creating SponsorBlock export settings string");
             JSONObject json = new JSONObject();
 
             JSONObject barTypesObject = new JSONObject(); // categories' colors
@@ -164,7 +164,7 @@ public class SponsorBlockSettings {
 
             return json.toString(2);
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockSettings.class, "failed to export settings", ex); // use info level, as we are showing our own toast
+            LogHelper.printInfo(() -> "failed to export settings", ex); // use info level, as we are showing our own toast
             ReVancedUtils.showToastLong(str("sb_settings_export_failed", ex));
             return "";
         }

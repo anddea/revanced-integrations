@@ -47,7 +47,7 @@ public class SponsorBlockUtils {
             SponsorSegment[] segments = SegmentPlaybackController.getSegments();
             if (segments == null || segments.length == 0) {
                 // should never be reached
-                LogHelper.printException(SponsorBlockUtils.class, "Segment is no longer available on the client");
+                LogHelper.printException(() -> "Segment is no longer available on the client");
                 return;
             }
             SponsorSegment segment = segments[which];
@@ -82,7 +82,7 @@ public class SponsorBlockUtils {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "segmentVoteClickListener failure", ex);
+            LogHelper.printException(() -> "segmentVoteClickListener failure", ex);
         }
     };
     private static long newSponsorSegmentDialogShownMillis;
@@ -130,7 +130,7 @@ public class SponsorBlockUtils {
 
             dialog.dismiss();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "editByHandDialogListener failure", ex);
+            LogHelper.printException(() -> "editByHandDialogListener failure", ex);
         }
     };
     private static boolean newSponsorSegmentPreviewed;
@@ -153,7 +153,7 @@ public class SponsorBlockUtils {
                         .getButton(DialogInterface.BUTTON_POSITIVE)
                         .setEnabled(enableButton);
             } catch (Exception ex) {
-                LogHelper.printException(SponsorBlockUtils.class, "segmentTypeListener failure", ex);
+                LogHelper.printException(() -> "segmentTypeListener failure", ex);
             }
         }
     };
@@ -185,7 +185,7 @@ public class SponsorBlockUtils {
                         .getButton(DialogInterface.BUTTON_POSITIVE)
                         .setEnabled(false);
             } catch (Exception ex) {
-                LogHelper.printException(SponsorBlockUtils.class, "segmentReadyDialogButtonListener failure", ex);
+                LogHelper.printException(() -> "segmentReadyDialogButtonListener failure", ex);
             }
         }
     };
@@ -218,7 +218,7 @@ public class SponsorBlockUtils {
             final long videoLength = VideoInformation.getVideoLength();
             final SegmentCategory segmentCategory = newUserCreatedSegmentCategory;
             if (start < 0 || end < 0 || start >= end || videoLength <= 0 || videoId.isEmpty() || segmentCategory == null) {
-                LogHelper.printException(SponsorBlockUtils.class, "invalid parameters");
+                LogHelper.printException(() -> "invalid parameters");
                 return;
             }
             clearUnsubmittedSegmentTimes();
@@ -227,7 +227,7 @@ public class SponsorBlockUtils {
                 SegmentPlaybackController.executeDownloadSegments(videoId);
             });
         } catch (Exception e) {
-            LogHelper.printException(SponsorBlockUtils.class, "Unable to submit segment", e);
+            LogHelper.printException(() -> "Unable to submit segment", e);
         }
     }
 
@@ -247,7 +247,7 @@ public class SponsorBlockUtils {
                     .setPositiveButton(str("sb_new_segment_mark_end"), newSponsorSegmentDialogListener)
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "onMarkLocationClicked failure", ex);
+            LogHelper.printException(() -> "onMarkLocationClicked failure", ex);
         }
     }
 
@@ -275,7 +275,7 @@ public class SponsorBlockUtils {
                         .show();
             }
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "onPublishClicked failure", ex);
+            LogHelper.printException(() -> "onPublishClicked failure", ex);
         }
     }
 
@@ -329,7 +329,7 @@ public class SponsorBlockUtils {
                     .setItems(titles, segmentVoteClickListener)
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "onVotingClicked failure", ex);
+            LogHelper.printException(() -> "onVotingClicked failure", ex);
         }
     }
 
@@ -347,7 +347,7 @@ public class SponsorBlockUtils {
                     .setItems(titles, (dialog, which) -> SBRequester.voteToChangeCategoryOnBackgroundThread(segment, values[which]))
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "onNewCategorySelect failure", ex);
+            LogHelper.printException(() -> "onNewCategorySelect failure", ex);
         }
     }
 
@@ -366,7 +366,7 @@ public class SponsorBlockUtils {
                 VideoInformation.seekTo(newSponsorSegmentStartMillis - 2500);
             }
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "onPreviewClicked failure", ex);
+            LogHelper.printException(() -> "onPreviewClicked failure", ex);
         }
     }
 
@@ -396,7 +396,7 @@ public class SponsorBlockUtils {
                     .setPositiveButton(str("sb_new_segment_mark_end"), editByHandDialogListener)
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockUtils.class, "onEditByHandClicked failure", ex);
+            LogHelper.printException(() -> "onEditByHandClicked failure", ex);
         }
     }
 
@@ -440,7 +440,7 @@ public class SponsorBlockUtils {
             } catch (ParseException e) {
                 ReVancedUtils.showToastLong(str("sb_new_segment_edit_by_hand_parse_error"));
             } catch (Exception ex) {
-                LogHelper.printException(SponsorBlockUtils.class, "EditByHandSaveDialogListener failure", ex);
+                LogHelper.printException(() -> "EditByHandSaveDialogListener failure", ex);
             }
         }
     }

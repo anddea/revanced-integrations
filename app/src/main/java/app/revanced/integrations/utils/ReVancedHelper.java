@@ -5,6 +5,7 @@ import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,9 +25,11 @@ public class ReVancedHelper {
     @Nullable
     private static PackageInfo getPackageInfo(@NonNull Context context) {
         try {
-            return getPackageManager(context).getPackageInfo(context.getPackageName(), 0);
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    ? getPackageManager(context).getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+                    : getPackageManager(context).getPackageInfo(packageName,0);
         } catch (PackageManager.NameNotFoundException e) {
-            LogHelper.printException(ReVancedHelper.class, "Failed to get package Info!" + e);
+            LogHelper.printException(() -> "Failed to get package Info!" + e);
         }
         return null;
     }

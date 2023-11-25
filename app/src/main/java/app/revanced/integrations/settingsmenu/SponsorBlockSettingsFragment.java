@@ -109,7 +109,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
             segmentCategory.setEnabled(enabled);
             statsCategory.setEnabled(enabled);
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockSettingsFragment.class, "update settings UI failure", ex);
+            LogHelper.printException(() -> "update settings UI failure", ex);
         }
     }
 
@@ -156,7 +156,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
 
             updateUI();
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockSettingsFragment.class, "onCreate failure", ex);
+            LogHelper.printException(() -> "onCreate failure", ex);
         }
     }
 
@@ -388,7 +388,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
                 segmentCategory.addPreference(new SegmentCategoryListPreference(activity, category));
             }
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockSettingsFragment.class, "updateSegmentCategories failure", ex);
+            LogHelper.printException(() -> "updateSegmentCategories failure", ex);
         }
     }
 
@@ -442,7 +442,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
                 loadingPlaceholderPreference.setTitle(str("sb_stats_sb_disabled"));
             }
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockSettingsFragment.class, "fetchAndDisplayStats failure", ex);
+            LogHelper.printException(() -> "fetchAndDisplayStats failure", ex);
         }
     }
 
@@ -536,7 +536,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
                 });
             }
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockSettingsFragment.class, "addUserStats failure", ex);
+            LogHelper.printException(() -> "addUserStats failure", ex);
         }
     }
 

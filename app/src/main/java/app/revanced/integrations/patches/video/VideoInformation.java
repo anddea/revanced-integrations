@@ -45,7 +45,7 @@ public final class VideoInformation {
             seekMethod = playerController.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
             seekMethod.setAccessible(true);
         } catch (Exception ex) {
-            LogHelper.printException(VideoInformation.class, "Failed to initialize", ex);
+            LogHelper.printException(() -> "Failed to initialize", ex);
         }
     }
 
@@ -64,7 +64,7 @@ public final class VideoInformation {
         try {
             return (Boolean) seekMethod.invoke(playerControllerRef.get(), Math.min(millisecond, videoLength));
         } catch (Exception ex) {
-            LogHelper.printException(VideoInformation.class, "Failed to seek", ex);
+            LogHelper.printException(() -> "Failed to seek", ex);
         }
         return false;
     }

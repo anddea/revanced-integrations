@@ -83,7 +83,7 @@ public class CustomPlaybackSpeedPatch {
                 i++;
             }
         } catch (Exception ex) {
-            LogHelper.printException(CustomPlaybackSpeedPatch.class, "parse error", ex);
+            LogHelper.printInfo(() -> "parse error", ex);
             resetCustomSpeeds(false);
             loadCustomSpeeds();
         }

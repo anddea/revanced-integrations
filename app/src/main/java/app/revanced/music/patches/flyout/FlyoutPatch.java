@@ -43,7 +43,7 @@ public class FlyoutPatch {
 
         final String flyoutPanelName = flyoutPanelEnum.name();
 
-        LogHelper.printDebug(FlyoutPatch.class, flyoutPanelName);
+        LogHelper.printDebug(() -> flyoutPanelName);
 
         for (FlyoutPanelComponent component : FlyoutPanelComponent.values())
             if (component.name.equals(flyoutPanelName) && component.enabled)

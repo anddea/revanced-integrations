@@ -144,7 +144,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             initializeReVancedSettings();
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error during onCreate()", th);
+            LogHelper.printException(() -> "Error during onCreate()", th);
         }
     }
 
@@ -338,7 +338,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             int entryIndex = speedListPreference.findIndexOfValue(value);
             speedListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setPlaybackSpeed" + th);
+            LogHelper.printException(() -> "Error setting setPlaybackSpeed" + th);
         }
     }
 
@@ -361,7 +361,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             int entryIndex = qualityListPreference.findIndexOfValue(value);
             qualityListPreference.setSummary(entryIndex < 0 ? null : entries[entryIndex]);
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setVideoQuality" + th);
+            LogHelper.printException(() -> "Error setting setVideoQuality" + th);
         }
     }
 
@@ -395,7 +395,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             int entryIndex = listPreference.findIndexOfValue(value);
             listPreference.setSummary(entryIndex < 0 ? str("pref_offline_smart_downloads_custom_storage_title") : entries[entryIndex]);
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setSpoofAppVersionTarget" + th);
+            LogHelper.printException(() -> "Error setting setSpoofAppVersionTarget" + th);
         }
     }
 
@@ -461,7 +461,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
             externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setExternalDownloaderPreference" + th);
+            LogHelper.printException(() -> "Error setting setExternalDownloaderPreference" + th);
         }
     }
 
@@ -489,7 +489,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 return false;
             });
         } catch (Throwable th) {
-            LogHelper.printException(ReVancedSettingsFragment.class, "Error setting setOpenSettingsPreference" + th);
+            LogHelper.printException(() -> "Error setting setOpenSettingsPreference" + th);
         }
     }
 

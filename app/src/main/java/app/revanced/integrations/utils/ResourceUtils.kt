@@ -32,17 +32,15 @@ object ResourceUtils {
         AnimationUtils.loadAnimation(getContext(), identifier(name, ResourceType.ANIM))
 
     @JvmStatic
-    fun <T : Class<*>, R : View> findView(clazz: T, view: View, name: String): R {
+    fun <R : View> findView(view: View, name: String): R {
         return view.findViewById(identifier(name, ResourceType.ID)) ?: run {
-            val ex = IllegalArgumentException("View with name $name not found")
-            LogHelper.printException(clazz, "View not found", ex)
-            throw ex
+            throw IllegalArgumentException("View with name $name not found")
         }
     }
 
     @JvmStatic
-    fun <T : Class<*>, R : View> findView(clazz: T, activity: Activity, name: String): R {
-        return findView(clazz, activity.window.decorView, name)
+    fun <R : View> findView(activity: Activity, name: String): R {
+        return findView(activity.window.decorView, name)
     }
 }
 

@@ -1,5 +1,7 @@
 package app.revanced.integrations.shared
 
+import app.revanced.integrations.utils.LogHelper
+
 /**
  * VideoState playback state.
  */
@@ -18,8 +20,12 @@ enum class VideoState {
         @JvmStatic
         fun setFromString(enumName: String) {
             val state = nameToVideoState[enumName]
-            if (state != null && currentVideoState != state)
+            if (state == null) {
+                LogHelper.printException { "Unknown VideoState encountered: $enumName" }
+            } else if (currentVideoState != state) {
+                LogHelper.printDebug { "VideoState changed to: $state" }
                 currentVideoState = state
+            }
         }
 
         /**

@@ -112,7 +112,7 @@ public class SegmentCategoryListPreference extends ListPreference {
                     updateTitle();
                     ReVancedUtils.showToastShort(str("sb_color_reset"));
                 } catch (Exception ex) {
-                    LogHelper.printException(SegmentCategoryListPreference.class, "setNeutralButton failure", ex);
+                    LogHelper.printException(() -> "setNeutralButton failure", ex);
                 }
             });
             builder.setNegativeButton(android.R.string.cancel, null);
@@ -120,7 +120,7 @@ public class SegmentCategoryListPreference extends ListPreference {
             mClickedDialogEntryIndex = findIndexOfValue(getValue());
             builder.setSingleChoiceItems(getEntries(), mClickedDialogEntryIndex, (dialog, which) -> mClickedDialogEntryIndex = which);
         } catch (Exception ex) {
-            LogHelper.printException(SegmentCategoryListPreference.class, "onPrepareDialogBuilder failure", ex);
+            LogHelper.printException(() -> "onPrepareDialogBuilder failure", ex);
         }
     }
 
@@ -151,7 +151,7 @@ public class SegmentCategoryListPreference extends ListPreference {
                 updateTitle();
             }
         } catch (Exception ex) {
-            LogHelper.printException(SegmentCategoryListPreference.class, "onDialogClosed failure", ex);
+            LogHelper.printException(() -> "onDialogClosed failure", ex);
         }
     }
 

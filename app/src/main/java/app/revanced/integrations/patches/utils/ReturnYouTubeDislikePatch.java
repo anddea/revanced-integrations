@@ -183,7 +183,7 @@ public class ReturnYouTubeDislikePatch {
                     || textView == null) {
                 return;
             }
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "setOldUILayoutDislikes");
+            LogHelper.printDebug(() -> "setOldUILayoutDislikes");
 
             if (oldUIOriginalSpan == null) {
                 // Use value of the first instance, as it appears TextViews can be recycled
@@ -204,7 +204,7 @@ public class ReturnYouTubeDislikePatch {
             updateOldUIDislikesTextView();
 
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "setOldUILayoutDislikes failure", ex);
+            LogHelper.printException(() -> "setOldUILayoutDislikes failure", ex);
         }
     }
 
@@ -234,10 +234,10 @@ public class ReturnYouTubeDislikePatch {
      * This method is sometimes called on the main thread, but it usually is called _off_ the main thread.
      * This method can be called multiple times for the same UI element (including after dislikes was added).
      *
-     * @param textRef Optional cache reference to the like/dislike char sequence,
-     *                 which may or may not be the same as the original span parameter.
-     *                 If dislikes are added, the atomic reference must be set to the replacement span.
-     * @param original Original char sequence was created or reused by Litho.
+     * @param textRef         Optional cache reference to the like/dislike char sequence,
+     *                        which may or may not be the same as the original span parameter.
+     *                        If dislikes are added, the atomic reference must be set to the replacement span.
+     * @param original        Original char sequence was created or reused by Litho.
      * @param isRollingNumber If the span is for a Rolling Number.
      * @return The original char sequence (if nothing should change), or a replacement char sequence that contains dislikes.
      */
@@ -281,7 +281,7 @@ public class ReturnYouTubeDislikePatch {
                 if (videoData == null) {
                     // The Shorts litho video id filter did not detect the video id.
                     // This is normal in incognito mode, but otherwise is abnormal.
-                    LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Cannot modify Shorts litho span, data is null");
+                    LogHelper.printDebug(() -> "Cannot modify Shorts litho span, data is null");
                     return original;
                 }
                 // Use the correct dislikes data after voting.
@@ -289,10 +289,10 @@ public class ReturnYouTubeDislikePatch {
                     lithoShortsShouldUseCurrentData = false;
                     videoData = currentVideoData;
                     if (videoData == null) {
-                        LogHelper.printException(ReturnYouTubeDislikePatch.class, "currentVideoData is null"); // Should never happen
+                        LogHelper.printException(() -> "currentVideoData is null"); // Should never happen
                         return original;
                     }
-                    LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Using current video data for litho span");
+                    LogHelper.printDebug(() -> "Using current video data for litho span");
                 }
                 replacement = videoData.getDislikeSpanForShort((Spanned) original);
             } else {
@@ -304,7 +304,7 @@ public class ReturnYouTubeDislikePatch {
             }
             return replacement;
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onLithoTextLoaded failure", ex);
+            LogHelper.printException(() -> "onLithoTextLoaded failure", ex);
         }
         return original;
     }
@@ -347,7 +347,7 @@ public class ReturnYouTubeDislikePatch {
 
             return videoData.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onLithoTextLoaded failure", ex);
+            LogHelper.printException(() -> "onLithoTextLoaded failure", ex);
         }
         return original;
     }
@@ -378,14 +378,14 @@ public class ReturnYouTubeDislikePatch {
                 currentVideoData = null;
                 return false;
             }
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "setShortsDislikes");
+            LogHelper.printDebug(() -> "setShortsDislikes");
 
             TextView textView = (TextView) likeDislikeView;
             textView.setText(SHORTS_LOADING_SPAN); // Change 'Dislike' text to the loading text.
             shortsTextViewRefs.add(new WeakReference<>(textView));
 
             if (likeDislikeView.isSelected() && isShortTextViewOnScreen(textView)) {
-                LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Shorts dislike is already selected");
+                LogHelper.printDebug(() -> "Shorts dislike is already selected");
                 ReturnYouTubeDislike videoData = currentVideoData;
                 if (videoData != null) videoData.setUserVote(Vote.DISLIKE);
             }
@@ -397,7 +397,7 @@ public class ReturnYouTubeDislikePatch {
 
             return true;
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "setShortsDislikes failure", ex);
+            LogHelper.printException(() -> "setShortsDislikes failure", ex);
             return false;
         }
     }
@@ -417,7 +417,7 @@ public class ReturnYouTubeDislikePatch {
                 return;
             }
 
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "updateShortsTextViews");
+            LogHelper.printDebug(() -> "updateShortsTextViews");
 
             Runnable update = () -> {
                 Spanned shortsDislikesSpan = videoData.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
@@ -425,7 +425,7 @@ public class ReturnYouTubeDislikePatch {
                     String videoId = videoData.getVideoId();
                     if (!videoId.equals(VideoInformation.getVideoId())) {
                         // User swiped to new video before fetch completed
-                        LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Ignoring stale dislikes data for short: " + videoId);
+                        LogHelper.printDebug(() -> "Ignoring stale dislikes data for short: " + videoId);
                         return;
                     }
 
@@ -440,7 +440,7 @@ public class ReturnYouTubeDislikePatch {
                         }
                         if (isShortTextViewOnScreen(textView)
                                 && (forceUpdate || textView.getText().toString().equals(SHORTS_LOADING_SPAN.toString()))) {
-                            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Setting Shorts TextView to: " + shortsDislikesSpan);
+                            LogHelper.printDebug(() -> "Setting Shorts TextView to: " + shortsDislikesSpan);
                             textView.setText(shortsDislikesSpan);
                         }
                     }
@@ -452,7 +452,7 @@ public class ReturnYouTubeDislikePatch {
                 ReVancedUtils.runOnBackgroundThread(update);
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "updateOnScreenShortsTextViews failure", ex);
+            LogHelper.printException(() -> "updateOnScreenShortsTextViews failure", ex);
         }
     }
 
@@ -489,7 +489,7 @@ public class ReturnYouTubeDislikePatch {
                 } // Else, the text was not a likes count but instead the view count or something else.
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onRollingNumberLoaded failure", ex);
+            LogHelper.printException(() -> "onRollingNumberLoaded failure", ex);
         }
         return original;
     }
@@ -509,7 +509,7 @@ public class ReturnYouTubeDislikePatch {
                 }
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "onRollingNumberMeasured failure", ex);
+            LogHelper.printException(() -> "onRollingNumberMeasured failure", ex);
         }
         return measuredTextWidth;
     }
@@ -520,7 +520,7 @@ public class ReturnYouTubeDislikePatch {
     private static void addRollingNumberPatchChanges(TextView view) {
         // YouTube Rolling Numbers do not use compound drawables or drawable padding.
         if (view.getCompoundDrawablePadding() == 0) {
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Adding rolling number TextView changes");
+            LogHelper.printDebug(() -> "Adding rolling number TextView changes");
             ShapeDrawable leftSeparator = ReturnYouTubeDislike.getLeftSeparatorDrawable();
             view.setCompoundDrawables(leftSeparator, null, null, null);
             view.setCompoundDrawablePadding(ReturnYouTubeDislike.leftSeparatorShapePaddingPixels);
@@ -533,7 +533,7 @@ public class ReturnYouTubeDislikePatch {
      */
     private static void removeRollingNumberPatchChanges(TextView view) {
         if (view.getCompoundDrawablePadding() != 0) {
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Removing rolling number TextView changes");
+            LogHelper.printDebug(() -> "Removing rolling number TextView changes");
             view.setCompoundDrawablePadding(0);
             view.setCompoundDrawables(null, null, null, null);
         }
@@ -560,7 +560,7 @@ public class ReturnYouTubeDislikePatch {
             if (replacement == null) {
                 // User enabled RYD while a video was open,
                 // or user opened/closed a Short while a regular video was opened.
-                LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Cannot update rolling number (field is null");
+                LogHelper.printDebug(() -> "Cannot update rolling number (field is null");
                 removeRollingNumberPatchChanges(view);
                 return original;
             }
@@ -580,7 +580,7 @@ public class ReturnYouTubeDislikePatch {
             // and using only the modified segmented span prevents the animation from showing.
             return replacement;
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "updateRollingNumber failure", ex);
+            LogHelper.printException(() -> "updateRollingNumber failure", ex);
             return original;
         }
     }
@@ -608,10 +608,10 @@ public class ReturnYouTubeDislikePatch {
                 return;
             }
             lastPrefetchedVideoId = videoId;
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Prefetching RYD for video: " + videoId);
+            LogHelper.printDebug(() -> "Prefetching RYD for video: " + videoId);
             ReturnYouTubeDislike.getFetchForVideoId(videoId);
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "preloadVideoId failure", ex);
+            LogHelper.printException(() -> "preloadVideoId failure", ex);
         }
     }
 
@@ -634,7 +634,7 @@ public class ReturnYouTubeDislikePatch {
             if (videoIdIsSame(currentVideoData, videoId)) {
                 return;
             }
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "New video id: " + videoId + " playerType: " + currentPlayerType);
+            LogHelper.printDebug(() -> "New video id: " + videoId + " playerType: " + currentPlayerType);
 
             ReturnYouTubeDislike data = ReturnYouTubeDislike.getFetchForVideoId(videoId);
             // Pre-emptively set the data to short status.
@@ -650,7 +650,7 @@ public class ReturnYouTubeDislikePatch {
                 updateOnScreenShortsTextViews(true);
             }
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "newVideoLoaded failure", ex);
+            LogHelper.printException(() -> "newVideoLoaded failure", ex);
         }
     }
 
@@ -663,11 +663,11 @@ public class ReturnYouTubeDislikePatch {
             // or the proto buffer structure was changed and the video id is no longer present.
             // Must clear both currently playing and last litho data otherwise the
             // next regular video may use the wrong data.
-            LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Litho filter did not find any video ids");
+            LogHelper.printDebug(() -> "Litho filter did not find any video ids");
             clearData();
             return;
         }
-        LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "New litho Shorts video id: " + videoId);
+        LogHelper.printDebug(() -> "New litho Shorts video id: " + videoId);
         ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(videoId);
         videoData.setVideoIdIsShort(true);
         lastLithoShortsVideoData = videoData;
@@ -697,7 +697,7 @@ public class ReturnYouTubeDislikePatch {
             }
             ReturnYouTubeDislike videoData = currentVideoData;
             if (videoData == null) {
-                LogHelper.printDebug(ReturnYouTubeDislikePatch.class, "Cannot send vote, as current video data is null");
+                LogHelper.printDebug(() -> "Cannot send vote, as current video data is null");
                 return; // User enabled RYD while a regular video was minimized.
             }
 
@@ -715,9 +715,9 @@ public class ReturnYouTubeDislikePatch {
                     return;
                 }
             }
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "Unknown vote type: " + vote);
+            LogHelper.printException(() -> "Unknown vote type: " + vote);
         } catch (Exception ex) {
-            LogHelper.printException(ReturnYouTubeDislikePatch.class, "sendVote failure", ex);
+            LogHelper.printException(() -> "sendVote failure", ex);
         }
     }
 }

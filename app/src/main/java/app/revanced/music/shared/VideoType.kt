@@ -24,11 +24,10 @@ enum class VideoType {
         @JvmStatic
         fun setFromString(enumName: String) {
             val newType = nameToVideoType[enumName]
-            if (newType != null && current != newType) {
-                LogHelper.printDebug(
-                    VideoType::class.java,
-                    "VideoType changed to: $newType"
-                )
+            if (newType == null) {
+                LogHelper.printException { "Unknown VideoType encountered: $enumName" }
+            } else if (current != newType) {
+                LogHelper.printDebug { "VideoType changed to: $newType" }
                 current = newType
             }
         }

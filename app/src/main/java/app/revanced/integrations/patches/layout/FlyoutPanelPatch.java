@@ -106,7 +106,7 @@ public class FlyoutPanelPatch {
                     VideoQualityMenuFilter.isVideoQualityMenuVisible = false;
                 }
             } catch (Exception ex) {
-                LogHelper.printException(FlyoutPanelPatch.class, "onFlyoutMenuCreate failure", ex);
+                LogHelper.printException(() -> "onFlyoutMenuCreate failure", ex);
             }
         });
     }

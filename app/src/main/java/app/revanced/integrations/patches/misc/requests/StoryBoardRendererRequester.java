@@ -30,7 +30,7 @@ public class StoryBoardRendererRequester {
                                               boolean showToastOnIOException) {
         if (showToastOnIOException)
             ReVancedUtils.showToastShort(toastMessage);
-        LogHelper.printException(StoryBoardRendererRequester.class, toastMessage, ex);
+        LogHelper.printInfo(() -> toastMessage, ex);
     }
 
     @Nullable
@@ -60,9 +60,9 @@ public class StoryBoardRendererRequester {
             handleConnectionError("Spoof storyboard temporarily not available: " + ex.getMessage(),
                     ex, showToastOnIOException);
         } catch (Exception ex) {
-            LogHelper.printException(StoryBoardRendererRequester.class, "Spoof storyboard fetch failed", ex); // Should never happen.
+            LogHelper.printException(() -> "Spoof storyboard fetch failed", ex); // Should never happen.
         } finally {
-            LogHelper.printDebug(StoryBoardRendererRequester.class, "Request took: " + (System.currentTimeMillis() - startTime) + "ms");
+            LogHelper.printDebug(() -> "Request took: " + (System.currentTimeMillis() - startTime) + "ms");
         }
 
         return null;
@@ -72,7 +72,7 @@ public class StoryBoardRendererRequester {
         try {
             return playerResponse.getJSONObject("playabilityStatus").getString("status").equals("OK");
         } catch (JSONException e) {
-            LogHelper.printDebug(StoryBoardRendererRequester.class, "Failed to get playabilityStatus for response: " + playerResponse);
+            LogHelper.printDebug(() -> "Failed to get playabilityStatus for response: " + playerResponse);
         }
 
         return false;
@@ -80,6 +80,7 @@ public class StoryBoardRendererRequester {
 
     /**
      * Fetches the storyboardRenderer from the innerTubeBody.
+     *
      * @param innerTubeBody The innerTubeBody to use to fetch the storyboardRenderer.
      * @return StoryboardRenderer or null if playabilityStatus is not OK.
      */
@@ -111,11 +112,11 @@ public class StoryBoardRendererRequester {
                             : null
             );
 
-            LogHelper.printDebug(StoryBoardRendererRequester.class, "Fetched: " + renderer);
+            LogHelper.printDebug(() -> "Fetched: " + renderer);
 
             return renderer;
         } catch (JSONException e) {
-            LogHelper.printException(StoryBoardRendererRequester.class, "Failed to get storyboardRenderer", e);
+            LogHelper.printException(() -> "Failed to get storyboardRenderer", e);
         }
 
         return null;
@@ -128,11 +129,11 @@ public class StoryBoardRendererRequester {
         var renderer = getStoryboardRendererUsingBody(
                 String.format(ANDROID_INNER_TUBE_BODY, videoId), false);
         if (renderer == null) {
-            LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using Android client");
+            LogHelper.printDebug(() -> videoId + " not available using Android client");
             renderer = getStoryboardRendererUsingBody(
                     String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId), true);
             if (renderer == null) {
-                LogHelper.printDebug(StoryBoardRendererRequester.class, videoId + " not available using TV embedded client");
+                LogHelper.printDebug(() -> videoId + " not available using TV embedded client");
             }
         }
 

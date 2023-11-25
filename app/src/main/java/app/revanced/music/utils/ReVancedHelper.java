@@ -27,7 +27,7 @@ public class ReVancedHelper {
         try {
             return getPackageManager(context).getPackageInfo(context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
-            LogHelper.printException(ReVancedHelper.class, "Failed to get package Info!" + e);
+            LogHelper.printException(() -> "Failed to get package Info!" + e);
         }
         return null;
     }

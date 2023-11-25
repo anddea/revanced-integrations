@@ -1,12 +1,16 @@
 package app.revanced.music.sponsorblock.requests;
 
+import static app.revanced.music.utils.StringRef.str;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +42,11 @@ public class SBRequester {
     private SBRequester() {
     }
 
+    private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex) {
+        if (ex != null) {
+            LogHelper.printInfo(() -> toastMessage, ex);
+        }
+    }
 
     @NonNull
     public static SponsorSegment[] getSegments(@NonNull String videoId) {
@@ -61,7 +70,7 @@ public class SBRequester {
                     String categoryKey = obj.getString("category");
                     SegmentCategory category = SegmentCategory.byCategoryKey(categoryKey);
                     if (category == null) {
-                        LogHelper.printException(SBRequester.class, "Received unknown category: " + categoryKey); // should never happen
+                        LogHelper.printException(() -> "Received unknown category: " + categoryKey); // should never happen
                     } else if ((end - start) >= minSegmentDuration) {
                         segments.add(new SponsorSegment(category, uuid, start, end, locked));
                     }
@@ -69,14 +78,18 @@ public class SBRequester {
                 runVipCheckInBackgroundIfNeeded();
             } else if (responseCode == 404) {
                 // no segments are found.  a normal response
-                LogHelper.printDebug(SBRequester.class, "No segments found for video: " + videoId);
+                LogHelper.printDebug(() -> "No segments found for video: " + videoId);
             } else {
+                handleConnectionError(str("sb_sponsorblock_connection_failure_status", responseCode), null);
                 connection.disconnect(); // something went wrong, might as well disconnect
             }
-        } catch (IOException ignored) {
+        } catch (SocketTimeoutException ex) {
+            handleConnectionError(str("sb_sponsorblock_connection_failure_timeout"), ex);
+        } catch (IOException ex) {
+            handleConnectionError(str("sb_sponsorblock_connection_failure_generic"), ex);
         } catch (Exception ex) {
             // Should never happen
-            LogHelper.printException(SBRequester.class, "getSegments failure", ex);
+            LogHelper.printException(() -> "getSegments failure", ex);
         }
 
         return segments.toArray(new SponsorSegment[0]);
@@ -94,7 +107,7 @@ public class SBRequester {
             try {
                 SettingsEnum.SB_LAST_VIP_CHECK.saveValue(now);
             } catch (Exception ex) {
-                LogHelper.printException(SBRequester.class, "Failed to check VIP", ex); // should never happen
+                LogHelper.printException(() -> "Failed to check VIP", ex); // should never happen
             }
         });
     }

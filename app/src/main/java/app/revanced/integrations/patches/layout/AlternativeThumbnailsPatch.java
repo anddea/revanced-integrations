@@ -44,7 +44,7 @@ public final class AlternativeThumbnailsPatch {
         // Fix any bad imported data.
         final int altThumbnailType = SettingsEnum.ALT_THUMBNAIL_TYPE.getInt();
         if (altThumbnailType < 1 || altThumbnailType > 3) {
-            LogHelper.printException(AlternativeThumbnailsPatch.class, "Invalid alt thumbnail type: " + altThumbnailType);
+            LogHelper.printException(() -> "Invalid alt thumbnail type: " + altThumbnailType);
             SettingsEnum.ALT_THUMBNAIL_TYPE.saveValue(SettingsEnum.ALT_THUMBNAIL_TYPE.defaultValue);
         }
     }
@@ -110,7 +110,7 @@ public final class AlternativeThumbnailsPatch {
 
             return builder.toString();
         } catch (Exception ex) {
-            LogHelper.printException(AlternativeThumbnailsPatch.class, "Alt thumbnails failure", ex);
+            LogHelper.printException(() -> "Alt thumbnails failure", ex);
             return originalUrl;
         }
     }
@@ -144,7 +144,7 @@ public final class AlternativeThumbnailsPatch {
                 VerifiedQualities.setAltThumbnailDoesNotExist(decodedUrl.videoId, quality);
             }
         } catch (Exception ex) {
-            LogHelper.printException(AlternativeThumbnailsPatch.class, "Alt thumbnails callback failure", ex);
+            LogHelper.printException(() -> "Alt thumbnails callback failure", ex);
         }
     }
 
@@ -336,12 +336,12 @@ public final class AlternativeThumbnailsPatch {
                         return (contentType != null && contentType.startsWith("image"));
                     }
                     if (responseCode != HttpURLConnection.HTTP_NOT_FOUND) {
-                        LogHelper.printDebug(AlternativeThumbnailsPatch.class, "Unexpected response code: " + responseCode + " for url: " + imageUrl);
+                        LogHelper.printDebug(() -> "Unexpected response code: " + responseCode + " for url: " + imageUrl);
                     }
                     return false;
                 }).get();
             } catch (ExecutionException | InterruptedException ex) {
-                LogHelper.printException(AlternativeThumbnailsPatch.class, "Could not verify alt url: " + imageUrl, ex);
+                LogHelper.printInfo(() -> "Could not verify alt url: " + imageUrl, ex);
                 imageFileFound = false;
             }
 

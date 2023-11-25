@@ -36,7 +36,7 @@ public class AlwaysRepeat {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(AlwaysRepeat.class, constraintLayout, "always_repeat_button");
+            ImageView imageView = findView(constraintLayout, "always_repeat_button");
             imageView.setSelected(SettingsEnum.ALWAYS_REPEAT.getBoolean());
             imageView.setOnClickListener(view -> AlwaysRepeat.changeSelected(!view.isSelected(), false));
             imageView.setOnLongClickListener(view -> {
@@ -60,7 +60,7 @@ public class AlwaysRepeat {
             changeVisibility(false);
 
         } catch (Exception ex) {
-            LogHelper.printException(AlwaysRepeat.class, "Unable to set FrameLayout", ex);
+            LogHelper.printException(() -> "Unable to set FrameLayout", ex);
         }
     }
 

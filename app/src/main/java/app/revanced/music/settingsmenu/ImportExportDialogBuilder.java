@@ -48,7 +48,7 @@ public class ImportExportDialogBuilder {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(ImportExportDialogBuilder.class, "editTextDialogBuilder failure", ex);
+            LogHelper.printException(() -> "editTextDialogBuilder failure", ex);
         }
     }
 
@@ -60,7 +60,7 @@ public class ImportExportDialogBuilder {
             SettingsEnum.importJSON(replacementSettings);
             SharedPreferenceChangeListener.rebootDialog();
         } catch (Exception ex) {
-            LogHelper.printException(ImportExportDialogBuilder.class, "importSettings failure", ex);
+            LogHelper.printException(() -> "importSettings failure", ex);
         }
     }
 }

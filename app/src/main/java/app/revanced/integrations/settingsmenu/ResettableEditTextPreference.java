@@ -62,7 +62,7 @@ public class ResettableEditTextPreference extends EditTextPreference {
                 editText.setText(defaultStringValue);
                 editText.setSelection(defaultStringValue.length()); // move cursor to end of text
             } catch (Exception ex) {
-                LogHelper.printException(ResettableEditTextPreference.class, "reset failure", ex);
+                LogHelper.printException(() -> "reset failure", ex);
             }
         });
     }

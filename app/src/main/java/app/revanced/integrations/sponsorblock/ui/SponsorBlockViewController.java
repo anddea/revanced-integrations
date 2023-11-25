@@ -54,7 +54,7 @@ public class SponsorBlockViewController {
      */
     public static void initialize(ViewGroup viewGroup) {
         try {
-            LogHelper.printDebug(SponsorBlockViewController.class, "initializing");
+            LogHelper.printDebug(() -> "initializing");
 
             // hide any old components, just in case they somehow are still hanging around
             hideAll();
@@ -93,7 +93,7 @@ public class SponsorBlockViewController {
             skipHighlight = null;
             skipSegment = null;
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockViewController.class, "initialize failure", ex);
+            LogHelper.printException(() -> "initialize failure", ex);
         }
     }
 
@@ -140,7 +140,7 @@ public class SponsorBlockViewController {
     public static void toggleNewSegmentLayoutVisibility() {
         NewSegmentLayout newSegmentLayout = newSegmentLayoutRef.get();
         if (newSegmentLayout == null) { // should never happen
-            LogHelper.printException(SponsorBlockViewController.class, "toggleNewSegmentLayoutVisibility failure");
+            LogHelper.printException(() -> "toggleNewSegmentLayoutVisibility failure");
             return;
         }
         newSegmentLayoutVisible = (newSegmentLayout.getVisibility() != View.VISIBLE);
@@ -183,7 +183,7 @@ public class SponsorBlockViewController {
             setSkipButtonMargins(skipSponsorButton, isWatchFullScreen);
             setViewVisibility(skipSponsorButton, skipSegment != null);
         } catch (Exception ex) {
-            LogHelper.printException(SponsorBlockViewController.class, "Player type changed failure", ex);
+            LogHelper.printException(() -> "Player type changed failure", ex);
         }
     }
 
@@ -203,7 +203,7 @@ public class SponsorBlockViewController {
                                          int defaultBottomMargin, int ctaBottomMargin, int hiddenBottomMargin) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
         if (params == null) {
-            LogHelper.printException(SponsorBlockViewController.class, "Unable to setNewSegmentLayoutMargins (params are null)");
+            LogHelper.printException(() -> "Unable to setNewSegmentLayoutMargins (params are null)");
             return;
         }
         params.bottomMargin = fullScreen ? (isFullscreenHidden() ? hiddenBottomMargin : ctaBottomMargin) : defaultBottomMargin;

@@ -53,15 +53,9 @@ enum class PlayerType {
         fun setFromString(enumName: String) {
             val newType = nameToPlayerType[enumName]
             if (newType == null) {
-                LogHelper.printException(
-                    PlayerType.Companion::class.java,
-                    "Unknown PlayerType encountered: $enumName"
-                )
+                LogHelper.printException { "Unknown PlayerType encountered: $enumName" }
             } else if (current != newType) {
-                LogHelper.printDebug(
-                    PlayerType.Companion::class.java,
-                    "PlayerType changed to: $newType"
-                )
+                LogHelper.printDebug { "PlayerType changed to: $newType" }
                 current = newType
             }
         }

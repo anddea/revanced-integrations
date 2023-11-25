@@ -40,7 +40,7 @@ public class ActionBarPatch {
                             hookDownloadButton(viewGroup, childCount);
                             hideRadioButton(viewGroup, childCount);
                         } catch (Exception ex) {
-                            LogHelper.printException(ActionBarPatch.class, "hookActionBar failure", ex);
+                            LogHelper.printException(() -> "hookActionBar failure", ex);
                         } finally {
                             viewGroup.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         }
