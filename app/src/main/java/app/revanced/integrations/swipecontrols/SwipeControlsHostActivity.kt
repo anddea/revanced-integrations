@@ -11,10 +11,11 @@ import app.revanced.integrations.swipecontrols.controller.ScreenBrightnessContro
 import app.revanced.integrations.swipecontrols.controller.SwipeZonesController
 import app.revanced.integrations.swipecontrols.controller.VolumeKeysController
 import app.revanced.integrations.swipecontrols.controller.gesture.ClassicSwipeController
+import app.revanced.integrations.swipecontrols.controller.gesture.PressToSwipeController
 import app.revanced.integrations.swipecontrols.controller.gesture.core.GestureController
 import app.revanced.integrations.swipecontrols.misc.Rectangle
 import app.revanced.integrations.swipecontrols.views.SwipeControlsOverlayLayout
-import app.revanced.integrations.utils.LogHelper
+import app.revanced.integrations.utils.LogHelper.printDebug
 import java.lang.ref.WeakReference
 
 /**
@@ -67,9 +68,55 @@ class SwipeControlsHostActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initialize()
+    }
 
+    override fun onStart() {
+        super.onStart()
+        reAttachOverlays()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        ensureInitialized()
+        return if ((ev != null) && gesture.submitTouchEvent(ev)) true else {
+            super.dispatchTouchEvent(ev)
+        }
+    }
+
+    override fun dispatchKeyEvent(ev: KeyEvent?): Boolean {
+        ensureInitialized()
+        return if ((ev != null) && keys.onKeyEvent(ev)) true else {
+            super.dispatchKeyEvent(ev)
+        }
+    }
+
+    /**
+     * dispatch a touch event to downstream views
+     *
+     * @param event the event to dispatch
+     * @return was the event consumed?
+     */
+    fun dispatchDownstreamTouchEvent(event: MotionEvent) =
+        super.dispatchTouchEvent(event)
+
+    /**
+     * ensures that swipe controllers are initialized and attached.
+     * on some ROMs with SDK <= 23, [onCreate] and [onStart] may not be called correctly.
+     * see https://github.com/revanced/revanced-patches/issues/446
+     */
+    private fun ensureInitialized() {
+        if (!this::config.isInitialized) {
+            initialize()
+            reAttachOverlays()
+        }
+    }
+
+    /**
+     * initializes controllers, only call once
+     */
+    private fun initialize() {
         // create controllers
-        LogHelper.info(this.javaClass, "initializing swipe controls controllers")
+        printDebug(this.javaClass, "initializing swipe controls controllers")
         config = SwipeControlsConfigurationProvider(this)
         keys = VolumeKeysController(this)
         audio = createAudioController()
@@ -101,35 +148,13 @@ class SwipeControlsHostActivity : Activity() {
         currentHost = WeakReference(this)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // (re) attach overlay
-        LogHelper.info(this.javaClass, "attaching swipe controls overlay")
+    /**
+     * (re) attaches swipe overlays
+     */
+    private fun reAttachOverlays() {
         contentRoot.removeView(overlay)
         contentRoot.addView(overlay)
     }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return if ((ev != null) && gesture.submitTouchEvent(ev)) true else {
-            super.dispatchTouchEvent(ev)
-        }
-    }
-
-    override fun dispatchKeyEvent(ev: KeyEvent?): Boolean {
-        return if ((ev != null) && keys.onKeyEvent(ev)) true else {
-            super.dispatchKeyEvent(ev)
-        }
-    }
-
-    /**
-     * dispatch a touch event to downstream views
-     *
-     * @param event the event to dispatch
-     * @return was the event consumed?
-     */
-    fun dispatchDownstreamTouchEvent(event: MotionEvent) =
-        super.dispatchTouchEvent(event)
 
     /**
      * called when the player type changes
@@ -165,7 +190,9 @@ class SwipeControlsHostActivity : Activity() {
      * create the gesture controller based on settings
      */
     private fun createGestureController() =
-        ClassicSwipeController(this)
+        if (config.shouldEnablePressToSwipe)
+            PressToSwipeController(this)
+        else ClassicSwipeController(this)
 
     companion object {
         /**

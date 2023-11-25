@@ -39,16 +39,16 @@ abstract class BaseGestureController(
 
     override fun submitTouchEvent(motionEvent: MotionEvent): Boolean {
         // ignore if swipe is disabled
-        if (!controller.config.enableSwipeControls) return false
+        if (!controller.config.enableSwipeControls) {
+            return false
+        }
 
         // create a copy of the event so we can modify it
         // without causing any issues downstream
         val me = MotionEvent.obtain(motionEvent)
 
         // check if we should drop this motion
-
         val dropped = shouldDropMotion(me)
-
         if (dropped) {
             me.action = MotionEvent.ACTION_CANCEL
         }

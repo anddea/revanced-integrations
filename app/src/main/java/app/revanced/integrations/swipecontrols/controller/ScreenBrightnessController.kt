@@ -13,7 +13,6 @@ import app.revanced.integrations.swipecontrols.misc.clamp
 class ScreenBrightnessController(
     private val host: Activity
 ) {
-
     /**
      * screen brightness saved by [save]
      */
@@ -36,6 +35,12 @@ class ScreenBrightnessController(
     }
 
     /**
+     * is the screen brightness set to device- default?
+     */
+    val isDefaultBrightness
+        get() = (rawScreenBrightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+
+    /**
      * save the current screen brightness, to be brought back using [restore]
      */
     fun save() {
@@ -53,7 +58,7 @@ class ScreenBrightnessController(
     /**
      * wrapper for the raw screen brightness in [WindowManager.LayoutParams.screenBrightness]
      */
-    private var rawScreenBrightness: Float
+    var rawScreenBrightness: Float
         get() = host.window.attributes.screenBrightness
         private set(value) {
             val attr = host.window.attributes
