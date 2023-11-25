@@ -198,7 +198,10 @@ public enum SegmentCategory {
     }
 
     public static void loadFromPreferences() {
-        SharedPreferences preferences = getPreferences(SPONSOR_BLOCK);
+        final SharedPreferences preferences = getPreferences(SPONSOR_BLOCK);
+        if (preferences == null)
+            return;
+
         LogHelper.printDebug(() -> "loadFromPreferences");
         for (SegmentCategory category : categoriesWithoutUnsubmitted()) {
             category.load(preferences);

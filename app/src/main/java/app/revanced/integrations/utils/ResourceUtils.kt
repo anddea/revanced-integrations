@@ -29,7 +29,7 @@ object ResourceUtils {
 
     @JvmStatic
     fun anim(name: String) =
-        AnimationUtils.loadAnimation(getContext(), identifier(name, ResourceType.ANIM))
+        AnimationUtils.loadAnimation(getContext(), identifier(name, ResourceType.ANIM))!!
 
     @JvmStatic
     fun <R : View> findView(view: View, name: String): R {

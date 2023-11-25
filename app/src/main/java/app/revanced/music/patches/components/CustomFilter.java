@@ -1,11 +1,6 @@
 package app.revanced.music.patches.components;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import app.revanced.music.settings.SettingsEnum;
-
 
 public final class CustomFilter extends Filter {
 
@@ -13,7 +8,6 @@ public final class CustomFilter extends Filter {
 
     // endregion
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public CustomFilter() {
         custom = new CustomFilterGroup(
                 SettingsEnum.CUSTOM_FILTER,

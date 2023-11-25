@@ -25,6 +25,9 @@ import app.revanced.music.patches.video.VideoInformation;
 import app.revanced.music.settings.SettingsEnum;
 
 public class VideoHelpers {
+    /**
+     * Injection point.
+     */
     public static float currentSpeed = 1.0f;
 
     public static void downloadMusic(@NonNull Context context) {
@@ -82,7 +85,6 @@ public class VideoHelpers {
         AudioManager audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
         if (audioManager != null) {
-            // noinspection deprecation
             audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         }
 

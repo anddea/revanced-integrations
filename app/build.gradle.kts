@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "app.revanced.integrations"
-        minSdk = 26
+        minSdk = 24
         // noinspection EditedTargetSdkVersion, ExpiredTargetSdkVersion
         targetSdk = 31
         multiDexEnabled = false

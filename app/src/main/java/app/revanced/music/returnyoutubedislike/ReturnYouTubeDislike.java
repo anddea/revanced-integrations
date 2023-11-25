@@ -11,7 +11,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.icu.text.CompactDecimalFormat;
-import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -446,21 +445,17 @@ public class ReturnYouTubeDislike {
      */
     @SuppressLint("ObsoleteSdkInt")
     private static String formatDislikeCount(long dislikeCount) {
-        // TODO: remove this when dropping support for versions below YT Music v6.20.51
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
-                if (dislikeCountFormatter == null) {
-                    // Note: Java number formatters will use the locale specific number characters.
-                    // such as Arabic which formats "1.234" into "۱,۲۳٤"
-                    // But YouTube disregards locale specific number characters
-                    // and instead shows english number characters everywhere.
-                    Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                    dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
-                }
-                return dislikeCountFormatter.format(dislikeCount);
+        synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
+            if (dislikeCountFormatter == null) {
+                // Note: Java number formatters will use the locale specific number characters.
+                // such as Arabic which formats "1.234" into "۱,۲۳٤"
+                // But YouTube disregards locale specific number characters
+                // and instead shows english number characters everywhere.
+                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
+                dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
             }
+            return dislikeCountFormatter.format(dislikeCount);
         }
-        return String.valueOf(dislikeCount);
     }
 
     /**
@@ -468,22 +463,18 @@ public class ReturnYouTubeDislike {
      */
     @SuppressLint("ObsoleteSdkInt")
     private static String formatDislikePercentage(float dislikePercentage) {
-        // TODO: remove this when dropping support for versions below YT Music v6.20.51
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
-                if (dislikePercentageFormatter == null) {
-                    Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                    dislikePercentageFormatter = NumberFormat.getPercentInstance(locale);
-                }
-                if (dislikePercentage >= 0.01) { // at least 1%
-                    dislikePercentageFormatter.setMaximumFractionDigits(0); // show only whole percentage points
-                } else {
-                    dislikePercentageFormatter.setMaximumFractionDigits(1); // show up to 1 digit precision
-                }
-                return dislikePercentageFormatter.format(dislikePercentage);
+        synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
+            if (dislikePercentageFormatter == null) {
+                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
+                dislikePercentageFormatter = NumberFormat.getPercentInstance(locale);
             }
+            if (dislikePercentage >= 0.01) { // at least 1%
+                dislikePercentageFormatter.setMaximumFractionDigits(0); // show only whole percentage points
+            } else {
+                dislikePercentageFormatter.setMaximumFractionDigits(1); // show up to 1 digit precision
+            }
+            return dislikePercentageFormatter.format(dislikePercentage);
         }
-        return String.valueOf(dislikePercentage);
     }
 
     public enum Vote {

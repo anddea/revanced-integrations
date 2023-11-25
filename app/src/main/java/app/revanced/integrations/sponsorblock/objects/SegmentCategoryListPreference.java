@@ -22,6 +22,9 @@ import java.util.Objects;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+/**
+ * @noinspection ALL
+ */
 public class SegmentCategoryListPreference extends ListPreference {
     private final SegmentCategory category;
     private EditText mEditText;
@@ -100,9 +103,7 @@ public class SegmentCategoryListPreference extends ListPreference {
             builder.setView(table);
             builder.setTitle(category.title.toString());
 
-            builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-            });
+            builder.setPositiveButton(android.R.string.ok, (dialog, which) -> onClick(dialog, DialogInterface.BUTTON_POSITIVE));
             builder.setNeutralButton(str("sb_reset_color"), (dialog, which) -> {
                 try {
                     SharedPreferences.Editor editor = getSharedPreferences().edit();

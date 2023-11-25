@@ -8,6 +8,7 @@ import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -25,8 +26,17 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 public class VideoHelpers {
 
+    /**
+     * Injection point.
+     */
     public static String currentQuality = "";
+    /**
+     * Injection point.
+     */
     public static float currentSpeed;
+    /**
+     * Injection point.
+     */
     public static String qualityAutoString = "Auto";
     private static volatile boolean isPiPAvailable = true;
 
@@ -45,6 +55,7 @@ public class VideoHelpers {
         );
     }
 
+    @TargetApi(26)
     @SuppressLint("DefaultLocale")
     public static void copyTimeStamp() {
         final long currentVideoTime = VideoInformation.getVideoTime();

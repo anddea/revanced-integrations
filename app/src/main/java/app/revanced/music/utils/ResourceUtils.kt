@@ -31,10 +31,6 @@ object ResourceUtils {
     fun integer(name: String) = resources.getInteger(identifier(name, ResourceType.INTEGER))
 
     @JvmStatic
-    fun anim(name: String) =
-        AnimationUtils.loadAnimation(getContext(), identifier(name, ResourceType.ANIM))
-
-    @JvmStatic
     fun <R : View> findView(view: View, name: String): R {
         return view.findViewById(identifier(name, ResourceType.ID)) ?: run {
             throw IllegalArgumentException("View with name $name not found")

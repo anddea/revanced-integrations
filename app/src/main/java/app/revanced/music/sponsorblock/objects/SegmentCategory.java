@@ -259,11 +259,6 @@ public enum SegmentCategory {
         return getCategoryColorDot(color);
     }
 
-    @NonNull
-    public Spanned getTitleWithColorDot() {
-        return Html.fromHtml(getCategoryColorDotHTML(color) + " " + title);
-    }
-
     /**
      * @param segmentStartTime video time the segment category started
      * @param videoLength      length of the video

@@ -3,6 +3,7 @@ package app.revanced.integrations.sponsorblock;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -400,6 +401,7 @@ public class SponsorBlockUtils {
         }
     }
 
+    @TargetApi(26)
     public static String getTimeSavedString(long totalSecondsSaved) {
         Duration duration = Duration.ofSeconds(totalSecondsSaved);
         final long hoursSaved = duration.toHours();

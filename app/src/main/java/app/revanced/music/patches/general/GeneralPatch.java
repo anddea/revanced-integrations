@@ -4,8 +4,6 @@ import static app.revanced.music.utils.ReVancedUtils.hideViewBy0dpUnderCondition
 
 import android.view.View;
 
-import java.util.stream.Stream;
-
 import app.revanced.music.settings.SettingsEnum;
 
 public class GeneralPatch {
@@ -24,8 +22,7 @@ public class GeneralPatch {
 
     public static String enableOldStyleLibraryShelf(final String browseId) {
         if (SettingsEnum.ENABLE_OLD_STYLE_LIBRARY_SHELF.getBoolean() || SettingsEnum.SPOOF_APP_VERSION.getBoolean()) {
-
-            if (Stream.of("FEmusic_library_landing").anyMatch(browseId::contains))
+            if (browseId.equals("FEmusic_library_landing"))
                 return "FEmusic_liked";
         }
 

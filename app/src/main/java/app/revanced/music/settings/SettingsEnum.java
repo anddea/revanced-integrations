@@ -209,7 +209,7 @@ public enum SettingsEnum {
                 if (json.has(importExportKey)) {
                     throw new IllegalArgumentException("duplicate key found: " + importExportKey);
                 }
-                if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
+                if (setting.includeWithImportExport() && setting.isNotSetToDefault()) {
                     json.put(importExportKey, setting.getObjectValue());
                 }
             }
@@ -249,7 +249,7 @@ public enum SettingsEnum {
                         setting.saveValue(value);
                     }
                     numberOfSettingsImported++;
-                } else if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
+                } else if (setting.includeWithImportExport() && setting.isNotSetToDefault()) {
                     LogHelper.printDebug(() -> "Resetting to default: " + setting);
                     setting.saveValue(setting.defaultValue);
                 }
@@ -327,10 +327,10 @@ public enum SettingsEnum {
     }
 
     /**
-     * @return if the currently set value is the same as {@link #defaultValue}
+     * @return if the currently set value is different from {@link #defaultValue}
      */
-    public boolean isSetToDefault() {
-        return value.equals(defaultValue);
+    public boolean isNotSetToDefault() {
+        return !value.equals(defaultValue);
     }
 
     /**

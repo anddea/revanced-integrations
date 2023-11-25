@@ -89,15 +89,13 @@ public class SkipSponsorButton extends FrameLayout {
     }
 
     /**
-     * @return true, if this button state was changed
+     *
      */
-    public boolean updateSkipButtonText(@NonNull SponsorSegment segment) {
+    public void updateSkipButtonText(@NonNull SponsorSegment segment) {
         this.segment = segment;
-        CharSequence newText = segment.getSkipButtonText();
-        if (newText.equals(skipSponsorTextView.getText())) {
-            return false;
+        final String newText = segment.getSkipButtonText();
+        if (!Objects.equals(newText, skipSponsorTextView.getText().toString())) {
+            skipSponsorTextView.setText(newText);
         }
-        skipSponsorTextView.setText(newText);
-        return true;
     }
 }

@@ -20,6 +20,9 @@ import app.revanced.integrations.utils.VideoHelpers;
  */
 public final class VideoInformation {
     private static final String SEEK_METHOD_NAME = "seekTo";
+    /**
+     * Injection point.
+     */
     public static boolean isLiveStream = false;
 
     private static WeakReference<Object> playerControllerRef;
@@ -173,16 +176,16 @@ public final class VideoInformation {
     }
 
     /**
-     * @return If the playback is at the end of the video.
+     * @return If the playback is not at the end of the video.
      * <p>
      * If video is playing in the background with no video visible,
-     * this always returns false (even if the video is actually at the end).
+     * this always returns false (even if the video is not actually at the end).
      * <p>
      * This is equivalent to checking for {@link VideoState#ENDED},
      * but can give a more up to date result for code calling from some hooks.
      * @see VideoState
      */
-    public static boolean isAtEndOfVideo() {
-        return videoTime >= videoLength && videoLength > 0;
+    public static boolean isNotAtEndOfVideo() {
+        return videoTime < videoLength && videoLength > 0;
     }
 }

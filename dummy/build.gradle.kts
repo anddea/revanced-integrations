@@ -12,7 +12,7 @@ android {
     buildToolsVersion = "33.0.2"
 
     defaultConfig {
-        minSdk = 26
+        minSdk = 24
     }
 
     buildTypes {

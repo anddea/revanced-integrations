@@ -4,6 +4,7 @@ import static android.text.Html.fromHtml;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -52,7 +53,6 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
     private SwitchPreference showSkipToast;
     private SwitchPreference trackSkips;
     private SwitchPreference showTimeWithoutSegments;
-    private SwitchPreference toastOnConnectionError;
     private EditTextPreference newSegmentStep;
     private EditTextPreference minSegmentDuration;
     private EditTextPreference privateUserId;
@@ -277,6 +277,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         category.addPreference(guidelinePreferences);
     }
 
+    @TargetApi(26)
     private void addGeneralCategory(final Context context, PreferenceScreen screen) {
         PreferenceCategory category = new PreferenceCategory(context);
         screen.addPreference(category);
@@ -353,9 +354,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
 
         importExport = new EditTextPreference(context) {
             protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-                builder.setNeutralButton(str("sb_settings_copy"), (dialog, which) -> {
-                    ReVancedUtils.setClipboard(getEditText().getText().toString());
-                });
+                builder.setNeutralButton(str("sb_settings_copy"), (dialog, which) -> ReVancedUtils.setClipboard(getEditText().getText().toString()));
             }
         };
         importExport.setTitle(str("settings_ie"));

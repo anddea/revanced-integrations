@@ -44,11 +44,11 @@ abstract class FilterGroup<T> {
     }
 
     /**
-     * @return If {@link FilterGroupList} should include this group when searching.
+     * @return If {@link FilterGroupList} should exclude this group when searching.
      * By default, all filters are included except non enabled settings that require reboot.
      */
-    public boolean includeInSearch() {
-        return isEnabled() || !setting.rebootApp;
+    public boolean excludeInSearch() {
+        return !isEnabled() && setting.rebootApp;
     }
 
     @NonNull
@@ -264,7 +264,7 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
         LogHelper.printDebug(() -> "Creating prefix search tree for: " + this);
         TrieSearch<V> search = createSearchGraph();
         for (T group : filterGroups) {
-            if (!group.includeInSearch()) {
+            if (group.excludeInSearch()) {
                 continue;
             }
             for (V pattern : group.filters) {
@@ -397,7 +397,7 @@ public final class LithoFilterPatch {
     private static <T> void filterGroupLists(TrieSearch<T> pathSearchTree,
                                              Filter filter, FilterGroupList<T, ? extends FilterGroup<T>> list) {
         for (FilterGroup<T> group : list) {
-            if (!group.includeInSearch()) {
+            if (group.excludeInSearch()) {
                 continue;
             }
             for (T pattern : group.filters) {

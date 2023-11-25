@@ -57,7 +57,7 @@ public class Requester {
 
     /**
      * Parse the {@link HttpURLConnection}, close the underlying InputStream, and disconnect.
-     *
+     * <p>
      * <b>Should only be used if other requests to the server are unlikely in the near future</b>
      *
      * @see #parseErrorJson(HttpURLConnection)
@@ -77,7 +77,7 @@ public class Requester {
 
     /**
      * Parse the {@link HttpURLConnection}, close the underlying InputStream, and disconnect.
-     *
+     * <p>
      * <b>Should only be used if other requests to the server are unlikely in the near future</b>
      *
      * @see #parseJSONObject(HttpURLConnection)
@@ -97,7 +97,7 @@ public class Requester {
 
     /**
      * Parse the {@link HttpURLConnection}, close the underlying InputStream, and disconnect.
-     *
+     * <p>
      * <b>Should only be used if other requests to the server are unlikely in the near future</b>
      *
      * @see #parseJSONArray(HttpURLConnection)

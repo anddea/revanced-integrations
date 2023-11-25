@@ -40,12 +40,8 @@ public class ImportExportDialogBuilder {
                     .setTitle(str("revanced_extended_settings_import_export_title"))
                     .setView(container)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setNeutralButton(str("revanced_extended_settings_import_copy"), (dialog, which) -> {
-                        ReVancedUtils.setClipboard(textView.getText().toString(), str("revanced_share_copy_settings_success"));
-                    })
-                    .setPositiveButton(str("revanced_extended_settings_import"), (dialog, which) -> {
-                        importSettings(textView.getText().toString());
-                    })
+                    .setNeutralButton(str("revanced_extended_settings_import_copy"), (dialog, which) -> ReVancedUtils.setClipboard(textView.getText().toString(), str("revanced_share_copy_settings_success")))
+                    .setPositiveButton(str("revanced_extended_settings_import"), (dialog, which) -> importSettings(textView.getText().toString()))
                     .show();
         } catch (Exception ex) {
             LogHelper.printException(() -> "editTextDialogBuilder failure", ex);

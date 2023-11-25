@@ -30,8 +30,8 @@ public class CustomPlaybackSpeedPatch {
 
     public static String[] customSpeedEntries;
     public static String[] customSpeedEntryValues;
-    public static String[] defaultSpeedEntries = {str("quality_auto"), "0.25x", "0.5x", "0.75x", str("revanced_playback_speed_normal"), "1.25x", "1.5x", "1.75x", "2.0x"};
-    public static String[] defaultSpeedEntryValues = {"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
+    public static final String[] defaultSpeedEntries = {str("quality_auto"), "0.25x", "0.5x", "0.75x", str("revanced_playback_speed_normal"), "1.25x", "1.5x", "1.75x", "2.0x"};
+    public static final String[] defaultSpeedEntryValues = {"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
     /**
      * Last time the method was used
      */

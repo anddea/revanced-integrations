@@ -18,7 +18,7 @@ class Event<T> {
         removeObserver(observer)
     }
 
-    fun removeObserver(observer: (T) -> Unit) {
+    private fun removeObserver(observer: (T) -> Unit) {
         eventListeners.remove(observer)
     }
 

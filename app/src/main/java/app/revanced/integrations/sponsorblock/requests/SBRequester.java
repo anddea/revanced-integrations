@@ -182,6 +182,7 @@ public class SBRequester {
                             str("sb_vote_failed_unknown_error", responseCode, connection.getResponseMessage()));
                 }
             } catch (SocketTimeoutException ex) {
+                ReVancedUtils.showToastShort(str("sb_vote_failed_timeout"));
             } catch (IOException ex) {
                 ReVancedUtils.showToastShort(str("sb_vote_failed_unknown_error", 0, ex.getMessage()));
             } catch (Exception ex) {

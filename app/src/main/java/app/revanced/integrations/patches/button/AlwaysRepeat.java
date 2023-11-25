@@ -24,7 +24,7 @@ public class AlwaysRepeat {
     volatile static boolean isShowing;
     volatile static boolean isScrubbed;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
-    static ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#fffffc79"), PorterDuff.Mode.SRC_ATOP);
+    static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#fffffc79"), PorterDuff.Mode.SRC_ATOP);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
     static int fadeDurationFast;

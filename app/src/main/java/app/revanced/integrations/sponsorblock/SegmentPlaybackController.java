@@ -2,6 +2,7 @@ package app.revanced.integrations.sponsorblock;
 
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.text.TextUtils;
@@ -675,6 +676,7 @@ public class SegmentPlaybackController {
         return totalTime;
     }
 
+    @SuppressLint("DefaultLocale")
     private static void calculateTimeWithoutSegments() {
         final long currentVideoLength = VideoInformation.getVideoLength();
         if (!SettingsEnum.SB_VIDEO_LENGTH_WITHOUT_SEGMENTS.getBoolean() || currentVideoLength <= 0
