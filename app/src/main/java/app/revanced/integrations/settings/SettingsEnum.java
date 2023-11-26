@@ -11,15 +11,25 @@ import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.R
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.RYD;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
+import static app.revanced.integrations.utils.StringRef.str;
+
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
 import app.revanced.integrations.sponsorblock.SponsorBlockSettings;
+import app.revanced.integrations.utils.LogHelper;
+import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.SharedPrefHelper;
 
 
@@ -551,6 +561,13 @@ public enum SettingsEnum {
         return false;
     }
 
+    /**
+     * @return if the currently set value is the same as {@link #defaultValue}
+     */
+    public boolean isSetToDefault() {
+        return value.equals(defaultValue);
+    }
+
     public boolean getBoolean() {
         return (Boolean) value;
     }
@@ -579,6 +596,138 @@ public enum SettingsEnum {
     public Object getObjectValue() {
         return value;
     }
+
+    /**
+     * This could be yet another field,
+     * for now use a simple switch statement since this method is not used outside this class.
+     */
+    private boolean includeWithImportExport() {
+        return switch (this) { // Not useful to export, no reason to include it.
+            // Not useful to export, no reason to include it.
+            case RYD_USER_ID,
+                    INITIALIZED,
+                    SB_HIDE_EXPORT_WARNING,
+                    SB_INITIALIZED,
+                    SB_LAST_VIP_CHECK,
+                    SB_LOCAL_TIME_SAVED_MILLISECONDS,
+                    SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS,
+                    SB_SEEN_GUIDELINES
+                    -> false;
+            default -> true;
+        };
+    }
+
+    // Begin import / export
+
+    /**
+     * If a setting path has this prefix, then remove it before importing/exporting.
+     */
+    private static final String OPTIONAL_REVANCED_SETTINGS_PREFIX = "revanced_";
+
+    /**
+     * The path, minus any 'revanced' prefix to keep json concise.
+     */
+    private String getImportExportKey() {
+        if (path.startsWith(OPTIONAL_REVANCED_SETTINGS_PREFIX)) {
+            return path.substring(OPTIONAL_REVANCED_SETTINGS_PREFIX.length());
+        }
+        return path;
+    }
+
+    private static SettingsEnum[] valuesSortedForExport() {
+        SettingsEnum[] sorted = values();
+        Arrays.sort(sorted, (SettingsEnum o1, SettingsEnum o2) -> {
+            // Organize SponsorBlock settings last.
+            final boolean o1IsSb = o1.sharedPref == SPONSOR_BLOCK;
+            final boolean o2IsSb = o2.sharedPref == SPONSOR_BLOCK;
+            if (o1IsSb != o2IsSb) {
+                return o1IsSb ? 1 : -1;
+            }
+            return o1.path.compareTo(o2.path);
+        });
+        return sorted;
+    }
+
+    @NonNull
+    public static String exportJSON(@Nullable Context alertDialogContext) {
+        try {
+            JSONObject json = new JSONObject();
+            for (SettingsEnum setting : valuesSortedForExport()) {
+                String importExportKey = setting.getImportExportKey();
+                if (json.has(importExportKey)) {
+                    throw new IllegalArgumentException("duplicate key found: " + importExportKey);
+                }
+                final boolean exportDefaultValues = false; // Enable to see what all settings looks like in the UI.
+                if (setting.includeWithImportExport() && (!setting.isSetToDefault() | exportDefaultValues)) {
+                    json.put(importExportKey, setting.getObjectValue());
+                }
+            }
+            SponsorBlockSettings.exportCategoriesToFlatJson(alertDialogContext, json);
+
+            if (json.length() == 0) {
+                return "";
+            }
+            String export = json.toString(0);
+            // Remove the outer JSON braces to make the output more compact,
+            // and leave less chance of the user forgetting to copy it
+            return export.substring(2, export.length() - 2);
+        } catch (JSONException e) {
+            LogHelper.printException(() -> "Export failure", e); // should never happen
+            return "";
+        }
+    }
+
+    /**
+     * @return if any settings that require a reboot were changed.
+     */
+    public static boolean importJSON(@NonNull String settingsJsonString) {
+        try {
+            if (!settingsJsonString.matches("[\\s\\S]*\\{")) {
+                settingsJsonString = '{' + settingsJsonString + '}'; // Restore outer JSON braces
+            }
+            JSONObject json = new JSONObject(settingsJsonString);
+
+            ReVancedSettingsFragment.settingImportInProgress = true;
+            boolean rebootSettingChanged = false;
+            int numberOfSettingsImported = 0;
+            for (SettingsEnum setting : values()) {
+                String key = setting.getImportExportKey();
+                if (json.has(key)) {
+                    Object value = switch (setting.returnType) {
+                        case BOOLEAN -> json.getBoolean(key);
+                        case INTEGER -> json.getInt(key);
+                        case LONG -> json.getLong(key);
+                        case FLOAT -> (float) json.getDouble(key);
+                        case STRING -> json.getString(key);
+                    };
+                    if (!setting.getObjectValue().equals(value)) {
+                        rebootSettingChanged |= setting.rebootApp;
+                        setting.saveValue(value);
+                    }
+                    numberOfSettingsImported++;
+                } else if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
+                    LogHelper.printDebug(() -> "Resetting to default: " + setting);
+                    rebootSettingChanged |= setting.rebootApp;
+                    setting.saveValue(setting.defaultValue);
+                }
+            }
+            numberOfSettingsImported += SponsorBlockSettings.importCategoriesFromFlatJson(json);
+
+            ReVancedUtils.showToastLong(numberOfSettingsImported == 0
+                    ? str("revanced_extended_settings_import_reset")
+                    : str("revanced_extended_settings_import_success"));
+
+            return rebootSettingChanged;
+        } catch (JSONException | IllegalArgumentException ex) {
+            ReVancedUtils.showToastLong(str("revanced_extended_settings_import_failed", ex.getMessage()));
+            LogHelper.printInfo(() -> "", ex);
+        } catch (Exception ex) {
+            LogHelper.printException(() -> "Import failure: " + ex.getMessage(), ex); // should never happen
+        }
+        return false;
+    }
+
+    // End import / export
 
     public enum ReturnType {
         BOOLEAN,

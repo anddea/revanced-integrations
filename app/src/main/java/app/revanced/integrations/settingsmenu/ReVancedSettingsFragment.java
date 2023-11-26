@@ -4,7 +4,6 @@ import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.utils.ReVancedHelper.isAdditionalSettingsEnabled;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
 import static app.revanced.integrations.utils.ReVancedHelper.isShortsToolBarEnabled;
-import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
@@ -28,8 +27,7 @@ import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -37,7 +35,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.Map;
+import java.util.Objects;
 
 import app.revanced.integrations.patches.button.AlwaysRepeat;
 import app.revanced.integrations.patches.button.CopyVideoUrl;
@@ -55,7 +53,7 @@ import app.revanced.integrations.utils.SharedPrefHelper;
  * @noinspection ALL
  */
 public class ReVancedSettingsFragment extends PreferenceFragment {
-    private static boolean settingImportInProgress = false;
+    public static boolean settingImportInProgress = false;
     private final int READ_REQUEST_CODE = 42;
     private final int WRITE_REQUEST_CODE = 43;
     @SuppressLint("SuspiciousIndentation")
@@ -66,8 +64,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             if (pref == null)
                 return;
 
-            if (pref instanceof SwitchPreference) {
-                SwitchPreference switchPref = (SwitchPreference) pref;
+            if (pref instanceof SwitchPreference switchPref) {
                 SettingsEnum.setValue(setting, switchPref.isChecked());
 
                 switch (setting) {
@@ -93,8 +90,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     case OVERLAY_BUTTON_SPEED_DIALOG -> SpeedDialog.refreshVisibility();
                 }
 
-            } else if (pref instanceof EditTextPreference) {
-                EditTextPreference editPreference = (EditTextPreference) pref;
+            } else if (pref instanceof EditTextPreference editPreference) {
                 SettingsEnum.setValue(setting, editPreference.getText());
             } else if (pref instanceof ListPreference) {
                 switch (setting) {
@@ -111,7 +107,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 return;
 
             if (setting.rebootApp)
-                rebootDialog();
+                showRebootDialog();
         }
     };
     private PreferenceScreen externalDownloaderPreferenceScreen;
@@ -125,6 +121,14 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         activity.finishAffinity();
         activity.startActivity(restartIntent);
         Runtime.getRuntime().exit(0);
+    }
+
+    public static void showRebootDialog(@NonNull Activity activity) {
+        new AlertDialog.Builder(activity)
+                .setMessage(str("pref_refresh_config"))
+                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
+                .setNegativeButton(str("sign_in_cancel"), null)
+                .show();
     }
 
     @SuppressLint({"ResourceType", "CommitPrefEdits"})
@@ -497,8 +501,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      * Add Preference to Import/Export settings submenu
      */
     private void setBackupRestorePreference() {
-        Preference importPreference = findPreference("revanced_import_settings");
-        Preference exportPreference = findPreference("revanced_export_settings");
+        Preference importPreference = findPreference("revanced_extended_settings_import");
+        Preference exportPreference = findPreference("revanced_extended_settings_export");
         if (importPreference == null || exportPreference == null)
             return;
 
@@ -519,8 +523,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private void exportActivity() {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        Activity activity = getActivity();
 
         var appName = ReVancedHelper.applicationLabel;
         var versionName = ReVancedHelper.appVersionName;
@@ -558,93 +560,65 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
 
-    /**
-     * TODO: Implemented as a more ideal serialize method
-     */
     private void exportJson(Uri uri) {
-        Context context = this.getContext();
-        SharedPreferences prefs = context.getSharedPreferences(REVANCED.getName(), Context.MODE_PRIVATE);
+        final Context context = this.getContext();
 
         try {
             @SuppressLint("Recycle")
-            FileWriter fileWriter = new FileWriter(
-                    context.getApplicationContext()
-                            .getContentResolver()
-                            .openFileDescriptor(uri, "w")
-                            .getFileDescriptor()
-            );
-            PrintWriter printWriter = new PrintWriter(fileWriter);
-            JSONObject settingsJson = new JSONObject();
-
-            var prefsMap = prefs.getAll();
-            for (Map.Entry entry : prefsMap.entrySet()) {
-                settingsJson.put(entry.getKey().toString(), entry.getValue());
-            }
-            printWriter.write(settingsJson.toString());
+            FileWriter jsonFileWriter =
+                    new FileWriter(
+                            Objects.requireNonNull(context.getApplicationContext()
+                                            .getContentResolver()
+                                            .openFileDescriptor(uri, "w"))
+                                    .getFileDescriptor()
+                    );
+            PrintWriter printWriter = new PrintWriter(jsonFileWriter);
+            printWriter.write(SettingsEnum.exportJSON(context));
             printWriter.close();
-            fileWriter.close();
+            jsonFileWriter.close();
 
-            showToastShort(context, str("settings_export_successful"));
-        } catch (IOException | JSONException e) {
-            showToastShort(context, str("settings_export_failed"));
-            throw new RuntimeException(e);
+            showToastShort(context, str("revanced_extended_settings_export_success"));
+        } catch (IOException e) {
+            showToastShort(context, str("revanced_extended_settings_export_failed"));
         }
     }
 
-    /**
-     * TODO: Implemented as a more ideal serialize method
-     */
     private void importJson(Uri uri) {
-        settingImportInProgress = true;
-        Context context = this.getContext();
-        SharedPreferences prefs = context.getSharedPreferences(REVANCED.getName(), Context.MODE_PRIVATE);
-        String json;
+        final Context context = this.getContext();
+        StringBuilder sb = new StringBuilder();
+        String line;
 
         try {
+            settingImportInProgress = true;
+
             @SuppressLint("Recycle")
-            FileReader fileReader = new FileReader(
-                    context.getApplicationContext()
-                            .getContentResolver()
-                            .openFileDescriptor(uri, "r")
-                            .getFileDescriptor()
-            );
+            FileReader fileReader =
+                    new FileReader(
+                            Objects.requireNonNull(context.getApplicationContext()
+                                            .getContentResolver()
+                                            .openFileDescriptor(uri, "r"))
+                                    .getFileDescriptor()
+                    );
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            SharedPreferences.Editor editor = SharedPrefHelper.getPreferences(context, SharedPrefHelper.SharedPrefNames.REVANCED).edit();
-
-            while ((json = bufferedReader.readLine()) != null) {
-                JSONObject settingsJson = new JSONObject(json);
-
-                var prefsMap = prefs.getAll();
-                for (Map.Entry entry : prefsMap.entrySet()) {
-                    String key = entry.getKey().toString().trim();
-                    Object value = entry.getValue();
-
-                    if (value instanceof Boolean) {
-                        editor.putBoolean(key, settingsJson.optBoolean(key, (boolean) value));
-                    } else {
-                        editor.putString(key, settingsJson.optString(key, value.toString()));
-                    }
-                }
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line).append("\n");
             }
-            editor.apply();
             bufferedReader.close();
             fileReader.close();
 
-            showToastShort(context, str("settings_import_successful"));
-            runOnMainThreadDelayed(() -> reboot(getActivity()), 1000L);
-        } catch (IOException | JSONException e) {
-            showToastShort(context, str("settings_import_failed"));
+            final boolean rebootNeeded = SettingsEnum.importJSON(sb.toString());
+            if (rebootNeeded) {
+                showRebootDialog();
+            }
+        } catch (IOException e) {
+            showToastShort(context, str("revanced_extended_settings_import_failed"));
             throw new RuntimeException(e);
+        } finally {
+            settingImportInProgress = false;
         }
     }
 
-    void rebootDialog() {
-        Activity activity = getActivity();
-
-        new AlertDialog.Builder(activity)
-                .setMessage(str("pref_refresh_config"))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
-                .setNegativeButton(str("sign_in_cancel"), null)
-                .show();
+    void showRebootDialog() {
+        showRebootDialog(getActivity());
     }
 }

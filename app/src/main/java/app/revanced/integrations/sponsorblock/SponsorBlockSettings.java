@@ -4,12 +4,16 @@ import static app.revanced.integrations.utils.ReVancedUtils.getContext;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Patterns;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.UUID;
@@ -164,6 +168,53 @@ public class SponsorBlockSettings {
             ReVancedUtils.showToastLong(str("sb_settings_export_failed", ex));
             return "";
         }
+    }
+
+    /**
+     * Export the categories using flatten json (no embedded dictionaries or arrays).
+     */
+    public static void exportCategoriesToFlatJson(@Nullable Context dialogContext,
+                                                  @NonNull JSONObject json) throws JSONException {
+        ReVancedUtils.verifyOnMainThread();
+        initialize();
+
+        // If user has a SponsorBlock user id then show a warning.
+        if (dialogContext != null && SponsorBlockSettings.userHasSBPrivateId()
+                && !SettingsEnum.SB_HIDE_EXPORT_WARNING.getBoolean()) {
+            new AlertDialog.Builder(dialogContext)
+                    .setMessage(str("sb_settings_revanced_export_user_id_warning"))
+                    .setNeutralButton(str("sb_settings_revanced_export_user_id_warning_dismiss"),
+                            (dialog, which) -> SettingsEnum.SB_HIDE_EXPORT_WARNING.saveValue(true))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setCancelable(false)
+                    .show();
+        }
+
+        for (SegmentCategory category : SegmentCategory.categoriesWithoutUnsubmitted()) {
+            category.exportToFlatJSON(json);
+        }
+    }
+
+    /**
+     * Import the categories using flatten json (no embedded dictionaries or arrays).
+     *
+     * @return the number of settings imported
+     */
+    public static int importCategoriesFromFlatJson(JSONObject json) throws JSONException {
+        ReVancedUtils.verifyOnMainThread();
+        initialize();
+
+        int numberOfImportedSettings = 0;
+        SharedPreferences.Editor editor = SharedPrefHelper.getPreferences(getContext(), SPONSOR_BLOCK).edit();
+
+        for (SegmentCategory category : SegmentCategory.categoriesWithoutUnsubmitted()) {
+            numberOfImportedSettings += category.importFromFlatJSON(json, editor);
+        }
+        editor.apply();
+
+        SegmentCategory.updateEnabledCategories();
+
+        return numberOfImportedSettings;
     }
 
     public static boolean isValidSBUserId(@NonNull String userId) {

@@ -357,7 +357,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
                 builder.setNeutralButton(str("sb_settings_copy"), (dialog, which) -> ReVancedUtils.setClipboard(getEditText().getText().toString()));
             }
         };
-        importExport.setTitle(str("settings_ie"));
+        importExport.setTitle(str("sb_settings_ie"));
         importExport.setSummary(str("sb_settings_ie_sum"));
         importExport.getEditText().setInputType(InputType.TYPE_CLASS_TEXT
                 | InputType.TYPE_TEXT_FLAG_MULTI_LINE
