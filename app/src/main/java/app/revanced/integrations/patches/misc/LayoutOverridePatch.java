@@ -14,7 +14,7 @@ public class LayoutOverridePatch {
         try {
             return getBoolean(REVANCED, "revanced_enable_tablet_layout", false);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Failed to getBoolean", ex);
+            LogHelper.printException(() -> "enableTabletLayout failed", ex);
             return false;
         }
     }
@@ -23,7 +23,7 @@ public class LayoutOverridePatch {
         try {
             return getBoolean(REVANCED, "revanced_enable_phone_layout", false) ? 480 : original;
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Failed to getBoolean", ex);
+            LogHelper.printException(() -> "getLayoutOverride failed", ex);
             return original;
         }
     }

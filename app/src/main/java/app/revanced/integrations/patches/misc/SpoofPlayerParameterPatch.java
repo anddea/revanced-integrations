@@ -116,10 +116,18 @@ public class SpoofPlayerParameterPatch {
     }
 
     /**
-     * Injection point.
+     * Injection point.  Forces seekbar to be shown for paid videos or
+     * if {@link SettingsEnum#SPOOF_PLAYER_PARAMETER} is not enabled.
      */
     public static boolean getSeekbarThumbnailOverrideValue() {
-        return SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean();
+        if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
+            return false;
+        }
+        final StoryboardRenderer renderer = videoRenderer;
+        // Spoof storyboard renderer is turned off,
+        // video is paid, or the storyboard fetch timed out.
+        // Show empty thumbnails so the seek time and chapters still show up.
+        return renderer == null || renderer.getSpec() != null;
     }
 
     /**
@@ -133,7 +141,7 @@ public class SpoofPlayerParameterPatch {
 
         StoryboardRenderer renderer = videoRenderer;
         if (renderer != null)
-            return renderer.spec();
+            return renderer.getSpec();
 
         return null;
     }
@@ -151,7 +159,7 @@ public class SpoofPlayerParameterPatch {
 
         StoryboardRenderer renderer = videoRenderer;
         if (renderer != null) {
-            return renderer.isLiveStream() ? null : renderer.spec();
+            return renderer.isLiveStream() ? null : renderer.getSpec();
         }
 
         return originalStoryboardRendererSpec;
@@ -166,7 +174,7 @@ public class SpoofPlayerParameterPatch {
 
         StoryboardRenderer renderer = videoRenderer;
         if (renderer != null) {
-            Integer recommendedLevel = renderer.recommendedLevel();
+            Integer recommendedLevel = renderer.getRecommendedLevel();
             if (recommendedLevel != null)
                 return recommendedLevel;
         }

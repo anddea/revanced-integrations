@@ -23,13 +23,22 @@ import app.revanced.integrations.utils.ReVancedUtils;
 
 public class StoryBoardRendererRequester {
 
+    /**
+     * For videos that have no storyboard.
+     * Usually for low resolution videos as old as YouTube itself.
+     * Does not include paid videos where the renderer fetch fails.
+     */
+    private static final StoryboardRenderer emptyStoryboard
+            = new StoryboardRenderer(null, false, null);
+
     private StoryBoardRendererRequester() {
     }
 
     private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex,
                                               boolean showToastOnIOException) {
-        if (showToastOnIOException)
+        if (showToastOnIOException) {
             ReVancedUtils.showToastShort(toastMessage);
+        }
         LogHelper.printInfo(() -> toastMessage, ex);
     }
 
@@ -97,6 +106,10 @@ public class StoryBoardRendererRequester {
     @Nullable
     private static StoryboardRenderer getStoryboardRendererUsingResponse(@NonNull JSONObject playerResponse) {
         try {
+            if (!playerResponse.has("storyboards")) {
+                LogHelper.printDebug(() -> "Using empty storyboard");
+                return emptyStoryboard;
+            }
             final JSONObject storyboards = playerResponse.getJSONObject("storyboards");
             final boolean isLiveStream = storyboards.has("playerLiveStoryboardSpecRenderer");
             final String storyboardsRendererTag = isLiveStream
