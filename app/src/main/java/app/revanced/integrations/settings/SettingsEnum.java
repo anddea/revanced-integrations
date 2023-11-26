@@ -351,7 +351,7 @@ public enum SettingsEnum {
     DISABLE_HDR_AUTO_BRIGHTNESS("revanced_disable_hdr_auto_brightness", BOOLEAN, TRUE, true,
             parents(ENABLE_SWIPE_BRIGHTNESS)),
     SWIPE_BRIGHTNESS_AUTO("revanced_swipe_brightness_auto", BOOLEAN, TRUE),
-    SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", FLOAT, 50F),
+    SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", FLOAT, 0.5F),
 
 
     // Video
@@ -562,10 +562,10 @@ public enum SettingsEnum {
     }
 
     /**
-     * @return if the currently set value is the same as {@link #defaultValue}
+     * @return if the currently set value is different from {@link #defaultValue}
      */
-    public boolean isSetToDefault() {
-        return value.equals(defaultValue);
+    public boolean isNotSetToDefault() {
+        return !value.equals(defaultValue);
     }
 
     public boolean getBoolean() {
@@ -658,7 +658,7 @@ public enum SettingsEnum {
                     throw new IllegalArgumentException("duplicate key found: " + importExportKey);
                 }
                 final boolean exportDefaultValues = false; // Enable to see what all settings looks like in the UI.
-                if (setting.includeWithImportExport() && (!setting.isSetToDefault() | exportDefaultValues)) {
+                if (setting.includeWithImportExport() && (setting.isNotSetToDefault() | exportDefaultValues)) {
                     json.put(importExportKey, setting.getObjectValue());
                 }
             }
@@ -705,7 +705,7 @@ public enum SettingsEnum {
                         setting.saveValue(value);
                     }
                     numberOfSettingsImported++;
-                } else if (setting.includeWithImportExport() && !setting.isSetToDefault()) {
+                } else if (setting.includeWithImportExport() && setting.isNotSetToDefault()) {
                     LogHelper.printDebug(() -> "Resetting to default: " + setting);
                     rebootSettingChanged |= setting.rebootApp;
                     setting.saveValue(setting.defaultValue);
