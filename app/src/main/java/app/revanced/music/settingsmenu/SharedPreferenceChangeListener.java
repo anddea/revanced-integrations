@@ -78,7 +78,10 @@ public class SharedPreferenceChangeListener {
             EditTextDialogBuilder.editTextDialogBuilder(HIDE_ACCOUNT_MENU_FILTER_STRINGS, activity, str("revanced_custom_filter_strings_summary"));
             return true;
         } else if (dataString.equals("revanced_extended_settings_import_export")) {
-            ImportExportDialogBuilder.editTextDialogBuilder(activity);
+            activity.getFragmentManager()
+                    .beginTransaction()
+                    .add(new ImportExportDialogBuilder(), "")
+                    .commit();
             return true;
         }
 
