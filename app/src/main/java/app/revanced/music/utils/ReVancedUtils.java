@@ -222,7 +222,9 @@ public class ReVancedUtils {
         }
     }
 
-    /** @noinspection deprecation*/
+    /**
+     * @noinspection deprecation
+     */
     @SuppressLint("MissingPermission") // permission already included in YouTube
     public static NetworkType getNetworkType() {
         assert context != null;

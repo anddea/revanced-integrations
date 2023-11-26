@@ -8,6 +8,7 @@ import static app.revanced.music.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
@@ -20,6 +21,9 @@ import android.util.TypedValue;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.BufferedReader;
@@ -30,25 +34,117 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Objects;
 
+import app.revanced.music.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.music.settings.SettingsEnum;
+import app.revanced.music.sponsorblock.objects.SponsorBlockDialogBuilder;
+import app.revanced.music.sponsorblock.objects.SponsorBlockEditTextDialogBuilder;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
-public class ImportExportDialogBuilder extends PreferenceFragment {
+public class ReVancedSettingsFragment extends PreferenceFragment {
+
     private static final String IMPORT_EXPORT_SETTINGS_ENTRY_KEY = "revanced_extended_settings_import_export_entry";
-    private static String existingSettings;
+    /**
+     * If a setting path has this prefix, then remove it.
+     */
+    private static final String OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX = "sb_segments_";
 
     private static final int READ_REQUEST_CODE = 42;
     private static final int WRITE_REQUEST_CODE = 43;
 
+    private static String existingSettings;
+
+
+    public ReVancedSettingsFragment() {
+    }
+
+    /**
+     * Injection point.
+     */
+    public static void onPreferenceChanged(@Nullable String key, boolean newValue) {
+        for (SettingsEnum setting : SettingsEnum.values()) {
+            if (!setting.path.equals(key) && key != null)
+                continue;
+
+            setting.saveValue(newValue);
+            if (setting.rebootApp)
+                showRebootDialog();
+        }
+    }
+
+    public static void reboot(@NonNull Activity activity) {
+        final Intent restartIntent =
+                activity.getPackageManager().getLaunchIntentForPackage(ReVancedHelper.packageName);
+
+        activity.finishAffinity();
+        activity.startActivity(restartIntent);
+        Runtime.getRuntime().exit(0);
+    }
+
+    public static void showRebootDialog() {
+        final Activity activity = ReVancedSettingActivity.getActivity();
+
+        if (activity == null)
+            return;
+
+        new AlertDialog.Builder(activity, android.R.style.Theme_DeviceDefault_Dialog_Alert).
+                setMessage(str("revanced_reboot_message")).
+                setPositiveButton(android.R.string.ok, (dialog, i) -> reboot(activity))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listDialogBuilder();
+        try {
+            final Activity activity = this.getActivity();
+            final String dataString = Objects.requireNonNull(activity.getIntent()).getDataString();
+
+            if (dataString == null || dataString.isEmpty())
+                return;
+
+            if (dataString.startsWith(OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX)) {
+                SponsorBlockDialogBuilder.dialogBuilder(dataString.replaceAll(OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX, ""), activity);
+                return;
+            }
+
+            final SettingsEnum settings = SettingsEnum.settingFromPath(dataString);
+
+            if (settings == null) {
+                return;
+            }
+
+            switch (settings) {
+                case CUSTOM_FILTER_STRINGS, HIDE_ACCOUNT_MENU_FILTER_STRINGS ->
+                        EditTextDialogBuilder.editTextDialogBuilder(settings, str("revanced_custom_filter_strings_summary"));
+                case CUSTOM_PLAYBACK_SPEEDS ->
+                        EditTextDialogBuilder.editTextDialogBuilder(settings, CustomPlaybackSpeedPatch.getWarningMessage());
+                case EXTERNAL_DOWNLOADER_PACKAGE_NAME ->
+                        EditTextDialogBuilder.editTextDialogBuilder(settings);
+                case SB_API_URL -> SponsorBlockEditTextDialogBuilder.editTextDialogBuilder();
+                case SETTINGS_IMPORT_EXPORT -> importExportListDialogBuilder();
+                case SPOOF_APP_VERSION_TARGET -> ListDialogBuilder.listDialogBuilder(settings, 1);
+                case START_PAGE -> ListDialogBuilder.listDialogBuilder(settings, 2);
+                default ->
+                        LogHelper.printDebug(() -> "Failed to find the right value: " + dataString);
+            }
+        } catch (Exception ex) {
+            LogHelper.printException(() -> "onCreate failure", ex);
+        }
     }
 
-    private void listDialogBuilder() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    /**
+     * Build a ListDialog for Import / Export settings
+     * When importing/exporting as file, {@link #onActivityResult} is used, so declare it here.
+     */
+    private void importExportListDialogBuilder() {
         try {
             final Activity activity = getActivity();
             final String[] mEntries = getStringArray(activity, IMPORT_EXPORT_SETTINGS_ENTRY_KEY);
@@ -59,13 +155,44 @@ public class ImportExportDialogBuilder extends PreferenceFragment {
                         switch (index) {
                             case 0 -> exportActivity();
                             case 1 -> importActivity();
-                            case 2 -> editTextDialogBuilder();
+                            case 2 -> importExportEditTextDialogBuilder();
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, null)
                     .show();
         } catch (Exception ex) {
             LogHelper.printException(() -> "listDialogBuilder failure", ex);
+        }
+    }
+
+    /**
+     * Build a EditTextDialog for Import / Export settings
+     */
+    private void importExportEditTextDialogBuilder() {
+        try {
+            final Activity activity = getActivity();
+            final EditText textView = new EditText(activity);
+            existingSettings = SettingsEnum.exportJSON();
+            textView.setText(existingSettings);
+            textView.setInputType(textView.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PT, 8); // Use a smaller font to reduce text wrap.
+
+            TextInputLayout textInputLayout = new TextInputLayout(activity);
+            textInputLayout.setLayoutParams(getLayoutParams(activity));
+            textInputLayout.addView(textView);
+
+            FrameLayout container = new FrameLayout(activity);
+            container.addView(textInputLayout);
+
+            getDialogBuilder(activity)
+                    .setTitle(str("revanced_extended_settings_import_export_title"))
+                    .setView(container)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setNeutralButton(str("revanced_extended_settings_import_copy"), (dialog, which) -> ReVancedUtils.setClipboard(textView.getText().toString(), str("revanced_share_copy_settings_success")))
+                    .setPositiveButton(str("revanced_extended_settings_import"), (dialog, which) -> importSettings(textView.getText().toString()))
+                    .show();
+        } catch (Exception ex) {
+            LogHelper.printException(() -> "editTextDialogBuilder failure", ex);
         }
     }
 
@@ -99,7 +226,7 @@ public class ImportExportDialogBuilder extends PreferenceFragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             exportJson(data.getData());
@@ -154,39 +281,11 @@ public class ImportExportDialogBuilder extends PreferenceFragment {
 
             final boolean rebootNeeded = SettingsEnum.importJSON(sb.toString());
             if (rebootNeeded) {
-                SharedPreferenceChangeListener.rebootDialog();
+                ReVancedSettingsFragment.showRebootDialog();
             }
         } catch (IOException e) {
             showToastShort(context, str("revanced_extended_settings_import_failed"));
             throw new RuntimeException(e);
-        }
-    }
-
-    private void editTextDialogBuilder() {
-        try {
-            final Activity activity = getActivity();
-            final EditText textView = new EditText(activity);
-            existingSettings = SettingsEnum.exportJSON();
-            textView.setText(existingSettings);
-            textView.setInputType(textView.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PT, 8); // Use a smaller font to reduce text wrap.
-
-            TextInputLayout textInputLayout = new TextInputLayout(activity);
-            textInputLayout.setLayoutParams(getLayoutParams(activity));
-            textInputLayout.addView(textView);
-
-            FrameLayout container = new FrameLayout(activity);
-            container.addView(textInputLayout);
-
-            getDialogBuilder(activity)
-                    .setTitle(str("revanced_extended_settings_import_export_title"))
-                    .setView(container)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setNeutralButton(str("revanced_extended_settings_import_copy"), (dialog, which) -> ReVancedUtils.setClipboard(textView.getText().toString(), str("revanced_share_copy_settings_success")))
-                    .setPositiveButton(str("revanced_extended_settings_import"), (dialog, which) -> importSettings(textView.getText().toString()))
-                    .show();
-        } catch (Exception ex) {
-            LogHelper.printException(() -> "editTextDialogBuilder failure", ex);
         }
     }
 
@@ -198,7 +297,7 @@ public class ImportExportDialogBuilder extends PreferenceFragment {
             }
             final boolean rebootNeeded = SettingsEnum.importJSON(replacementSettings);
             if (rebootNeeded) {
-                SharedPreferenceChangeListener.rebootDialog();
+                ReVancedSettingsFragment.showRebootDialog();
             }
         } catch (Exception ex) {
             LogHelper.printException(() -> "importSettings failure", ex);

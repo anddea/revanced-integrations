@@ -14,14 +14,20 @@ import androidx.annotation.NonNull;
 import com.google.android.material.textfield.TextInputLayout;
 
 import app.revanced.music.settings.SettingsEnum;
+import app.revanced.music.settingsmenu.ReVancedSettingActivity;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
 public class SponsorBlockEditTextDialogBuilder {
 
-    public static void editTextDialogBuilder(@NonNull Activity activity) {
+    public static void editTextDialogBuilder() {
         try {
             SettingsEnum api = SettingsEnum.SB_API_URL;
+
+            final Activity activity = ReVancedSettingActivity.getActivity();
+
+            if (activity == null)
+                return;
 
             final EditText textView = new EditText(activity);
             textView.setHint(api.getString());

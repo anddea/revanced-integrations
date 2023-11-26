@@ -23,6 +23,8 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import app.revanced.music.utils.LogHelper;
@@ -32,14 +34,15 @@ public enum SettingsEnum {
 
     // Account
     HIDE_ACCOUNT_MENU("revanced_hide_account_menu", BOOLEAN, FALSE),
-    HIDE_ACCOUNT_MENU_FILTER_STRINGS("revanced_hide_account_menu_filter_strings", STRING, ""),
+    HIDE_ACCOUNT_MENU_FILTER_STRINGS("revanced_hide_account_menu_filter_strings", STRING, "", 1),
     HIDE_ACCOUNT_MENU_EMPTY_COMPONENT("revanced_hide_account_menu_empty_component", BOOLEAN, FALSE),
     HIDE_HANDLE("revanced_hide_handle", BOOLEAN, TRUE, true),
     HIDE_TERMS_CONTAINER("revanced_hide_terms_container", BOOLEAN, FALSE, true),
 
 
     // Action Bar
-    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING,
+            "com.deniscerri.ytdl", true, 1),
     HIDE_ACTION_BAR_LABEL("revanced_hide_action_bar_label", BOOLEAN, FALSE),
     HIDE_ACTION_BAR_RADIO("revanced_hide_action_bar_radio", BOOLEAN, FALSE),
     HOOK_ACTION_BAR_DOWNLOAD("revanced_hook_action_bar_download", BOOLEAN, FALSE, true),
@@ -85,7 +88,7 @@ public enum SettingsEnum {
 
     // General
     CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
-    CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true),
+    CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true, 1),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE),
     ENABLE_LANDSCAPE_MODE("revanced_enable_landscape_mode", BOOLEAN, TRUE, true),
     ENABLE_OLD_STYLE_LIBRARY_SHELF("revanced_enable_old_style_library_shelf", BOOLEAN, FALSE, true),
@@ -98,7 +101,7 @@ public enum SettingsEnum {
     HIDE_HISTORY_BUTTON("revanced_hide_history_button", BOOLEAN, FALSE),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, FALSE),
     HIDE_PLAYLIST_CARD("revanced_hide_playlist_card", BOOLEAN, FALSE, true),
-    START_PAGE("revanced_start_page", STRING, "FEmusic_home", true),
+    START_PAGE("revanced_start_page", STRING, "FEmusic_home", true, 1),
 
 
     // Misc
@@ -106,8 +109,11 @@ public enum SettingsEnum {
     ENABLE_OPUS_CODEC("revanced_enable_opus_codec", BOOLEAN, TRUE, true),
     SANITIZE_SHARING_LINKS("revanced_sanitize_sharing_links", BOOLEAN, TRUE, true),
     SETTINGS_INITIALIZED("revanced_settings_initialized", BOOLEAN, FALSE),
+    SETTINGS_IMPORT_EXPORT("revanced_extended_settings_import_export", BOOLEAN, FALSE, 1),
     SPOOF_APP_VERSION("revanced_spoof_app_version", BOOLEAN, FALSE, true),
-    SPOOF_APP_VERSION_TARGET("revanced_spoof_app_version_target", STRING, "4.27.53", true),
+    SPOOF_APP_VERSION_TARGET("revanced_spoof_app_version_target", STRING,
+            "4.27.53", true, 1),
+
 
     // Navigation
     ENABLE_BLACK_NAVIGATION_BAR("revanced_enable_black_navigation_bar", BOOLEAN, TRUE),
@@ -135,7 +141,7 @@ public enum SettingsEnum {
 
     // Video
     CUSTOM_PLAYBACK_SPEEDS("revanced_custom_playback_speeds", STRING,
-            "0.25\n0.5\n0.75\n1.0\n1.25\n1.5\n1.75\n2.0", true),
+            "0.25\n0.5\n0.75\n1.0\n1.25\n1.5\n1.75\n2.0", true, 1),
     ENABLE_SAVE_PLAYBACK_SPEED("revanced_enable_save_playback_speed", BOOLEAN, FALSE),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, TRUE),
     DEFAULT_PLAYBACK_SPEED("revanced_default_playback_speed", FLOAT, 1.0f),
@@ -153,7 +159,7 @@ public enum SettingsEnum {
     // SponsorBlock
     SB_ENABLED("sb_enabled", BOOLEAN, TRUE),
     SB_TOAST_ON_SKIP("sb_toast_on_skip", BOOLEAN, TRUE),
-    SB_API_URL("sb_api_url", STRING, "https://sponsor.ajay.app"),
+    SB_API_URL("sb_api_url", STRING, "https://sponsor.ajay.app", 1),
     SB_PRIVATE_USER_ID("sb_private_user_id", STRING, ""),
     // SB settings not exported
     SB_LAST_VIP_CHECK("sb_last_vip_check", LONG, 0L);
@@ -164,8 +170,53 @@ public enum SettingsEnum {
      */
     private static final String OPTIONAL_REVANCED_SETTINGS_PREFIX = "revanced_";
 
+    /**
+     * If a setting path has this prefix, then remove it.
+     */
+    private static final String OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX = "sb_segments_";
+
+    /**
+     * Array of settings using intent
+     */
+    private static String[] intentSettingArray;
+
+    private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
+
     static {
         loadAllSettings();
+        setIntentSettings();
+
+        for (SettingsEnum setting : values()) {
+            pathToSetting.put(setting.path, setting);
+        }
+    }
+
+    @Nullable
+    public static SettingsEnum settingFromPath(@NonNull String str) {
+        return pathToSetting.get(str);
+    }
+
+    private static void loadAllSettings() {
+        for (SettingsEnum setting : values()) {
+            setting.load();
+        }
+    }
+
+    private static void setIntentSettings() {
+        int i = 0;
+        for (SettingsEnum setting : values()) {
+            if (setting.isUsedIntent()) {
+                i++;
+            }
+        }
+        intentSettingArray = new String[i + 2];
+        int j = 0;
+        for (SettingsEnum setting : values()) {
+            if (setting.isUsedIntent()) {
+                intentSettingArray[j++] = setting.path;
+            }
+        }
+        intentSettingArray[j] = OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX;
     }
 
     @NonNull
@@ -175,23 +226,27 @@ public enum SettingsEnum {
     @NonNull
     public final ReturnType returnType;
     public final boolean rebootApp;
+    public final int useIntent;
     public Object value;
 
     SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue) {
-        this(path, returnType, defaultValue, false);
+        this(path, returnType, defaultValue, false, 0);
     }
 
     SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp) {
+        this(path, returnType, defaultValue, rebootApp, 0);
+    }
+
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, int useIntent) {
+        this(path, returnType, defaultValue, false, useIntent);
+    }
+
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp, int useIntent) {
         this.path = path;
         this.returnType = returnType;
         this.defaultValue = defaultValue;
         this.rebootApp = rebootApp;
-    }
-
-    private static void loadAllSettings() {
-        for (SettingsEnum setting : values()) {
-            setting.load();
-        }
+        this.useIntent = useIntent;
     }
 
     private static SettingsEnum[] valuesSortedForExport() {
@@ -272,6 +327,13 @@ public enum SettingsEnum {
         return false;
     }
 
+    /**
+     * @return whether dataString contains settings that use Intent
+     */
+    public static boolean includeWithIntent(@NonNull String dataString) {
+        return ReVancedUtils.containsAny(dataString, intentSettingArray);
+    }
+
     private void load() {
         switch (returnType) {
             case BOOLEAN ->
@@ -339,12 +401,20 @@ public enum SettingsEnum {
     }
 
     /**
+     * @return whether the setting uses intents
+     */
+    public boolean isUsedIntent() {
+        return useIntent > 0;
+    }
+
+    /**
      * This could be yet another field,
      * for now use a simple switch statement since this method is not used outside this class.
      */
     private boolean includeWithImportExport() {
         return switch (this) { // Not useful to export, no reason to include it.
-            case RYD_USER_ID, SB_LAST_VIP_CHECK, SETTINGS_INITIALIZED -> false;
+            case RYD_USER_ID, SB_LAST_VIP_CHECK, SETTINGS_INITIALIZED, SETTINGS_IMPORT_EXPORT ->
+                    false;
             default -> true;
         };
     }

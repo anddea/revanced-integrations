@@ -10,7 +10,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import app.revanced.music.settings.SettingsEnum;
-import app.revanced.music.settingsmenu.SharedPreferenceChangeListener;
+import app.revanced.music.settingsmenu.ReVancedSettingsFragment;
 import app.revanced.music.utils.ReVancedHelper;
 
 public class InitializationPatch {
@@ -36,7 +36,7 @@ public class InitializationPatch {
         new AlertDialog.Builder(activity, android.R.style.Theme_DeviceDefault_Dialog_Alert)
                 .setMessage(str("revanced_reboot_first_run"))
                 .setPositiveButton(android.R.string.ok, (dialog, id) ->
-                        runOnMainThreadDelayed(() -> SharedPreferenceChangeListener.reboot(activity), 1000L)
+                        runOnMainThreadDelayed(() -> ReVancedSettingsFragment.reboot(activity), 1000L)
                 )
                 .setNegativeButton(android.R.string.cancel, null)
                 .setCancelable(false)

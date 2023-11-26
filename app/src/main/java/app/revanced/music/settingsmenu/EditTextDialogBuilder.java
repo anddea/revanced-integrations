@@ -1,9 +1,7 @@
 package app.revanced.music.settingsmenu;
 
-import static app.revanced.music.settings.SettingsEnum.ReturnType;
 import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
 import static app.revanced.music.utils.ReVancedHelper.getLayoutParams;
-import static app.revanced.music.utils.SharedPrefHelper.saveString;
 import static app.revanced.music.utils.StringRef.str;
 
 import android.app.Activity;
@@ -19,13 +17,15 @@ import app.revanced.music.utils.LogHelper;
 
 public class EditTextDialogBuilder {
 
-    public static void editTextDialogBuilder(@NonNull SettingsEnum setting, Activity base) {
-        editTextDialogBuilder(setting, base, setting.getString());
+    public static void editTextDialogBuilder(@NonNull SettingsEnum setting) {
+        editTextDialogBuilder(setting, setting.getString());
     }
 
-    public static void editTextDialogBuilder(@NonNull SettingsEnum setting, @NonNull Activity activity, String hint) {
+    public static void editTextDialogBuilder(@NonNull SettingsEnum setting, String hint) {
         try {
-            if (setting.returnType != ReturnType.STRING)
+            final Activity activity = ReVancedSettingActivity.getActivity();
+
+            if (activity == null)
                 return;
 
             final EditText textView = new EditText(activity);
@@ -44,12 +44,12 @@ public class EditTextDialogBuilder {
                     .setView(container)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
-                        saveString(setting.path, setting.defaultValue.toString());
-                        SharedPreferenceChangeListener.rebootDialog();
+                        setting.saveValue(setting.defaultValue.toString());
+                        ReVancedSettingsFragment.showRebootDialog();
                     })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        saveString(setting.path, textView.getText().toString().trim());
-                        SharedPreferenceChangeListener.rebootDialog();
+                        setting.saveValue(textView.getText().toString().trim());
+                        ReVancedSettingsFragment.showRebootDialog();
                     })
                     .show();
         } catch (Exception ex) {

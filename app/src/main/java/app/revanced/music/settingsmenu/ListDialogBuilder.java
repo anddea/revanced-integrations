@@ -2,7 +2,6 @@ package app.revanced.music.settingsmenu;
 
 import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
 import static app.revanced.music.utils.ReVancedHelper.getStringArray;
-import static app.revanced.music.utils.SharedPrefHelper.saveString;
 import static app.revanced.music.utils.StringRef.str;
 
 import android.app.Activity;
@@ -17,8 +16,15 @@ import app.revanced.music.utils.LogHelper;
 public class ListDialogBuilder {
     private static int mClickedDialogEntryIndex;
 
-    public static void listDialogBuilder(@NonNull SettingsEnum setting, @NonNull Activity activity, int defaultIndex, String entryKey, String entryValueKey) {
+    public static void listDialogBuilder(@NonNull SettingsEnum setting, int defaultIndex) {
         try {
+            final Activity activity = ReVancedSettingActivity.getActivity();
+
+            if (activity == null)
+                return;
+
+            final String entryKey = setting.path + "_entry";
+            final String entryValueKey = setting.path + "_entry_value";
             final String[] mEntries = getStringArray(activity, entryKey);
             final String[] mEntryValues = getStringArray(activity, entryValueKey);
 
@@ -31,12 +37,12 @@ public class ListDialogBuilder {
                             (dialog, id) -> mClickedDialogEntryIndex = id)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
-                        saveString(setting.path, setting.defaultValue.toString());
-                        SharedPreferenceChangeListener.rebootDialog();
+                        setting.saveValue(setting.defaultValue.toString());
+                        ReVancedSettingsFragment.showRebootDialog();
                     })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        saveString(setting.path, mEntryValues[mClickedDialogEntryIndex]);
-                        SharedPreferenceChangeListener.rebootDialog();
+                        setting.saveValue(mEntryValues[mClickedDialogEntryIndex]);
+                        ReVancedSettingsFragment.showRebootDialog();
                     })
                     .show();
         } catch (Exception ex) {
