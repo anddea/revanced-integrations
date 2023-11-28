@@ -70,6 +70,10 @@ public class ReVancedHelper {
         return (int) px;
     }
 
+    public static AlertDialog.Builder getDialogBuilder(@NonNull Context context) {
+        return new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert);
+    }
+
     public static AlertDialog.Builder getDialogBuilder(@NonNull Activity activity) {
         return new AlertDialog.Builder(activity, android.R.style.Theme_DeviceDefault_Dialog_Alert);
     }

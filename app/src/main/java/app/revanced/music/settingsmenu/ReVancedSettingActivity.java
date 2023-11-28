@@ -19,12 +19,12 @@ public class ReVancedSettingActivity {
     /**
      * Injection point.
      *
-     * @param object It is usually settings activity, but sometimes it cannot be cast as an Activity.
+     * @param object object is usually Activity, but sometimes object cannot be cast to Activity.
      *               Check whether object can be cast as Activity for a safe hook.
      */
     public static void setActivity(@NonNull Object object) {
-        if (object instanceof Activity)
-            activity = (Activity) object;
+        if (object instanceof Activity mActivity)
+            activity = mActivity;
     }
 
     public static Activity getActivity() {

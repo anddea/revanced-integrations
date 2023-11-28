@@ -1,5 +1,6 @@
 package app.revanced.music.sponsorblock.objects;
 
+import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
 import static app.revanced.music.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.music.utils.StringRef.str;
 
@@ -30,7 +31,7 @@ public class SponsorBlockDialogBuilder {
     public static void dialogBuilder(String categoryString, Activity base) {
         try {
             SegmentCategory category = Objects.requireNonNull(SegmentCategory.byCategoryKey(categoryString));
-            final AlertDialog.Builder builder = new AlertDialog.Builder(base, android.R.style.Theme_DeviceDefault_Dialog_Alert);
+            final AlertDialog.Builder builder = getDialogBuilder(base);
             TableLayout table = new TableLayout(base);
             table.setOrientation(LinearLayout.HORIZONTAL);
             table.setPadding(70, 0, 150, 0);

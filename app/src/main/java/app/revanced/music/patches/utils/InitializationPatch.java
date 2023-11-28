@@ -1,10 +1,10 @@
 package app.revanced.music.patches.utils;
 
+import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
 import static app.revanced.music.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.music.utils.StringRef.str;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -31,12 +31,13 @@ public class InitializationPatch {
         SettingsEnum.SETTINGS_INITIALIZED.saveValue(true);
 
         // show dialog
-        Activity activity = (Activity) context;
+        if (!(context instanceof Activity mActivity))
+            return;
 
-        new AlertDialog.Builder(activity, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+        getDialogBuilder(context)
                 .setMessage(str("revanced_reboot_first_run"))
                 .setPositiveButton(android.R.string.ok, (dialog, id) ->
-                        runOnMainThreadDelayed(() -> ReVancedSettingsFragment.reboot(activity), 1000L)
+                        runOnMainThreadDelayed(() -> ReVancedSettingsFragment.reboot(mActivity), 1000L)
                 )
                 .setNegativeButton(android.R.string.cancel, null)
                 .setCancelable(false)

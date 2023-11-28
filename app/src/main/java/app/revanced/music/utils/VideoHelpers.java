@@ -1,5 +1,6 @@
 package app.revanced.music.utils;
 
+import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
 import static app.revanced.music.utils.ReVancedUtils.showToastShort;
 import static app.revanced.music.utils.StringRef.str;
 
@@ -62,7 +63,7 @@ public class VideoHelpers {
 
         final int index = Arrays.binarySearch(playbackSpeedEntryValues, String.valueOf(currentSpeed));
 
-        AlertDialog speedDialog = new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+        AlertDialog speedDialog = getDialogBuilder(context)
                 .setSingleChoiceItems(playbackSpeedEntries, index, (mDialog, mIndex) -> {
                     overrideSpeedBridge(Float.parseFloat(playbackSpeedEntryValues[mIndex] + "f"));
                     mDialog.dismiss();

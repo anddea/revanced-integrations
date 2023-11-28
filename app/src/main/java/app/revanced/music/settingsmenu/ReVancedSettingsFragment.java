@@ -8,7 +8,6 @@ import static app.revanced.music.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
@@ -63,13 +62,17 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
      * Injection point.
      */
     public static void onPreferenceChanged(@Nullable String key, boolean newValue) {
-        for (SettingsEnum setting : SettingsEnum.values()) {
-            if (!setting.path.equals(key) && key != null)
-                continue;
+        if (key == null || key.isEmpty())
+            return;
 
-            setting.saveValue(newValue);
-            if (setting.rebootApp)
-                showRebootDialog();
+        for (SettingsEnum setting : SettingsEnum.values()) {
+            if (Objects.equals(setting.path, key)) {
+                setting.saveValue(newValue);
+                if (setting.rebootApp) {
+                    showRebootDialog();
+                }
+                break;
+            }
         }
     }
 
@@ -88,9 +91,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         if (activity == null)
             return;
 
-        new AlertDialog.Builder(activity, android.R.style.Theme_DeviceDefault_Dialog_Alert).
-                setMessage(str("revanced_reboot_message")).
-                setPositiveButton(android.R.string.ok, (dialog, i) -> reboot(activity))
+        getDialogBuilder(activity)
+                .setMessage(str("revanced_reboot_message"))
+                .setPositiveButton(android.R.string.ok, (dialog, i) -> reboot(activity))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
@@ -110,11 +113,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 return;
             }
 
-            final SettingsEnum settings = SettingsEnum.settingFromPath(dataString);
-
-            if (settings == null) {
-                return;
-            }
+            final SettingsEnum settings = Objects.requireNonNull(SettingsEnum.settingFromPath(dataString));
 
             switch (settings) {
                 case CUSTOM_FILTER_STRINGS, HIDE_ACCOUNT_MENU_FILTER_STRINGS ->
