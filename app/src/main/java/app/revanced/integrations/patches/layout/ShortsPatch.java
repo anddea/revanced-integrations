@@ -1,11 +1,9 @@
 package app.revanced.integrations.patches.layout;
 
-import static app.revanced.integrations.patches.utils.NavBarIndexPatch.isShortsTab;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 
 import android.annotation.SuppressLint;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -83,12 +81,6 @@ public class ShortsPatch {
         return SettingsEnum.HIDE_SHORTS_TOOLBAR_BANNER.getBoolean();
     }
 
-    public static void hideShortsToolBar(Toolbar toolbar) {
-        if (!SettingsEnum.HIDE_SHORTS_TOOLBAR.getBoolean())
-            return;
-        final int visibility = isShortsTab() ? View.GONE : View.VISIBLE;
-        toolbar.setVisibility(visibility);
-    }
 
     public static void hideShortsToolBarButton(String enumString, View view) {
         for (ToolBarButton button : ToolBarButton.values()) {

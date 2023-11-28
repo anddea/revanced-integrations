@@ -3,7 +3,6 @@ package app.revanced.integrations.settingsmenu;
 import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.utils.ReVancedHelper.isAdditionalSettingsEnabled;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
-import static app.revanced.integrations.utils.ReVancedHelper.isShortsToolBarEnabled;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
@@ -78,10 +77,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                             HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC,
                             SPOOF_APP_VERSION,
                             SPOOF_APP_VERSION_TARGET -> setPlayerFlyoutPanelAdditionalSettings();
-                    case HIDE_SHORTS_TOOLBAR_BANNER,
-                            HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON,
-                            HIDE_SHORTS_TOOLBAR_MENU_BUTTON,
-                            HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON -> setShortsToolBar();
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP ->
@@ -188,7 +183,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         setOpenSettingsPreference();
         setPlaybackSpeed();
         setPlayerFlyoutPanelAdditionalSettings();
-        setShortsToolBar();
         setSpoofAppVersionTarget();
         setVideoQuality(false);
         setVideoQuality(true);
@@ -371,10 +365,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private void setPlayerFlyoutPanelAdditionalSettings() {
         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_ADDITIONAL_SETTINGS.saveValue(isAdditionalSettingsEnabled());
-    }
-
-    private void setShortsToolBar() {
-        SettingsEnum.HIDE_SHORTS_TOOLBAR.saveValue(isShortsToolBarEnabled());
     }
 
     /**

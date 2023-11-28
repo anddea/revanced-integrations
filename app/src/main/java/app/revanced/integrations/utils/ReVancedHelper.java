@@ -90,20 +90,6 @@ public class ReVancedHelper {
         return false;
     }
 
-    public static boolean isShortsToolBarEnabled() {
-        boolean shortsToolBarEnabled = true;
-        final SettingsEnum[] shortsToolBarSettings = {
-                SettingsEnum.HIDE_SHORTS_TOOLBAR_BANNER,
-                SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON,
-                SettingsEnum.HIDE_SHORTS_TOOLBAR_MENU_BUTTON,
-                SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON
-        };
-        for (SettingsEnum s : shortsToolBarSettings) {
-            shortsToolBarEnabled &= s.getBoolean();
-        }
-        return shortsToolBarEnabled;
-    }
-
     public static boolean isSpoofedTargetVersionGez(@NonNull String versionName) {
         if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
             return false;

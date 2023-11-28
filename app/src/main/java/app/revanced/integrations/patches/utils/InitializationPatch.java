@@ -1,5 +1,6 @@
 package app.revanced.integrations.patches.utils;
 
+import static app.revanced.integrations.utils.ReVancedHelper.isAdditionalSettingsEnabled;
 import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.StringRef.str;
 
@@ -42,6 +43,7 @@ public class InitializationPatch {
      * The version of the current integrations is saved to YouTube's SharedPreferences to identify if the app was first installed.
      */
     public static void initializeReVancedSettings(@NonNull Context context) {
+        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_ADDITIONAL_SETTINGS.saveValue(isAdditionalSettingsEnabled());
         if (SettingsEnum.INITIALIZED.getBoolean())
             return;
 
