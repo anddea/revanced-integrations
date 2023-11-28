@@ -251,7 +251,6 @@ public enum SettingsEnum {
 
     // Overlay Button
     ALWAYS_REPEAT("revanced_always_repeat", BOOLEAN, FALSE),
-    ALWAYS_REPEAT_PAUSE("revanced_always_repeat_pause", BOOLEAN, FALSE),
     OVERLAY_BUTTON_ALWAYS_REPEAT("revanced_overlay_button_always_repeat", BOOLEAN, TRUE),
     OVERLAY_BUTTON_COPY_VIDEO_URL("revanced_overlay_button_copy_video_url", BOOLEAN, TRUE),
     OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP("revanced_overlay_button_copy_video_url_timestamp", BOOLEAN, FALSE),

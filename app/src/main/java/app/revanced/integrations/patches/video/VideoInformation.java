@@ -8,7 +8,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-import app.revanced.integrations.patches.utils.AlwaysRepeatPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.VideoState;
 import app.revanced.integrations.utils.LogHelper;
@@ -96,15 +95,7 @@ public final class VideoInformation {
     }
 
     public static boolean videoEnded() {
-        if (SettingsEnum.ALWAYS_REPEAT.getBoolean()) {
-            final boolean seekResult = seekTo(0);
-            if (SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean() && seekResult)
-                AlwaysRepeatPatch.shouldRepeatAndPause();
-
-            return seekResult;
-        }
-
-        return false;
+        return SettingsEnum.ALWAYS_REPEAT.getBoolean() && seekTo(0);
     }
 
     /**
