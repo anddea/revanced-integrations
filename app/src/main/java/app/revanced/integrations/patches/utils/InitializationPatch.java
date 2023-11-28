@@ -10,7 +10,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.sponsorblock.SegmentPlaybackController;
 import app.revanced.integrations.utils.ReVancedHelper;
 
 public class InitializationPatch {
@@ -46,9 +45,11 @@ public class InitializationPatch {
         if (SettingsEnum.INITIALIZED.getBoolean())
             return;
 
-        Activity activity = (Activity) context;
+        // show dialog
+        if (!(context instanceof Activity mActivity))
+            return;
 
-        runOnMainThreadDelayed(() -> buildDialog(activity), 500);
+        runOnMainThreadDelayed(() -> buildDialog(mActivity), 500);
 
         runOnMainThreadDelayed(() ->
                 {
@@ -56,23 +57,12 @@ public class InitializationPatch {
                     SettingsEnum.INITIALIZED.saveValue(true);
 
                     // set spoof player parameter default value
-                    SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!activity.getPackageName().equals("com.google.android.youtube"));
+                    SettingsEnum.SPOOF_PLAYER_PARAMETER.saveValue(!mActivity.getPackageName().equals("com.google.android.youtube"));
 
                     // set save playback speed default value
                     SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.DefaultPlaybackSpeed());
                 }, 1000
         );
-    }
-
-    /**
-     * For some reason, when I first install the app, my SponsorBlock settings are not initialized.
-     * To solve this, forcibly initialize SponsorBlock.
-     */
-    public static void initializeSponsorBlockSettings(@NonNull Context context) {
-        if (SettingsEnum.SB_INITIALIZED.getBoolean())
-            return;
-        SegmentPlaybackController.initialize(null);
-        SettingsEnum.SB_INITIALIZED.saveValue(true);
     }
 
     public static void setDeviceInformation(@NonNull Context context) {

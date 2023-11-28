@@ -131,8 +131,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 .show();
     }
 
-    @SuppressLint({"ResourceType", "CommitPrefEdits"})
-    @Override // android.preference.PreferenceFragment, android.app.Fragment
+    @SuppressLint("ResourceType")
+    @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
@@ -152,7 +152,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
 
-    @Override // android.preference.PreferenceFragment, android.app.Fragment
+    @Override
     public void onDestroy() {
         getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
         super.onDestroy();

@@ -38,14 +38,17 @@ public class ImportExportPreference extends EditTextPreference implements Prefer
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
+
     public ImportExportPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
+
     public ImportExportPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
+
     public ImportExportPreference(Context context) {
         super(context);
         init();
@@ -68,7 +71,7 @@ public class ImportExportPreference extends EditTextPreference implements Prefer
         try {
             // Show the user the settings in JSON format.
             builder.setNeutralButton(str("revanced_extended_settings_import_copy"), (dialog, which) ->
-                    ReVancedUtils.setClipboard(getEditText().getText().toString(), str("revanced_share_copy_settings_success")))
+                            ReVancedUtils.setClipboard(getEditText().getText().toString(), str("revanced_share_copy_settings_success")))
                     .setPositiveButton(str("revanced_extended_settings_import"), (dialog, which) ->
                             importSettings(getEditText().getText().toString())
                     );

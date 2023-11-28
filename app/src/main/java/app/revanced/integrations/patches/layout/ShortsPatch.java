@@ -26,7 +26,10 @@ public class ShortsPatch {
     }
 
     public static void hideShortsPlayerNavigationBar() {
-        if (!SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean() || !(pivotBar instanceof HorizontalScrollView horizontalScrollView))
+        if (!SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean())
+            return;
+
+        if (!(pivotBar instanceof HorizontalScrollView horizontalScrollView))
             return;
 
         horizontalScrollView.setVisibility(View.GONE);
@@ -88,9 +91,12 @@ public class ShortsPatch {
     }
 
     public static void hideShortsToolBarButton(String enumString, View view) {
-        for (ToolBarButton button : ToolBarButton.values())
-            if (enumString.equals(button.name))
+        for (ToolBarButton button : ToolBarButton.values()) {
+            if (enumString.equals(button.name)) {
                 hideViewUnderCondition(button.enabled, view);
+                break;
+            }
+        }
     }
 
     private enum ToolBarButton {

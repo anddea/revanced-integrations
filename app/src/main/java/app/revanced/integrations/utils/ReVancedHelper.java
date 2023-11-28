@@ -27,7 +27,7 @@ public class ReVancedHelper {
         try {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                     ? getPackageManager(context).getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
-                    : getPackageManager(context).getPackageInfo(packageName,0);
+                    : getPackageManager(context).getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             LogHelper.printException(() -> "Failed to get package Info!" + e);
         }
