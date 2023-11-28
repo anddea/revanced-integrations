@@ -1,8 +1,11 @@
 package app.revanced.integrations.utils;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -25,6 +28,9 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @noinspection ALL
+ */
 public class ReVancedUtils {
     /**
      * General purpose pool for network calls and other background tasks.
@@ -48,6 +54,24 @@ public class ReVancedUtils {
 
     private ReVancedUtils() {
     } // utility class
+
+    /**
+     * @return The first child view that matches the filter.
+     */
+    @Nullable
+    public static <T extends View> T getChildView(@NonNull ViewGroup viewGroup, @NonNull MatchFilter filter) {
+        for (int i = 0, childCount = viewGroup.getChildCount(); i < childCount; i++) {
+            View childAt = viewGroup.getChildAt(i);
+            if (filter.matches(childAt)) {
+                return (T) childAt;
+            }
+        }
+        return null;
+    }
+
+    public interface MatchFilter<T> {
+        boolean matches(T object);
+    }
 
     public static Context getContext() {
         return context;
@@ -82,8 +106,8 @@ public class ReVancedUtils {
         }
     }
 
-    public static boolean containsAny(@NonNull String value, @NonNull String... targets) {
-        return indexOfFirstFound(value, targets) >= 0;
+    public static boolean containsAny(@Nullable String value, @NonNull String... targets) {
+        return value != null && indexOfFirstFound(value, targets) >= 0;
     }
 
     public static int indexOfFirstFound(@NonNull String value, @NonNull String... targets) {
@@ -121,8 +145,9 @@ public class ReVancedUtils {
     }
 
     public static void setClipboard(@NonNull String text, @Nullable String toastMessage) {
-        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        android.content.ClipData clip = android.content.ClipData.newPlainText(ReVancedHelper.applicationLabel, text);
+        if (!(context.getSystemService(Context.CLIPBOARD_SERVICE) instanceof ClipboardManager clipboard))
+            return;
+        final ClipData clip = ClipData.newPlainText(ReVancedHelper.applicationLabel, text);
         clipboard.setPrimaryClip(clip);
 
         // Do not show a toast if using Android 13+ as it shows it's own toast.
@@ -222,12 +247,12 @@ public class ReVancedUtils {
         }
     }
 
-    /** @noinspection deprecation*/
     @SuppressLint("MissingPermission") // permission already included in YouTube
     public static NetworkType getNetworkType() {
-        assert context != null;
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        var networkInfo = cm.getActiveNetworkInfo();
+        if (context == null || !(context.getSystemService(Context.CONNECTIVITY_SERVICE) instanceof ConnectivityManager cm))
+            return NetworkType.NONE;
+
+        final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 
         if (networkInfo == null || !networkInfo.isConnected())
             return NetworkType.NONE;

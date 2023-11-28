@@ -1,13 +1,17 @@
 package com.google.android.apps.youtube.app.settings.videoquality;
 
+import static app.revanced.integrations.utils.ReVancedUtils.getChildView;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
+import android.preference.PreferenceFragment;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toolbar;
+
+import java.util.Objects;
 
 import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
 import app.revanced.integrations.settingsmenu.ReturnYouTubeDislikeSettingsFragment;
@@ -22,60 +26,50 @@ import app.revanced.integrations.utils.ThemeHelper;
  */
 public class VideoQualitySettingsActivity extends Activity {
 
-    public static ImageButton getImageButton(ViewGroup viewGroup) {
-        if (viewGroup == null) return null;
-        int childCount = viewGroup.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View childAt = viewGroup.getChildAt(i);
-            if (childAt instanceof ImageButton) {
-                return (ImageButton) childAt;
-            }
-        }
-        return null;
-    }
-
-    public static TextView getTextView(ViewGroup viewGroup) {
-        if (viewGroup == null) return null;
-        int childCount = viewGroup.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View childAt = viewGroup.getChildAt(i);
-            if (childAt instanceof TextView) {
-                return (TextView) childAt;
-            }
-        }
-        return null;
-    }
-
     @Override
     protected void onCreate(Bundle bundle) {
-        setTheme(ThemeHelper.getSettingTheme());
-
         super.onCreate(bundle);
-        setContentView(identifier("revanced_settings_with_toolbar", ResourceType.LAYOUT));
-        initImageButton();
+        try {
+            setTheme(ThemeHelper.getSettingTheme());
+            setContentView(identifier("revanced_settings_with_toolbar", ResourceType.LAYOUT));
 
-        switch (getIntent().getDataString()) {
-            case "sponsorblock_settings" -> {
-                trySetTitle(identifier("revanced_sponsorblock_settings_title", ResourceType.STRING));
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new SponsorBlockSettingsFragment())
-                        .commit();
+            final int fragmentId = identifier("revanced_settings_fragments", ResourceType.ID);
+            final ViewGroup toolBar = Objects.requireNonNull(findViewById(identifier("revanced_toolbar", ResourceType.ID)));
+
+            setBackButton(toolBar);
+
+            PreferenceFragment fragment;
+            String toolbarTitleResourceName;
+            String dataString = getIntent().getDataString();
+            switch (dataString) {
+                case "sponsorblock_settings" -> {
+                    fragment = new SponsorBlockSettingsFragment();
+                    toolbarTitleResourceName = "revanced_sponsorblock_settings_title";
+                    break;
+                }
+                case "ryd_settings" -> {
+                    fragment = new ReturnYouTubeDislikeSettingsFragment();
+                    toolbarTitleResourceName = "revanced_ryd_settings_title";
+                    break;
+                }
+                case "extended_settings" -> {
+                    fragment = new ReVancedSettingsFragment();
+                    toolbarTitleResourceName = "revanced_extended_settings_title";
+                    break;
+                }
+                default -> {
+                    LogHelper.printException(() -> "Unknown setting: " + dataString);
+                    return;
+                }
             }
-            case "ryd_settings" -> {
-                trySetTitle(identifier("revanced_ryd_settings_title", ResourceType.STRING));
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReturnYouTubeDislikeSettingsFragment())
-                        .commit();
-            }
-            case "extended_settings" -> {
-                trySetTitle(identifier("revanced_extended_settings_title", ResourceType.STRING));
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(identifier("revanced_settings_fragments", ResourceType.ID), new ReVancedSettingsFragment())
-                        .commit();
-            }
+
+            setToolbarTitle(toolBar, toolbarTitleResourceName);
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(fragmentId, fragment)
+                    .commit();
+        } catch (Exception ex) {
+            LogHelper.printException(() -> "onCreate failure", ex);
         }
     }
 
@@ -84,21 +78,14 @@ public class VideoQualitySettingsActivity extends Activity {
         super.onDestroy();
     }
 
-    private void trySetTitle(int i) {
-        try {
-            getTextView(findViewById(identifier("toolbar", ResourceType.ID))).setText(i);
-        } catch (Exception e) {
-            LogHelper.printException(() -> "Couldn't set Toolbar title", e);
-        }
+    private void setBackButton(ViewGroup toolBar) {
+        ImageButton imageButton = Objects.requireNonNull(getChildView(toolBar, view -> view instanceof ImageButton));
+        imageButton.setOnClickListener(view -> VideoQualitySettingsActivity.this.onBackPressed());
+        imageButton.setImageDrawable(getResources().getDrawable(ResourceHelper.getArrow()));
     }
 
-    private void initImageButton() {
-        try {
-            ImageButton imageButton = getImageButton(findViewById(identifier("toolbar", ResourceType.ID)));
-            imageButton.setOnClickListener(view -> VideoQualitySettingsActivity.this.onBackPressed());
-            imageButton.setImageDrawable(getResources().getDrawable(ResourceHelper.getArrow()));
-        } catch (Exception e) {
-            LogHelper.printException(() -> "Couldn't set Toolbar click handler", e);
-        }
+    private void setToolbarTitle(ViewGroup toolBar, String toolbarTitleResourceName) {
+        TextView toolbarTextView = Objects.requireNonNull(getChildView(toolBar, view -> view instanceof TextView));
+        toolbarTextView.setText(identifier(toolbarTitleResourceName, ResourceType.STRING));
     }
 }
