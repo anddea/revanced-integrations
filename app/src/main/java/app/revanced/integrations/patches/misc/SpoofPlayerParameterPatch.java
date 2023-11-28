@@ -1,11 +1,9 @@
 package app.revanced.integrations.patches.misc;
 
 import static app.revanced.integrations.patches.misc.requests.StoryBoardRendererRequester.getStoryboardRenderer;
+import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
 
 import androidx.annotation.Nullable;
-
-import java.util.Arrays;
-import java.util.List;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -27,10 +25,10 @@ public class SpoofPlayerParameterPatch {
     /**
      * Parameters causing playback issues.
      */
-    private static final List<String> AUTOPLAY_PARAMETERS = Arrays.asList(
-            "YAHI", // Autoplay in feed
-            "SAFg"  // Autoplay in scrim
-    );
+    private static final String[] AUTOPLAY_PARAMETERS = {
+            "YAHI", // Autoplay in feed.
+            "SAFg"  // Autoplay in scrim.
+    };
 
     /**
      * Parameter used for autoplay in scrim.
@@ -83,7 +81,7 @@ public class SpoofPlayerParameterPatch {
         }
 
         final boolean isPlayingFeed = PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL
-                && AUTOPLAY_PARAMETERS.stream().anyMatch(parameters::contains);
+                && containsAny(parameters, AUTOPLAY_PARAMETERS);
 
         if (!isPlayingFeed) {
             // StoryboardRenderer is always empty when playing video with INCOGNITO_PARAMETERS parameter.

@@ -1,10 +1,11 @@
 package app.revanced.integrations.patches.utils;
 
-import static app.revanced.integrations.utils.ReVancedUtils.getContext;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 
+import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ResourceType;
 
 public class LithoThemePatch {
@@ -23,22 +24,29 @@ public class LithoThemePatch {
     };
 
     // background colors
-    private static int whiteColor = 0;
-    private static int blackColor = 0;
+    private static final int whiteColor;
+    private static final int blackColor;
+
+    static {
+        blackColor = getColor("yt_black1");
+        whiteColor = getColor("yt_white1");
+    }
 
     public static int applyLithoTheme(int originalValue) {
-        if (anyEquals(originalValue, DARK_VALUES)) return getBlackColor();
-        else if (anyEquals(originalValue, WHITE_VALUES)) return getWhiteColor();
-        return originalValue;
+        if (anyEquals(originalValue, DARK_VALUES)) {
+            return getBlackColor();
+        } else if (anyEquals(originalValue, WHITE_VALUES)) {
+            return getWhiteColor();
+        } else {
+            return originalValue;
+        }
     }
 
     private static int getBlackColor() {
-        if (blackColor == 0) blackColor = getColor("yt_black1");
         return blackColor;
     }
 
     private static int getWhiteColor() {
-        if (whiteColor == 0) whiteColor = getColor("yt_white1");
         return whiteColor;
     }
 
@@ -50,8 +58,7 @@ public class LithoThemePatch {
      */
     @SuppressLint("DiscouragedApi")
     private static int getColor(String name) {
-        var context = getContext();
-
+        final Context context = ReVancedUtils.getContext();
         return context != null ? context.getColor(identifier(name, ResourceType.COLOR)) : 0;
     }
 

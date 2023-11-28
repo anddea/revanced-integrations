@@ -10,19 +10,16 @@ import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import java.util.Arrays;
-import java.util.List;
-
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 public class GeneralPatch {
-    private static final List<String> toolBarButtonList = Arrays.asList(
+    private static final String[] TOOLBAR_BUTTON_LIST = {
             "CREATION_ENTRY",   // Create button (Phone)
             "FAB_CAMERA",       // Create button (Tablet)
             "TAB_ACTIVITY"      // Notification button
-    );
+    };
     public static boolean captionsButtonStatus;
     private static FrameLayout.LayoutParams layoutParams;
     private static int minimumHeight = 1;
@@ -182,9 +179,11 @@ public class GeneralPatch {
     }
 
     public static void hideToolBarButton(String enumString, View view) {
+        if (!SettingsEnum.HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON.getBoolean())
+            return;
+
         hideViewUnderCondition(
-                toolBarButtonList.stream().anyMatch(enumString::contains)
-                        && SettingsEnum.HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON.getBoolean(),
+                ReVancedUtils.containsAny(enumString, TOOLBAR_BUTTON_LIST),
                 view
         );
     }
