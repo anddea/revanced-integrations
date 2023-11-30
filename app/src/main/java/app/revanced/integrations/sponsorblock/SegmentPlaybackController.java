@@ -205,13 +205,16 @@ public class SegmentPlaybackController {
             if (Objects.equals(currentVideoId, videoId)) {
                 return;
             }
-            SponsorBlockSettings.initialize();
             clearData();
             if (videoId == null || !SettingsEnum.SB_ENABLED.getBoolean()) {
                 return;
             }
             if (PlayerType.getCurrent().isNoneOrHidden()) {
                 LogHelper.printDebug(() -> "ignoring Short");
+                return;
+            }
+            if (ReVancedUtils.isNetworkNotConnected()) {
+                LogHelper.printDebug(() -> "Network not connected, ignoring video");
                 return;
             }
 
@@ -636,7 +639,6 @@ public class SegmentPlaybackController {
     private static void setSponsorBarAbsoluteLeft(Rect rect) {
         final int left = rect.left;
         if (sponsorBarAbsoluteLeft != left) {
-            LogHelper.printDebug(() -> "setSponsorBarAbsoluteLeft: " + left);
             sponsorBarAbsoluteLeft = left;
         }
     }
@@ -644,7 +646,6 @@ public class SegmentPlaybackController {
     private static void setSponsorBarAbsoluteRight(Rect rect) {
         final int right = rect.right;
         if (sponsorAbsoluteBarRight != right) {
-            LogHelper.printDebug(() -> "setSponsorBarAbsoluteRight: " + right);
             sponsorAbsoluteBarRight = right;
         }
     }
@@ -654,7 +655,6 @@ public class SegmentPlaybackController {
      */
     public static void setSponsorBarThickness(int thickness) {
         if (sponsorBarThickness != thickness) {
-            LogHelper.printDebug(() -> "setSponsorBarThickness: " + thickness);
             sponsorBarThickness = thickness;
         }
     }
