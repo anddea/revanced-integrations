@@ -52,19 +52,30 @@ import app.revanced.integrations.utils.SharedPrefHelper;
  * @noinspection ALL
  */
 public class ReVancedSettingsFragment extends PreferenceFragment {
+    private PreferenceScreen externalDownloaderPreferenceScreen;
+    private PreferenceManager mPreferenceManager;
+    private SharedPreferences mSharedPreferences;
     public static boolean settingImportInProgress = false;
     private final int READ_REQUEST_CODE = 42;
     private final int WRITE_REQUEST_CODE = 43;
     @SuppressLint("SuspiciousIndentation")
-    SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
-        for (SettingsEnum setting : SettingsEnum.values()) {
-            if (!setting.path.equals(str)) continue;
-            Preference pref = findPreference(str);
-            if (pref == null)
+    private final SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
+        try {
+            SettingsEnum setting = SettingsEnum.settingFromPath(str);
+            if (setting == null) {
                 return;
+            }
+            Preference mPreference = findPreference(str);
+            if (mPreference == null) {
+                return;
+            }
 
-            if (pref instanceof SwitchPreference switchPref) {
-                SettingsEnum.setValue(setting, switchPref.isChecked());
+            if (mPreference instanceof SwitchPreference switchPreference) {
+                if (settingImportInProgress) {
+                    switchPreference.setChecked(setting.getBoolean());
+                } else {
+                    SettingsEnum.setValue(setting, switchPreference.isChecked());
+                }
 
                 switch (setting) {
                     case HIDE_PLAYER_FLYOUT_PANEL_AMBIENT,
@@ -84,58 +95,52 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     case OVERLAY_BUTTON_EXTERNAL_DOWNLOADER -> ExternalDownload.refreshVisibility();
                     case OVERLAY_BUTTON_SPEED_DIALOG -> SpeedDialog.refreshVisibility();
                 }
-
-            } else if (pref instanceof EditTextPreference editPreference) {
-                SettingsEnum.setValue(setting, editPreference.getText());
-            } else if (pref instanceof ListPreference) {
+            } else if (mPreference instanceof EditTextPreference editTextPreference) {
+                if (settingImportInProgress) {
+                    editTextPreference.getEditText().setText(setting.getObjectValue().toString());
+                } else {
+                    SettingsEnum.setValue(setting, editTextPreference.getText());
+                }
+            } else if (mPreference instanceof ListPreference) {
                 switch (setting) {
                     case DEFAULT_PLAYBACK_SPEED -> setPlaybackSpeed();
                     case DEFAULT_VIDEO_QUALITY_WIFI -> setVideoQuality(true);
                     case DEFAULT_VIDEO_QUALITY_MOBILE -> setVideoQuality(false);
                     case SPOOF_APP_VERSION_TARGET -> setSpoofAppVersionTarget();
                 }
+            } else {
+                LogHelper.printException(() -> "Setting cannot be handled: " + mPreference.getClass() + " " + mPreference);
+                return;
             }
 
             enableDisablePreferences();
 
-            if (settingImportInProgress)
+            if (settingImportInProgress) {
                 return;
+            }
+
+            final Activity activity = getActivity();
 
             if (setting.rebootApp)
-                showRebootDialog();
+                SettingsUtils.showRestartDialog(activity);
+        } catch (Exception ex) {
+            LogHelper.printException(() -> "OnSharedPreferenceChangeListener failure", ex);
         }
     };
-    private PreferenceScreen externalDownloaderPreferenceScreen;
 
     public ReVancedSettingsFragment() {
-    }
-
-    public static void reboot(Activity activity) {
-        Intent restartIntent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
-
-        activity.finishAffinity();
-        activity.startActivity(restartIntent);
-        Runtime.getRuntime().exit(0);
-    }
-
-    public static void showRebootDialog(@NonNull Activity activity) {
-        new AlertDialog.Builder(activity)
-                .setMessage(str("pref_refresh_config"))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> reboot(activity))
-                .setNegativeButton(str("sign_in_cancel"), null)
-                .show();
     }
 
     @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-
-        getPreferenceManager().setSharedPreferencesName(REVANCED.getName());
         try {
+            mPreferenceManager = getPreferenceManager();
+            mPreferenceManager.setSharedPreferencesName(REVANCED.getName());
+            mSharedPreferences = mPreferenceManager.getSharedPreferences();
             addPreferencesFromResource(identifier("revanced_prefs", ResourceType.XML));
-            SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
-            sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+            mSharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 
             enableDisablePreferences();
 
@@ -149,7 +154,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
     @Override
     public void onDestroy() {
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
         super.onDestroy();
     }
 
@@ -364,7 +369,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     private void setPlayerFlyoutPanelAdditionalSettings() {
-        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_ADDITIONAL_SETTINGS.saveValue(isAdditionalSettingsEnabled());
+        ReVancedHelper.setPlayerFlyoutPanelAdditionalSettings();
     }
 
     /**
@@ -402,7 +407,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             final var EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY = "revanced_external_downloader_package_name";
             final var EXTERNAL_DOWNLOADER_WEBSITE_PREFERENCE_KEY = "revanced_external_downloader_website";
 
-            Activity activity = getActivity();
+            final Activity activity = getActivity();
 
             String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_LABEL_PREFERENCE_KEY);
             String[] packageNameArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PACKAGE_NAME_PREFERENCE_KEY);
@@ -574,7 +579,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     }
 
     private void importJson(Uri uri) {
-        final Context context = this.getContext();
+        final Activity activity = this.getActivity();
         StringBuilder sb = new StringBuilder();
         String line;
 
@@ -584,7 +589,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             @SuppressLint("Recycle")
             FileReader fileReader =
                     new FileReader(
-                            Objects.requireNonNull(context.getApplicationContext()
+                            Objects.requireNonNull(activity.getApplicationContext()
                                             .getContentResolver()
                                             .openFileDescriptor(uri, "r"))
                                     .getFileDescriptor()
@@ -598,17 +603,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
 
             final boolean rebootNeeded = SettingsEnum.importJSON(sb.toString());
             if (rebootNeeded) {
-                showRebootDialog();
+                SettingsUtils.showRestartDialog(activity);
             }
         } catch (IOException e) {
-            showToastShort(context, str("revanced_extended_settings_import_failed"));
+            showToastShort(activity, str("revanced_extended_settings_import_failed"));
             throw new RuntimeException(e);
         } finally {
             settingImportInProgress = false;
         }
-    }
-
-    void showRebootDialog() {
-        showRebootDialog(getActivity());
     }
 }

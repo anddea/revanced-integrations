@@ -1,5 +1,6 @@
 package app.revanced.music.settingsmenu;
 
+import static app.revanced.music.settings.SettingsUtils.showRestartDialog;
 import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
 import static app.revanced.music.utils.ReVancedHelper.getLayoutParams;
 import static app.revanced.music.utils.ReVancedHelper.getStringArray;
@@ -20,7 +21,6 @@ import android.util.TypedValue;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -76,26 +76,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
 
-    public static void reboot(@NonNull Activity activity) {
-        final Intent restartIntent =
-                activity.getPackageManager().getLaunchIntentForPackage(ReVancedHelper.packageName);
-
-        activity.finishAffinity();
-        activity.startActivity(restartIntent);
-        Runtime.getRuntime().exit(0);
-    }
-
     public static void showRebootDialog() {
         final Activity activity = ReVancedSettingActivity.getActivity();
 
         if (activity == null)
             return;
 
-        getDialogBuilder(activity)
-                .setMessage(str("revanced_reboot_message"))
-                .setPositiveButton(android.R.string.ok, (dialog, i) -> reboot(activity))
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+        showRestartDialog(activity);
     }
 
     @Override

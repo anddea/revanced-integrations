@@ -349,7 +349,7 @@ public enum SettingsEnum {
     DISABLE_HDR_AUTO_BRIGHTNESS("revanced_disable_hdr_auto_brightness", BOOLEAN, TRUE, true,
             parents(ENABLE_SWIPE_BRIGHTNESS)),
     SWIPE_BRIGHTNESS_AUTO("revanced_swipe_brightness_auto", BOOLEAN, TRUE),
-    SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", FLOAT, 0.5F),
+    SWIPE_BRIGHTNESS_VALUE("revanced_swipe_brightness_value", FLOAT, 0.5f),
 
 
     // Video

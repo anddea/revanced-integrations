@@ -14,6 +14,7 @@ import android.util.TypedValue;
 import android.widget.EditText;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.settings.SettingsUtils;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
@@ -88,7 +89,7 @@ public class ImportExportPreference extends EditTextPreference implements Prefer
             ReVancedSettingsFragment.settingImportInProgress = true;
             final boolean rebootNeeded = SettingsEnum.importJSON(replacementSettings);
             if (rebootNeeded && this.getContext() instanceof Activity activity) {
-                ReVancedSettingsFragment.showRebootDialog(activity);
+                SettingsUtils.showRestartDialog(activity);
             }
         } catch (Exception ex) {
             ReVancedUtils.showToastShort(str("revanced_extended_settings_import_failed"));

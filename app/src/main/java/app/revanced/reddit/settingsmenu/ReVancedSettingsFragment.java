@@ -1,15 +1,15 @@
 package app.revanced.reddit.settingsmenu;
 
+import static app.revanced.reddit.settings.SettingsUtils.showRestartDialog;
+
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import app.revanced.reddit.settings.SettingsEnum;
@@ -20,57 +20,55 @@ import app.revanced.reddit.utils.LogHelper;
  * @noinspection ALL
  */
 public class ReVancedSettingsFragment extends PreferenceFragment {
+    private PreferenceScreen mPreferenceScreen;
+    private PreferenceManager mPreferenceManager;
 
-    SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
+    private final SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
         try {
             SettingsEnum setting = SettingsEnum.settingFromPath(str);
             if (setting == null)
                 return;
 
             if (setting.rebootApp)
-                rebootDialog(getActivity());
+                showRestartDialog(getActivity());
 
         } catch (Exception ex) {
             LogHelper.printException(() -> "OnSharedPreferenceChangeListener failure", ex);
         }
     };
 
-    private static void reboot(@NonNull Activity activity) {
-        Intent restartIntent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
-
-        activity.finishAffinity();
-        activity.startActivity(restartIntent);
-        Runtime.getRuntime().exit(0);
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getPreferenceManager().setSharedPreferencesName(SharedPrefCategory.REDDIT.prefName);
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
 
-        final Activity activity = getActivity();
-        PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activity);
-        setPreferenceScreen(preferenceScreen);
+        mPreferenceManager = getPreferenceManager();
+        mPreferenceManager.setSharedPreferencesName(SharedPrefCategory.REDDIT.prefName);
+        mPreferenceManager.getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
 
-        addPreferences(activity, preferenceScreen, SettingsStatus.generalAds, SettingsEnum.HIDE_COMMENT_ADS);
-        addPreferences(activity, preferenceScreen, SettingsStatus.generalAds, SettingsEnum.HIDE_OLD_POST_ADS);
-        addPreferences(activity, preferenceScreen, SettingsStatus.generalAds, SettingsEnum.HIDE_NEW_POST_ADS);
-        addPreferences(activity, preferenceScreen, SettingsStatus.screenshotPopup, SettingsEnum.DISABLE_SCREENSHOT_POPUP);
-        addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_CHAT_BUTTON);
-        addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_CREATE_BUTTON);
-        addPreferences(activity, preferenceScreen, SettingsStatus.navigationButtons, SettingsEnum.HIDE_DISCOVER_BUTTON);
-        addPreferences(activity, preferenceScreen, SettingsStatus.placeButton, SettingsEnum.HIDE_PLACE_BUTTON);
-        addPreferences(activity, preferenceScreen, SettingsStatus.recentlyVisitedShelf, SettingsEnum.HIDE_RECENTLY_VISITED_SHELF);
-        addPreferences(activity, preferenceScreen, SettingsStatus.openLinksDirectly, SettingsEnum.OPEN_LINKS_DIRECTLY);
-        addPreferences(activity, preferenceScreen, SettingsStatus.openLinksExternally, SettingsEnum.OPEN_LINKS_EXTERNALLY);
-        addPreferences(activity, preferenceScreen, SettingsStatus.sanitizeUrlQuery, SettingsEnum.SANITIZE_URL_QUERY);
+        mPreferenceScreen = mPreferenceManager.createPreferenceScreen(getActivity());
+        setPreferenceScreen(mPreferenceScreen);
+
+        addPreferences(SettingsStatus.generalAds, SettingsEnum.HIDE_COMMENT_ADS);
+        addPreferences(SettingsStatus.generalAds, SettingsEnum.HIDE_OLD_POST_ADS);
+        addPreferences(SettingsStatus.generalAds, SettingsEnum.HIDE_NEW_POST_ADS);
+        addPreferences(SettingsStatus.screenshotPopup, SettingsEnum.DISABLE_SCREENSHOT_POPUP);
+        addPreferences(SettingsStatus.navigationButtons, SettingsEnum.HIDE_CHAT_BUTTON);
+        addPreferences(SettingsStatus.navigationButtons, SettingsEnum.HIDE_CREATE_BUTTON);
+        addPreferences(SettingsStatus.navigationButtons, SettingsEnum.HIDE_DISCOVER_BUTTON);
+        addPreferences(SettingsStatus.placeButton, SettingsEnum.HIDE_PLACE_BUTTON);
+        addPreferences(SettingsStatus.recentlyVisitedShelf, SettingsEnum.HIDE_RECENTLY_VISITED_SHELF);
+        addPreferences(SettingsStatus.openLinksDirectly, SettingsEnum.OPEN_LINKS_DIRECTLY);
+        addPreferences(SettingsStatus.openLinksExternally, SettingsEnum.OPEN_LINKS_EXTERNALLY);
+        addPreferences(SettingsStatus.sanitizeUrlQuery, SettingsEnum.SANITIZE_URL_QUERY);
     }
 
-    private void addPreferences(Activity activity, PreferenceScreen preferenceScreen, boolean isAvailable, SettingsEnum setting) {
-        if (!isAvailable) return;
+    private void addPreferences(boolean isAvailable, SettingsEnum setting) {
+        if (!isAvailable)
+            return;
 
-        SwitchPreference switchPreference = new SwitchPreference(activity);
+        final Activity activity = getActivity();
+
+        final SwitchPreference switchPreference = new SwitchPreference(activity);
         switchPreference.setChecked(setting.getBoolean());
         switchPreference.setTitle(setting.getTitle());
         switchPreference.setSummary(setting.getSummary());
@@ -78,20 +76,12 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             setting.saveValue(newValue);
             return true;
         });
-        preferenceScreen.addPreference(switchPreference);
+        mPreferenceScreen.addPreference(switchPreference);
     }
 
-    @Override // android.preference.PreferenceFragment, android.app.Fragment
+    @Override
     public void onDestroy() {
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
+        mPreferenceManager.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
         super.onDestroy();
-    }
-
-    private void rebootDialog(@NonNull Activity activity) {
-        new AlertDialog.Builder(activity).
-                setMessage("Refresh and restart").
-                setPositiveButton("RESTART", (dialog, i) -> reboot(activity))
-                .setNegativeButton("CANCEL", null)
-                .show();
     }
 }

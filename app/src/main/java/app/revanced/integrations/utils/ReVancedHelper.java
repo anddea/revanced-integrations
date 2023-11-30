@@ -44,7 +44,7 @@ public class ReVancedHelper {
         return context.getResources().getStringArray(identifier(key, ResourceType.ARRAY));
     }
 
-    public static boolean isAdditionalSettingsEnabled() {
+    private static boolean isAdditionalSettingsEnabled() {
         // In the old player flyout panels, the video quality icon and additional quality icon are the same
         // Therefore, additional Settings should not be blocked in old player flyout panels
         if (isSpoofedTargetVersionLez("18.22.00"))
@@ -113,6 +113,10 @@ public class ReVancedHelper {
         if (packageInfo != null) {
             applicationLabel = (String) packageInfo.applicationInfo.loadLabel(getPackageManager(context));
         }
+    }
+
+    public static void setPlayerFlyoutPanelAdditionalSettings() {
+        SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_ADDITIONAL_SETTINGS.saveValue(isAdditionalSettingsEnabled());
     }
 
     public static void setIsTablet(@NonNull Context context) {

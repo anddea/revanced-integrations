@@ -1,8 +1,6 @@
 package app.revanced.music.patches.utils;
 
-import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
-import static app.revanced.music.utils.ReVancedUtils.runOnMainThreadDelayed;
-import static app.revanced.music.utils.StringRef.str;
+import static app.revanced.music.settings.SettingsUtils.showRestartDialog;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +8,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import app.revanced.music.settings.SettingsEnum;
-import app.revanced.music.settingsmenu.ReVancedSettingsFragment;
 import app.revanced.music.utils.ReVancedHelper;
 
 public class InitializationPatch {
@@ -34,14 +31,7 @@ public class InitializationPatch {
         if (!(context instanceof Activity mActivity))
             return;
 
-        getDialogBuilder(context)
-                .setMessage(str("revanced_reboot_first_run"))
-                .setPositiveButton(android.R.string.ok, (dialog, id) ->
-                        runOnMainThreadDelayed(() -> ReVancedSettingsFragment.reboot(mActivity), 1000L)
-                )
-                .setNegativeButton(android.R.string.cancel, null)
-                .setCancelable(false)
-                .show();
+        showRestartDialog(mActivity, "revanced_reboot_first_run", 1000);
 
         // set save playback speed default value
         SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.RememberPlaybackSpeed());
