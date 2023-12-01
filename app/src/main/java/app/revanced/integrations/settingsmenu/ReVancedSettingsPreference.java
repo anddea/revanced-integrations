@@ -233,7 +233,7 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
         final String[] packageNameArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_package_name");
         final String[] websiteArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_website");
 
-        final String[] mEntries = {str("revanced_external_downloader_download"), str("revanced_external_downloader_save"), activity.getString(android.R.string.cancel)};
+        final String[] mEntries = {str("revanced_external_downloader_download"), str("revanced_external_downloader_set"), str("accessibility_bottom_sheet_close_button")};
 
         try {
             final PreferenceScreen externalDownloaderPreferenceScreen = (PreferenceScreen) mPreferenceManager.findPreference("external_downloader");
