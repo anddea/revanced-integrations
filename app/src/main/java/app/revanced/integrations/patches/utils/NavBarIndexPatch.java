@@ -1,23 +1,33 @@
 package app.revanced.integrations.patches.utils;
 
-public class NavBarIndexPatch {
-    private static volatile int currentNavBarIndex = 0;
-    private static volatile int lastNavBarIndex = 0;
+import app.revanced.integrations.utils.LogHelper;
 
-    public static void setCurrentNavBarIndex(int navBarIndex) {
-        if (currentNavBarIndex == navBarIndex)
+public class NavBarIndexPatch {
+    private static int currentNavBarIndex = 0;
+
+    /**
+     * Injection point.
+     * @param navBarIndex tab index in PivotBar
+     */
+    public static void setNavBarIndex(int navBarIndex) {
+        setNavBarIndex(navBarIndex, true);
+    }
+
+    /**
+     * Injection point.
+     * @param navBarIndex tab index in PivotBar
+     * @param isSelected whether the current tab is selected
+     */
+    public static void setNavBarIndex(int navBarIndex, boolean isSelected) {
+        if (!isSelected || currentNavBarIndex == navBarIndex)
             return;
 
-        lastNavBarIndex = currentNavBarIndex;
         currentNavBarIndex = navBarIndex;
+        LogHelper.printDebug(() -> "Setting NavBar Index to: " + navBarIndex);
     }
 
-    public static void setLastNavBarIndex() {
-        currentNavBarIndex = lastNavBarIndex;
-    }
-
-    public static boolean isShortsTab() {
-        return currentNavBarIndex == 1;
+    public static boolean isNotLibraryTab() {
+        return currentNavBarIndex != 4;
     }
 }
 

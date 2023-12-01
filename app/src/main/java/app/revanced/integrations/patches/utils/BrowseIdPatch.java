@@ -14,7 +14,7 @@ public class BrowseIdPatch {
     /**
      * Current browse id.
      */
-    private static volatile String browseId;
+    private static volatile String browseId = DEFAULT_BROWSE_ID;
     /**
      * Field where the BrowseId is saved. (type: String)
      */
@@ -61,7 +61,7 @@ public class BrowseIdPatch {
                 return;
             }
             final String newlyLoadedBrowseId = browseIdFieldObject.toString();
-            if (Objects.equals(browseId, newlyLoadedBrowseId)) {
+            if (newlyLoadedBrowseId.isEmpty() || Objects.equals(browseId, newlyLoadedBrowseId)) {
                 return;
             }
             browseId = newlyLoadedBrowseId;
@@ -93,8 +93,12 @@ public class BrowseIdPatch {
         }
     }
 
+    public static void setDefaultBrowseIdToField() {
+        setBrowseIdToField(DEFAULT_BROWSE_ID);
+    }
+
     public static boolean isHomeFeed() {
-        return Objects.equals(browseId, DEFAULT_BROWSE_ID);
+        return browseId.equals(DEFAULT_BROWSE_ID);
     }
 }
 
