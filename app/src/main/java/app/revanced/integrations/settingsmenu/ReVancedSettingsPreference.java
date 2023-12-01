@@ -229,9 +229,11 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
      * Add Preference to External downloader settings submenu
      */
     private static void setExternalDownloaderPreference(@NonNull Activity activity) {
-        String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_label");
-        String[] packageNameArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_package_name");
-        String[] websiteArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_website");
+        final String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_label");
+        final String[] packageNameArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_package_name");
+        final String[] websiteArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_website");
+
+        final String[] mEntries = {str("revanced_external_downloader_download"), str("revanced_external_downloader_save"), activity.getString(android.R.string.cancel)};
 
         try {
             final PreferenceScreen externalDownloaderPreferenceScreen = (PreferenceScreen) mPreferenceManager.findPreference("external_downloader");
@@ -242,9 +244,8 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
                 final String label = labelArray[index];
                 final String packageName = packageNameArray[index];
                 final Uri uri = Uri.parse(websiteArray[index]);
-                final boolean isInstalled = isPackageEnabled(activity, packageName);
 
-                final String msg = isInstalled
+                final String installedMessage = isPackageEnabled(activity, packageName)
                         ? str("revanced_external_downloader_installed")
                         : str("revanced_external_downloader_not_installed");
 
@@ -253,18 +254,23 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
                 externalDownloaderPreference.setTitle(label);
                 externalDownloaderPreference.setSummary(packageName);
                 externalDownloaderPreference.setOnPreferenceClickListener(preference -> {
-                    new AlertDialog.Builder(activity)
-                            .setTitle(label)
-                            .setMessage(msg)
-                            .setNegativeButton(str("playback_control_close"), null)
-                            .setNeutralButton(str("common_google_play_services_install_button"), (dialog, id) -> {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+                    builder.setTitle(String.format("%s (%s)", label, installedMessage));
+                    builder.setItems(mEntries, (mDialog, mIndex) -> {
+                        switch (mIndex) {
+                            case 0 -> {
                                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                 activity.startActivity(intent);
-                            })
-                            .setPositiveButton(str("save_metadata_menu"), (dialog, id) -> {
+                            }
+                            case 1 -> {
                                 SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(packageName);
-                            })
-                            .show();
+                                SettingsUtils.showRestartDialog(activity);
+                            }
+                            case 2 -> mDialog.dismiss();
+                        }
+                    });
+                    builder.show();
 
                     return false;
                 });
