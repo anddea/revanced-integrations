@@ -24,29 +24,22 @@ public class LithoThemePatch {
     };
 
     // background colors
-    private static final int whiteColor;
-    private static final int blackColor;
-
-    static {
-        blackColor = getColor("yt_black1");
-        whiteColor = getColor("yt_white1");
-    }
+    private static int whiteColor = 0;
+    private static int blackColor = 0;
 
     public static int applyLithoTheme(int originalValue) {
-        if (anyEquals(originalValue, DARK_VALUES)) {
-            return getBlackColor();
-        } else if (anyEquals(originalValue, WHITE_VALUES)) {
-            return getWhiteColor();
-        } else {
-            return originalValue;
-        }
+        if (anyEquals(originalValue, DARK_VALUES)) return getBlackColor();
+        else if (anyEquals(originalValue, WHITE_VALUES)) return getWhiteColor();
+        return originalValue;
     }
 
     private static int getBlackColor() {
+        if (blackColor == 0) blackColor = getColor("yt_black1");
         return blackColor;
     }
 
     private static int getWhiteColor() {
+        if (whiteColor == 0) whiteColor = getColor("yt_white1");
         return whiteColor;
     }
 
