@@ -136,6 +136,7 @@ public enum SettingsEnum {
 
     // Experimental Flags
     DISABLE_LANDSCAPE_MODE("revanced_disable_landscape_mode", BOOLEAN, FALSE, true),
+    FORCE_FULLSCREEN("revanced_force_fullscreen", BOOLEAN, FALSE, true),
 
 
     // General

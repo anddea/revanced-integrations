@@ -2,6 +2,9 @@ package app.revanced.integrations.patches.layout;
 
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -12,6 +15,9 @@ import app.revanced.integrations.utils.ReVancedUtils;
 
 public class FullscreenPatch {
     private static final int DEFAULT_MARGIN_TOP = (int) SettingsEnum.QUICK_ACTIONS_MARGIN_TOP.defaultValue;
+    @SuppressLint("StaticFieldLeak")
+    public static Activity watchDescriptorActivity;
+    private static boolean isLandScapeVideo = true;
 
     public static boolean disableAmbientMode() {
         return !SettingsEnum.DISABLE_AMBIENT_MODE_IN_FULLSCREEN.getBoolean();
@@ -23,6 +29,14 @@ public class FullscreenPatch {
 
     public static boolean enableCompactControlsOverlay(boolean original) {
         return SettingsEnum.ENABLE_COMPACT_CONTROLS_OVERLAY.getBoolean() || original;
+    }
+
+    public static boolean forceFullscreen(boolean original) {
+        if (!SettingsEnum.FORCE_FULLSCREEN.getBoolean())
+            return original;
+
+        ReVancedUtils.runOnMainThreadDelayed(FullscreenPatch::setOrientation, 1000);
+        return true;
     }
 
     public static boolean hideAutoPlayPreview() {
@@ -49,6 +63,14 @@ public class FullscreenPatch {
         );
     }
 
+    private static void setOrientation() {
+        final int requestedOrientation = isLandScapeVideo
+                ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                : watchDescriptorActivity.getRequestedOrientation();
+
+        watchDescriptorActivity.setRequestedOrientation(requestedOrientation);
+    }
+
     public static void setQuickActionMargin(FrameLayout frameLayout) {
         int marginTop = SettingsEnum.QUICK_ACTIONS_MARGIN_TOP.getInt();
 
@@ -67,6 +89,13 @@ public class FullscreenPatch {
                 marginLayoutParams.bottomMargin
         );
         frameLayout.requestLayout();
+    }
+
+    public static void setVideoPortrait(int width, int height) {
+        if (!SettingsEnum.FORCE_FULLSCREEN.getBoolean())
+            return;
+
+        isLandScapeVideo = width > height;
     }
 
     public static boolean showFullscreenTitle() {
