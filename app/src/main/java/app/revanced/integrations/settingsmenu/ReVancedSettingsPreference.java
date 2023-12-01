@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.settings.SettingsUtils;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;
 
@@ -53,19 +54,22 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
         }
     }
 
+    public static void updateListPreferenceSummary(ListPreference listPreference, SettingsEnum setting) {
+        updateListPreferenceSummary(listPreference, setting, true);
+    }
+
     /**
      * Sets summary text to the currently selected list option.
      */
-    public static void updateListPreferenceSummary(ListPreference listPreference, SettingsEnum setting) {
+    public static void updateListPreferenceSummary(ListPreference listPreference, SettingsEnum setting, boolean shouldSetSummary) {
         String objectStringValue = setting.getObjectValue().toString();
-        final int entryIndex = listPreference.findIndexOfValue(objectStringValue);
+        int entryIndex = listPreference.findIndexOfValue(objectStringValue);
         if (entryIndex >= 0) {
-            listPreference.setSummary(listPreference.getEntries()[entryIndex]);
             listPreference.setValue(objectStringValue);
-        } else {
-            // Value is not an available option.
-            // User manually edited import data, or options changed and current selection is no longer available.
-            // Still show the value in the summary so it's clear that something is selected.
+            objectStringValue = listPreference.getEntries()[entryIndex].toString();
+        }
+
+        if (shouldSetSummary) {
             listPreference.setSummary(objectStringValue);
         }
     }

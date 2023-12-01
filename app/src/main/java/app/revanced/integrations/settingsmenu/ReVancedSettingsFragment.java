@@ -44,11 +44,7 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;
 import app.revanced.integrations.utils.ResourceType;
 
-/**
- * @noinspection ALL
- */
 public class ReVancedSettingsFragment extends PreferenceFragment {
-    private PreferenceManager mPreferenceManager;
     private SharedPreferences mSharedPreferences;
     public static boolean settingImportInProgress = false;
     private final int READ_REQUEST_CODE = 42;
@@ -103,12 +99,15 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     SettingsEnum.setValue(setting, listPreference.getValue());
                 }
 
-                if (setting.equals(SettingsEnum.DEFAULT_PLAYBACK_SPEED)) {
-                    ListPreference speedListPreference = (ListPreference) findPreference(setting.path);
-                    speedListPreference.setEntries(CustomPlaybackSpeedPatch.getListEntries());
-                    speedListPreference.setEntryValues(CustomPlaybackSpeedPatch.getListEntryValues());
+                switch (setting) {
+                    case DEFAULT_PLAYBACK_SPEED -> {
+                        listPreference.setEntries(CustomPlaybackSpeedPatch.getListEntries());
+                        listPreference.setEntryValues(CustomPlaybackSpeedPatch.getListEntryValues());
+                        updateListPreferenceSummary(listPreference, setting);
+                    }
+                    case DOUBLE_BACK_TIMEOUT -> updateListPreferenceSummary(listPreference, setting, false);
+                    default -> updateListPreferenceSummary(listPreference, setting);
                 }
-                updateListPreferenceSummary(listPreference, setting);
             } else {
                 LogHelper.printException(() -> "Setting cannot be handled: " + mPreference.getClass() + " " + mPreference);
                 return;
@@ -135,7 +134,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         try {
-            mPreferenceManager = getPreferenceManager();
+            final PreferenceManager mPreferenceManager = getPreferenceManager();
             mPreferenceManager.setSharedPreferencesName(REVANCED.prefName);
             mSharedPreferences = mPreferenceManager.getSharedPreferences();
             addPreferencesFromResource(identifier("revanced_prefs", ResourceType.XML));
@@ -149,18 +148,20 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             for (SettingsEnum setting : SettingsEnum.values()) {
                 Preference preference = findPreference(setting.path);
 
-                if (setting.equals(SettingsEnum.DEFAULT_PLAYBACK_SPEED)) {
-                    ListPreference speedListPreference = (ListPreference) findPreference(setting.path);
-                    speedListPreference.setEntries(CustomPlaybackSpeedPatch.getListEntries());
-                    speedListPreference.setEntryValues(CustomPlaybackSpeedPatch.getListEntryValues());
-                }
-
                 if (preference instanceof SwitchPreference switchPreference) {
                     switchPreference.setChecked(setting.getBoolean());
                 } else if (preference instanceof EditTextPreference editTextPreference) {
                     editTextPreference.setText(setting.getObjectValue().toString());
                 } else if (preference instanceof ListPreference listPreference) {
-                    updateListPreferenceSummary(listPreference, setting);
+                    switch (setting) {
+                        case DEFAULT_PLAYBACK_SPEED -> {
+                            listPreference.setEntries(CustomPlaybackSpeedPatch.getListEntries());
+                            listPreference.setEntryValues(CustomPlaybackSpeedPatch.getListEntryValues());
+                            updateListPreferenceSummary(listPreference, setting);
+                        }
+                        case DOUBLE_BACK_TIMEOUT -> updateListPreferenceSummary(listPreference, setting, false);
+                        default -> updateListPreferenceSummary(listPreference, setting);
+                    }
                 }
             }
 
