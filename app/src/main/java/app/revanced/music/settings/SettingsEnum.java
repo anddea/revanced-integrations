@@ -153,6 +153,7 @@ public enum SettingsEnum {
 
     // SponsorBlock
     SB_ENABLED("sb_enabled", BOOLEAN, TRUE),
+    SB_TOAST_ON_CONNECTION_ERROR("sb_toast_on_connection_error", BOOLEAN, TRUE),
     SB_TOAST_ON_SKIP("sb_toast_on_skip", BOOLEAN, TRUE),
     SB_API_URL("sb_api_url", STRING, "https://sponsor.ajay.app", 1),
     SB_PRIVATE_USER_ID("sb_private_user_id", STRING, ""),
@@ -239,7 +240,7 @@ public enum SettingsEnum {
     }
 
     SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp, int useIntent) {
-        this(path, returnType, defaultValue, YOUTUBE, false, useIntent);
+        this(path, returnType, defaultValue, YOUTUBE, rebootApp, useIntent);
     }
 
     SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue,
