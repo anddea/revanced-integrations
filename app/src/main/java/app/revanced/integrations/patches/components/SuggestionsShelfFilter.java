@@ -1,6 +1,6 @@
 package app.revanced.integrations.patches.components;
 
-import static app.revanced.integrations.utils.ReVancedHelper.isSpoofedTargetVersionLez;
+import static app.revanced.integrations.utils.ReVancedHelper.isSpoofingToLessThan;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 
 import android.view.View;
@@ -46,7 +46,7 @@ public final class SuggestionsShelfFilter extends Filter {
     public static void hideBreakingNewsShelf(View view) {
         hideViewBy0dpUnderCondition(
                 SettingsEnum.HIDE_SUGGESTIONS_SHELF.getBoolean()
-                        && !isSpoofedTargetVersionLez("17.31.00"),
+                        && !isSpoofingToLessThan("17.31.00"),
                 view
         );
     }

@@ -1,6 +1,7 @@
 package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.settings.SharedPrefCategory.RETURN_YOUTUBE_DISLIKE;
+import static app.revanced.integrations.utils.ReVancedHelper.isSpoofingToLessThan;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.app.Activity;
@@ -17,15 +18,10 @@ import app.revanced.integrations.patches.utils.ReturnYouTubeDislikePatch;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.settings.SettingsEnum;
 
-/**
- * @noinspection ALL
- */
 public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
 
-    /**
-     * If ReturnYouTubeDislike is enabled
-     */
-    private SwitchPreference enabledPreference;
+    private static final boolean IS_SPOOFING_TO_NON_LITHO_SHORTS_PLAYER =
+            isSpoofingToLessThan("18.34.00");
 
     /**
      * If dislikes are shown on Shorts.
@@ -33,20 +29,25 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
     private SwitchPreference shortsPreference;
 
     /**
-     * If dislikes are shown as percentage
+     * If dislikes are shown as percentage.
      */
     private SwitchPreference percentagePreference;
 
     /**
-     * If segmented like/dislike button uses smaller compact layout
+     * If segmented like/dislike button uses smaller compact layout.
      */
     private SwitchPreference compactLayoutPreference;
 
+    /**
+     * If segmented like/dislike button uses smaller compact layout.
+     */
+    private SwitchPreference toastOnRYDNotAvailable;
+
     private void updateUIState() {
-        final boolean rydIsEnabled = SettingsEnum.RYD_ENABLED.getBoolean();
-        shortsPreference.setEnabled(rydIsEnabled);
-        percentagePreference.setEnabled(rydIsEnabled);
-        compactLayoutPreference.setEnabled(rydIsEnabled);
+        shortsPreference.setEnabled(SettingsEnum.RYD_SHORTS.isAvailable());
+        percentagePreference.setEnabled(SettingsEnum.RYD_DISLIKE_PERCENTAGE.isAvailable());
+        compactLayoutPreference.setEnabled(SettingsEnum.RYD_COMPACT_LAYOUT.isAvailable());
+        toastOnRYDNotAvailable.setEnabled(SettingsEnum.RYD_TOAST_ON_CONNECTION_ERROR.isAvailable());
     }
 
     @Override
@@ -54,11 +55,11 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         getPreferenceManager().setSharedPreferencesName(RETURN_YOUTUBE_DISLIKE.prefName);
 
-        Activity context = this.getActivity();
-        PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(context);
+        final Activity activity = this.getActivity();
+        final PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activity);
         setPreferenceScreen(preferenceScreen);
 
-        enabledPreference = new SwitchPreference(context);
+        SwitchPreference enabledPreference = new SwitchPreference(activity);
         enabledPreference.setChecked(SettingsEnum.RYD_ENABLED.getBoolean());
         enabledPreference.setTitle(str("revanced_ryd_enable_title"));
         enabledPreference.setSummaryOn(str("revanced_ryd_enable_summary_on"));
@@ -73,10 +74,14 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         });
         preferenceScreen.addPreference(enabledPreference);
 
-        shortsPreference = new SwitchPreference(context);
+        shortsPreference = new SwitchPreference(activity);
         shortsPreference.setChecked(SettingsEnum.RYD_SHORTS.getBoolean());
         shortsPreference.setTitle(str("revanced_ryd_shorts_title"));
-        shortsPreference.setSummaryOn(str("revanced_ryd_shorts_summary_on"));
+        String shortsSummary = str("revanced_ryd_shorts_summary_on",
+                IS_SPOOFING_TO_NON_LITHO_SHORTS_PLAYER
+                        ? ""
+                        : "\n\n" + str("revanced_ryd_shorts_summary_disclaimer"));
+        shortsPreference.setSummaryOn(shortsSummary);
         shortsPreference.setSummaryOff(str("revanced_ryd_shorts_summary_off"));
         shortsPreference.setOnPreferenceChangeListener((pref, newValue) -> {
             SettingsEnum.RYD_SHORTS.saveValue(newValue);
@@ -85,7 +90,7 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         });
         preferenceScreen.addPreference(shortsPreference);
 
-        percentagePreference = new SwitchPreference(context);
+        percentagePreference = new SwitchPreference(activity);
         percentagePreference.setChecked(SettingsEnum.RYD_DISLIKE_PERCENTAGE.getBoolean());
         percentagePreference.setTitle(str("revanced_ryd_dislike_percentage_title"));
         percentagePreference.setSummaryOn(str("revanced_ryd_dislike_percentage_summary_on"));
@@ -98,7 +103,7 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         });
         preferenceScreen.addPreference(percentagePreference);
 
-        compactLayoutPreference = new SwitchPreference(context);
+        compactLayoutPreference = new SwitchPreference(activity);
         compactLayoutPreference.setChecked(SettingsEnum.RYD_COMPACT_LAYOUT.getBoolean());
         compactLayoutPreference.setTitle(str("revanced_ryd_compact_layout_title"));
         compactLayoutPreference.setSummaryOn(str("revanced_ryd_compact_layout_summary_on"));
@@ -111,22 +116,34 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
         });
         preferenceScreen.addPreference(compactLayoutPreference);
 
+        toastOnRYDNotAvailable = new SwitchPreference(activity);
+        toastOnRYDNotAvailable.setChecked(SettingsEnum.RYD_TOAST_ON_CONNECTION_ERROR.getBoolean());
+        toastOnRYDNotAvailable.setTitle(str("revanced_ryd_toast_on_connection_error_title"));
+        toastOnRYDNotAvailable.setSummaryOn(str("revanced_ryd_toast_on_connection_error_summary_on"));
+        toastOnRYDNotAvailable.setSummaryOff(str("revanced_ryd_toast_on_connection_error_summary_off"));
+        toastOnRYDNotAvailable.setOnPreferenceChangeListener((pref, newValue) -> {
+            SettingsEnum.RYD_TOAST_ON_CONNECTION_ERROR.saveValue(newValue);
+            updateUIState();
+            return true;
+        });
+        preferenceScreen.addPreference(toastOnRYDNotAvailable);
+
         updateUIState();
 
 
         // About category
 
-        PreferenceCategory aboutCategory = new PreferenceCategory(context);
+        PreferenceCategory aboutCategory = new PreferenceCategory(activity);
         aboutCategory.setTitle(str("revanced_ryd_about"));
         preferenceScreen.addPreference(aboutCategory);
 
         // ReturnYouTubeDislike Website
 
-        Preference aboutWebsitePreference = new Preference(context);
+        Preference aboutWebsitePreference = new Preference(activity);
         aboutWebsitePreference.setTitle(str("revanced_ryd_attribution_title"));
         aboutWebsitePreference.setSummary(str("revanced_ryd_attribution_summary"));
         aboutWebsitePreference.setOnPreferenceClickListener(pref -> {
-            var intent = new Intent(Intent.ACTION_VIEW);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://returnyoutubedislike.com"));
             pref.getContext().startActivity(intent);
             return false;

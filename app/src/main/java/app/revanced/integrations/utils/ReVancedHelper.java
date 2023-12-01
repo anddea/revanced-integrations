@@ -47,7 +47,7 @@ public class ReVancedHelper {
     private static boolean isAdditionalSettingsEnabled() {
         // In the old player flyout panels, the video quality icon and additional quality icon are the same
         // Therefore, additional Settings should not be blocked in old player flyout panels
-        if (isSpoofedTargetVersionLez("18.22.00"))
+        if (isSpoofingToLessThan("18.22.00"))
             return false;
 
         boolean additionalSettingsEnabled = true;
@@ -90,22 +90,13 @@ public class ReVancedHelper {
         return false;
     }
 
-    public static boolean isSpoofedTargetVersionGez(@NonNull String versionName) {
+    public static boolean isSpoofingToLessThan(@NonNull String versionName) {
         if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
             return false;
 
         final int spoofedVersion = Integer.parseInt(SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().replaceAll("\\.", ""));
         final int targetVersion = Integer.parseInt(versionName.replaceAll("\\.", ""));
-        return spoofedVersion >= targetVersion;
-    }
-
-    public static boolean isSpoofedTargetVersionLez(@NonNull String versionName) {
-        if (!SettingsEnum.SPOOF_APP_VERSION.getBoolean())
-            return false;
-
-        final int spoofedVersion = Integer.parseInt(SettingsEnum.SPOOF_APP_VERSION_TARGET.getString().replaceAll("\\.", ""));
-        final int targetVersion = Integer.parseInt(versionName.replaceAll("\\.", ""));
-        return spoofedVersion <= targetVersion;
+        return spoofedVersion < targetVersion;
     }
 
     public static void setApplicationLabel(@NonNull Context context) {
