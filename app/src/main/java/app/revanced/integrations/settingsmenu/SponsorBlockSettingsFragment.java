@@ -1,7 +1,7 @@
 package app.revanced.integrations.settingsmenu;
 
 import static android.text.Html.fromHtml;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
+import static app.revanced.integrations.settings.SharedPrefCategory.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.annotation.TargetApi;
@@ -118,7 +118,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         try {
             PreferenceManager preferenceManager = getPreferenceManager();
-            preferenceManager.setSharedPreferencesName(SPONSOR_BLOCK.getName());
+            preferenceManager.setSharedPreferencesName(SPONSOR_BLOCK.prefName);
 
             Activity context = this.getActivity();
             PreferenceScreen preferenceScreen = preferenceManager.createPreferenceScreen(context);

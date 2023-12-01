@@ -84,26 +84,28 @@ public final class VideoInformation {
     }
 
     public static void reloadVideo() {
-        ReVancedUtils.runOnMainThreadDelayed(() -> {
-                    if (videoLength < 10000 || isLiveStream)
-                        return;
+        if (videoLength < 10000 || isLiveStream)
+            return;
 
-                    final long lastVideoTime = videoTime;
-                    final float playbackSpeed = VideoHelpers.getCurrentSpeed();
-                    final long speedAdjustedTimeThreshold = (long) (playbackSpeed * 1000);
-                    seekTo(10000);
-                    seekTo(lastVideoTime + speedAdjustedTimeThreshold);
+        final long lastVideoTime = videoTime;
+        final float playbackSpeed = VideoHelpers.getCurrentSpeed();
+        final long speedAdjustedTimeThreshold = (long) (playbackSpeed * 1000);
+        seekTo(10000);
+        seekTo(lastVideoTime + speedAdjustedTimeThreshold);
 
-                    if (!SettingsEnum.SKIP_PRELOADED_BUFFER_TOAST.getBoolean())
-                        return;
+        if (!SettingsEnum.SKIP_PRELOADED_BUFFER_TOAST.getBoolean())
+            return;
 
-                    ReVancedUtils.showToastShort(str("revanced_skipped_preloaded_buffer"));
-                }, 700
-        );
+        ReVancedUtils.showToastShort(str("revanced_skipped_preloaded_buffer"));
     }
 
     public static boolean videoEnded() {
-        return SettingsEnum.ALWAYS_REPEAT.getBoolean() && seekTo(0);
+        if (!SettingsEnum.ALWAYS_REPEAT.getBoolean())
+            return false;
+
+        ReVancedUtils.runOnMainThreadDelayed(() -> seekTo(0), 0);
+
+        return true;
     }
 
     /**

@@ -1,8 +1,6 @@
 package app.revanced.integrations.patches.misc;
 
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
-import static app.revanced.integrations.utils.SharedPrefHelper.getBoolean;
-
+import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
 public class LayoutOverridePatch {
@@ -12,19 +10,19 @@ public class LayoutOverridePatch {
      */
     public static boolean enableTabletLayout() {
         try {
-            return getBoolean(REVANCED, "revanced_enable_tablet_layout", false);
+            return SettingsEnum.ENABLE_TABLET_LAYOUT.getBoolean();
         } catch (Exception ex) {
             LogHelper.printException(() -> "enableTabletLayout failed", ex);
-            return false;
         }
+        return false;
     }
 
     public static int getLayoutOverride(int original) {
         try {
-            return getBoolean(REVANCED, "revanced_enable_phone_layout", false) ? 480 : original;
+            return SettingsEnum.ENABLE_PHONE_LAYOUT.getBoolean() ? 480 : original;
         } catch (Exception ex) {
             LogHelper.printException(() -> "getLayoutOverride failed", ex);
-            return original;
         }
+        return original;
     }
 }

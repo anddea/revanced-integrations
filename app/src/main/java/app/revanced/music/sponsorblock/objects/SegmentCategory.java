@@ -1,7 +1,6 @@
 package app.revanced.music.sponsorblock.objects;
 
 import static app.revanced.music.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY;
-import static app.revanced.music.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.music.utils.StringRef.sf;
 
 import android.content.SharedPreferences;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import app.revanced.music.settings.SharedPrefCategory;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.StringRef;
 
@@ -160,7 +160,7 @@ public enum SegmentCategory {
     }
 
     public static void loadFromPreferences() {
-        SharedPreferences preferences = Objects.requireNonNull(getPreferences());
+        SharedPreferences preferences = Objects.requireNonNull(SharedPrefCategory.YOUTUBE.preferences);
         LogHelper.printDebug(() -> "loadFromPreferences");
         for (SegmentCategory category : categoriesWithoutUnsubmitted()) {
             category.load(preferences);

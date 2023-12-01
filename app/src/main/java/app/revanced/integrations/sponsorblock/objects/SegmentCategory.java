@@ -2,8 +2,6 @@ package app.revanced.integrations.sponsorblock.objects;
 
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.IGNORE;
 import static app.revanced.integrations.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
-import static app.revanced.integrations.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.integrations.utils.StringRef.sf;
 
 import android.content.SharedPreferences;
@@ -26,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
+import app.revanced.integrations.settings.SharedPrefCategory;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.StringRef;
 
@@ -198,9 +197,7 @@ public enum SegmentCategory {
     }
 
     public static void loadFromPreferences() {
-        final SharedPreferences preferences = getPreferences(SPONSOR_BLOCK);
-        if (preferences == null)
-            return;
+        SharedPreferences preferences = Objects.requireNonNull(SharedPrefCategory.SPONSOR_BLOCK.preferences);
 
         LogHelper.printDebug(() -> "loadFromPreferences");
         for (SegmentCategory category : categoriesWithoutUnsubmitted()) {

@@ -7,12 +7,7 @@ import static app.revanced.music.settings.SettingsEnum.ReturnType.FLOAT;
 import static app.revanced.music.settings.SettingsEnum.ReturnType.INTEGER;
 import static app.revanced.music.settings.SettingsEnum.ReturnType.LONG;
 import static app.revanced.music.settings.SettingsEnum.ReturnType.STRING;
-import static app.revanced.music.utils.SharedPrefHelper.getPreferences;
-import static app.revanced.music.utils.SharedPrefHelper.saveBoolean;
-import static app.revanced.music.utils.SharedPrefHelper.saveFloat;
-import static app.revanced.music.utils.SharedPrefHelper.saveInteger;
-import static app.revanced.music.utils.SharedPrefHelper.saveLong;
-import static app.revanced.music.utils.SharedPrefHelper.saveString;
+import static app.revanced.music.settings.SharedPrefCategory.YOUTUBE;
 import static app.revanced.music.utils.StringRef.str;
 
 import androidx.annotation.NonNull;
@@ -224,6 +219,8 @@ public enum SettingsEnum {
     @NonNull
     public final Object defaultValue;
     @NonNull
+    public final SharedPrefCategory sharedPref;
+    @NonNull
     public final ReturnType returnType;
     public final boolean rebootApp;
     public final int useIntent;
@@ -242,9 +239,15 @@ public enum SettingsEnum {
     }
 
     SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp, int useIntent) {
-        this.path = path;
-        this.returnType = returnType;
-        this.defaultValue = defaultValue;
+        this(path, returnType, defaultValue, YOUTUBE, false, useIntent);
+    }
+
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue,
+                 SharedPrefCategory prefName, boolean rebootApp, int useIntent) {
+        this.path = Objects.requireNonNull(path);
+        this.returnType = Objects.requireNonNull(returnType);
+        this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.sharedPref = Objects.requireNonNull(prefName);
         this.rebootApp = rebootApp;
         this.useIntent = useIntent;
     }
@@ -336,31 +339,51 @@ public enum SettingsEnum {
 
     private void load() {
         switch (returnType) {
-            case BOOLEAN ->
-                    value = Objects.requireNonNull(getPreferences()).getBoolean(path, (boolean) defaultValue);
-            case INTEGER ->
-                    value = Objects.requireNonNull(getPreferences()).getInt(path, (Integer) defaultValue);
-            case LONG ->
-                    value = Objects.requireNonNull(getPreferences()).getLong(path, (long) defaultValue);
-            case FLOAT ->
-                    value = Objects.requireNonNull(getPreferences()).getFloat(path, (float) defaultValue);
-            case STRING ->
-                    value = Objects.requireNonNull(getPreferences()).getString(path, (String) defaultValue);
-            default -> throw new IllegalStateException(name());
+            case BOOLEAN:
+                value = sharedPref.getBoolean(path, (boolean) defaultValue);
+                break;
+            case INTEGER:
+                value = sharedPref.getIntegerString(path, (Integer) defaultValue);
+                break;
+            case LONG:
+                value = sharedPref.getLongString(path, (Long) defaultValue);
+                break;
+            case FLOAT:
+                value = sharedPref.getFloatString(path, (Float) defaultValue);
+                break;
+            case STRING:
+                value = sharedPref.getString(path, (String) defaultValue);
+                break;
+            default:
+                throw new IllegalStateException(name());
         }
     }
 
+    /**
+     * Sets the value, and persistently saves it.
+     */
     public void saveValue(@NonNull Object newValue) {
-        Objects.requireNonNull(newValue);
         returnType.validate(newValue);
+        value = newValue; // Must set before saving to preferences (otherwise importing fails to update UI correctly).
         switch (returnType) {
-            case BOOLEAN -> saveBoolean(path, (boolean) newValue);
-            case LONG -> saveLong(path, (long) newValue);
-            case INTEGER -> saveInteger(path, (Integer) newValue);
-            case FLOAT -> saveFloat(path, (float) newValue);
-            default -> saveString(path, newValue.toString());
+            case BOOLEAN:
+                sharedPref.saveBoolean(path, (boolean) newValue);
+                break;
+            case INTEGER:
+                sharedPref.saveIntegerString(path, (Integer) newValue);
+                break;
+            case LONG:
+                sharedPref.saveLongString(path, (Long) newValue);
+                break;
+            case FLOAT:
+                sharedPref.saveFloatString(path, (Float) newValue);
+                break;
+            case STRING:
+                sharedPref.saveString(path, (String) newValue);
+                break;
+            default:
+                throw new IllegalStateException(name());
         }
-        value = newValue;
     }
 
     public boolean getBoolean() {

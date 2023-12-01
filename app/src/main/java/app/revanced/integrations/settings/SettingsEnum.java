@@ -7,10 +7,10 @@ import static app.revanced.integrations.settings.SettingsEnum.ReturnType.FLOAT;
 import static app.revanced.integrations.settings.SettingsEnum.ReturnType.INTEGER;
 import static app.revanced.integrations.settings.SettingsEnum.ReturnType.LONG;
 import static app.revanced.integrations.settings.SettingsEnum.ReturnType.STRING;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.REVANCED;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.RYD;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.YOUTUBE;
+import static app.revanced.integrations.settings.SharedPrefCategory.REVANCED;
+import static app.revanced.integrations.settings.SharedPrefCategory.RETURN_YOUTUBE_DISLIKE;
+import static app.revanced.integrations.settings.SharedPrefCategory.SPONSOR_BLOCK;
+import static app.revanced.integrations.settings.SharedPrefCategory.YOUTUBE;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.content.Context;
@@ -30,7 +30,6 @@ import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
 import app.revanced.integrations.sponsorblock.SponsorBlockSettings;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
-import app.revanced.integrations.utils.SharedPrefHelper;
 
 
 public enum SettingsEnum {
@@ -113,7 +112,6 @@ public enum SettingsEnum {
 
     // Fullscreen
     DISABLE_AMBIENT_MODE_IN_FULLSCREEN("revanced_disable_ambient_mode_in_fullscreen", BOOLEAN, FALSE, true),
-    ENABLE_COMPACT_CONTROLS_OVERLAY("revanced_enable_compact_controls_overlay", BOOLEAN, FALSE, true),
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", BOOLEAN, FALSE, true),
     HIDE_END_SCREEN_OVERLAY("revanced_hide_end_screen_overlay", BOOLEAN, FALSE, true),
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", BOOLEAN, FALSE, true),
@@ -136,6 +134,7 @@ public enum SettingsEnum {
 
     // Experimental Flags
     DISABLE_LANDSCAPE_MODE("revanced_disable_landscape_mode", BOOLEAN, FALSE, true),
+    ENABLE_COMPACT_CONTROLS_OVERLAY("revanced_enable_compact_controls_overlay", BOOLEAN, FALSE, true),
     FORCE_FULLSCREEN("revanced_force_fullscreen", BOOLEAN, FALSE, true),
 
 
@@ -162,7 +161,6 @@ public enum SettingsEnum {
     HIDE_MIX_PLAYLISTS("revanced_hide_mix_playlists", BOOLEAN, FALSE),
     HIDE_SEARCH_TERM_THUMBNAIL("revanced_hide_search_term_thumbnail", BOOLEAN, FALSE),
     HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
-    HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
     HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON("revanced_hide_toolbar_create_notification_button", BOOLEAN, FALSE, true),
     HIDE_TRENDING_SEARCHES("revanced_hide_trending_searches", BOOLEAN, TRUE),
 
@@ -187,6 +185,8 @@ public enum SettingsEnum {
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
     // Experimental Flags
+    HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
+    HIDE_SUGGESTIONS_SHELF_METHOD("revanced_hide_suggestions_shelf_method", BOOLEAN, FALSE, true),
     HIDE_VIDEO_WITH_LOW_VIEW("revanced_hide_video_with_low_view", BOOLEAN, FALSE, true),
 
     // Channel Profile
@@ -372,11 +372,11 @@ public enum SettingsEnum {
 
 
     // Return YouTube Dislike
-    RYD_USER_ID("ryd_user_id", STRING, "", RYD),
-    RYD_ENABLED("ryd_enabled", BOOLEAN, TRUE, RYD),
-    RYD_SHORTS("ryd_shorts", BOOLEAN, TRUE, RYD),
-    RYD_DISLIKE_PERCENTAGE("ryd_dislike_percentage", BOOLEAN, FALSE, RYD),
-    RYD_COMPACT_LAYOUT("ryd_compact_layout", BOOLEAN, FALSE, RYD),
+    RYD_USER_ID("ryd_user_id", STRING, "", RETURN_YOUTUBE_DISLIKE),
+    RYD_ENABLED("ryd_enabled", BOOLEAN, TRUE, RETURN_YOUTUBE_DISLIKE),
+    RYD_SHORTS("ryd_shorts", BOOLEAN, TRUE, RETURN_YOUTUBE_DISLIKE),
+    RYD_DISLIKE_PERCENTAGE("ryd_dislike_percentage", BOOLEAN, FALSE, RETURN_YOUTUBE_DISLIKE),
+    RYD_COMPACT_LAYOUT("ryd_compact_layout", BOOLEAN, FALSE, RETURN_YOUTUBE_DISLIKE),
 
 
     // SponsorBlock
@@ -418,7 +418,7 @@ public enum SettingsEnum {
     @NonNull
     public final Object defaultValue;
     @NonNull
-    public final SharedPrefHelper.SharedPrefNames sharedPref;
+    public final SharedPrefCategory sharedPref;
     @NonNull
     public final ReturnType returnType;
     /**
@@ -452,16 +452,16 @@ public enum SettingsEnum {
         this(path, returnType, defaultValue, REVANCED, rebootApp, parents);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName) {
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName) {
         this(path, returnType, defaultValue, prefName, false, null);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName,
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
                  SettingsEnum[] parents) {
         this(path, returnType, defaultValue, prefName, false, parents);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefHelper.SharedPrefNames prefName,
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
                  boolean rebootApp, @Nullable SettingsEnum[] parents) {
         this.path = Objects.requireNonNull(path);
         this.returnType = Objects.requireNonNull(returnType);
@@ -516,15 +516,23 @@ public enum SettingsEnum {
 
     private void load() {
         switch (returnType) {
-            case BOOLEAN ->
-                    value = SharedPrefHelper.getBoolean(sharedPref, path, (boolean) defaultValue);
-            case INTEGER ->
-                    value = SharedPrefHelper.getInt(sharedPref, path, (Integer) defaultValue);
-            case LONG -> value = SharedPrefHelper.getLong(sharedPref, path, (Long) defaultValue);
-            case FLOAT -> value = SharedPrefHelper.getFloat(sharedPref, path, (Float) defaultValue);
-            case STRING ->
-                    value = SharedPrefHelper.getString(sharedPref, path, (String) defaultValue);
-            default -> throw new IllegalStateException(name());
+            case BOOLEAN:
+                value = sharedPref.getBoolean(path, (boolean) defaultValue);
+                break;
+            case INTEGER:
+                value = sharedPref.getIntegerString(path, (Integer) defaultValue);
+                break;
+            case LONG:
+                value = sharedPref.getLongString(path, (Long) defaultValue);
+                break;
+            case FLOAT:
+                value = sharedPref.getFloatString(path, (Float) defaultValue);
+                break;
+            case STRING:
+                value = sharedPref.getString(path, (String) defaultValue);
+                break;
+            default:
+                throw new IllegalStateException(name());
         }
     }
 
@@ -534,12 +542,24 @@ public enum SettingsEnum {
     public void saveValue(@NonNull Object newValue) {
         returnType.validate(newValue);
         value = newValue; // Must set before saving to preferences (otherwise importing fails to update UI correctly).
-
         switch (returnType) {
-            case BOOLEAN -> SharedPrefHelper.saveBoolean(sharedPref, path, (boolean) newValue);
-            case INTEGER, LONG, FLOAT, STRING ->
-                    SharedPrefHelper.saveString(sharedPref, path, newValue.toString());
-            default -> throw new IllegalStateException(name());
+            case BOOLEAN:
+                sharedPref.saveBoolean(path, (boolean) newValue);
+                break;
+            case INTEGER:
+                sharedPref.saveIntegerString(path, (Integer) newValue);
+                break;
+            case LONG:
+                sharedPref.saveLongString(path, (Long) newValue);
+                break;
+            case FLOAT:
+                sharedPref.saveFloatString(path, (Float) newValue);
+                break;
+            case STRING:
+                sharedPref.saveString(path, (String) newValue);
+                break;
+            default:
+                throw new IllegalStateException(name());
         }
     }
 

@@ -1,5 +1,6 @@
 package app.revanced.integrations.settingsmenu;
 
+import static app.revanced.integrations.settings.SharedPrefCategory.RETURN_YOUTUBE_DISLIKE;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.app.Activity;
@@ -15,7 +16,6 @@ import android.preference.SwitchPreference;
 import app.revanced.integrations.patches.utils.ReturnYouTubeDislikePatch;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.SharedPrefHelper;
 
 /**
  * @noinspection ALL
@@ -52,7 +52,7 @@ public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getPreferenceManager().setSharedPreferencesName(SharedPrefHelper.SharedPrefNames.RYD.getName());
+        getPreferenceManager().setSharedPreferencesName(RETURN_YOUTUBE_DISLIKE.prefName);
 
         Activity context = this.getActivity();
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(context);

@@ -1,7 +1,6 @@
 package app.revanced.integrations.sponsorblock;
 
-import static app.revanced.integrations.utils.ReVancedUtils.getContext;
-import static app.revanced.integrations.utils.SharedPrefHelper.SharedPrefNames.SPONSOR_BLOCK;
+import static app.revanced.integrations.settings.SharedPrefCategory.SPONSOR_BLOCK;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.app.AlertDialog;
@@ -23,7 +22,6 @@ import app.revanced.integrations.sponsorblock.objects.CategoryBehaviour;
 import app.revanced.integrations.sponsorblock.objects.SegmentCategory;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
-import app.revanced.integrations.utils.SharedPrefHelper;
 
 public class SponsorBlockSettings {
     /**
@@ -70,7 +68,7 @@ public class SponsorBlockSettings {
             }
             SegmentCategory.updateEnabledCategories();
 
-            SharedPreferences.Editor editor = SharedPrefHelper.getPreferences(getContext(), SPONSOR_BLOCK).edit();
+            SharedPreferences.Editor editor = SPONSOR_BLOCK.preferences.edit();
 
             for (SegmentCategory category : SegmentCategory.categoriesWithoutUnsubmitted()) {
                 category.save(editor);
@@ -205,7 +203,7 @@ public class SponsorBlockSettings {
         initialize();
 
         int numberOfImportedSettings = 0;
-        SharedPreferences.Editor editor = SharedPrefHelper.getPreferences(getContext(), SPONSOR_BLOCK).edit();
+        SharedPreferences.Editor editor = SPONSOR_BLOCK.preferences.edit();
 
         for (SegmentCategory category : SegmentCategory.categoriesWithoutUnsubmitted()) {
             numberOfImportedSettings += category.importFromFlatJSON(json, editor);

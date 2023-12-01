@@ -1,7 +1,7 @@
 package app.revanced.music.sponsorblock.objects;
 
+import static app.revanced.music.settings.SharedPrefCategory.YOUTUBE;
 import static app.revanced.music.utils.ReVancedHelper.getDialogBuilder;
-import static app.revanced.music.utils.SharedPrefHelper.getPreferences;
 import static app.revanced.music.utils.StringRef.str;
 
 import android.app.Activity;
@@ -101,14 +101,14 @@ public class SponsorBlockDialogBuilder {
                 }
 
                 String colorValue = mEditText.getText().toString().trim();
-                SharedPreferences.Editor editor = Objects.requireNonNull(getPreferences()).edit();
+                SharedPreferences.Editor editor = YOUTUBE.preferences.edit();
                 category.setColor(colorValue);
                 category.save(editor);
                 editor.apply();
             });
             builder.setNeutralButton(str("sb_reset_color"), (dialog, which) -> {
                 try {
-                    SharedPreferences.Editor editor = Objects.requireNonNull(getPreferences()).edit();
+                    SharedPreferences.Editor editor = YOUTUBE.preferences.edit();
                     category.setColor(category.defaultColor);
                     category.save(editor);
                     editor.apply();
