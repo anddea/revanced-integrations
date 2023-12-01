@@ -145,10 +145,11 @@ public enum SettingsEnum {
 
 
     // Return YouTube Dislike
-    RYD_USER_ID("revanced_ryd_user_id", STRING, ""),
     RYD_ENABLED("revanced_ryd_enabled", BOOLEAN, TRUE),
+    RYD_USER_ID("revanced_ryd_user_id", STRING, ""),
     RYD_DISLIKE_PERCENTAGE("revanced_ryd_dislike_percentage", BOOLEAN, FALSE),
     RYD_COMPACT_LAYOUT("revanced_ryd_compact_layout", BOOLEAN, FALSE),
+    RYD_TOAST_ON_CONNECTION_ERROR("revanced_ryd_toast_on_connection_error", BOOLEAN, TRUE),
 
 
     // SponsorBlock
