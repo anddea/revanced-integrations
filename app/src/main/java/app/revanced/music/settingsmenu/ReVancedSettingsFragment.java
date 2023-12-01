@@ -192,11 +192,11 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         var appName = ReVancedHelper.applicationLabel;
         var versionName = ReVancedHelper.appVersionName;
         var formatDate = dateFormat.format(new Date(System.currentTimeMillis()));
-        var fileName = String.format("%s_v%s_%s.json", appName, versionName, formatDate);
+        var fileName = String.format("%s_v%s_%s.txt", appName, versionName, formatDate);
 
         var intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/json");
+        intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TITLE, fileName);
         startActivityForResult(intent, WRITE_REQUEST_CODE);
     }
@@ -207,7 +207,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     private void importActivity() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType(Build.VERSION.SDK_INT <= 28 ? "*/*" : "application/json");
+        intent.setType(Build.VERSION.SDK_INT <= 28 ? "*/*" : "text/plain");
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
@@ -215,13 +215,13 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            exportJson(data.getData());
+            exportText(data.getData());
         } else if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            importJson(data.getData());
+            importText(data.getData());
         }
     }
 
-    private void exportJson(Uri uri) {
+    private void exportText(Uri uri) {
         Context context = this.getContext();
 
         try {
@@ -244,7 +244,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         }
     }
 
-    private void importJson(Uri uri) {
+    private void importText(Uri uri) {
         final Context context = this.getContext();
         StringBuilder sb = new StringBuilder();
         String line;
