@@ -53,6 +53,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
     private SwitchPreference showSkipToast;
     private SwitchPreference trackSkips;
     private SwitchPreference showTimeWithoutSegments;
+    private SwitchPreference toastOnConnectionError;
     private EditTextPreference newSegmentStep;
     private EditTextPreference minSegmentDuration;
     private EditTextPreference privateUserId;
@@ -70,7 +71,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
             } else if (!SettingsEnum.SB_CREATE_NEW_SEGMENT.getBoolean()) {
                 SponsorBlockViewController.hideNewSegmentLayout();
             }
-            // voting and add new segment buttons automatically shows/hides themselves
+            // Voting and add new segment buttons automatically shows/hide themselves.
 
             sbEnabled.setChecked(enabled);
 
@@ -89,6 +90,9 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
             showSkipToast.setChecked(SettingsEnum.SB_TOAST_ON_SKIP.getBoolean());
             showSkipToast.setEnabled(enabled);
 
+            toastOnConnectionError.setChecked(SettingsEnum.SB_TOAST_ON_CONNECTION_ERROR.getBoolean());
+            toastOnConnectionError.setEnabled(enabled);
+
             trackSkips.setChecked(SettingsEnum.SB_TRACK_SKIP_COUNT.getBoolean());
             trackSkips.setEnabled(enabled);
 
@@ -103,6 +107,12 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
 
             privateUserId.setText(SettingsEnum.SB_PRIVATE_USER_ID.getString());
             privateUserId.setEnabled(enabled);
+
+            // If the user has a private user id, then include a subtext that mentions not to share it.
+            String exportSummarySubText = SponsorBlockSettings.userHasSBPrivateId()
+                    ? str("sb_settings_ie_sum_warning")
+                    : "";
+            importExport.setSummary(str("sb_settings_ie_sum", exportSummarySubText));
 
             apiUrl.setEnabled(enabled);
             importExport.setEnabled(enabled);
@@ -283,6 +293,17 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         screen.addPreference(category);
         category.setTitle(str("sb_general"));
 
+        toastOnConnectionError = new SwitchPreference(context);
+        toastOnConnectionError.setTitle(str("sb_toast_on_connection_error_title"));
+        toastOnConnectionError.setSummaryOn(str("sb_toast_on_connection_error_summary_on"));
+        toastOnConnectionError.setSummaryOff(str("sb_toast_on_connection_error_summary_off"));
+        toastOnConnectionError.setOnPreferenceChangeListener((preference1, newValue) -> {
+            SettingsEnum.SB_TOAST_ON_CONNECTION_ERROR.saveValue(newValue);
+            updateUI();
+            return true;
+        });
+        category.addPreference(toastOnConnectionError);
+
         trackSkips = new SwitchPreference(context);
         trackSkips.setTitle(str("sb_general_skipcount"));
         trackSkips.setSummaryOn(str("sb_general_skipcount_sum_on"));
@@ -314,6 +335,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
                 return false;
             }
             SettingsEnum.SB_PRIVATE_USER_ID.saveValue(newUUID);
+            updateUI();
             fetchAndDisplayStats();
             return true;
         });
@@ -358,7 +380,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
             }
         };
         importExport.setTitle(str("sb_settings_ie"));
-        importExport.setSummary(str("sb_settings_ie_sum"));
+        // Summary is set in updateUI()
         importExport.getEditText().setInputType(InputType.TYPE_CLASS_TEXT
                 | InputType.TYPE_TEXT_FLAG_MULTI_LINE
                 | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);

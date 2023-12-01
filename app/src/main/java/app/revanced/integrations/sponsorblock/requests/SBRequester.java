@@ -50,6 +50,9 @@ public class SBRequester {
     }
 
     private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex) {
+        if (SettingsEnum.SB_TOAST_ON_CONNECTION_ERROR.getBoolean()) {
+            ReVancedUtils.showToastShort(toastMessage);
+        }
         if (ex != null) {
             LogHelper.printInfo(() -> toastMessage, ex);
         }
