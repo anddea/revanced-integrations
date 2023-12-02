@@ -44,6 +44,7 @@ public enum SettingsEnum {
 
 
     // Ads
+    CLOSE_INTERSTITIAL_ADS("revanced_close_interstitial_ads", BOOLEAN, FALSE, true),
     HIDE_MUSIC_ADS("revanced_hide_music_ads", BOOLEAN, TRUE, true),
 
 
