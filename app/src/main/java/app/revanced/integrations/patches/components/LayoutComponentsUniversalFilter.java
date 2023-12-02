@@ -13,6 +13,7 @@ final class LayoutComponentsUniversalFilter extends Filter {
         final StringFilterGroup feedSurvey = new StringFilterGroup(
                 SettingsEnum.HIDE_FEED_SURVEY,
                 "feed_nudge",
+                "infeed_survey",
                 "in_feed_survey",
                 "slimline_survey"
         );
