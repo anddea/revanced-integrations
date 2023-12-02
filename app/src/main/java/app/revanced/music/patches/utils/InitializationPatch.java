@@ -31,7 +31,7 @@ public class InitializationPatch {
         if (!(context instanceof Activity mActivity))
             return;
 
-        showRestartDialog(mActivity, "revanced_reboot_first_run", 1000);
+        showRestartDialog(mActivity, "revanced_restart_first_run", 1000);
 
         // set save playback speed default value
         SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.RememberPlaybackSpeed());

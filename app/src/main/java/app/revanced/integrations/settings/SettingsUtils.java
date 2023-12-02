@@ -23,13 +23,13 @@ public class SettingsUtils {
     }
 
     public static void showRestartDialog(@NonNull Activity activity) {
-        showRestartDialog(activity, "pref_refresh_config", 0);
+        showRestartDialog(activity, "revanced_restart_message", 0);
     }
 
     public static void showRestartDialog(@NonNull Activity activity, @NonNull String message, long delay) {
         new AlertDialog.Builder(activity)
                 .setMessage(str(message))
-                .setPositiveButton(str("in_app_update_restart_button"), (dialog, id) -> runOnMainThreadDelayed(() -> restartApp(activity), delay))
+                .setPositiveButton(android.R.string.ok, (dialog, id) -> runOnMainThreadDelayed(() -> restartApp(activity), delay))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }

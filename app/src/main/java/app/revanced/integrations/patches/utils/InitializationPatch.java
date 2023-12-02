@@ -33,7 +33,7 @@ public class InitializationPatch {
         if (!(context instanceof Activity mActivity))
             return;
 
-        runOnMainThreadDelayed(() -> showRestartDialog(mActivity, "revanced_reboot_first_run", 500), 500);
+        runOnMainThreadDelayed(() -> showRestartDialog(mActivity, "revanced_restart_first_run", 500), 500);
         runOnMainThreadDelayed(() ->
                 {
                     // set initialize value

@@ -23,7 +23,7 @@ public class SettingsUtils {
     }
 
     public static void showRestartDialog(@NonNull Activity activity) {
-        showRestartDialog(activity, "revanced_reboot_message", 0);
+        showRestartDialog(activity, "revanced_restart_message", 0);
     }
 
     public static void showRestartDialog(@NonNull Activity activity, @NonNull String message, long delay) {
