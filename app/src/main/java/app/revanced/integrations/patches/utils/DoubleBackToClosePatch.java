@@ -2,6 +2,8 @@ package app.revanced.integrations.patches.utils;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
+
 import app.revanced.integrations.settings.SettingsEnum;
 
 public class DoubleBackToClosePatch {
@@ -25,17 +27,20 @@ public class DoubleBackToClosePatch {
      *
      * @param activity is used when closing the app
      */
-    public static void closeActivityOnBackPressed(Activity activity) {
+    public static void closeActivityOnBackPressed(@NonNull Activity activity) {
         // Check scroll position reaches the top in home feed
-        if (!isScrollTop) return;
+        if (!isScrollTop)
+            return;
+
+        final long currentTime = System.currentTimeMillis();
 
         // If the time between two back button presses does not reach PRESSED_TIMEOUT_MILLISECONDS,
         // set lastTimeBackPressed to the current time.
-        if (System.currentTimeMillis() - lastTimeBackPressed < PRESSED_TIMEOUT_MILLISECONDS ||
-                PRESSED_TIMEOUT_MILLISECONDS == 0L)
+        if (currentTime - lastTimeBackPressed < PRESSED_TIMEOUT_MILLISECONDS ||
+                PRESSED_TIMEOUT_MILLISECONDS == 0)
             activity.finish();
         else
-            lastTimeBackPressed = System.currentTimeMillis();
+            lastTimeBackPressed = currentTime;
     }
 
     /**

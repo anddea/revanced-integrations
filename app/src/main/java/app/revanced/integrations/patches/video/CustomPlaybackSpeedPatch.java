@@ -184,10 +184,12 @@ public class CustomPlaybackSpeedPatch {
      * @param context Context for [playbackSpeedDialogListener]
      */
     private static void showCustomPlaybackSpeedMenu(@NonNull Context context) {
+        final long currentTime = System.currentTimeMillis();
+
         // Ignores method reuse in less than 1 second.
-        if (lastTimeUsed != 0 && System.currentTimeMillis() - lastTimeUsed < 1000)
+        if (lastTimeUsed != 0 && currentTime - lastTimeUsed < 1000)
             return;
-        lastTimeUsed = System.currentTimeMillis();
+        lastTimeUsed = currentTime;
 
         if (SettingsEnum.CUSTOM_PLAYBACK_SPEED_PANEL_TYPE.getBoolean()) {
             // Open playback speed dialog

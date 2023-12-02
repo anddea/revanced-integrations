@@ -44,6 +44,8 @@ public enum SettingsEnum {
     HIDE_VIDEO_ADS("revanced_hide_video_ads", BOOLEAN, TRUE, true),
     HIDE_VIEW_PRODUCTS("revanced_hide_view_products", BOOLEAN, TRUE),
     HIDE_WEB_SEARCH_RESULTS("revanced_hide_web_search_results", BOOLEAN, TRUE),
+    // Experimental Flags
+    CLOSE_INTERSTITIAL_ADS("revanced_close_interstitial_ads", BOOLEAN, FALSE, true),
 
 
     // Alternative Thumbnails
