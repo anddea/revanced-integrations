@@ -1,6 +1,7 @@
 package app.revanced.integrations.swipecontrols.controller.gesture
 
 import android.view.MotionEvent
+import app.revanced.integrations.shared.LockModeState
 import app.revanced.integrations.swipecontrols.SwipeControlsHostActivity
 import app.revanced.integrations.swipecontrols.controller.gesture.core.BaseGestureController
 import app.revanced.integrations.swipecontrols.controller.gesture.core.SwipeDetector
@@ -55,8 +56,12 @@ class PressToSwipeController(
         distanceX: Double,
         distanceY: Double
     ): Boolean {
+        // cancel if locked
+        if (LockModeState.current.isLocked())
+            return false
         // cancel if not in swipe session or vertical
-        if (!isInSwipeSession || currentSwipe != SwipeDetector.SwipeDirection.VERTICAL) return false
+        if (!isInSwipeSession || currentSwipe != SwipeDetector.SwipeDirection.VERTICAL)
+            return false
         return when (from.toPoint()) {
             in controller.zones.volume -> {
                 scrollVolume(distanceY)
