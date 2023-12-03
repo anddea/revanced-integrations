@@ -76,6 +76,19 @@ public class VideoQualityPatch {
         }
     }
 
+    private static void setVideoQuality(int preferredQuality) {
+        if (videoQualities != null) {
+            int qualityToUse = videoQualities.get(0); // first element is automatic mode
+            for (Integer quality : videoQualities) {
+                if (quality <= preferredQuality && qualityToUse < quality)  {
+                    qualityToUse = quality;
+                }
+            }
+            preferredQuality = qualityToUse;
+        }
+        overrideQuality(preferredQuality);
+    }
+
     /**
      * Injection point.
      */
@@ -88,10 +101,7 @@ public class VideoQualityPatch {
         if (preferredQuality == -2)
             return;
 
-        ReVancedUtils.runOnMainThreadDelayed(() ->
-                        overrideQuality(preferredQuality),
-                500
-        );
+        ReVancedUtils.runOnMainThreadDelayed(() -> setVideoQuality(preferredQuality), 500);
     }
 
     /**
