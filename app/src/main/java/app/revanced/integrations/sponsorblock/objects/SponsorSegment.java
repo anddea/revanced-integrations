@@ -27,11 +27,17 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
      */
     public boolean recordedAsSkipped = false;
 
+    /**
+     * The end of the segment may be longer than the length of the video.
+     * In this case, the autoplay may break or fall into an infinite loop.
+     * Checking the length every time in {@link VideoInformation#seekTo} is too inefficient,
+     * So check it only once when the segment is fetched.
+     */
     public SponsorSegment(@NonNull SegmentCategory category, @Nullable String UUID, long start, long end, boolean isLocked) {
         this.category = category;
         this.UUID = UUID;
         this.start = start;
-        this.end = end;
+        this.end = Math.min(end, VideoInformation.getVideoLength() - 250);
         this.isLocked = isLocked;
     }
 

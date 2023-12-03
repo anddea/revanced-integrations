@@ -62,17 +62,10 @@ public final class VideoInformation {
      * @return if the seek was successful
      */
     public static boolean seekTo(long millisecond) {
-        final long videoLength = getVideoLength();
-
-        // Don't seek more than the video length to prevent issues such as
-        // Play pause button or autoplay not working.
-        // TODO: These are arbitrarily chosen values and should be subject to be adjusted.
-        final long seekToMilliseconds = millisecond > videoLength ? Integer.MAX_VALUE : millisecond;
-
         ReVancedUtils.verifyOnMainThread();
         try {
             //noinspection DataFlowIssue
-            return (Boolean) seekMethod.invoke(playerControllerRef.get(), seekToMilliseconds);
+            return (Boolean) seekMethod.invoke(playerControllerRef.get(), millisecond);
         } catch (Exception ex) {
             LogHelper.printException(() -> "Failed to seek", ex);
         }
