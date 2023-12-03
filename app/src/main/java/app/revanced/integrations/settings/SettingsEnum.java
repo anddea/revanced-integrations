@@ -336,7 +336,7 @@ public enum SettingsEnum {
     ENABLE_SWIPE_VOLUME("revanced_enable_swipe_volume", BOOLEAN, TRUE, true),
     ENABLE_SWIPE_AUTO_BRIGHTNESS("revanced_enable_swipe_auto_brightness", BOOLEAN, FALSE,
             parents(ENABLE_SWIPE_BRIGHTNESS)),
-    ENABLE_PRESS_TO_SWIPE("revanced_enable_press_to_swipe", BOOLEAN, FALSE, true,
+    ENABLE_SWIPE_PRESS_TO_ENGAGE("revanced_enable_swipe_press_to_engage", BOOLEAN, FALSE, true,
             parents(ENABLE_SWIPE_BRIGHTNESS, ENABLE_SWIPE_VOLUME)),
     ENABLE_SWIPE_HAPTIC_FEEDBACK("revanced_enable_swipe_haptic_feedback", BOOLEAN, TRUE, true,
             parents(ENABLE_SWIPE_BRIGHTNESS, ENABLE_SWIPE_VOLUME)),

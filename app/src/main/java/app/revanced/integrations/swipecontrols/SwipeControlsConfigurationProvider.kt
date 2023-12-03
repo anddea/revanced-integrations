@@ -52,7 +52,7 @@ class SwipeControlsConfigurationProvider(
      * should press-to-swipe be enabled?
      */
     val shouldEnablePressToSwipe: Boolean
-        get() = SettingsEnum.ENABLE_PRESS_TO_SWIPE.boolean
+        get() = SettingsEnum.ENABLE_SWIPE_PRESS_TO_ENGAGE.boolean
 
     /**
      * threshold for swipe detection
