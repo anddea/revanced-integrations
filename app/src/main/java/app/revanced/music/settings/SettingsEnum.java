@@ -44,8 +44,11 @@ public enum SettingsEnum {
 
 
     // Ads
-    CLOSE_INTERSTITIAL_ADS("revanced_close_interstitial_ads", BOOLEAN, FALSE, true),
+    CLOSE_INTERSTITIAL_ADS("revanced_close_interstitial_ads", BOOLEAN, TRUE, true),
+    HIDE_GENERAL_ADS("revanced_hide_general_ads", BOOLEAN, TRUE, true),
     HIDE_MUSIC_ADS("revanced_hide_music_ads", BOOLEAN, TRUE, true),
+    HIDE_PREMIUM_PROMOTION("revanced_hide_premium_promotion", BOOLEAN, TRUE, true),
+    HIDE_PREMIUM_RENEWAL("revanced_hide_premium_renewal", BOOLEAN, TRUE, true),
 
 
     // Flyout

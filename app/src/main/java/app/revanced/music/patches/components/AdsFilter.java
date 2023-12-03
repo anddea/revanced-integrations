@@ -14,7 +14,7 @@ public final class AdsFilter extends Filter {
         );
 
         statementBanner = new StringFilterGroup(
-                SettingsEnum.HIDE_MUSIC_ADS,
+                SettingsEnum.HIDE_GENERAL_ADS,
                 "statement_banner"
         );
 

@@ -28,22 +28,16 @@ public class ActionBarPatch {
     }
 
     public static void hookActionBar(ViewGroup viewGroup) {
-        viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        try {
-                            final int childCount = viewGroup.getChildCount();
-                            if (childCount == 0)
-                                return;
+        viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+                    try {
+                        final int childCount = viewGroup.getChildCount();
+                        if (childCount == 0)
+                            return;
 
-                            hookDownloadButton(viewGroup, childCount);
-                            hideRadioButton(viewGroup, childCount);
-                        } catch (Exception ex) {
-                            LogHelper.printException(() -> "hookActionBar failure", ex);
-                        } finally {
-                            viewGroup.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        }
+                        hookDownloadButton(viewGroup, childCount);
+                        hideRadioButton(viewGroup, childCount);
+                    } catch (Exception ex) {
+                        LogHelper.printException(() -> "hookActionBar failure", ex);
                     }
                 });
     }
