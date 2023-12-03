@@ -20,6 +20,11 @@ import app.revanced.integrations.utils.VideoHelpers;
 public final class VideoInformation {
     private static final String SEEK_METHOD_NAME = "seekTo";
     /**
+     * Prefix present in all Short player parameters signature.
+     */
+    private static final String SHORTS_PLAYER_PARAMETERS = "8AEB";
+
+    /**
      * Injection point.
      */
     public static boolean isLiveStream = false;
@@ -32,6 +37,10 @@ public final class VideoInformation {
 
     private static long videoLength = 0;
     private static long videoTime = -1;
+
+    @NonNull
+    private static volatile String playerResponseVideoId = "";
+    private static volatile boolean videoIdIsShort;
 
     /**
      * Injection point.
@@ -102,13 +111,39 @@ public final class VideoInformation {
     }
 
     /**
-     * Id of the current video playing.  Includes Shorts.
+     * Id of the last video opened.  Includes Shorts.
      *
-     * @return The id of the video. Empty string if not set yet.
+     * @return The id of the video, or an empty string if no videos have been opened yet.
      */
     @NonNull
     public static String getVideoId() {
         return videoId;
+    }
+
+    /**
+     * Differs from {@link #videoId} as this is the video id for the
+     * last player response received, which may not be the last video opened.
+     * <p>
+     * If Shorts are loading the background, this commonly will be
+     * different from the Short that is currently on screen.
+     * <p>
+     * For most use cases, you should instead use {@link #getVideoId()}.
+     *
+     * @return The id of the last video loaded, or an empty string if no videos have been loaded yet.
+     */
+    @NonNull
+    public static String getPlayerResponseVideoId() {
+        return playerResponseVideoId;
+    }
+
+    /**
+     * @return If the last player response video id _that was opened_ was a Short.
+     * <p>
+     * Note: This value returned may not match the status of  {@link #getPlayerResponseVideoId()}
+     * since that includes player responses for videos not opened.
+     */
+    public static boolean lastVideoIdIsShort() {
+        return videoIdIsShort;
     }
 
     /**
@@ -121,6 +156,37 @@ public final class VideoInformation {
             return;
 
         videoId = newlyLoadedVideoId;
+    }
+
+    /**
+     * @return If the player parameters are for a Short.
+     */
+    public static boolean playerParametersAreShort(@NonNull String parameters) {
+        return parameters.startsWith(SHORTS_PLAYER_PARAMETERS);
+    }
+
+    /**
+     * Injection point.
+     */
+    public static String newPlayerResponseSignature(@NonNull String signature, boolean isShortAndOpeningOrPlaying) {
+        final boolean isShort = playerParametersAreShort(signature);
+        if (!isShort || isShortAndOpeningOrPlaying) {
+            if (videoIdIsShort != isShort) {
+                videoIdIsShort = isShort;
+            }
+        }
+        return signature; // Return the original value since we are observing and not modifying.
+    }
+
+    /**
+     * Injection point.  Called off the main thread.
+     *
+     * @param videoId The id of the last video loaded.
+     */
+    public static void setPlayerResponseVideoId(@NonNull String videoId, boolean isShortAndOpeningOrPlaying) {
+        if (!playerResponseVideoId.equals(videoId)) {
+            playerResponseVideoId = videoId;
+        }
     }
 
     /**

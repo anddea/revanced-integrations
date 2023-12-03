@@ -30,8 +30,6 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
     /**
      * The end of the segment may be longer than the length of the video.
      * In this case, the autoplay may break or fall into an infinite loop.
-     * Checking the length every time in {@link VideoInformation#seekTo} is too inefficient,
-     * So check it only once when the segment is fetched.
      */
     public SponsorSegment(@NonNull SegmentCategory category, @Nullable String UUID, long start, long end, boolean isLocked) {
         this.category = category;

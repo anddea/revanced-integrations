@@ -1,6 +1,7 @@
 package app.revanced.integrations.patches.utils;
 
 import static app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike.Vote;
+import static app.revanced.integrations.utils.ReVancedHelper.isSpoofingToLessThan;
 import static app.revanced.integrations.utils.ResourceUtils.identifier;
 
 import android.graphics.Rect;
@@ -34,19 +35,24 @@ import app.revanced.integrations.utils.ResourceType;
  * Handles all interaction of UI patch components.
  * <p>
  * Known limitation:
- * Litho based Shorts player can experience temporarily frozen video playback if the RYD fetch takes too long.
+ * The implementation of Shorts litho requires blocking the loading the first Short until RYD has completed.
+ * This is because it modifies the dislikes text synchronously, and if the RYD fetch has
+ * not completed yet then the UI will be temporarily frozen.
  * <p>
- * Temporary work around:
- * Enable app spoofing to version 18.33.40 or older, as that uses a non litho Shorts player.
- * <p>
- * Permanent fix (yet to be implemented), either of:
- * - Modify patch to hook onto the Shorts Litho TextView, and update the dislikes asynchronously.
- * - Find a way to force Litho to rebuild it's component tree
- * (and use that hook to force the shorts dislikes to update after the fetch is completed).
+ * A (yet to be implemented) solution that fixes this problem.  Any one of:
+ * - Modify patch to hook onto the Shorts Litho TextView, and update the dislikes text asynchronously.
+ * - Find a way to force Litho to rebuild it's component tree,
+ *   and use that hook to force the shorts dislikes to update after the fetch is completed.
+ * - Hook into the dislikes button image view, and replace the dislikes thumb down image with a
+ *   generated image of the number of dislikes, then update the image asynchronously.  This Could
+ *   also be used for the regular video player to give a better UI layout and completely remove
+ *   the need for the Rolling Number patches.
  */
 @SuppressWarnings("unused")
 public class ReturnYouTubeDislikePatch {
 
+    public static final boolean IS_SPOOFING_TO_NON_LITHO_SHORTS_PLAYER =
+            isSpoofingToLessThan("18.34.00");
     /**
      * Resource identifier of old UI dislike button.
      */
@@ -80,6 +86,7 @@ public class ReturnYouTubeDislikePatch {
      */
     @Nullable
     private static volatile ReturnYouTubeDislike lastLithoShortsVideoData;
+    private static volatile boolean lastPlayerResponseWasShort;
     /**
      * Because the litho Shorts spans are created after ReturnYouTubeDislikeFilterPatch
      * detects the video ids, after the user votes the litho will update
@@ -336,9 +343,10 @@ public class ReturnYouTubeDislikePatch {
                 return original;
             }
 
-            String conversionContextString = conversionContext.toString();
-            if (!conversionContextString.contains("|shorts_dislike_button.eml|"))
+            if (!conversionContext.toString().contains("|shorts_dislike_button.eml|"))
                 return original;
+
+            LogHelper.printDebug(() -> "setShortsDislikes in Incognito mode");
 
             ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(VideoInformation.getVideoId());
             videoData.setVideoIdIsShort(true);
@@ -347,7 +355,7 @@ public class ReturnYouTubeDislikePatch {
 
             return videoData.getDislikeSpanForShort(SHORTS_LOADING_SPAN);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onLithoTextLoaded failure", ex);
+            LogHelper.printException(() -> "onCharSequenceLoaded failure", ex);
         }
         return original;
     }
@@ -597,23 +605,41 @@ public class ReturnYouTubeDislikePatch {
     /**
      * Injection point.  Uses 'playback response' video id hook to preload RYD.
      */
-    public static void preloadVideoId(@NonNull String videoId, boolean videoIsOpeningOrPlaying) {
+    public static void preloadVideoId(@NonNull String videoId, boolean isShortAndOpeningOrPlaying) {
         try {
-            // Shorts shelf in home and subscription feed causes player response hook to be called,
-            // and the 'is opening/playing' parameter will be false.
-            // This hook will be called again when the Short is actually opened.
-            if (!videoIsOpeningOrPlaying || !SettingsEnum.RYD_ENABLED.getBoolean()) {
-                return;
-            }
-            if (!SettingsEnum.RYD_SHORTS.getBoolean() && PlayerType.getCurrent().isNoneHiddenOrSlidingMinimized()) {
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
                 return;
             }
             if (videoId.equals(lastPrefetchedVideoId)) {
                 return;
             }
+
+            final boolean videoIdIsShort = VideoInformation.lastVideoIdIsShort();
+            // Shorts shelf in home and subscription feed causes player response hook to be called,
+            // and the 'is opening/playing' parameter will be false.
+            // This hook will be called again when the Short is actually opened.
+            if (videoIdIsShort && (!isShortAndOpeningOrPlaying || !SettingsEnum.RYD_SHORTS.getBoolean())) {
+                return;
+            }
+            final boolean waitForFetchToComplete = !IS_SPOOFING_TO_NON_LITHO_SHORTS_PLAYER
+                    && videoIdIsShort && !lastPlayerResponseWasShort;
+            lastPlayerResponseWasShort = videoIdIsShort;
             lastPrefetchedVideoId = videoId;
+
             LogHelper.printDebug(() -> "Prefetching RYD for video: " + videoId);
-            ReturnYouTubeDislike.getFetchForVideoId(videoId);
+            ReturnYouTubeDislike fetch = ReturnYouTubeDislike.getFetchForVideoId(videoId);
+            if (waitForFetchToComplete && !fetch.fetchCompleted()) {
+                // This call is off the main thread, so wait until the RYD fetch completely finishes,
+                // otherwise if this returns before the fetch completes then the UI can
+                // become frozen when the main thread tries to modify the litho Shorts dislikes and
+                // it must wait for the fetch.
+                // Only need to do this for the first Short opened, as the next Short to swipe to
+                // are preloaded in the background.
+                //
+                // If an asynchronous litho Shorts solution is found, then this blocking call should be removed.
+                LogHelper.printDebug(() -> "Waiting for prefetch to complete: " + videoId);
+                fetch.getFetchData(10000); // Use any arbitrarily large max wait time.
+            }
         } catch (Exception ex) {
             LogHelper.printException(() -> "preloadVideoId failure", ex);
         }
