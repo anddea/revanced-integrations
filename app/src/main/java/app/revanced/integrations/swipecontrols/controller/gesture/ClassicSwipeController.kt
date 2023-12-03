@@ -1,6 +1,7 @@
 package app.revanced.integrations.swipecontrols.controller.gesture
 
 import android.view.MotionEvent
+import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.shared.LockModeState
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserver
 import app.revanced.integrations.shared.PlayerControlsVisibilityObserverImpl
@@ -94,7 +95,7 @@ class ClassicSwipeController(
         distanceY: Double
     ): Boolean {
         // cancel if locked
-        if (LockModeState.current.isLocked())
+        if (!SettingsEnum.SWIPE_LOCK_MODE.boolean && LockModeState.current.isLocked())
             return false
         // cancel if not vertical
         if (currentSwipe != SwipeDetector.SwipeDirection.VERTICAL)
