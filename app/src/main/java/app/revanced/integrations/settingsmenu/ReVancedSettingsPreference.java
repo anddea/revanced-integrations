@@ -2,6 +2,7 @@ package app.revanced.integrations.settingsmenu;
 
 import static app.revanced.integrations.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.utils.ReVancedHelper.isPackageEnabled;
+import static app.revanced.integrations.utils.ReVancedHelper.isSpoofingToLessThan;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import android.app.Activity;
@@ -276,6 +277,9 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
                 });
                 externalDownloaderPreferenceScreen.addPreference(externalDownloaderPreference);
             }
+
+            if (isSpoofingToLessThan("18.24.00"))
+                return;
 
             Preference experimentalPreference = new Preference(activity);
             experimentalPreference.setTitle(" ");
