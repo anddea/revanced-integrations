@@ -90,11 +90,12 @@ public class ReturnYouTubeDislikeApi {
     }
 
     private static void updateRateLimitAndStats(boolean connectionError, boolean rateLimitHit) {
-        if (connectionError && rateLimitHit) {
-            throw new IllegalArgumentException();
+        if (rateLimitHit) {
+            if (connectionError)
+                throw new IllegalArgumentException();
+            else
+                ReVancedUtils.showToastLong(str("revanced_ryd_failure_client_rate_limit_requested"));
         }
-        if (rateLimitHit)
-            ReVancedUtils.showToastLong(str("revanced_ryd_failure_client_rate_limit_requested"));
     }
 
     private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex) {
