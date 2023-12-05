@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.fullscreen;
 
 import static app.revanced.integrations.utils.StringRef.str;
 
@@ -13,6 +13,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+@SuppressWarnings("unused")
 public class FullscreenPatch {
     private static final int DEFAULT_MARGIN_TOP = (int) SettingsEnum.QUICK_ACTIONS_MARGIN_TOP.defaultValue;
     @SuppressLint("StaticFieldLeak")

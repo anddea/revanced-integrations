@@ -6,6 +6,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+@SuppressWarnings("unused")
 public class ReloadVideoPatch {
     @NonNull
     public static String videoId = "";

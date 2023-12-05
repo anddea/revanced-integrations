@@ -12,6 +12,7 @@ import app.revanced.music.utils.ReVancedUtils;
 /**
  * Hooking class for the current playing video.
  */
+@SuppressWarnings("unused")
 public final class VideoInformation {
     private static final String SEEK_METHOD_NAME = "seekTo";
 

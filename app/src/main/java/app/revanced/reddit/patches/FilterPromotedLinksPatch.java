@@ -5,6 +5,7 @@ import com.reddit.domain.model.ILink;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public final class FilterPromotedLinksPatch {
     /**
      * Filters list from promoted links.

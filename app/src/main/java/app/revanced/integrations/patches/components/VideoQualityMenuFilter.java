@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+/** @noinspection rawtypes*/
 public final class VideoQualityMenuFilter extends Filter {
     // Must be volatile or synchronized, as litho filtering runs off main thread and this field is then access from the main thread.
     public static volatile boolean isVideoQualityMenuVisible;

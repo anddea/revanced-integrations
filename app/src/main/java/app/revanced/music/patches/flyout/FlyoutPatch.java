@@ -22,6 +22,7 @@ import app.revanced.music.utils.ReVancedUtils;
 import app.revanced.music.utils.ResourceType;
 import app.revanced.music.utils.VideoHelpers;
 
+@SuppressWarnings("unused")
 public class FlyoutPatch {
 
     private static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#ffffffff"), PorterDuff.Mode.SRC_ATOP);

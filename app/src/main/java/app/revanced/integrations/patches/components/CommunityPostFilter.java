@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+/** @noinspection rawtypes*/
+@SuppressWarnings("unused")
 public final class CommunityPostFilter extends Filter {
 
     public CommunityPostFilter() {

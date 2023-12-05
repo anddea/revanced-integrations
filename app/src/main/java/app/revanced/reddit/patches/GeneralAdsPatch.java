@@ -7,6 +7,7 @@ import java.util.List;
 
 import app.revanced.reddit.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public final class GeneralAdsPatch {
 
     private static List<?> filterChildren(final Iterable<?> links) {

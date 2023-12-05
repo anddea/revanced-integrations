@@ -5,6 +5,7 @@ import android.net.Uri;
 import app.revanced.reddit.settings.SettingsEnum;
 import app.revanced.reddit.utils.LogHelper;
 
+@SuppressWarnings("unused")
 public final class OpenLinksDirectlyPatch {
 
     /**

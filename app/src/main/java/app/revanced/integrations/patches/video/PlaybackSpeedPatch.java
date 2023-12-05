@@ -12,6 +12,7 @@ public class PlaybackSpeedPatch {
     private static String currentContentCpn;
     private static float currentPlaybackSpeed = 1.0f;
 
+    @SuppressWarnings("unused")
     public static void newVideoStarted(final String contentCpn, final boolean isLiveStream) {
         try {
             if (contentCpn.isEmpty() || Objects.equals(currentContentCpn, contentCpn))

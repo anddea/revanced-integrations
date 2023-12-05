@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.button;
+package app.revanced.integrations.patches.overlaybutton;
 
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
@@ -15,6 +15,7 @@ import java.lang.ref.WeakReference;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
+@SuppressWarnings("unused")
 public class AlwaysRepeat {
     volatile static boolean isButtonEnabled;
     volatile static boolean isShowing;

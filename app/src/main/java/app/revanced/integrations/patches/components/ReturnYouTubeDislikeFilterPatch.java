@@ -13,6 +13,8 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.TrieSearch;
 
+/** @noinspection rawtypes*/
+@SuppressWarnings("unused")
 public final class ReturnYouTubeDislikeFilterPatch extends Filter {
 
     /**

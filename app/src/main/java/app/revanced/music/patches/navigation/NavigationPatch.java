@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import app.revanced.music.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class NavigationPatch {
     public static Enum<?> lastPivotTab;
 

@@ -2,6 +2,7 @@ package app.revanced.music.patches.components;
 
 import app.revanced.music.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public final class EmojiPickerFilter extends Filter {
 
     public EmojiPickerFilter() {

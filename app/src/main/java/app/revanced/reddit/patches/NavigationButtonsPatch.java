@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import app.revanced.reddit.settings.SettingsEnum;
 import app.revanced.reddit.utils.LogHelper;
 
+@SuppressWarnings("unused")
 public final class NavigationButtonsPatch {
 
     public static void hideNavigationButtons(ViewGroup viewGroup) {

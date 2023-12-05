@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.patches.utils.InterstitialBannerPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 
+/** @noinspection rawtypes*/
+@SuppressWarnings("unused")
 final class InterstitialBannerFilter extends Filter {
 
     public InterstitialBannerFilter() {

@@ -1,5 +1,6 @@
 package app.revanced.music.patches.utils;
 
+@SuppressWarnings("unused")
 public class LithoThemePatch {
     private static final int[] DARK_VALUES = {
             -14606047 // comments box background

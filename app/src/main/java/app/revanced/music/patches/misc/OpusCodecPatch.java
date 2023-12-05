@@ -2,6 +2,7 @@ package app.revanced.music.patches.misc;
 
 import app.revanced.music.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class OpusCodecPatch {
 
     public static boolean enableOpusCodec() {

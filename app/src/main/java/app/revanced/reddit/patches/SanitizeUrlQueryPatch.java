@@ -2,6 +2,7 @@ package app.revanced.reddit.patches;
 
 import app.revanced.reddit.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public final class SanitizeUrlQueryPatch {
 
     public static boolean stripQueryParameters() {

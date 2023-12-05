@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.button;
+package app.revanced.integrations.patches.overlaybutton;
 
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
@@ -16,6 +16,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.VideoHelpers;
 
+@SuppressWarnings("unused")
 public class ExternalDownload {
     volatile static boolean isButtonEnabled;
     volatile static boolean isShowing;

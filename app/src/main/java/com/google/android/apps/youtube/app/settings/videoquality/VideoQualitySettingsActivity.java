@@ -9,7 +9,6 @@ import android.preference.PreferenceFragment;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import java.util.Objects;
 

@@ -4,6 +4,7 @@ import android.view.View;
 
 import app.revanced.reddit.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class PlaceButtonPatch {
 
     public static void hidePlaceButton(View view) {

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.ReVancedHelper;
 
+@SuppressWarnings("unused")
 public class InitializationPatch {
 
     /**

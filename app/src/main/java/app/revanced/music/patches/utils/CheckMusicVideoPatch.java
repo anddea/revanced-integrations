@@ -28,6 +28,7 @@ public class CheckMusicVideoPatch {
      * @param playlistIndex Original playlist index value from PlaybackStartDescriptor.
      */
     @SuppressLint("DefaultLocale")
+    @SuppressWarnings("unused")
     public static void playbackStart(@NonNull String videoId, @NonNull String playlistId, final int playlistIndex, boolean isPlaying) {
         try {
             if (!SettingsEnum.REPLACE_PLAYER_CAST_BUTTON.getBoolean() || isPlaying)

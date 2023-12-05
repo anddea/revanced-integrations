@@ -102,6 +102,7 @@ abstract class FilterGroup<T> {
         /**
          * Length of the matched filter pattern.
          */
+        @SuppressWarnings("unused")
         public int getMatchedLength() {
             return matchedLength;
         }

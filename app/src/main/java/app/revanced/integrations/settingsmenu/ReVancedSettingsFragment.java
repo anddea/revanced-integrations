@@ -32,11 +32,11 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Objects;
 
-import app.revanced.integrations.patches.button.AlwaysRepeat;
-import app.revanced.integrations.patches.button.CopyVideoUrl;
-import app.revanced.integrations.patches.button.CopyVideoUrlTimestamp;
-import app.revanced.integrations.patches.button.ExternalDownload;
-import app.revanced.integrations.patches.button.SpeedDialog;
+import app.revanced.integrations.patches.overlaybutton.AlwaysRepeat;
+import app.revanced.integrations.patches.overlaybutton.CopyVideoUrl;
+import app.revanced.integrations.patches.overlaybutton.CopyVideoUrlTimestamp;
+import app.revanced.integrations.patches.overlaybutton.ExternalDownload;
+import app.revanced.integrations.patches.overlaybutton.SpeedDialog;
 import app.revanced.integrations.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.settings.SettingsUtils;
@@ -44,6 +44,9 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;
 import app.revanced.integrations.utils.ResourceType;
 
+/**
+ * @noinspection ALL
+ */
 public class ReVancedSettingsFragment extends PreferenceFragment {
     private SharedPreferences mSharedPreferences;
     public static boolean settingImportInProgress = false;

@@ -20,6 +20,7 @@ import app.revanced.music.utils.ReVancedUtils;
 import app.revanced.music.utils.ResourceType;
 import app.revanced.music.utils.VideoHelpers;
 
+@SuppressWarnings("unused")
 public class PlayerPatch {
 
     public static boolean enableColorMatchPlayer() {

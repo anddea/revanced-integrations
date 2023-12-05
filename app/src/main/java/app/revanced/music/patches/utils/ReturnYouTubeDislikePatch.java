@@ -17,6 +17,7 @@ import app.revanced.music.utils.LogHelper;
  * <p>
  * Does not handle creating dislike spans or anything to do with {@link ReturnYouTubeDislikeApi}.
  */
+@SuppressWarnings("unused")
 public class ReturnYouTubeDislikePatch {
     @Nullable
     private static String currentVideoId;

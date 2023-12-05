@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import app.revanced.music.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class AccountPatch {
 
     public static void hideAccountMenu(CharSequence charSequence, View view) {

@@ -2,6 +2,7 @@ package app.revanced.integrations.patches.components;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 final class WaterMarkFilter extends Filter {
 
     public WaterMarkFilter() {

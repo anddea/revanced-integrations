@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.seekbar;
 
 import android.graphics.Color;
 import android.view.View;
@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.VideoHelpers;
 
+@SuppressWarnings("unused")
 public class SeekBarPatch {
     /**
      * Default color of seekbar.

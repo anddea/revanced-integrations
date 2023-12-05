@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.alternativethumbnails;
 
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
@@ -36,6 +36,7 @@ import app.revanced.integrations.utils.ReVancedUtils;
  * - Save to a temporary file the video id's verified to have alt thumbnails.
  * This would speed up loading the watch history and users saved playlists.
  */
+@SuppressWarnings("unused")
 public final class AlternativeThumbnailsPatch {
     private static final int TIMEOUT_DEFAULT_MILLISECONDS = 5000;
     private static final String DE_ARROW_THUMBNAILS_API = "https://dearrow-thumb.ajay.app/api/v1/getThumbnail?videoID=%s&redirectUrl=";

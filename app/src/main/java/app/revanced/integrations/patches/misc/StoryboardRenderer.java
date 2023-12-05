@@ -4,6 +4,9 @@ import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @noinspection ALL
+ */
 public final class StoryboardRenderer {
     @Nullable
     private final String spec;

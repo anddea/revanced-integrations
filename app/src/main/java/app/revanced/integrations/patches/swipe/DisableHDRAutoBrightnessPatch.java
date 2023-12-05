@@ -2,6 +2,7 @@ package app.revanced.integrations.patches.swipe;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class DisableHDRAutoBrightnessPatch {
 
     public static boolean disableHDRAutoBrightness() {

@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.StringTrieSearch;
 
+/** @noinspection rawtypes*/
+@SuppressWarnings("unused")
 final class PlayerFlyoutPanelsFooterFilter extends Filter {
 
     private final StringTrieSearch exceptions = new StringTrieSearch();

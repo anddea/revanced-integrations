@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+/** @noinspection rawtypes*/
+@SuppressWarnings("unused")
 final class ButtonsFilter extends Filter {
 
     private static final String VIDEO_ACTION_BAR_PATH = "video_action_bar.eml";

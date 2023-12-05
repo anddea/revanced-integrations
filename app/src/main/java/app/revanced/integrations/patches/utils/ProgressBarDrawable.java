@@ -1,7 +1,7 @@
 package app.revanced.integrations.patches.utils;
 
-import static app.revanced.integrations.patches.layout.SeekBarPatch.ORIGINAL_SEEKBAR_COLOR;
-import static app.revanced.integrations.patches.layout.SeekBarPatch.resumedProgressBarColor;
+import static app.revanced.integrations.patches.seekbar.SeekBarPatch.ORIGINAL_SEEKBAR_COLOR;
+import static app.revanced.integrations.patches.seekbar.SeekBarPatch.resumedProgressBarColor;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class ProgressBarDrawable extends Drawable {
 
     private final Paint paint = new Paint();

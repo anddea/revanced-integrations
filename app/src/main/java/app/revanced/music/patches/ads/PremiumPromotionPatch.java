@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 
+@SuppressWarnings("unused")
 public class PremiumPromotionPatch {
 
     public static void hidePremiumPromotion(View view) {

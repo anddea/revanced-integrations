@@ -3,6 +3,8 @@ package app.revanced.music.patches.components;
 import app.revanced.music.patches.utils.InterstitialBannerPatch;
 import app.revanced.music.settings.SettingsEnum;
 
+/** @noinspection rawtypes*/
+@SuppressWarnings("unused")
 public final class AdsFilter extends Filter {
     private final StringFilterGroup interstitialBanner;
     private final StringFilterGroup statementBanner;

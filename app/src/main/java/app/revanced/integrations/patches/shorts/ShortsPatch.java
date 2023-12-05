@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.shorts;
 
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
@@ -11,6 +11,7 @@ import android.widget.HorizontalScrollView;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class ShortsPatch {
     @SuppressLint("StaticFieldLeak")
     public static Object pivotBar;

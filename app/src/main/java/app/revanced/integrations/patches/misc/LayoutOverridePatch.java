@@ -3,6 +3,7 @@ package app.revanced.integrations.patches.misc;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
+@SuppressWarnings("unused")
 public class LayoutOverridePatch {
     /**
      * Context is overridden when trying to play a YouTube video from the Google Play Store,

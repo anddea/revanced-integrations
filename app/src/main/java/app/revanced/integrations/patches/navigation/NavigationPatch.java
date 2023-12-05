@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.navigation;
 
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 
@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class NavigationPatch {
     public static Enum<?> lastPivotTab;
 

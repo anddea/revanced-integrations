@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class OpenLinksDirectlyPatch {
     private static final String YOUTUBE_REDIRECT_PATH = "/redirect";
 

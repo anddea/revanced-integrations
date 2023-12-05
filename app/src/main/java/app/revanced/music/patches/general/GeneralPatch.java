@@ -6,6 +6,7 @@ import android.view.View;
 
 import app.revanced.music.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class GeneralPatch {
 
     public static boolean disableAutoCaptions(boolean original) {

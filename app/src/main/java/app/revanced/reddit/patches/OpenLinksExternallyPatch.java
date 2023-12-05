@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import app.revanced.reddit.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class OpenLinksExternallyPatch {
 
     /**

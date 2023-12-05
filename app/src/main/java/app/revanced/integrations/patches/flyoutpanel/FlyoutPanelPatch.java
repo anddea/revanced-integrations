@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.flyoutpanel;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,6 +11,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+@SuppressWarnings("unused")
 public class FlyoutPanelPatch {
 
     public static void enableOldQualityMenu(ListView listView) {

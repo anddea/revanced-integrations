@@ -2,6 +2,7 @@ package app.revanced.integrations.patches.misc;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class CodecOverridePatch {
 
     public static String getManufacturer(String manufacturer) {

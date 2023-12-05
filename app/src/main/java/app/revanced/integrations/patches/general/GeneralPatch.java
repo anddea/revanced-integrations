@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.general;
 
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
@@ -14,6 +14,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+@SuppressWarnings("unused")
 public class GeneralPatch {
     private static final String[] TOOLBAR_BUTTON_LIST = {
             "CREATION_ENTRY",   // Create button (Phone)

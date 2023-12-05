@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 
+/** @noinspection rawtypes*/
+@SuppressWarnings("unused")
 final class PlayerFlyoutPanelsFilter extends Filter {
     // Search the buffer only if the flyout menu identifier is found.
     // Handle the searching in this class instead of adding to the global filter group (which searches all the time)

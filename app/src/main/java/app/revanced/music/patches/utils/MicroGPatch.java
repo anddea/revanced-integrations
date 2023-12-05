@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
+@SuppressWarnings("unused")
 public class MicroGPatch {
     private static final String DONT_KILL_MY_APP_LINK = "https://dontkillmyapp.com";
     private static final String MICROG_VENDOR = "com.mgoogle";

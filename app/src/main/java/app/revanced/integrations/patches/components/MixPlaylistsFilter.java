@@ -3,6 +3,7 @@ package app.revanced.integrations.patches.components;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.StringTrieSearch;
 
+@SuppressWarnings("unused")
 public final class MixPlaylistsFilter extends Filter {
 
     private static final StringTrieSearch exceptions = new StringTrieSearch();

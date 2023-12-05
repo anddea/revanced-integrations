@@ -5,6 +5,7 @@ import java.util.List;
 
 import app.revanced.reddit.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public final class RecentlyVisitedShelfPatch {
 
     public static List<?> hideRecentlyVisitedShelf(List<?> list) {

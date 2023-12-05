@@ -7,6 +7,7 @@ import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
+@SuppressWarnings("unused")
 public class PremiumRenewalPatch {
 
     public static void hidePremiumRenewal(LinearLayout linearLayout, View closeButtonView) {

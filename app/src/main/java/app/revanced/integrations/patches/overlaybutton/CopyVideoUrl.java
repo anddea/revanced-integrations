@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.button;
+package app.revanced.integrations.patches.overlaybutton;
 
 import static app.revanced.integrations.utils.ResourceUtils.anim;
 import static app.revanced.integrations.utils.ResourceUtils.findView;
@@ -16,7 +16,8 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.VideoHelpers;
 
-public class CopyVideoUrlTimestamp {
+@SuppressWarnings("unused")
+public class CopyVideoUrl {
     volatile static boolean isButtonEnabled;
     volatile static boolean isShowing;
     volatile static boolean isScrubbed;
@@ -32,11 +33,11 @@ public class CopyVideoUrlTimestamp {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(constraintLayout, "copy_video_url_timestamp_button");
+            ImageView imageView = findView(constraintLayout, "copy_video_url_button");
 
-            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(true));
+            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(false));
             imageView.setOnLongClickListener(view -> {
-                VideoHelpers.copyTimeStamp();
+                VideoHelpers.copyUrl(true);
                 return true;
             });
             buttonView = new WeakReference<>(imageView);
@@ -54,8 +55,8 @@ public class CopyVideoUrlTimestamp {
             isScrubbed = false;
             changeVisibility(false);
 
-        } catch (Exception e) {
-            LogHelper.printException(() -> "Unable to set FrameLayout", e);
+        } catch (Exception ex) {
+            LogHelper.printException(() -> "Unable to set FrameLayout", ex);
         }
     }
 
@@ -98,6 +99,6 @@ public class CopyVideoUrlTimestamp {
     }
 
     private static boolean setValue() {
-        return SettingsEnum.OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP.getBoolean();
+        return SettingsEnum.OVERLAY_BUTTON_COPY_VIDEO_URL.getBoolean();
     }
 }

@@ -85,6 +85,7 @@ abstract class FilterGroup<T> {
             return setting;
         }
 
+        @SuppressWarnings("unused")
         public boolean isFiltered() {
             return matchedIndex >= 0;
         }
@@ -99,6 +100,7 @@ abstract class FilterGroup<T> {
         /**
          * Length of the matched filter pattern.
          */
+        @SuppressWarnings("unused")
         public int getMatchedLength() {
             return matchedLength;
         }

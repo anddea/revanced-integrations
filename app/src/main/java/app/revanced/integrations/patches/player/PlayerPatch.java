@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.layout;
+package app.revanced.integrations.patches.player;
 
 import static app.revanced.integrations.utils.StringRef.str;
 
@@ -12,6 +12,7 @@ import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.ResourceHelper;
 
+@SuppressWarnings("unused")
 public class PlayerPatch {
     private static final int DEFAULT_OPACITY = (int) SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.defaultValue;
 

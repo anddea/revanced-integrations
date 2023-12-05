@@ -3,6 +3,7 @@ package app.revanced.integrations.patches.misc;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 
+@SuppressWarnings("unused")
 public class SplashAnimationPatch {
 
     public static boolean enableNewSplashAnimationBoolean(boolean original) {

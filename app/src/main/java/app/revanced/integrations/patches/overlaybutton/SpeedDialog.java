@@ -1,4 +1,4 @@
-package app.revanced.integrations.patches.button;
+package app.revanced.integrations.patches.overlaybutton;
 
 import static app.revanced.integrations.patches.video.PlaybackSpeedPatch.overrideSpeed;
 import static app.revanced.integrations.utils.ReVancedUtils.showToastShort;
@@ -19,6 +19,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.VideoHelpers;
 
+@SuppressWarnings("unused")
 public class SpeedDialog {
     volatile static boolean isButtonEnabled;
     volatile static boolean isShowing;

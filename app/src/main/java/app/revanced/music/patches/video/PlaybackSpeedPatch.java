@@ -5,6 +5,7 @@ import static app.revanced.music.utils.StringRef.str;
 
 import app.revanced.music.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class PlaybackSpeedPatch {
     private static float selectedSpeed = 1.0f;
 

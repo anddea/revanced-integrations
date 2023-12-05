@@ -2,6 +2,7 @@ package app.revanced.integrations.patches.misc;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("unused")
 public class SpoofDeviceDimensionsPatch {
     private static final boolean SPOOF = SettingsEnum.SPOOF_DEVICE_DIMENSIONS.getBoolean();
 

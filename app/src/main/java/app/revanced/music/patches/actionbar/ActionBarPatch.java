@@ -10,6 +10,7 @@ import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.VideoHelpers;
 
+@SuppressWarnings("unused")
 public class ActionBarPatch {
 
     public static boolean hideActionBarLabel(boolean original) {
