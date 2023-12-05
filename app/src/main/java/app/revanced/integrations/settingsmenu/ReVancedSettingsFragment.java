@@ -48,7 +48,6 @@ import app.revanced.integrations.utils.ResourceType;
  * @noinspection ALL
  */
 public class ReVancedSettingsFragment extends PreferenceFragment {
-    private SharedPreferences mSharedPreferences;
     public static boolean settingImportInProgress = false;
     private final int READ_REQUEST_CODE = 42;
     private final int WRITE_REQUEST_CODE = 43;
@@ -81,7 +80,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                             HIDE_PLAYER_FLYOUT_PANEL_WATCH_IN_VR,
                             HIDE_PLAYER_FLYOUT_PANEL_YT_MUSIC,
                             SPOOF_APP_VERSION,
-                            SPOOF_APP_VERSION_TARGET -> ReVancedHelper.setPlayerFlyoutPanelAdditionalSettings();
+                            SPOOF_APP_VERSION_TARGET ->
+                            ReVancedHelper.setPlayerFlyoutPanelAdditionalSettings();
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP ->
@@ -108,7 +108,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                         listPreference.setEntryValues(CustomPlaybackSpeedPatch.getListEntryValues());
                         updateListPreferenceSummary(listPreference, setting);
                     }
-                    case DOUBLE_BACK_TIMEOUT -> updateListPreferenceSummary(listPreference, setting, false);
+                    case DOUBLE_BACK_TIMEOUT ->
+                            updateListPreferenceSummary(listPreference, setting, false);
                     default -> updateListPreferenceSummary(listPreference, setting);
                 }
             } else {
@@ -128,6 +129,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             LogHelper.printException(() -> "OnSharedPreferenceChangeListener failure", ex);
         }
     };
+    private SharedPreferences mSharedPreferences;
 
     public ReVancedSettingsFragment() {
     }
@@ -162,7 +164,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                             listPreference.setEntryValues(CustomPlaybackSpeedPatch.getListEntryValues());
                             updateListPreferenceSummary(listPreference, setting);
                         }
-                        case DOUBLE_BACK_TIMEOUT -> updateListPreferenceSummary(listPreference, setting, false);
+                        case DOUBLE_BACK_TIMEOUT ->
+                                updateListPreferenceSummary(listPreference, setting, false);
                         default -> updateListPreferenceSummary(listPreference, setting);
                     }
                 }

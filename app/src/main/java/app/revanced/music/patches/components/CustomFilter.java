@@ -2,7 +2,9 @@ package app.revanced.music.patches.components;
 
 import app.revanced.music.settings.SettingsEnum;
 
-/** @noinspection rawtypes, ClassEscapesDefinedScope */
+/**
+ * @noinspection rawtypes, ClassEscapesDefinedScope
+ */
 @SuppressWarnings("unused")
 public final class CustomFilter extends Filter {
 

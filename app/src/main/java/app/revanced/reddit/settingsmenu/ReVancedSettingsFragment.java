@@ -20,9 +20,6 @@ import app.revanced.reddit.utils.LogHelper;
  * @noinspection ALL
  */
 public class ReVancedSettingsFragment extends PreferenceFragment {
-    private PreferenceScreen mPreferenceScreen;
-    private PreferenceManager mPreferenceManager;
-
     private final SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
         try {
             SettingsEnum setting = SettingsEnum.settingFromPath(str);
@@ -36,6 +33,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             LogHelper.printException(() -> "OnSharedPreferenceChangeListener failure", ex);
         }
     };
+    private PreferenceScreen mPreferenceScreen;
+    private PreferenceManager mPreferenceManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

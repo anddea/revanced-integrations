@@ -10,7 +10,9 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.StringTrieSearch;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class SuggestedActionFilter extends Filter {
     private final StringTrieSearch exceptions = new StringTrieSearch();

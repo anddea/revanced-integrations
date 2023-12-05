@@ -5,7 +5,9 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.StringTrieSearch;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";

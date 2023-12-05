@@ -22,19 +22,6 @@ public class ImportExportPreference extends EditTextPreference implements Prefer
 
     private String existingSettings;
 
-    @TargetApi(26)
-    private void init() {
-        setSelectable(true);
-
-        EditText editText = getEditText();
-        editText.setTextIsSelectable(true);
-        editText.setAutofillHints((String) null);
-        editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        editText.setTextSize(TypedValue.COMPLEX_UNIT_PT, 8); // Use a smaller font to reduce text wrap.
-
-        setOnPreferenceClickListener(this);
-    }
-
     public ImportExportPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
@@ -53,6 +40,19 @@ public class ImportExportPreference extends EditTextPreference implements Prefer
     public ImportExportPreference(Context context) {
         super(context);
         init();
+    }
+
+    @TargetApi(26)
+    private void init() {
+        setSelectable(true);
+
+        EditText editText = getEditText();
+        editText.setTextIsSelectable(true);
+        editText.setAutofillHints((String) null);
+        editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_PT, 8); // Use a smaller font to reduce text wrap.
+
+        setOnPreferenceClickListener(this);
     }
 
     @Override

@@ -4,7 +4,9 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class ChannelProfileFilter extends Filter {
     private static final String BROWSE_BUTTON_PHONE_PATH = "|ContainerType|button.eml|";

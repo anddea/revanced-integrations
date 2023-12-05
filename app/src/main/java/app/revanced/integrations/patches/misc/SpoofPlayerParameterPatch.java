@@ -52,7 +52,7 @@ public class SpoofPlayerParameterPatch {
 
     /**
      * Injection point.
-     *
+     * <p>
      * Called off the main thread, and called multiple times for each video.
      *
      * @param parameters Original player parameter value.

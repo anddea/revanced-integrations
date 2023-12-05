@@ -5,7 +5,9 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.StringTrieSearch;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class LayoutComponentsFilter extends Filter {
     private final StringTrieSearch exceptions = new StringTrieSearch();

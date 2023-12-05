@@ -4,7 +4,9 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class LowViewsFilter extends Filter {
     private static final ByteArrayAsStringFilterGroup lowViewsVideoIdentifier =

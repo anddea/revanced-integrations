@@ -69,10 +69,6 @@ public class ReVancedUtils {
         return null;
     }
 
-    public interface MatchFilter<T> {
-        boolean matches(T object);
-    }
-
     public static Context getContext() {
         return context;
     }
@@ -283,5 +279,9 @@ public class ReVancedUtils {
         public String getName() {
             return name;
         }
+    }
+
+    public interface MatchFilter<T> {
+        boolean matches(T object);
     }
 }

@@ -11,7 +11,9 @@ import app.revanced.integrations.patches.utils.BrowseIdPatch;
 import app.revanced.integrations.patches.utils.NavBarIndexPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class SuggestionsShelfFilter extends Filter {
     private final StringFilterGroup horizontalShelf;

@@ -26,6 +26,9 @@ import app.revanced.integrations.settings.SettingsUtils;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;
 
+/**
+ * @noinspection ALL
+ */
 public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
     private static final String EXTERNAL_DOWNLOADER_PREFERENCE_KEY = "revanced_external_downloader";
     private static PreferenceManager mPreferenceManager;

@@ -8,7 +8,9 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 import app.revanced.integrations.utils.StringTrieSearch;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class AdsFilter extends Filter {
     private final StringTrieSearch exceptions = new StringTrieSearch();

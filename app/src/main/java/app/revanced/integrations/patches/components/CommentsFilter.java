@@ -5,7 +5,9 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.StringTrieSearch;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 final class CommentsFilter extends Filter {
     private static final String COMMENT_COMPOSER_PATH = "comment_composer";

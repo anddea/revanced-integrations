@@ -7,6 +7,7 @@ public class NavBarIndexPatch {
 
     /**
      * Injection point.
+     *
      * @param navBarIndex tab index in PivotBar
      */
     public static void setNavBarIndex(int navBarIndex) {
@@ -15,8 +16,9 @@ public class NavBarIndexPatch {
 
     /**
      * Injection point.
+     *
      * @param navBarIndex tab index in PivotBar
-     * @param isSelected whether the current tab is selected
+     * @param isSelected  whether the current tab is selected
      */
     public static void setNavBarIndex(int navBarIndex, boolean isSelected) {
         if (!isSelected || currentNavBarIndex == navBarIndex)

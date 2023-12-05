@@ -123,6 +123,18 @@ public final class VideoInformation {
     }
 
     /**
+     * Injection point.
+     *
+     * @param newlyLoadedVideoId id of the current video
+     */
+    public static void setVideoId(@NonNull String newlyLoadedVideoId) {
+        if (videoId.equals(newlyLoadedVideoId))
+            return;
+
+        videoId = newlyLoadedVideoId;
+    }
+
+    /**
      * Differs from {@link #videoId} as this is the video id for the
      * last player response received, which may not be the last video opened.
      * <p>
@@ -146,18 +158,6 @@ public final class VideoInformation {
      */
     public static boolean lastVideoIdIsShort() {
         return videoIdIsShort;
-    }
-
-    /**
-     * Injection point.
-     *
-     * @param newlyLoadedVideoId id of the current video
-     */
-    public static void setVideoId(@NonNull String newlyLoadedVideoId) {
-        if (videoId.equals(newlyLoadedVideoId))
-            return;
-
-        videoId = newlyLoadedVideoId;
     }
 
     /**

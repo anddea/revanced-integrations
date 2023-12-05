@@ -4,7 +4,9 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
 
-/** @noinspection rawtypes*/
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 final class HandlesFilter extends Filter {
     private static final String ACCOUNT_HEADER_PATH = "account_header.eml";

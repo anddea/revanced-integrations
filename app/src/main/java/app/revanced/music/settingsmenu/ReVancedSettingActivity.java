@@ -16,6 +16,10 @@ public class ReVancedSettingActivity {
     @SuppressLint("StaticFieldLeak")
     private static Activity activity;
 
+    public static Activity getActivity() {
+        return activity;
+    }
+
     /**
      * Injection point.
      *
@@ -25,10 +29,6 @@ public class ReVancedSettingActivity {
     public static void setActivity(@NonNull Object object) {
         if (object instanceof Activity mActivity)
             activity = mActivity;
-    }
-
-    public static Activity getActivity() {
-        return activity;
     }
 
     /**

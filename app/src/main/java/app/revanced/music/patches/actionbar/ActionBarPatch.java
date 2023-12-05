@@ -4,7 +4,6 @@ import static app.revanced.music.utils.StringRef.str;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
@@ -30,17 +29,17 @@ public class ActionBarPatch {
 
     public static void hookActionBar(ViewGroup viewGroup) {
         viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-                    try {
-                        final int childCount = viewGroup.getChildCount();
-                        if (childCount == 0)
-                            return;
+            try {
+                final int childCount = viewGroup.getChildCount();
+                if (childCount == 0)
+                    return;
 
-                        hookDownloadButton(viewGroup, childCount);
-                        hideRadioButton(viewGroup, childCount);
-                    } catch (Exception ex) {
-                        LogHelper.printException(() -> "hookActionBar failure", ex);
-                    }
-                });
+                hookDownloadButton(viewGroup, childCount);
+                hideRadioButton(viewGroup, childCount);
+            } catch (Exception ex) {
+                LogHelper.printException(() -> "hookActionBar failure", ex);
+            }
+        });
     }
 
     private static void hookDownloadButton(ViewGroup viewGroup, int childCount) {

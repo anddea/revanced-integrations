@@ -16,35 +16,35 @@ public class PremiumPromotionPatch {
             return;
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-                    try {
-                        if (!(view instanceof ViewGroup viewGroup)) {
-                            return;
-                        }
-                        if (viewGroup.getChildCount() == 0) {
-                            return;
-                        }
-                        if (!(viewGroup.getChildAt(0) instanceof ViewGroup mealBarLayoutRoot)) {
-                            return;
-                        }
-                        if (mealBarLayoutRoot.getChildCount() == 0) {
-                            return;
-                        }
-                        if (!(mealBarLayoutRoot.getChildAt(0) instanceof LinearLayout linearLayout)) {
-                            return;
-                        }
-                        if (linearLayout.getChildCount() == 0) {
-                            return;
-                        }
-                        if (!(linearLayout.getChildAt(0) instanceof ImageView imageView)) {
-                            return;
-                        }
+            try {
+                if (!(view instanceof ViewGroup viewGroup)) {
+                    return;
+                }
+                if (viewGroup.getChildCount() == 0) {
+                    return;
+                }
+                if (!(viewGroup.getChildAt(0) instanceof ViewGroup mealBarLayoutRoot)) {
+                    return;
+                }
+                if (mealBarLayoutRoot.getChildCount() == 0) {
+                    return;
+                }
+                if (!(mealBarLayoutRoot.getChildAt(0) instanceof LinearLayout linearLayout)) {
+                    return;
+                }
+                if (linearLayout.getChildCount() == 0) {
+                    return;
+                }
+                if (!(linearLayout.getChildAt(0) instanceof ImageView imageView)) {
+                    return;
+                }
 
-                        if (imageView.getVisibility() == View.VISIBLE) {
-                            view.setVisibility(View.GONE);
-                        }
-                    } catch (Exception ex) {
-                        LogHelper.printException(() -> "hideGetPremium failure", ex);
-                    }
-                });
+                if (imageView.getVisibility() == View.VISIBLE) {
+                    view.setVisibility(View.GONE);
+                }
+            } catch (Exception ex) {
+                LogHelper.printException(() -> "hideGetPremium failure", ex);
+            }
+        });
     }
 }

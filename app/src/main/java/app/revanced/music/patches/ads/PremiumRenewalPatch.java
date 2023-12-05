@@ -18,15 +18,15 @@ public class PremiumRenewalPatch {
         buttonContainerView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             try {
                 ReVancedUtils.runOnMainThreadDelayed(() -> {
-                    if (buttonContainerView.getChildAt(0) instanceof ViewGroup closeButtonParentView) {
-                        final View closeButtonView = closeButtonParentView.getChildAt(0);
-                        if (closeButtonView != null) {
-                            closeButtonView.setSoundEffectsEnabled(false);
-                            closeButtonView.performClick();
-                        }
-                        ReVancedUtils.hideViewByLayoutParams((View) buttonContainerView.getParent());
-                    }
-                    }, 0
+                            if (buttonContainerView.getChildAt(0) instanceof ViewGroup closeButtonParentView) {
+                                final View closeButtonView = closeButtonParentView.getChildAt(0);
+                                if (closeButtonView != null) {
+                                    closeButtonView.setSoundEffectsEnabled(false);
+                                    closeButtonView.performClick();
+                                }
+                                ReVancedUtils.hideViewByLayoutParams((View) buttonContainerView.getParent());
+                            }
+                        }, 0
                 );
             } catch (Exception ex) {
                 LogHelper.printException(() -> "hidePremiumRenewal failure", ex);

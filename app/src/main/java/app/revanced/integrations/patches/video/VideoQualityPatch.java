@@ -81,7 +81,7 @@ public class VideoQualityPatch {
         if (videoQualities != null) {
             int qualityToUse = videoQualities.get(0); // first element is automatic mode
             for (Integer quality : videoQualities) {
-                if (quality <= preferredQuality && qualityToUse < quality)  {
+                if (quality <= preferredQuality && qualityToUse < quality) {
                     qualityToUse = quality;
                 }
             }

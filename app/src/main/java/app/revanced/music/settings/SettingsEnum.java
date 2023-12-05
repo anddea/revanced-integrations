@@ -175,13 +175,11 @@ public enum SettingsEnum {
      * If a setting path has this prefix, then remove it.
      */
     private static final String OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX = "sb_segments_";
-
+    private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
     /**
      * Array of settings using intent
      */
     private static String[] intentSettingArray;
-
-    private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
 
     static {
         loadAllSettings();
@@ -190,6 +188,41 @@ public enum SettingsEnum {
         for (SettingsEnum setting : values()) {
             pathToSetting.put(setting.path, setting);
         }
+    }
+
+    @NonNull
+    public final String path;
+    @NonNull
+    public final Object defaultValue;
+    @NonNull
+    public final SharedPrefCategory sharedPref;
+    @NonNull
+    public final ReturnType returnType;
+    public final boolean rebootApp;
+    public final int useIntent;
+    public Object value;
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue) {
+        this(path, returnType, defaultValue, false, 0);
+    }
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp) {
+        this(path, returnType, defaultValue, rebootApp, 0);
+    }
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, int useIntent) {
+        this(path, returnType, defaultValue, false, useIntent);
+    }
+
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp, int useIntent) {
+        this(path, returnType, defaultValue, YOUTUBE, rebootApp, useIntent);
+    }
+
+    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue,
+                 SharedPrefCategory prefName, boolean rebootApp, int useIntent) {
+        this.path = Objects.requireNonNull(path);
+        this.returnType = Objects.requireNonNull(returnType);
+        this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.sharedPref = Objects.requireNonNull(prefName);
+        this.rebootApp = rebootApp;
+        this.useIntent = useIntent;
     }
 
     @Nullable
@@ -218,44 +251,6 @@ public enum SettingsEnum {
             }
         }
         intentSettingArray[j] = OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX;
-    }
-
-    @NonNull
-    public final String path;
-    @NonNull
-    public final Object defaultValue;
-    @NonNull
-    public final SharedPrefCategory sharedPref;
-    @NonNull
-    public final ReturnType returnType;
-    public final boolean rebootApp;
-    public final int useIntent;
-    public Object value;
-
-    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue) {
-        this(path, returnType, defaultValue, false, 0);
-    }
-
-    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp) {
-        this(path, returnType, defaultValue, rebootApp, 0);
-    }
-
-    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, int useIntent) {
-        this(path, returnType, defaultValue, false, useIntent);
-    }
-
-    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue, boolean rebootApp, int useIntent) {
-        this(path, returnType, defaultValue, YOUTUBE, rebootApp, useIntent);
-    }
-
-    SettingsEnum(@NonNull String path, @NonNull ReturnType returnType, @NonNull Object defaultValue,
-                 SharedPrefCategory prefName, boolean rebootApp, int useIntent) {
-        this.path = Objects.requireNonNull(path);
-        this.returnType = Objects.requireNonNull(returnType);
-        this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
-        this.sharedPref = Objects.requireNonNull(prefName);
-        this.rebootApp = rebootApp;
-        this.useIntent = useIntent;
     }
 
     private static SettingsEnum[] valuesSortedForExport() {

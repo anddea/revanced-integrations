@@ -9,14 +9,6 @@ import app.revanced.integrations.settings.SettingsEnum;
 
 public class LogHelper {
 
-    /**
-     * Log messages using lambdas.
-     */
-    public interface LogMessage {
-        @NonNull
-        String buildMessageString();
-    }
-
     private static final String LOG_PREFIX = "Extended: ";
 
     /**
@@ -77,6 +69,14 @@ public class LogHelper {
         } else {
             Log.e(logMessage, messageString, ex);
         }
+    }
+
+    /**
+     * Log messages using lambdas.
+     */
+    public interface LogMessage {
+        @NonNull
+        String buildMessageString();
     }
 
 }
