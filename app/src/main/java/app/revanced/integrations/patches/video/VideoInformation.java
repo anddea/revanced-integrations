@@ -3,6 +3,7 @@ package app.revanced.integrations.patches.video;
 import static app.revanced.integrations.utils.StringRef.str;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -17,6 +18,7 @@ import app.revanced.integrations.utils.VideoHelpers;
 /**
  * Hooking class for the current playing video.
  */
+@SuppressWarnings("unused")
 public final class VideoInformation {
     private static final String SEEK_METHOD_NAME = "seekTo";
     /**
@@ -161,21 +163,22 @@ public final class VideoInformation {
     /**
      * @return If the player parameters are for a Short.
      */
-    public static boolean playerParametersAreShort(@NonNull String parameters) {
-        return parameters.startsWith(SHORTS_PLAYER_PARAMETERS);
+    public static boolean playerParametersAreShort(@Nullable String playerParameter) {
+        return playerParameter != null && playerParameter.startsWith(SHORTS_PLAYER_PARAMETERS);
     }
 
     /**
      * Injection point.
      */
-    public static String newPlayerResponseSignature(@NonNull String signature, boolean isShortAndOpeningOrPlaying) {
-        final boolean isShort = playerParametersAreShort(signature);
+    @Nullable
+    public static String newPlayerParameter(@Nullable String videoId, @Nullable String playerParameter, boolean isShortAndOpeningOrPlaying) {
+        final boolean isShort = playerParametersAreShort(playerParameter);
         if (!isShort || isShortAndOpeningOrPlaying) {
             if (videoIdIsShort != isShort) {
                 videoIdIsShort = isShort;
             }
         }
-        return signature; // Return the original value since we are observing and not modifying.
+        return playerParameter; // Return the original value since we are observing and not modifying.
     }
 
     /**

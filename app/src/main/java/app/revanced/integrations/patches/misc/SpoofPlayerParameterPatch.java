@@ -1,9 +1,11 @@
 package app.revanced.integrations.patches.misc;
 
 import static app.revanced.integrations.patches.misc.requests.StoryBoardRendererRequester.getStoryboardRenderer;
-import static app.revanced.integrations.utils.ReVancedUtils.containsAny;
 
 import androidx.annotation.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
 
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -25,10 +27,10 @@ public class SpoofPlayerParameterPatch {
     /**
      * Parameters causing playback issues.
      */
-    private static final String[] AUTOPLAY_PARAMETERS = {
-            "YAHI", // Autoplay in feed.
-            "SAFg"  // Autoplay in scrim.
-    };
+    private static final List<String> AUTOPLAY_PARAMETERS = Arrays.asList(
+            "YAHI", // Autoplay in feed
+            "SAFg"  // Autoplay in scrim
+    );
 
     /**
      * Parameter used for autoplay in scrim.
@@ -55,7 +57,7 @@ public class SpoofPlayerParameterPatch {
      *
      * @param parameters Original player parameter value.
      */
-    public static String spoofParameter(String parameters, boolean isShortAndOpeningOrPlaying) {
+    public static String spoofParameter(String videoId, String parameters, boolean isShortAndOpeningOrPlaying) {
         LogHelper.printDebug(() -> "Original player parameter value: " + parameters);
 
         if (!SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean()) {
@@ -75,12 +77,12 @@ public class SpoofPlayerParameterPatch {
         }
 
         final boolean isPlayingFeed = PlayerType.getCurrent() == PlayerType.INLINE_MINIMAL
-                && containsAny(parameters, AUTOPLAY_PARAMETERS);
+                && AUTOPLAY_PARAMETERS.stream().anyMatch(parameters::contains);
 
         if (!isPlayingFeed) {
             // StoryboardRenderer is always empty when playing video with INCOGNITO_PARAMETERS parameter.
             // Fetch StoryboardRenderer without parameter.
-            fetchStoryboardRenderer();
+            fetchStoryboardRenderer(videoId);
             // Spoof the player parameter to prevent playback issues.
             return INCOGNITO_PARAMETERS;
         }
@@ -90,14 +92,13 @@ public class SpoofPlayerParameterPatch {
         } else {
             // StoryboardRenderer is always empty when playing video with INCOGNITO_PARAMETERS parameter.
             // Fetch StoryboardRenderer without parameter.
-            fetchStoryboardRenderer();
+            fetchStoryboardRenderer(videoId);
             // Spoof the player parameter to prevent playback issues.
             return SCRIM_PARAMETER + INCOGNITO_PARAMETERS;
         }
     }
 
-    private static void fetchStoryboardRenderer() {
-        final String videoId = VideoInformation.getPlayerResponseVideoId();
+    private static void fetchStoryboardRenderer(String videoId) {
         if (!videoId.equals(lastPlayerResponseVideoId)) {
             lastPlayerResponseVideoId = videoId;
             // This will block starting video playback until the fetch completes.
