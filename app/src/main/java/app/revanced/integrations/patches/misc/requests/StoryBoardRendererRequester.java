@@ -39,7 +39,7 @@ public class StoryBoardRendererRequester {
         if (showToastOnIOException) {
             ReVancedUtils.showToastShort(toastMessage);
         }
-        LogHelper.printInfo(() -> toastMessage, ex);
+        LogHelper.printException(() -> toastMessage, ex);
     }
 
     @Nullable

@@ -171,7 +171,7 @@ public final class VideoInformation {
      * Injection point.
      */
     @Nullable
-    public static String newPlayerParameter(@Nullable String videoId, @Nullable String playerParameter, boolean isShortAndOpeningOrPlaying) {
+    public static String newPlayerParameter(@NonNull String videoId, @Nullable String playerParameter, boolean isShortAndOpeningOrPlaying) {
         final boolean isShort = playerParametersAreShort(playerParameter);
         if (!isShort || isShortAndOpeningOrPlaying) {
             if (videoIdIsShort != isShort) {
