@@ -38,7 +38,7 @@ public enum SettingsEnum {
     // Action Bar
     EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING,
             "com.deniscerri.ytdl", true, 1),
-    HIDE_ACTION_BAR_LABEL("revanced_hide_action_bar_label", BOOLEAN, FALSE),
+    HIDE_ACTION_BAR_LABEL("revanced_hide_action_bar_label", BOOLEAN, FALSE, true),
     HIDE_ACTION_BAR_RADIO("revanced_hide_action_bar_radio", BOOLEAN, FALSE),
     HOOK_ACTION_BAR_DOWNLOAD("revanced_hook_action_bar_download", BOOLEAN, FALSE, true),
 

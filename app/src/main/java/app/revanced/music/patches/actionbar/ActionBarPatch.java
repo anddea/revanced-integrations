@@ -12,8 +12,8 @@ import app.revanced.music.utils.VideoHelpers;
 @SuppressWarnings("unused")
 public class ActionBarPatch {
 
-    public static boolean hideActionBarLabel(boolean original) {
-        return !SettingsEnum.HIDE_ACTION_BAR_LABEL.getBoolean() && original;
+    public static boolean hideActionBarLabel() {
+        return SettingsEnum.HIDE_ACTION_BAR_LABEL.getBoolean();
     }
 
     private static void hideRadioButton(ViewGroup viewGroup, int childCount) {
