@@ -54,8 +54,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         addPreferences(SettingsStatus.navigationButtons, SettingsEnum.HIDE_CHAT_BUTTON);
         addPreferences(SettingsStatus.navigationButtons, SettingsEnum.HIDE_CREATE_BUTTON);
         addPreferences(SettingsStatus.navigationButtons, SettingsEnum.HIDE_DISCOVER_BUTTON);
-        addPreferences(SettingsStatus.placeButton, SettingsEnum.HIDE_PLACE_BUTTON);
         addPreferences(SettingsStatus.recentlyVisitedShelf, SettingsEnum.HIDE_RECENTLY_VISITED_SHELF);
+        addPreferences(SettingsStatus.toolBarButton, SettingsEnum.HIDE_TOOLBAR_BUTTON);
         addPreferences(SettingsStatus.openLinksDirectly, SettingsEnum.OPEN_LINKS_DIRECTLY);
         addPreferences(SettingsStatus.openLinksExternally, SettingsEnum.OPEN_LINKS_EXTERNALLY);
         addPreferences(SettingsStatus.sanitizeUrlQuery, SettingsEnum.SANITIZE_URL_QUERY);

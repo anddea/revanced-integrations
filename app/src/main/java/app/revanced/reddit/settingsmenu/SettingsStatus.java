@@ -5,10 +5,10 @@ public class SettingsStatus {
     public static boolean navigationButtons = false;
     public static boolean openLinksDirectly = false;
     public static boolean openLinksExternally = false;
-    public static boolean placeButton = false;
     public static boolean recentlyVisitedShelf = false;
     public static boolean sanitizeUrlQuery = false;
     public static boolean screenshotPopup = false;
+    public static boolean toolBarButton = false;
 
 
     public static void GeneralAds() {
@@ -27,10 +27,6 @@ public class SettingsStatus {
         openLinksExternally = true;
     }
 
-    public static void PlaceButton() {
-        placeButton = true;
-    }
-
     public static void RecentlyVisitedShelf() {
         recentlyVisitedShelf = true;
     }
@@ -41,6 +37,10 @@ public class SettingsStatus {
 
     public static void ScreenshotPopup() {
         screenshotPopup = true;
+    }
+
+    public static void ToolBarButton() {
+        toolBarButton = true;
     }
 
     public static void load() {
