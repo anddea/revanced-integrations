@@ -29,7 +29,7 @@ public final class AdsFilter extends Filter {
     boolean isFiltered(String path, FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (matchedGroup == statementBanner) {
             return super.isFiltered(path, matchedList, matchedGroup, matchedIndex);
-        } else if (matchedGroup == interstitialBanner) {
+        } else if (matchedGroup == interstitialBanner && path.contains("|ImageType|")) {
             // If you hide the entire banner, the layout is not loaded,
             // So only the empty gray screen is displayed.
             // https://github.com/ReVanced/revanced-integrations/pull/355

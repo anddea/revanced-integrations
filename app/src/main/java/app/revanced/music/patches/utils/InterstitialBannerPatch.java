@@ -15,7 +15,7 @@ public class InterstitialBannerPatch {
 
     public static void onBackPressed() {
         final long currentTime = System.currentTimeMillis();
-        if (lastTimeCalled != 0 && currentTime - lastTimeCalled < 1000)
+        if (lastTimeCalled != 0 && currentTime - lastTimeCalled < 10000)
             return;
 
         lastTimeCalled = currentTime;
