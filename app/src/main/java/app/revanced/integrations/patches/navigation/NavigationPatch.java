@@ -15,22 +15,6 @@ import app.revanced.integrations.settings.SettingsEnum;
 public class NavigationPatch {
     public static Enum<?> lastPivotTab;
 
-    public static boolean changeHomePage() {
-        return SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean();
-    }
-
-    public static void changeHomePage(Activity activity) {
-        if (!SettingsEnum.CHANGE_HOMEPAGE_TO_SUBSCRIPTION.getBoolean())
-            return;
-
-        final Intent intent = activity.getIntent();
-        if (Objects.equals(intent.getAction(), "android.intent.action.MAIN")) {
-            intent.setAction("com.google.android.youtube.action.open.subscriptions");
-            intent.setPackage(activity.getPackageName());
-            activity.startActivity(intent);
-        }
-    }
-
     public static boolean switchCreateNotification(boolean original) {
         return SettingsEnum.SWITCH_CREATE_NOTIFICATION.getBoolean() || original;
     }
