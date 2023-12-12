@@ -27,11 +27,8 @@ public class NavigationPatch {
         if (lastPivotTab == null)
             return;
 
-        final String pivotTabString = lastPivotTab.name();
-        openLibraryTab(view, pivotTabString);
-
         for (NavigationButton button : NavigationButton.values())
-            if (button.name.equals(pivotTabString))
+            if (button.name.equals(lastPivotTab.name()))
                 hideViewUnderCondition(button.enabled, view);
     }
 
@@ -39,34 +36,8 @@ public class NavigationPatch {
         hideViewUnderCondition(SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean(), view);
     }
 
-    public static void hideYouButton(View view) {
-        openYouTab(view);
-        // hideViewUnderCondition(SettingsEnum.HIDE_YOU_BUTTON.getBoolean(), view);
-    }
-
     public static boolean enableTabletNavBar(boolean original) {
         return SettingsEnum.ENABLE_TABLET_NAVIGATION_BAR.getBoolean() || original;
-    }
-
-    private static void openLibraryTab(View view, String pivotTabString) {
-        if (!SettingsEnum.OPEN_LIBRARY_YOU_STARTUP.getBoolean())
-            return;
-
-        if (!NavigationButton.LIBRARY.name.equals(pivotTabString))
-            return;
-
-        view.setSoundEffectsEnabled(false);
-        view.performClick();
-        view.setSoundEffectsEnabled(true);
-    }
-
-    private static void openYouTab(View view) {
-        if (!SettingsEnum.OPEN_LIBRARY_YOU_STARTUP.getBoolean())
-            return;
-
-        view.setSoundEffectsEnabled(false);
-        view.performClick();
-        view.setSoundEffectsEnabled(true);
     }
 
     private enum NavigationButton {

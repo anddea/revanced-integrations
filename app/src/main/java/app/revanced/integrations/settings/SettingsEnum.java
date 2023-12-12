@@ -250,7 +250,6 @@ public enum SettingsEnum {
     HIDE_NOTIFICATIONS_BUTTON("revanced_hide_notifications_button", BOOLEAN, FALSE, true),
     HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", BOOLEAN, FALSE, true),
     HIDE_SUBSCRIPTIONS_BUTTON("revanced_hide_subscriptions_button", BOOLEAN, FALSE, true),
-    OPEN_LIBRARY_YOU_STARTUP("revanced_open_library_you_startup", BOOLEAN, FALSE, true),
     SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", BOOLEAN, TRUE, true),
 
     // Settings not exported
