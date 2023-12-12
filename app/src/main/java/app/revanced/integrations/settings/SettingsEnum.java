@@ -49,10 +49,13 @@ public enum SettingsEnum {
 
 
     // Alternative Thumbnails
-    ALT_THUMBNAIL_ENABLED("revanced_alt_thumbnail_enabled", BOOLEAN, FALSE),
-    ALT_THUMBNAIL_DEARROW("revanced_alt_thumbnail_dearrow", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_ENABLED)),
-    ALT_THUMBNAIL_TYPE("revanced_alt_thumbnail_type", INTEGER, 1, parents(ALT_THUMBNAIL_ENABLED)),
-    ALT_THUMBNAIL_SKIP_CHECKING("revanced_alt_thumbnail_skip_checking", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_ENABLED)),
+    ALT_THUMBNAIL_DEARROW("revanced_alt_thumbnail_dearrow", BOOLEAN, false),
+    ALT_THUMBNAIL_DEARROW_API_URL("revanced_alt_thumbnail_dearrow_api_url", STRING,
+            "https://dearrow-thumb.ajay.app/api/v1/getThumbnail", true, parents(ALT_THUMBNAIL_DEARROW)),
+    ALT_THUMBNAIL_DEARROW_CONNECTION_TOAST("revanced_alt_thumbnail_dearrow_connection_toast", BOOLEAN, TRUE, parents(ALT_THUMBNAIL_DEARROW)),
+    ALT_THUMBNAIL_STILLS("revanced_alt_thumbnail_stills", BOOLEAN, FALSE),
+    ALT_THUMBNAIL_STILLS_FAST("revanced_alt_thumbnail_stills_fast", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_STILLS)),
+    ALT_THUMBNAIL_STILLS_TIME("revanced_alt_thumbnail_stills_time", INTEGER, 2, parents(ALT_THUMBNAIL_STILLS)),
 
 
     // Bottom Player
