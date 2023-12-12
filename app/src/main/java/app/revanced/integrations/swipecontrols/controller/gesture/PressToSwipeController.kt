@@ -1,6 +1,7 @@
 package app.revanced.integrations.swipecontrols.controller.gesture
 
 import android.view.MotionEvent
+import app.revanced.integrations.patches.swipe.SwipeControlsPatch.isEngagementOverlayVisible
 import app.revanced.integrations.settings.SettingsEnum
 import app.revanced.integrations.shared.LockModeState
 import app.revanced.integrations.swipecontrols.SwipeControlsHostActivity
@@ -62,6 +63,9 @@ class PressToSwipeController(
             return false
         // cancel if not in swipe session or vertical
         if (!isInSwipeSession || currentSwipe != SwipeDetector.SwipeDirection.VERTICAL)
+            return false
+        // ignore gestures when engagement overlay is visible
+        if (isEngagementOverlayVisible())
             return false
         return when (from.toPoint()) {
             in controller.zones.volume -> {
