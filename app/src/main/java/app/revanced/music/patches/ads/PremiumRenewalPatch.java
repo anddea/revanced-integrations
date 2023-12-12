@@ -1,8 +1,11 @@
 package app.revanced.music.patches.ads;
 
+import static app.revanced.music.utils.StringRef.str;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
@@ -18,12 +21,16 @@ public class PremiumRenewalPatch {
         buttonContainerView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             try {
                 ReVancedUtils.runOnMainThreadDelayed(() -> {
-                            if (buttonContainerView.getChildAt(0) instanceof ViewGroup closeButtonParentView) {
-                                final View closeButtonView = closeButtonParentView.getChildAt(0);
-                                if (closeButtonView != null) {
-                                    closeButtonView.setSoundEffectsEnabled(false);
-                                    closeButtonView.performClick();
-                                }
+                            if (!(buttonContainerView.getChildAt(0) instanceof ViewGroup closeButtonParentView))
+                                return;
+
+                            if (!(closeButtonParentView.getChildAt(0) instanceof TextView closeButtonView))
+                                return;
+
+                            if (closeButtonView.getText().toString().equals(str("dialog_got_it_text"))) {
+                                closeButtonView.setSoundEffectsEnabled(false);
+                                closeButtonView.performClick();
+                            } else {
                                 ReVancedUtils.hideViewByLayoutParams((View) buttonContainerView.getParent());
                             }
                         }, 0
