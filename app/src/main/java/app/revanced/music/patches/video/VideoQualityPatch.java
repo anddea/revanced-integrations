@@ -1,6 +1,7 @@
 package app.revanced.music.patches.video;
 
 import static app.revanced.music.utils.StringRef.str;
+import static app.revanced.music.utils.VideoHelpers.getCurrentQuality;
 
 import androidx.annotation.Nullable;
 
@@ -23,13 +24,22 @@ public class VideoQualityPatch {
     @Nullable
     private static List<Integer> videoQualities;
 
-    /**
-     * There is no need to check the array of available qualities
-     * The target method finds available quality and applies it.
-     *
-     * @param qualityValue preferred quality value
-     */
-    private static void overrideQuality(final int qualityValue) {
+    private static void changeDefaultQuality(final int defaultQuality) {
+        final ReVancedUtils.NetworkType networkType = ReVancedUtils.getNetworkType();
+
+        switch (networkType) {
+            case NONE -> {
+                ReVancedUtils.showToastShort(str("revanced_save_video_quality_none"));
+                return;
+            }
+            case MOBILE -> mobileQualitySetting.saveValue(defaultQuality);
+            default -> wifiQualitySetting.saveValue(defaultQuality);
+        }
+
+        ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName(), defaultQuality + "p"));
+    }
+
+    public static void overrideQuality(final int qualityValue) {
         LogHelper.printDebug(() -> "Quality changed to: " + qualityValue);
         // Rest of the implementation added by patch.
     }
@@ -58,6 +68,19 @@ public class VideoQualityPatch {
         }
     }
 
+    private static void setVideoQuality(int preferredQuality) {
+        if (videoQualities != null) {
+            int qualityToUse = videoQualities.get(0); // first element is automatic mode
+            for (Integer quality : videoQualities) {
+                if (quality <= preferredQuality && qualityToUse < quality) {
+                    qualityToUse = quality;
+                }
+            }
+            preferredQuality = qualityToUse;
+        }
+        overrideQuality(preferredQuality);
+    }
+
     /**
      * Injection point.
      */
@@ -70,7 +93,7 @@ public class VideoQualityPatch {
         if (preferredQuality == -2)
             return;
 
-        overrideQuality(preferredQuality);
+        ReVancedUtils.runOnMainThreadDelayed(() -> setVideoQuality(preferredQuality), 500);
     }
 
     /**
@@ -84,17 +107,9 @@ public class VideoQualityPatch {
 
         final int selectedQuality = videoQualities.get(selectedQualityIndex);
 
-        ReVancedUtils.NetworkType networkType = ReVancedUtils.getNetworkType();
-
-        switch (networkType) {
-            case NONE -> {
-                ReVancedUtils.showToastShort(str("revanced_save_video_quality_none"));
-                return;
-            }
-            case MOBILE -> mobileQualitySetting.saveValue(selectedQuality);
-            default -> wifiQualitySetting.saveValue(selectedQuality);
-        }
-
-        ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName(), selectedQuality + "p"));
+        ReVancedUtils.runOnMainThreadDelayed(() ->
+                        changeDefaultQuality(getCurrentQuality(selectedQuality)),
+                300
+        );
     }
 }

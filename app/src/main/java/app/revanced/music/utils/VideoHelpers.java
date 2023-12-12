@@ -29,6 +29,10 @@ public class VideoHelpers {
     /**
      * Injection point.
      */
+    public static String currentQuality = "";
+    /**
+     * Injection point.
+     */
     public static float currentSpeed = 1.0f;
 
     public static void downloadMusic(@NonNull Context context) {
@@ -115,5 +119,13 @@ public class VideoHelpers {
 
     public static float getCurrentSpeed() {
         return currentSpeed;
+    }
+
+    public static int getCurrentQuality(int original) {
+        try {
+            return Integer.parseInt(currentQuality.split("p")[0]);
+        } catch (Exception ignored) {
+        }
+        return original;
     }
 }

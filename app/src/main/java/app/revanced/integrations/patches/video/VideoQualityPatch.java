@@ -24,11 +24,11 @@ public class VideoQualityPatch {
     @Nullable
     private static List<Integer> videoQualities;
 
-    private static void changeDefaultQuality(int defaultQuality) {
+    private static void changeDefaultQuality(final int defaultQuality) {
         if (!SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean())
             return;
 
-        ReVancedUtils.NetworkType networkType = ReVancedUtils.getNetworkType();
+        final ReVancedUtils.NetworkType networkType = ReVancedUtils.getNetworkType();
 
         switch (networkType) {
             case NONE -> {
@@ -42,12 +42,6 @@ public class VideoQualityPatch {
         ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName(), defaultQuality + "p"));
     }
 
-    /**
-     * There is no need to check the array of available qualities
-     * The target method finds available quality and applies it.
-     *
-     * @param qualityValue preferred quality value
-     */
     public static void overrideQuality(final int qualityValue) {
         LogHelper.printDebug(() -> "Quality changed to: " + qualityValue);
         // Rest of the implementation added by patch.
