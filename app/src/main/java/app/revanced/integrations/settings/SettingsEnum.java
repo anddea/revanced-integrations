@@ -572,6 +572,13 @@ public enum SettingsEnum {
     }
 
     /**
+     * Identical to calling {@link #saveValue(Object)} using {@link #defaultValue}.
+     */
+    public void resetToDefault() {
+        saveValue(defaultValue);
+    }
+
+    /**
      * @return if this setting can be configured and used.
      * <p>
      * Not to be confused with {@link #getBoolean()}
@@ -731,7 +738,7 @@ public enum SettingsEnum {
                 } else if (setting.includeWithImportExport() && setting.isNotSetToDefault()) {
                     LogHelper.printDebug(() -> "Resetting to default: " + setting);
                     rebootSettingChanged |= setting.rebootApp;
-                    setting.saveValue(setting.defaultValue);
+                    setting.resetToDefault();
                 }
             }
             numberOfSettingsImported += SponsorBlockSettings.importCategoriesFromFlatJson(json);

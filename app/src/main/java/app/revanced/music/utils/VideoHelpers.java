@@ -39,9 +39,8 @@ public class VideoHelpers {
         String downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString();
 
         if (downloaderPackageName.isEmpty()) {
-            final String defaultValue = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.defaultValue.toString();
-            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.saveValue(defaultValue);
-            downloaderPackageName = defaultValue;
+            SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.resetToDefault();
+            downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.defaultValue.toString();
         }
 
         if (!ReVancedHelper.isPackageEnabled(context, downloaderPackageName)) {

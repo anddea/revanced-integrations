@@ -144,7 +144,7 @@ final class CustomFilterGroup extends StringFilterGroup {
         for (String pattern : patterns) {
             if (!StringTrieSearch.isValidPattern(pattern)) {
                 ReVancedUtils.showToastShort(str("revanced_custom_filter_strings_warning"));
-                setting.saveValue(setting.defaultValue);
+                setting.resetToDefault();
                 return getFilterPatterns(setting);
             }
         }

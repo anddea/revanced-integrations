@@ -45,7 +45,7 @@ public class SponsorBlockEditTextDialogBuilder {
                     .setView(container)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
-                        api.saveValue(api.defaultValue);
+                        api.resetToDefault();
                         ReVancedUtils.showToastShort(str("sb_api_url_reset"));
                     })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {

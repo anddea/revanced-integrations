@@ -45,7 +45,7 @@ public class CustomPlaybackSpeedPatch {
         }
 
         ReVancedUtils.showToastShort(str("revanced_custom_playback_speeds_invalid"));
-        SettingsEnum.CUSTOM_PLAYBACK_SPEEDS.saveValue(SettingsEnum.CUSTOM_PLAYBACK_SPEEDS.defaultValue);
+        SettingsEnum.CUSTOM_PLAYBACK_SPEEDS.resetToDefault();
     }
 
     public static void loadCustomSpeeds() {

@@ -313,7 +313,7 @@ public enum SettingsEnum {
                 } else if (setting.includeWithImportExport() && setting.isNotSetToDefault()) {
                     LogHelper.printDebug(() -> "Resetting to default: " + setting);
                     rebootSettingChanged |= setting.rebootApp;
-                    setting.saveValue(setting.defaultValue);
+                    setting.resetToDefault();
                 }
             }
 
@@ -385,6 +385,13 @@ public enum SettingsEnum {
             default:
                 throw new IllegalStateException(name());
         }
+    }
+
+    /**
+     * Identical to calling {@link #saveValue(Object)} using {@link #defaultValue}.
+     */
+    public void resetToDefault() {
+        saveValue(defaultValue);
     }
 
     public boolean getBoolean() {

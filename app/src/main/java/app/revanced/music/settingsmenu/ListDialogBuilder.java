@@ -37,7 +37,7 @@ public class ListDialogBuilder {
                             (dialog, id) -> mClickedDialogEntryIndex = id)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setNeutralButton(str("revanced_reset"), (dialog, which) -> {
-                        setting.saveValue(setting.defaultValue.toString());
+                        setting.resetToDefault();
                         ReVancedSettingsFragment.showRebootDialog();
                     })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {

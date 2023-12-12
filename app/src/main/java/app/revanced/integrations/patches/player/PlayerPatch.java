@@ -14,15 +14,13 @@ import app.revanced.integrations.utils.ResourceHelper;
 
 @SuppressWarnings("unused")
 public class PlayerPatch {
-    private static final int DEFAULT_OPACITY = (int) SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.defaultValue;
-
     public static void changePlayerOpacity(ImageView imageView) {
         int opacity = SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.getInt();
 
         if (opacity < 0 || opacity > 100) {
             ReVancedUtils.showToastShort(str("revanced_custom_player_overlay_opacity_warning"));
-            SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.saveValue(DEFAULT_OPACITY);
-            opacity = DEFAULT_OPACITY;
+            SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.resetToDefault();
+            opacity = (int) SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.defaultValue;
         }
 
         imageView.setImageAlpha((opacity * 255) / 100);
