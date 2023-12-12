@@ -2,7 +2,10 @@ package app.revanced.integrations.patches.general;
 
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
+import static app.revanced.integrations.utils.StringRef.str;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -10,12 +13,18 @@ import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
+import java.util.Objects;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.shared.PlayerType;
+import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
 @SuppressWarnings("unused")
 public class GeneralPatch {
+    private static final String MAIN_ACTIONS = "android.intent.action.MAIN";
     private static final String[] TOOLBAR_BUTTON_LIST = {
             "CREATION_ENTRY",   // Create button (Phone)
             "FAB_CAMERA",       // Create button (Tablet)
@@ -28,6 +37,34 @@ public class GeneralPatch {
     private static int paddingTop = 0;
     private static int paddingRight = 12;
     private static int paddingBottom = 0;
+
+    /**
+     * Change the start page only when the user starts the app on the launcher.
+     * <p>
+     * If the app starts with a widget or the app starts through a shortcut,
+     * Action of intent is not {@link #MAIN_ACTIONS}.
+     *
+     * @param intent original intent
+     */
+    public static void changeStartPage(@NonNull Intent intent) {
+        if (!Objects.equals(intent.getAction(), MAIN_ACTIONS))
+            return;
+
+        final String startPage = SettingsEnum.CHANGE_START_PAGE.getString();
+        if (startPage.isEmpty())
+            return;
+
+        if (startPage.startsWith("open.")) {
+            intent.setAction("com.google.android.youtube.action." + startPage);
+        } else if (startPage.startsWith("www.youtube.com")) {
+            intent.setData(Uri.parse(startPage));
+        } else {
+            ReVancedUtils.showToastShort(str("revanced_change_start_page_warning"));
+            SettingsEnum.CHANGE_START_PAGE.resetToDefault();
+            return;
+        }
+        LogHelper.printDebug(() -> "Changing start page to " + startPage);
+    }
 
     public static boolean disableAutoCaptions() {
         return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden();

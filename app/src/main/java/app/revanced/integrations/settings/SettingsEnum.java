@@ -145,6 +145,7 @@ public enum SettingsEnum {
 
 
     // General
+    CHANGE_START_PAGE("revanced_change_start_page", STRING, "", true),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE, true),
     ENABLE_GRADIENT_LOADING_SCREEN("revanced_enable_gradient_loading_screen", BOOLEAN, FALSE, true),
     ENABLE_MUSIC_SEARCH("revanced_enable_music_search", BOOLEAN, TRUE, true),
