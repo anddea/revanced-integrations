@@ -90,7 +90,6 @@ public final class AdsFilter extends Filter {
 
         final StringFilterGroup viewProducts = new StringFilterGroup(
                 SettingsEnum.HIDE_VIEW_PRODUCTS,
-                "expandable_product_grid",
                 "product_item",
                 "products_in_video"
         );
