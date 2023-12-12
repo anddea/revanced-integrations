@@ -9,6 +9,13 @@ import app.revanced.music.settings.SettingsEnum;
 @SuppressWarnings("unused")
 public class GeneralPatch {
 
+    public static String changeStartPage(final String browseId) {
+        if (!browseId.equals("FEmusic_home"))
+            return browseId;
+
+        return SettingsEnum.CHANGE_START_PAGE.getString();
+    }
+
     public static boolean disableAutoCaptions(boolean original) {
         return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() || original;
     }
@@ -48,12 +55,5 @@ public class GeneralPatch {
 
     public static boolean hideNewPlaylistButton() {
         return SettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
-    }
-
-    public static String setStartPage(final String browseId) {
-        if (!browseId.equals("FEmusic_home"))
-            return browseId;
-
-        return SettingsEnum.START_PAGE.getString();
     }
 }

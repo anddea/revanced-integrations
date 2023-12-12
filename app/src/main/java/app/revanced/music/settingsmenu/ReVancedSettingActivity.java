@@ -12,6 +12,9 @@ import java.util.Objects;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
 
+/**
+ * @noinspection ALL
+ */
 public class ReVancedSettingActivity {
     @SuppressLint("StaticFieldLeak")
     private static Activity activity;

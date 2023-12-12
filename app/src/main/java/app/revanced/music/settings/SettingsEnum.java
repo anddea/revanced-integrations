@@ -86,6 +86,7 @@ public enum SettingsEnum {
 
 
     // General
+    CHANGE_START_PAGE("revanced_change_start_page", STRING, "FEmusic_home", true, 1),
     CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
     CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true, 1),
     DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE),
@@ -100,7 +101,6 @@ public enum SettingsEnum {
     HIDE_HISTORY_BUTTON("revanced_hide_history_button", BOOLEAN, FALSE),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, FALSE),
     HIDE_PLAYLIST_CARD("revanced_hide_playlist_card", BOOLEAN, FALSE, true),
-    START_PAGE("revanced_start_page", STRING, "FEmusic_home", true, 1),
 
 
     // Misc

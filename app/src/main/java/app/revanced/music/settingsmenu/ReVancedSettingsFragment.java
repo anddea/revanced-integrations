@@ -41,6 +41,9 @@ import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.ReVancedHelper;
 import app.revanced.music.utils.ReVancedUtils;
 
+/**
+ * @noinspection ALL
+ */
 public class ReVancedSettingsFragment extends PreferenceFragment {
 
     private static final String IMPORT_EXPORT_SETTINGS_ENTRY_KEY = "revanced_extended_settings_import_export_entry";
@@ -103,6 +106,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             final SettingsEnum settings = Objects.requireNonNull(SettingsEnum.settingFromPath(dataString));
 
             switch (settings) {
+                case CHANGE_START_PAGE -> ListDialogBuilder.listDialogBuilder(settings, 2);
                 case CUSTOM_FILTER_STRINGS, HIDE_ACCOUNT_MENU_FILTER_STRINGS ->
                         EditTextDialogBuilder.editTextDialogBuilder(settings, str("revanced_custom_filter_strings_summary"));
                 case CUSTOM_PLAYBACK_SPEEDS ->
@@ -112,7 +116,6 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 case SB_API_URL -> SponsorBlockEditTextDialogBuilder.editTextDialogBuilder();
                 case SETTINGS_IMPORT_EXPORT -> importExportListDialogBuilder();
                 case SPOOF_APP_VERSION_TARGET -> ListDialogBuilder.listDialogBuilder(settings, 1);
-                case START_PAGE -> ListDialogBuilder.listDialogBuilder(settings, 2);
                 default ->
                         LogHelper.printDebug(() -> "Failed to find the right value: " + dataString);
             }
