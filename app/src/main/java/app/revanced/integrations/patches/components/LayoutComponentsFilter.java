@@ -3,30 +3,47 @@ package app.revanced.integrations.patches.components;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.utils.StringTrieSearch;
 
 /**
  * @noinspection rawtypes
  */
 @SuppressWarnings("unused")
 public final class LayoutComponentsFilter extends Filter {
-    private final StringTrieSearch exceptions = new StringTrieSearch();
-    private final CustomFilterGroup custom;
+    private static final ByteArrayAsStringFilterGroup lowViewsVideoIdentifier =
+            new ByteArrayAsStringFilterGroup(
+                    SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
+                    "g-highZ"
+            );
 
-    private final StringFilterGroup notifyMe;
+    private final StringFilterGroup communityPosts;
+    private final StringFilterGroupList communityPostsGroupList = new StringFilterGroupList();
+    private final StringFilterGroup videoWithLowLevelView;
 
     public LayoutComponentsFilter() {
-        exceptions.addPatterns(
-                "related_video_with_context",
-                "comment_thread", // skip blocking anything in the comments
-                "|comment.", // skip blocking anything in the comments replies
-                "library_recent_shelf"
+        // Identifiers.
+
+        final StringFilterGroup graySeparator = new StringFilterGroup(
+                SettingsEnum.HIDE_GRAY_SEPARATOR,
+                "cell_divider"
         );
 
-        custom = new CustomFilterGroup(
-                SettingsEnum.CUSTOM_FILTER,
-                SettingsEnum.CUSTOM_FILTER_STRINGS
+        final StringFilterGroup chipsShelf = new StringFilterGroup(
+                SettingsEnum.HIDE_CHIPS_SHELF,
+                "chips_shelf"
         );
+
+        final StringFilterGroup searchBar = new StringFilterGroup(
+                SettingsEnum.HIDE_SEARCH_BAR,
+                "search_bar_entry_point"
+        );
+
+        identifierFilterGroupList.addAll(
+                chipsShelf,
+                graySeparator,
+                searchBar
+        );
+
+        // Paths.
 
         final StringFilterGroup albumCard = new StringFilterGroup(
                 SettingsEnum.HIDE_ALBUM_CARDS,
@@ -39,14 +56,32 @@ public final class LayoutComponentsFilter extends Filter {
                 "multi_feed_icon_button"
         );
 
-        final StringFilterGroup chipsShelf = new StringFilterGroup(
-                SettingsEnum.HIDE_CHIPS_SHELF,
-                "chips_shelf"
+        communityPosts = new StringFilterGroup(
+                null,
+                "post_base_wrapper"
         );
 
-        final StringFilterGroup graySeparator = new StringFilterGroup(
-                SettingsEnum.HIDE_GRAY_SEPARATOR,
-                "cell_divider"
+        final StringFilterGroup customFilter = new CustomFilterGroup(
+                SettingsEnum.CUSTOM_FILTER,
+                SettingsEnum.CUSTOM_FILTER_STRINGS
+        );
+
+        final StringFilterGroup expandableMetadata = new StringFilterGroup(
+                SettingsEnum.HIDE_EXPANDABLE_CHIP,
+                "inline_expander"
+        );
+
+        final StringFilterGroup feedSurvey = new StringFilterGroup(
+                SettingsEnum.HIDE_FEED_SURVEY,
+                "feed_nudge",
+                "infeed_survey",
+                "in_feed_survey",
+                "slimline_survey"
+        );
+
+        final StringFilterGroup grayDescription = new StringFilterGroup(
+                SettingsEnum.HIDE_GRAY_DESCRIPTION,
+                "endorsement_header_footer"
         );
 
         final StringFilterGroup infoPanel = new StringFilterGroup(
@@ -81,14 +116,9 @@ public final class LayoutComponentsFilter extends Filter {
                 "offer_module"
         );
 
-        notifyMe = new StringFilterGroup(
+        final StringFilterGroup notifyMe = new StringFilterGroup(
                 SettingsEnum.HIDE_NOTIFY_ME_BUTTON,
                 "set_reminder_button"
-        );
-
-        final StringFilterGroup searchBar = new StringFilterGroup(
-                SettingsEnum.HIDE_SEARCH_BAR,
-                "search_bar_entry_point"
         );
 
         final StringFilterGroup startTrial = new StringFilterGroup(
@@ -102,10 +132,25 @@ public final class LayoutComponentsFilter extends Filter {
                 "ticket_shelf"
         );
 
+        final StringFilterGroup timedReactions = new StringFilterGroup(
+                SettingsEnum.HIDE_TIMED_REACTIONS,
+                "emoji_control_panel",
+                "timed_reaction"
+        );
+
+        videoWithLowLevelView = new StringFilterGroup(
+                null,
+                "home_video_with_context.eml"
+        );
+
         pathFilterGroupList.addAll(
                 albumCard,
                 audioTrackButton,
-                custom,
+                communityPosts,
+                customFilter,
+                expandableMetadata,
+                feedSurvey,
+                grayDescription,
                 infoPanel,
                 joinMembership,
                 latestPosts,
@@ -113,26 +158,31 @@ public final class LayoutComponentsFilter extends Filter {
                 movieShelf,
                 notifyMe,
                 startTrial,
-                ticketShelf
+                ticketShelf,
+                timedReactions,
+                videoWithLowLevelView
         );
 
-        identifierFilterGroupList.addAll(
-                chipsShelf,
-                graySeparator,
-                searchBar
+        communityPostsGroupList.addAll(
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_COMMUNITY_POSTS_HOME,
+                        "horizontalCollectionSwipeProtector=null"
+                ),
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS,
+                        "heightConstraint=null"
+                )
         );
     }
 
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        // The groups are excluded from the filter due to the exceptions list below.
-        // Filter them separately here.
-        if (matchedGroup == notifyMe)
-            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
-
-        if (matchedGroup != custom && exceptions.matches(path))
-            return false; // Exceptions are not filtered.
+        if (matchedGroup == videoWithLowLevelView) {
+            return lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered();
+        } else if (matchedGroup == communityPosts) {
+            return communityPostsGroupList.check(allValue).isFiltered();
+        }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
