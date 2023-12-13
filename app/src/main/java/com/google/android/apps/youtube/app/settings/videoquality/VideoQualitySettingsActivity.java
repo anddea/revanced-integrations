@@ -39,22 +39,19 @@ public class VideoQualitySettingsActivity extends Activity {
 
             PreferenceFragment fragment;
             String toolbarTitleResourceName;
-            String dataString = getIntent().getDataString();
+            String dataString = Objects.requireNonNull(getIntent().getDataString());
             switch (dataString) {
                 case "sponsorblock_settings" -> {
                     fragment = new SponsorBlockSettingsFragment();
                     toolbarTitleResourceName = "revanced_sponsorblock_settings_title";
-                    break;
                 }
                 case "ryd_settings" -> {
                     fragment = new ReturnYouTubeDislikeSettingsFragment();
                     toolbarTitleResourceName = "revanced_ryd_settings_title";
-                    break;
                 }
                 case "extended_settings" -> {
                     fragment = new ReVancedSettingsFragment();
                     toolbarTitleResourceName = "revanced_extended_settings_title";
-                    break;
                 }
                 default -> {
                     LogHelper.printException(() -> "Unknown setting: " + dataString);

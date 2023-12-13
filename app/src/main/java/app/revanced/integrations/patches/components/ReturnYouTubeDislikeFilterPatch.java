@@ -9,12 +9,22 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import app.revanced.integrations.patches.utils.ReturnYouTubeDislikePatch;
+import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.TrieSearch;
 
 /**
- * @noinspection rawtypes
+ * Searches for video id's in the proto buffer of Shorts dislike.
+ * <p>
+ * Because multiple litho dislike spans are created in the background
+ * (and also anytime litho refreshes the components, which is somewhat arbitrary),
+ * that makes the value of {@link VideoInformation#getVideoId()} and {@link VideoInformation#getPlayerResponseVideoId()}
+ * unreliable to determine which video id a Shorts litho span belongs to.
+ * <p>
+ * But the correct video id does appear in the protobuffer just before a Shorts litho span is created.
+ * <p>
+ * Once a way to asynchronously update litho text is found, this strategy will no longer be needed.
  */
 @SuppressWarnings("unused")
 public final class ReturnYouTubeDislikeFilterPatch extends Filter {
@@ -70,7 +80,7 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
     }
 
     /**
-     * This could use {@link TrieSearch}, but since the video ids are constantly changing
+     * This could use {@link TrieSearch}, but since the patterns are constantly changing
      * the overhead of updating the Trie might negate the search performance gain.
      */
     private static boolean byteArrayContainsString(@NonNull byte[] array, @NonNull String text) {
@@ -89,6 +99,9 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
         return false;
     }
 
+    /**
+     * @noinspection rawtypes
+     */
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {

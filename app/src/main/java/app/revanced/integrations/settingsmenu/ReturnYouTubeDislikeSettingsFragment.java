@@ -17,6 +17,7 @@ import app.revanced.integrations.patches.utils.ReturnYouTubeDislikePatch;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.settings.SettingsEnum;
 
+@SuppressWarnings("deprecation")
 public class ReturnYouTubeDislikeSettingsFragment extends PreferenceFragment {
 
     /**
