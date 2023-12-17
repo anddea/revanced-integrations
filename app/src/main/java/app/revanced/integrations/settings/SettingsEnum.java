@@ -644,8 +644,6 @@ public enum SettingsEnum {
                     INITIALIZED,
                     SB_HIDE_EXPORT_WARNING,
                     SB_LAST_VIP_CHECK,
-                    SB_LOCAL_TIME_SAVED_MILLISECONDS,
-                    SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS,
                     SB_SEEN_GUIDELINES -> false;
             default -> true;
         };
