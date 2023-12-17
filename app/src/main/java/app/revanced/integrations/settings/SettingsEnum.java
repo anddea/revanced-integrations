@@ -59,6 +59,7 @@ public enum SettingsEnum {
 
 
     // Bottom Player
+    ENABLE_BOTTOM_PLAYER_GESTURES("revanced_enable_bottom_player_gestures", BOOLEAN, TRUE, true),
 
     // Channel Bar
     HIDE_JOIN_BUTTON("revanced_hide_join_button", BOOLEAN, TRUE),
