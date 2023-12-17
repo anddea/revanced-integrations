@@ -50,6 +50,11 @@ final class CommentsFilter extends Filter {
                 "|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|"
         );
 
+        final StringFilterGroup membersBanner = new StringFilterGroup(
+                SettingsEnum.HIDE_COMMENTS_BY_MEMBERS,
+                "sponsorships_comments"
+        );
+
         final StringFilterGroup previewComment = new StringFilterGroup(
                 SettingsEnum.HIDE_PREVIEW_COMMENT,
                 "|carousel_item",
@@ -70,6 +75,7 @@ final class CommentsFilter extends Filter {
                 commentsPreviewDots,
                 createShorts,
                 emojiPicker,
+                membersBanner,
                 previewComment,
                 thanks
         );

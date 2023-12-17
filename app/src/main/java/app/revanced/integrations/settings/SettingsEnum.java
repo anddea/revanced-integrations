@@ -79,6 +79,7 @@ public enum SettingsEnum {
 
     // Comments
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
+    HIDE_COMMENTS_BY_MEMBERS("revanced_hide_comments_by_members", BOOLEAN, FALSE),
     HIDE_COMMENTS_SECTION("revanced_hide_comments_section", BOOLEAN, FALSE),
     HIDE_COMMENTS_THANKS_BUTTON("revanced_hide_comments_thanks_button", BOOLEAN, FALSE),
     HIDE_CREATE_SHORTS_BUTTON("revanced_hide_create_shorts_button", BOOLEAN, FALSE),
