@@ -93,16 +93,14 @@ final class ButtonsFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (!path.startsWith(VIDEO_ACTION_BAR_PATH)) {
+            return false;
+        }
         if (matchedGroup == actionBarRule && !isEveryFilterGroupEnabled()) {
             return false;
         }
         if (matchedGroup == bufferFilterPathRule) {
-            if (!path.startsWith(VIDEO_ACTION_BAR_PATH)) {
-                return false; // Some other unknown button and not part of the player action buttons.
-            }
-            if (!bufferButtonsGroupList.check(protobufBufferArray).isFiltered()) {
-                return false; // Action button is not set to hide.
-            }
+            return bufferButtonsGroupList.check(protobufBufferArray).isFiltered();
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
