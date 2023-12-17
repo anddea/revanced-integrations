@@ -191,7 +191,7 @@ public enum SettingsEnum {
     HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", BOOLEAN, FALSE),
     HIDE_SEARCH_BAR("revanced_hide_search_bar", BOOLEAN, FALSE),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
-    HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
+    HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, TRUE),
     // Experimental Flags
     HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
     HIDE_SUGGESTIONS_SHELF_METHOD("revanced_hide_suggestions_shelf_method", BOOLEAN, FALSE, true),
