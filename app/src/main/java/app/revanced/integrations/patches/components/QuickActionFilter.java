@@ -30,6 +30,18 @@ final class QuickActionFilter extends Filter {
                         "dislike_button"
                 ),
                 new StringFilterGroup(
+                        SettingsEnum.HIDE_QUICK_ACTIONS_COMMENT_BUTTON,
+                        "comments_entry_point_button"
+                ),
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON,
+                        "|save_to_playlist_button"
+                ),
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON,
+                        "|overflow_menu_button"
+                ),
+                new StringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
                         "fullscreen_related_videos"
                 ),
@@ -37,18 +49,6 @@ final class QuickActionFilter extends Filter {
         );
 
         bufferButtonsGroupList.addAll(
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_QUICK_ACTIONS_LIKE_BUTTON,
-                        "yt_outline_thumb_up"
-                ),
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_QUICK_ACTIONS_DISLIKE_BUTTON,
-                        "yt_outline_thumb_down"
-                ),
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_QUICK_ACTIONS_COMMENT_BUTTON,
-                        "yt_outline_message_bubble_right"
-                ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON,
                         "yt_outline_message_bubble_overlap"
@@ -62,16 +62,8 @@ final class QuickActionFilter extends Filter {
                         "yt_outline_list_play_arrow"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON,
-                        "yt_outline_library_add"
-                ),
-                new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON,
                         "yt_outline_share"
-                ),
-                new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_QUICK_ACTIONS_MORE_BUTTON,
-                        "yt_outline_overflow_horizontal"
                 )
         );
     }
@@ -92,15 +84,11 @@ final class QuickActionFilter extends Filter {
         if (!path.startsWith(QUICK_ACTION_PATH)) {
             return false;
         }
-
         if (matchedGroup == quickActionRule && !isEveryFilterGroupEnabled()) {
             return false;
         }
-
         if (matchedGroup == bufferFilterPathRule) {
-            if (!bufferButtonsGroupList.check(protobufBufferArray).isFiltered()) {
-                return false;
-            }
+            return bufferButtonsGroupList.check(protobufBufferArray).isFiltered();
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
