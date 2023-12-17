@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
+import app.revanced.integrations.patches.components.ReturnYouTubeDislikeFilterPatch;
 import app.revanced.integrations.patches.video.VideoInformation;
 import app.revanced.integrations.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.settings.SettingsEnum;
@@ -88,7 +89,7 @@ public class ReturnYouTubeDislikePatch {
     private static volatile ReturnYouTubeDislike lastLithoShortsVideoData;
     private static volatile boolean lastPlayerResponseWasShort;
     /**
-     * Because the litho Shorts spans are created after ReturnYouTubeDislikeFilterPatch
+     * Because the litho Shorts spans are created after {@link ReturnYouTubeDislikeFilterPatch}
      * detects the video ids, after the user votes the litho will update
      * but {@link #lastLithoShortsVideoData} is not the correct data to use.
      * If this is true, then instead use {@link #currentVideoData}.
@@ -623,7 +624,7 @@ public class ReturnYouTubeDislikePatch {
                 return;
             }
 
-            final boolean videoIdIsShort = VideoInformation.lastVideoIdIsShort();
+            final boolean videoIdIsShort = VideoInformation.lastPlayerResponseIsShort();
             // Shorts shelf in home and subscription feed causes player response hook to be called,
             // and the 'is opening/playing' parameter will be false.
             // This hook will be called again when the Short is actually opened.
