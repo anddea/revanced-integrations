@@ -69,11 +69,11 @@ final class QuickActionFilter extends Filter {
     }
 
     private boolean isEveryFilterGroupEnabled() {
-        for (FilterGroup rule : pathFilterGroupList)
-            if (!rule.isEnabled()) return false;
+        for (StringFilterGroup group : pathFilterGroupList)
+            if (!group.isEnabled()) return false;
 
-        for (FilterGroup rule : bufferButtonsGroupList)
-            if (!rule.isEnabled()) return false;
+        for (ByteArrayFilterGroup group : bufferButtonsGroupList)
+            if (!group.isEnabled()) return false;
 
         return true;
     }

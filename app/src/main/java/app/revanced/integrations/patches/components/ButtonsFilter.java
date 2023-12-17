@@ -31,7 +31,7 @@ final class ButtonsFilter extends Filter {
         pathFilterGroupList.addAll(
                 new StringFilterGroup(
                         SettingsEnum.HIDE_LIKE_DISLIKE_BUTTON,
-                        "|CellType|ContainerType|segmented_like_dislike_button"
+                        "|segmented_like_dislike_button"
                 ),
                 new StringFilterGroup(
                         SettingsEnum.HIDE_DOWNLOAD_BUTTON,
@@ -81,11 +81,11 @@ final class ButtonsFilter extends Filter {
     }
 
     private boolean isEveryFilterGroupEnabled() {
-        for (FilterGroup rule : pathFilterGroupList)
-            if (!rule.isEnabled()) return false;
+        for (StringFilterGroup group : pathFilterGroupList)
+            if (!group.isEnabled()) return false;
 
-        for (FilterGroup rule : bufferButtonsGroupList)
-            if (!rule.isEnabled()) return false;
+        for (ByteArrayFilterGroup group : bufferButtonsGroupList)
+            if (!group.isEnabled()) return false;
 
         return true;
     }
