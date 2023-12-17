@@ -119,17 +119,18 @@ public final class AdsFilter extends Filter {
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
 
-        if (matchedGroup == interstitialBanner && path.contains("|ImageType|")) {
-            // If you hide the entire banner, the layout is not loaded,
-            // So only the empty gray screen is displayed.
-            // https://github.com/ReVanced/revanced-integrations/pull/355
+        if (matchedGroup == interstitialBanner) {
+            if (path.contains("|ImageType|")) {
+                // If you hide the entire banner, the layout is not loaded,
+                // So only the empty gray screen is displayed.
+                // https://github.com/ReVanced/revanced-integrations/pull/355
 
-            // Therefore, instead of hiding the entire banner,
-            // If the banner is detected, just press the back button.
-            InterstitialBannerPatch.onBackPressed();
+                // Therefore, instead of hiding the entire banner, just press the back button.
+                InterstitialBannerPatch.onBackPressed();
+            }
             return false;
+        } else {
+            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
         }
-
-        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }
