@@ -2,11 +2,18 @@ package app.revanced.integrations.patches.components;
 
 import android.view.View;
 
+import androidx.annotation.Nullable;
+
+import app.revanced.integrations.patches.utils.InterstitialBannerPatch;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+/**
+ * @noinspection rawtypes
+ */
 @SuppressWarnings("unused")
 public final class AdsFilter extends Filter {
+    private final StringFilterGroup interstitialBanner;
 
     public AdsFilter() {
 
@@ -18,6 +25,11 @@ public final class AdsFilter extends Filter {
         final StringFilterGroup imageShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_IMAGE_SHELF,
                 "image_shelf"
+        );
+
+        interstitialBanner = new StringFilterGroup(
+                SettingsEnum.CLOSE_INTERSTITIAL_ADS,
+                "_interstitial"
         );
 
         final StringFilterGroup merchandise = new StringFilterGroup(
@@ -79,6 +91,7 @@ public final class AdsFilter extends Filter {
         pathFilterGroupList.addAll(
                 generalAds,
                 imageShelf,
+                interstitialBanner,
                 merchandise,
                 paidContent,
                 selfSponsor,
@@ -100,5 +113,23 @@ public final class AdsFilter extends Filter {
 
     public static boolean hideGetPremium() {
         return SettingsEnum.HIDE_GET_PREMIUM.getBoolean();
+    }
+
+    @Override
+    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+
+        if (matchedGroup == interstitialBanner && path.contains("|ImageType|")) {
+            // If you hide the entire banner, the layout is not loaded,
+            // So only the empty gray screen is displayed.
+            // https://github.com/ReVanced/revanced-integrations/pull/355
+
+            // Therefore, instead of hiding the entire banner,
+            // If the banner is detected, just press the back button.
+            InterstitialBannerPatch.onBackPressed();
+            return false;
+        }
+
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }

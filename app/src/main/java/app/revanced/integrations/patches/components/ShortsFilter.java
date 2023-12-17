@@ -47,8 +47,8 @@ public final class ShortsFilter extends Filter {
         );
 
         identifierFilterGroupList.addAll(
-                shorts,
                 shelfHeader,
+                shorts,
                 thanksButton
         );
 
@@ -82,6 +82,18 @@ public final class ShortsFilter extends Filter {
                 videoActionButton
         );
 
+        final ByteArrayAsStringFilterGroup shortsDislikeButton =
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_PLAYER_DISLIKE_BUTTON,
+                        "reel_dislike_button"
+                );
+
+        final ByteArrayAsStringFilterGroup shortsLikeButton =
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON,
+                        "reel_like_button"
+                );
+
         final ByteArrayAsStringFilterGroup shortsCommentButton =
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON,
@@ -102,6 +114,8 @@ public final class ShortsFilter extends Filter {
 
         videoActionButtonGroupList.addAll(
                 shortsCommentButton,
+                shortsDislikeButton,
+                shortsLikeButton,
                 shortsRemixButton,
                 shortsShareButton
         );
@@ -114,26 +128,21 @@ public final class ShortsFilter extends Filter {
             return false;
 
         if (matchedList == pathFilterGroupList) {
-            // Always filter if matched.
-            if (matchedGroup == infoPanel)
+            if (matchedGroup == infoPanel) {
+                // Always filter if matched.
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
-
-            // Video action buttons have the same path.
-            if (matchedGroup == videoActionButton) {
-                if (videoActionButtonGroupList.check(protobufBufferArray).isFiltered())
-                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
-                return false;
+            } else if (matchedGroup == videoActionButton) {
+                // Video action buttons have the same path.
+                return videoActionButtonGroupList.check(protobufBufferArray).isFiltered();
+            } else {
+                // Filter other path groups from pathFilterGroupList, only when reelChannelBar is visible
+                // to avoid false positives.
+                return path.startsWith(REEL_CHANNEL_BAR_PATH);
             }
-
-            // Filter other path groups from pathFilterGroupList, only when reelChannelBar is visible
-            // to avoid false positives.
-            if (!path.startsWith(REEL_CHANNEL_BAR_PATH))
-                return false;
         } else if (matchedGroup == shelfHeader) {
             // Check ConversationContext to not hide shelf header in channel profile
             // This value does not exist in the shelf header in the channel profile
-            if (!allValue.contains(SHORTS_SHELF_HEADER_CONVERSION_CONTEXT))
-                return false;
+            return allValue.contains(SHORTS_SHELF_HEADER_CONVERSION_CONTEXT);
         }
 
         // Super class handles logging.
