@@ -229,6 +229,11 @@ public class ReVancedUtils {
         }
     }
 
+    public static boolean isNetworkNotConnected() {
+        final NetworkType networkType = getNetworkType();
+        return networkType == NetworkType.NONE;
+    }
+
     @SuppressLint("MissingPermission") // permission already included in YouTube
     public static NetworkType getNetworkType() {
         if (context == null || !(context.getSystemService(Context.CONNECTIVITY_SERVICE) instanceof ConnectivityManager cm))

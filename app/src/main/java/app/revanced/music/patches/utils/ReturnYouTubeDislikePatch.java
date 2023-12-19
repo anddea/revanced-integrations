@@ -7,10 +7,13 @@ import android.text.Spanned;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 import app.revanced.music.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.music.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
 import app.revanced.music.settings.SettingsEnum;
 import app.revanced.music.utils.LogHelper;
+import app.revanced.music.utils.ReVancedUtils;
 
 /**
  * Handles all interaction of UI patch components.
@@ -34,15 +37,24 @@ public class ReturnYouTubeDislikePatch {
     /**
      * Injection point.
      */
-    public static void newVideoLoaded(@NonNull String videoId) {
+    public static void newVideoLoaded(@Nullable String videoId) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
-
-            if (!videoId.equals(currentVideoId)) {
-                currentVideoId = videoId;
-
-                ReturnYouTubeDislike.newVideoLoaded(videoId);
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+                return;
             }
+            if (videoId == null || videoId.isEmpty()) {
+                return;
+            }
+            if (Objects.equals(currentVideoId, videoId)) {
+                return;
+            }
+            if (ReVancedUtils.isNetworkNotConnected()) {
+                LogHelper.printDebug(() -> "Network not connected, ignoring video");
+                return;
+            }
+
+            currentVideoId = videoId;
+            ReturnYouTubeDislike.newVideoLoaded(videoId);
         } catch (Exception ex) {
             LogHelper.printException(() -> "newVideoLoaded failure", ex);
         }

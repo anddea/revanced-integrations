@@ -72,6 +72,7 @@ public class SegmentPlaybackController {
      * Clears all downloaded data.
      */
     private static void clearData() {
+        SponsorBlockSettings.initialize();
         currentVideoId = null;
         segments = null;
         segmentCurrentlyPlaying = null;
@@ -85,17 +86,23 @@ public class SegmentPlaybackController {
     /**
      * Injection point.
      */
-    public static void setVideoId(@NonNull String videoId) {
+    public static void setVideoId(@Nullable String videoId) {
         try {
             if (!SettingsEnum.SB_ENABLED.getBoolean()) {
+                return;
+            }
+            if (ReVancedUtils.isNetworkNotConnected()) {
+                LogHelper.printDebug(() -> "Network not connected, ignoring video");
+                return;
+            }
+            if (videoId == null || videoId.isEmpty()) {
                 return;
             }
             if (Objects.equals(currentVideoId, videoId)) {
                 return;
             }
-            SponsorBlockSettings.initialize();
-            clearData();
 
+            clearData();
             currentVideoId = videoId;
             LogHelper.printDebug(() -> "setCurrentVideoId: " + videoId);
 

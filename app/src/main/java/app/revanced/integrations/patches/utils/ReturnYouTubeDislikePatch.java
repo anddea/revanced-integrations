@@ -620,6 +620,10 @@ public class ReturnYouTubeDislikePatch {
             if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
                 return;
             }
+            if (ReVancedUtils.isNetworkNotConnected()) {
+                LogHelper.printDebug(() -> "Network not connected, ignoring video");
+                return;
+            }
             if (videoId.equals(lastPrefetchedVideoId)) {
                 return;
             }
@@ -661,10 +665,17 @@ public class ReturnYouTubeDislikePatch {
      */
     public static void newVideoLoaded(@NonNull String videoId) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) return;
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+                return;
+            }
             Objects.requireNonNull(videoId);
 
-            PlayerType currentPlayerType = PlayerType.getCurrent();
+            if (ReVancedUtils.isNetworkNotConnected()) {
+                LogHelper.printDebug(() -> "Network not connected, ignoring video");
+                return;
+            }
+
+            final PlayerType currentPlayerType = PlayerType.getCurrent();
             final boolean isNoneHiddenOrSlidingMinimized = currentPlayerType.isNoneHiddenOrSlidingMinimized();
             if (isNoneHiddenOrSlidingMinimized && !SettingsEnum.RYD_SHORTS.getBoolean()) {
                 // Must clear here, otherwise the wrong data can be used for a minimized regular video.

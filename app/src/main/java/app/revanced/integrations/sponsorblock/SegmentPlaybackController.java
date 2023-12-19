@@ -36,6 +36,7 @@ import app.revanced.integrations.utils.VideoHelpers;
  * <p>
  * Class is not thread safe. All methods must be called on the main thread unless otherwise specified.
  */
+@SuppressWarnings("unused")
 public class SegmentPlaybackController {
     /**
      * Length of time to show a skip button for a highlight segment,
@@ -202,19 +203,22 @@ public class SegmentPlaybackController {
      */
     public static void setCurrentVideoId(@Nullable String videoId) {
         try {
-            if (Objects.equals(currentVideoId, videoId)) {
-                return;
-            }
-            clearData();
-            if (videoId == null || !SettingsEnum.SB_ENABLED.getBoolean()) {
-                return;
-            }
-            if (PlayerType.getCurrent().isNoneOrHidden()) {
-                LogHelper.printDebug(() -> "ignoring Short");
+            if (!SettingsEnum.SB_ENABLED.getBoolean()) {
                 return;
             }
             if (ReVancedUtils.isNetworkNotConnected()) {
                 LogHelper.printDebug(() -> "Network not connected, ignoring video");
+                return;
+            }
+            if (videoId == null || videoId.isEmpty()) {
+                return;
+            }
+            if (Objects.equals(currentVideoId, videoId)) {
+                return;
+            }
+            clearData();
+            if (PlayerType.getCurrent().isNoneOrHidden()) {
+                LogHelper.printDebug(() -> "ignoring Short");
                 return;
             }
 

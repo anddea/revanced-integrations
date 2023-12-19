@@ -1,6 +1,7 @@
 package app.revanced.music.patches.video;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -58,11 +59,15 @@ public final class VideoInformation {
      *
      * @param newlyLoadedVideoId id of the current video
      */
-    public static void setVideoId(@NonNull String newlyLoadedVideoId) {
-        if (!videoId.equals(newlyLoadedVideoId)) {
-            LogHelper.printDebug(() -> "New video id: " + newlyLoadedVideoId);
-            videoId = newlyLoadedVideoId;
+    public static void setVideoId(@Nullable String newlyLoadedVideoId) {
+        if (newlyLoadedVideoId == null) {
+            return;
         }
+        if (Objects.equals(newlyLoadedVideoId, videoId)) {
+            return;
+        }
+        LogHelper.printDebug(() -> "New video id: " + newlyLoadedVideoId);
+        videoId = newlyLoadedVideoId;
     }
 
     /**
