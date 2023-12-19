@@ -1,73 +1,74 @@
 package app.revanced.music.patches.actionbar;
 
-import static app.revanced.music.utils.StringRef.str;
-
 import android.view.View;
-import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 
 import app.revanced.music.settings.SettingsEnum;
-import app.revanced.music.utils.LogHelper;
 import app.revanced.music.utils.VideoHelpers;
 
 @SuppressWarnings("unused")
 public class ActionBarPatch {
 
+    @NonNull
+    private static String buttonType = "";
+
     public static boolean hideActionBarLabel() {
-        return SettingsEnum.HIDE_ACTION_BAR_LABEL.getBoolean();
+        return SettingsEnum.HIDE_ACTION_BUTTON_LABEL.getBoolean();
     }
 
-    private static void hideRadioButton(ViewGroup viewGroup, int childCount) {
-        if (!SettingsEnum.HIDE_ACTION_BAR_RADIO.getBoolean()) {
+    public static boolean hideActionButton() {
+        for (ActionButton actionButton : ActionButton.values())
+            if (actionButton.enabled && actionButton.name.equals(buttonType))
+                return true;
+
+        return false;
+    }
+
+    public static void hookDownloadButton(View view) {
+        if (!SettingsEnum.HOOK_ACTION_BUTTON_DOWNLOAD.getBoolean()) {
             return;
         }
-        View radioButton = viewGroup.getChildAt(childCount - 1);
 
-        if (radioButton != null) {
-            radioButton.setVisibility(View.GONE);
-        }
+        if (buttonType.equals(ActionButton.DOWNLOAD.name))
+            view.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
     }
 
-    public static void hookActionBar(ViewGroup viewGroup) {
-        viewGroup.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            try {
-                final int childCount = viewGroup.getChildCount();
-                if (childCount == 0)
-                    return;
+    public static void setButtonType(@NonNull Object obj) {
+        final String buttonType = obj.toString();
 
-                hookDownloadButton(viewGroup, childCount);
-                hideRadioButton(viewGroup, childCount);
-            } catch (Exception ex) {
-                LogHelper.printException(() -> "hookActionBar failure", ex);
-            }
-        });
+        for (ActionButton actionButton : ActionButton.values())
+            if (buttonType.contains(actionButton.identifier))
+                setButtonType(actionButton.name);
     }
 
-    private static void hookDownloadButton(ViewGroup viewGroup, int childCount) {
-        if (!SettingsEnum.HOOK_ACTION_BAR_DOWNLOAD.getBoolean()) {
+    public static void setButtonType(@NonNull String newButtonType) {
+        buttonType = newButtonType;
+    }
+
+    public static void setButtonTypeDownload(int type) {
+        if (type != 0)
             return;
-        }
-        int downloadButtonIndex = 3;
-        if (SettingsEnum.SPOOF_APP_VERSION.getBoolean() || childCount < 5) {
-            final String description = str("action_add_to_offline_songs");
-            downloadButtonIndex = -1;
-            for (int i = 0; i < childCount; i++) {
-                View childView = viewGroup.getChildAt(i);
-                if (childView != null) {
-                    String buttonDescription = childView.getContentDescription().toString();
-                    if (buttonDescription.contains(description)) {
-                        downloadButtonIndex = i;
-                        break;
-                    }
-                }
-            }
-            if (downloadButtonIndex == -1) {
-                return;
-            }
-        }
 
-        View downloadButton = viewGroup.getChildAt(downloadButtonIndex);
-        if (downloadButton != null) {
-            downloadButton.setOnClickListener(imageView -> VideoHelpers.downloadMusic(imageView.getContext()));
+        setButtonType(ActionButton.DOWNLOAD.name);
+    }
+
+    private enum ActionButton {
+        ADD_TO_PLAYLIST("ACTION_BUTTON_ADD_TO_PLAYLIST", "69487224", SettingsEnum.HIDE_ACTION_BUTTON_ADD_TO_PLAYLIST.getBoolean()),
+        COMMENT_DISABLED("ACTION_BUTTON_COMMENT", "76623563", SettingsEnum.HIDE_ACTION_BUTTON_COMMENT.getBoolean()),
+        COMMENT_ENABLED("ACTION_BUTTON_COMMENT", "138681778", SettingsEnum.HIDE_ACTION_BUTTON_COMMENT.getBoolean()),
+        DOWNLOAD("ACTION_BUTTON_DOWNLOAD", "73080600", SettingsEnum.HIDE_ACTION_BUTTON_DOWNLOAD.getBoolean()),
+        RADIO("ACTION_BUTTON_RADIO", "48687757", SettingsEnum.HIDE_ACTION_BUTTON_RADIO.getBoolean()),
+        SHARE("ACTION_BUTTON_SHARE", "90650344", SettingsEnum.HIDE_ACTION_BUTTON_SHARE.getBoolean());
+
+        private final String name;
+        private final String identifier;
+        private final boolean enabled;
+
+        ActionButton(String name, String identifier, boolean enabled) {
+            this.name = name;
+            this.identifier = identifier;
+            this.enabled = enabled;
         }
     }
 }
