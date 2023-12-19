@@ -26,6 +26,7 @@ import app.revanced.music.utils.VideoHelpers;
  * <p>
  * Class is not thread safe. All methods must be called on the main thread unless otherwise specified.
  */
+@SuppressWarnings("unused")
 public class SegmentPlaybackController {
     @Nullable
     private static String currentVideoId;
@@ -84,18 +85,8 @@ public class SegmentPlaybackController {
     /**
      * Injection point.
      */
-    public static void setCurrentVideoId(@Nullable String videoId) {
-        setCurrentVideoId(videoId, false);
-    }
-
-    /**
-     * Injection point.
-     */
-    public static void setCurrentVideoId(@Nullable String videoId, boolean isPlaying) {
+    public static void setVideoId(@NonNull String videoId) {
         try {
-            if (videoId == null || isPlaying)
-                return;
-
             if (!SettingsEnum.SB_ENABLED.getBoolean()) {
                 return;
             }
