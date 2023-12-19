@@ -87,12 +87,17 @@ public class VideoHelpers {
     @SuppressLint("IntentReset")
     public static void openInYouTube(@NonNull Context context) {
         AudioManager audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        final String videoId = VideoInformation.getVideoId();
+        if (videoId.isEmpty()) {
+            showToastShort(str("revanced_watch_on_youtube_warning"));
+            return;
+        }
 
         if (audioManager != null) {
             audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         }
 
-        String url = String.format("vnd.youtube://%s", VideoInformation.getVideoId());
+        String url = String.format("vnd.youtube://%s", videoId);
         if (SettingsEnum.REPLACE_FLYOUT_PANEL_DISMISS_QUEUE_CONTINUE_WATCH.getBoolean()) {
             long seconds = VideoInformation.getVideoTime() / 1000;
             url += String.format("?t=%s", seconds);
