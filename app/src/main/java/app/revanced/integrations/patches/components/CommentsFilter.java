@@ -65,7 +65,7 @@ final class CommentsFilter extends Filter {
 
         thanks = new StringFilterGroup(
                 SettingsEnum.HIDE_COMMENTS_THANKS_BUTTON,
-                "|ContainerType|ContainerType|ContainerType|super_thanks_button.eml"
+                "|super_thanks_button.eml"
         );
 
         identifierFilterGroupList.addAll(channelGuidelines);
@@ -88,11 +88,9 @@ final class CommentsFilter extends Filter {
             return false;
 
         if (matchedGroup == createShorts || matchedGroup == emojiPicker || matchedGroup == thanks) {
-            if (!path.startsWith(COMMENT_COMPOSER_PATH))
-                return false;
+            return path.startsWith(COMMENT_COMPOSER_PATH);
         } else if (matchedGroup == commentsPreviewDots) {
-            if (!path.startsWith(VIDEO_METADATA_CAROUSEL_PATH))
-                return false;
+            return path.startsWith(VIDEO_METADATA_CAROUSEL_PATH);
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
