@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.ReVancedHelper;
 
+@SuppressWarnings("unused")
 public class InitializationPatch {
 
     /**
@@ -49,10 +50,9 @@ public class InitializationPatch {
     }
 
     public static void setDeviceInformation(@NonNull Context context) {
+        ReVancedHelper.setPackageName(context);
         ReVancedHelper.setApplicationLabel(context);
         ReVancedHelper.setIsTablet(context);
-        ReVancedHelper.setPackageName(context);
-        ReVancedHelper.setVersionCode(context);
         ReVancedHelper.setVersionName(context);
     }
 }

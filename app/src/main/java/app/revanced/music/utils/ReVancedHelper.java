@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -26,7 +27,11 @@ public class ReVancedHelper {
     @Nullable
     private static PackageInfo getPackageInfo(@NonNull Context context) {
         try {
-            return getPackageManager(context).getPackageInfo(context.getPackageName(), 0);
+            final PackageManager packageManager = getPackageManager(context);
+            final String packageName = context.getPackageName();
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    ? packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+                    : packageManager.getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             LogHelper.printException(() -> "Failed to get package Info!" + e);
         }

@@ -16,8 +16,7 @@ public class ReVancedHelper {
     public static String applicationLabel = "ReVanced_Extended";
     public static boolean isTablet = false;
     public static String packageName = "app.rvx.android.youtube";
-    public static int appVersionCode = 1540478400; // 18.40.34
-    public static String appVersionName = "18.40.34";
+    public static String appVersionName = "18.45.43";
 
     private ReVancedHelper() {
     } // utility class
@@ -25,9 +24,11 @@ public class ReVancedHelper {
     @Nullable
     private static PackageInfo getPackageInfo(@NonNull Context context) {
         try {
+            final PackageManager packageManager = getPackageManager(context);
+            final String packageName = context.getPackageName();
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                    ? getPackageManager(context).getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
-                    : getPackageManager(context).getPackageInfo(packageName, 0);
+                    ? packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+                    : packageManager.getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             LogHelper.printException(() -> "Failed to get package Info!" + e);
         }
@@ -116,13 +117,6 @@ public class ReVancedHelper {
 
     public static void setPackageName(@NonNull Context context) {
         packageName = context.getPackageName();
-    }
-
-    public static void setVersionCode(@NonNull Context context) {
-        final PackageInfo packageInfo = getPackageInfo(context);
-        if (packageInfo != null) {
-            appVersionCode = packageInfo.versionCode;
-        }
     }
 
     public static void setVersionName(@NonNull Context context) {
