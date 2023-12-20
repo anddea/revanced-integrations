@@ -25,6 +25,7 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.settings.SettingsUtils;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedHelper;
+import app.revanced.integrations.utils.ResourceHelper;
 
 /**
  * @noinspection ALL
@@ -71,6 +72,8 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
         if (entryIndex >= 0) {
             listPreference.setValue(objectStringValue);
             objectStringValue = listPreference.getEntries()[entryIndex].toString();
+        } else {
+            objectStringValue = ResourceHelper.getResources().getString(android.R.string.unknownName);
         }
 
         if (shouldSetSummary) {
