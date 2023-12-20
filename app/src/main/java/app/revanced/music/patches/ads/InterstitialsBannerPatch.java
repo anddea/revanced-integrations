@@ -9,10 +9,15 @@ import app.revanced.music.settings.SettingsEnum;
 @SuppressWarnings("unused")
 public class InterstitialsBannerPatch {
 
+    public static boolean hideInterstitialsBanner(boolean original) {
+        return SettingsEnum.HIDE_INTERSTITIAL_ADS.getBoolean() || original;
+    }
+
     public static void hideInterstitialsBanner(View view) {
         hideViewBy0dpUnderCondition(
-                SettingsEnum.CLOSE_INTERSTITIAL_ADS.getBoolean(),
+                SettingsEnum.HIDE_INTERSTITIAL_ADS.getBoolean(),
                 view
         );
     }
+
 }
