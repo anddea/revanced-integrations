@@ -9,15 +9,21 @@ import app.revanced.integrations.settings.SettingsEnum;
  */
 @SuppressWarnings("unused")
 public final class LayoutComponentsFilter extends Filter {
+    private static final String ENDORSEMENT_HEADER_FOOTER_PATH = "endorsement_header_footer";
+    private static final ByteArrayAsStringFilterGroup grayDescriptionIdentifier =
+            new ByteArrayAsStringFilterGroup(
+                    SettingsEnum.HIDE_VIDEO_WITH_GRAY_DESCRIPTION,
+                    ENDORSEMENT_HEADER_FOOTER_PATH
+            );
     private static final ByteArrayAsStringFilterGroup lowViewsVideoIdentifier =
             new ByteArrayAsStringFilterGroup(
                     SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
                     "g-highZ"
             );
-
     private final StringFilterGroup communityPosts;
     private final StringFilterGroupList communityPostsGroupList = new StringFilterGroupList();
-    private final StringFilterGroup videoWithLowLevelView;
+    private final StringFilterGroup homeVideoWithContext;
+    private final StringFilterGroup searchVideoWithContext;
 
     public LayoutComponentsFilter() {
         // Identifiers.
@@ -81,7 +87,12 @@ public final class LayoutComponentsFilter extends Filter {
 
         final StringFilterGroup grayDescription = new StringFilterGroup(
                 SettingsEnum.HIDE_GRAY_DESCRIPTION,
-                "endorsement_header_footer"
+                ENDORSEMENT_HEADER_FOOTER_PATH
+        );
+
+        homeVideoWithContext = new StringFilterGroup(
+                SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
+                "home_video_with_context.eml"
         );
 
         final StringFilterGroup infoPanel = new StringFilterGroup(
@@ -121,6 +132,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "set_reminder_button"
         );
 
+        searchVideoWithContext = new StringFilterGroup(
+                SettingsEnum.HIDE_VIDEO_WITH_GRAY_DESCRIPTION,
+                "search_video_with_context.eml"
+        );
+
         final StringFilterGroup startTrial = new StringFilterGroup(
                 SettingsEnum.HIDE_START_TRIAL_BUTTON,
                 "channel_purchase_button"
@@ -138,11 +154,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "timed_reaction"
         );
 
-        videoWithLowLevelView = new StringFilterGroup(
-                null,
-                "home_video_with_context.eml"
-        );
-
         pathFilterGroupList.addAll(
                 albumCard,
                 audioTrackButton,
@@ -151,16 +162,17 @@ public final class LayoutComponentsFilter extends Filter {
                 expandableMetadata,
                 feedSurvey,
                 grayDescription,
+                homeVideoWithContext,
                 infoPanel,
                 joinMembership,
                 latestPosts,
                 medicalPanel,
                 movieShelf,
                 notifyMe,
+                searchVideoWithContext,
                 startTrial,
                 ticketShelf,
-                timedReactions,
-                videoWithLowLevelView
+                timedReactions
         );
 
         communityPostsGroupList.addAll(
@@ -178,8 +190,10 @@ public final class LayoutComponentsFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (matchedGroup == videoWithLowLevelView) {
+        if (matchedGroup == homeVideoWithContext) {
             return lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered();
+        } else if (matchedGroup == searchVideoWithContext) {
+            return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         } else if (matchedGroup == communityPosts) {
             return communityPostsGroupList.check(allValue).isFiltered();
         }
