@@ -4,10 +4,17 @@ import static app.revanced.music.utils.ReVancedUtils.hideViewBy0dpUnderCondition
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
+import java.util.Objects;
+
 import app.revanced.music.settings.SettingsEnum;
 
 @SuppressWarnings("unused")
 public class GeneralPatch {
+    @NonNull
+    private static String videoId = "";
+    private static boolean subtitlePrefetched = true;
 
     public static String changeStartPage(final String browseId) {
         if (!browseId.equals("FEmusic_home"))
@@ -17,7 +24,10 @@ public class GeneralPatch {
     }
 
     public static boolean disableAutoCaptions(boolean original) {
-        return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() || original;
+        if (!SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean())
+            return original;
+
+        return subtitlePrefetched;
     }
 
     public static boolean enableLandScapeMode(boolean original) {
@@ -55,5 +65,17 @@ public class GeneralPatch {
 
     public static boolean hideNewPlaylistButton() {
         return SettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
+    }
+
+    public static void newVideoStarted(@NonNull String newlyLoadedVideoId) {
+        if (Objects.equals(newlyLoadedVideoId, videoId)) {
+            return;
+        }
+        videoId = newlyLoadedVideoId;
+        subtitlePrefetched = false;
+    }
+
+    public static void prefetchSubtitleTrack() {
+        subtitlePrefetched = true;
     }
 }

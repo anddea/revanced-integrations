@@ -93,7 +93,7 @@ public enum SettingsEnum {
     CHANGE_START_PAGE("revanced_change_start_page", STRING, "FEmusic_home", true, 1),
     CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
     CUSTOM_FILTER_STRINGS("revanced_custom_filter_strings", STRING, "", true, 1),
-    DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE),
+    DISABLE_AUTO_CAPTIONS("revanced_disable_auto_captions", BOOLEAN, FALSE, true),
     ENABLE_LANDSCAPE_MODE("revanced_enable_landscape_mode", BOOLEAN, TRUE, true),
     ENABLE_OLD_STYLE_LIBRARY_SHELF("revanced_enable_old_style_library_shelf", BOOLEAN, FALSE, true),
     HIDE_BUTTON_SHELF("revanced_hide_button_shelf", BOOLEAN, FALSE, true),

@@ -86,16 +86,13 @@ public class SegmentPlaybackController {
     /**
      * Injection point.
      */
-    public static void setVideoId(@Nullable String videoId) {
+    public static void setVideoId(@NonNull String videoId) {
         try {
             if (!SettingsEnum.SB_ENABLED.getBoolean()) {
                 return;
             }
             if (ReVancedUtils.isNetworkNotConnected()) {
                 LogHelper.printDebug(() -> "Network not connected, ignoring video");
-                return;
-            }
-            if (videoId == null || videoId.isEmpty()) {
                 return;
             }
             if (Objects.equals(currentVideoId, videoId)) {
