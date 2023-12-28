@@ -54,8 +54,16 @@ public class PlayerPatch {
         return SettingsEnum.HIDE_AUTOPLAY_BUTTON.getBoolean();
     }
 
-    public static void hideCaptionsButton(ImageView imageView) {
-        imageView.setVisibility(SettingsEnum.HIDE_CAPTIONS_BUTTON.getBoolean() ? ImageView.GONE : ImageView.VISIBLE);
+    public static boolean hideCaptionsButton(boolean original) {
+        return !SettingsEnum.HIDE_CAPTIONS_BUTTON.getBoolean() && original;
+    }
+
+    public static void hideCaptionsButton(View view) {
+        if (!SettingsEnum.HIDE_CAPTIONS_BUTTON.getBoolean())
+            return;
+
+        view.setVisibility(View.GONE);
+        ReVancedUtils.hideViewByLayoutParams(view);
     }
 
     public static int hideCastButton(int original) {
