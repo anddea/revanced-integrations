@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 
 import app.revanced.integrations.settings.SettingsEnum;
-import app.revanced.integrations.shared.PlayerType;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
@@ -30,8 +29,10 @@ public class GeneralPatch {
             "FAB_CAMERA",       // Create button (Tablet)
             "TAB_ACTIVITY"      // Notification button
     };
-    public static boolean captionsButtonStatus;
     private static FrameLayout.LayoutParams layoutParams;
+    @NonNull
+    private static String videoId = "";
+    private static boolean subtitlePrefetched = true;
     private static int minimumHeight = 1;
     private static int paddingLeft = 12;
     private static int paddingTop = 0;
@@ -66,8 +67,11 @@ public class GeneralPatch {
         LogHelper.printDebug(() -> "Changing start page to " + startPage);
     }
 
-    public static boolean disableAutoCaptions() {
-        return SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean() && !PlayerType.getCurrent().isNoneOrHidden();
+    public static boolean disableAutoCaptions(boolean original) {
+        if (!SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean())
+            return original;
+
+        return subtitlePrefetched;
     }
 
     public static boolean enableGradientLoadingScreen() {
@@ -234,5 +238,17 @@ public class GeneralPatch {
         else
             parent.setVisibility(View.VISIBLE);
 
+    }
+
+    public static void newVideoStarted(@NonNull String newlyLoadedVideoId) {
+        if (Objects.equals(newlyLoadedVideoId, videoId)) {
+            return;
+        }
+        videoId = newlyLoadedVideoId;
+        subtitlePrefetched = false;
+    }
+
+    public static void prefetchSubtitleTrack() {
+        subtitlePrefetched = true;
     }
 }
