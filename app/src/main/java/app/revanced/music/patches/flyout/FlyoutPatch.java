@@ -111,9 +111,10 @@ public class FlyoutPatch {
 
     private enum FlyoutPanelComponent {
         SAVE_EPISODE_FOR_LATER("BOOKMARK_BORDER", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_EPISODE_FOR_LATER.getBoolean()),
-        SHUFFLE("SHUFFLE", SettingsEnum.HIDE_FLYOUT_PANEL_SHUFFLE.getBoolean()),
+        SHUFFLE_PLAY("SHUFFLE", SettingsEnum.HIDE_FLYOUT_PANEL_SHUFFLE_PLAY.getBoolean()),
         RADIO("MIX", SettingsEnum.HIDE_FLYOUT_PANEL_START_RADIO.getBoolean()),
         EDIT_PLAYLIST("EDIT", SettingsEnum.HIDE_FLYOUT_PANEL_EDIT_PLAYLIST.getBoolean()),
+        DELETE_PLAYLIST("DELETE", SettingsEnum.HIDE_FLYOUT_PANEL_DELETE_PLAYLIST.getBoolean()),
         PLAY_NEXT("QUEUE_PLAY_NEXT", SettingsEnum.HIDE_FLYOUT_PANEL_PLAY_NEXT.getBoolean()),
         ADD_TO_QUEUE("QUEUE_MUSIC", SettingsEnum.HIDE_FLYOUT_PANEL_ADD_TO_QUEUE.getBoolean()),
         SAVE_TO_LIBRARY("LIBRARY_ADD", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_TO_LIBRARY.getBoolean()),

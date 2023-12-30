@@ -62,6 +62,7 @@ public enum SettingsEnum {
 
     HIDE_FLYOUT_PANEL_ADD_TO_QUEUE("revanced_hide_flyout_panel_add_to_queue", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_CAPTIONS("revanced_hide_flyout_panel_captions", BOOLEAN, FALSE, true),
+    HIDE_FLYOUT_PANEL_DELETE_PLAYLIST("revanced_hide_flyout_panel_delete_playlist", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_DISMISS_QUEUE("revanced_hide_flyout_panel_dismiss_queue", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_DOWNLOAD("revanced_hide_flyout_panel_download", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_EDIT_PLAYLIST("revanced_hide_flyout_panel_edit_playlist", BOOLEAN, FALSE, true),
@@ -80,7 +81,7 @@ public enum SettingsEnum {
     HIDE_FLYOUT_PANEL_SAVE_TO_LIBRARY("revanced_hide_flyout_panel_save_to_library", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_SAVE_TO_PLAYLIST("revanced_hide_flyout_panel_save_to_playlist", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_SHARE("revanced_hide_flyout_panel_share", BOOLEAN, FALSE, true),
-    HIDE_FLYOUT_PANEL_SHUFFLE("revanced_hide_flyout_panel_shuffle", BOOLEAN, FALSE, true),
+    HIDE_FLYOUT_PANEL_SHUFFLE_PLAY("revanced_hide_flyout_panel_shuffle_play", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_SLEEP_TIMER("revanced_hide_flyout_panel_sleep_timer", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_START_RADIO("revanced_hide_flyout_panel_start_radio", BOOLEAN, FALSE, true),
     HIDE_FLYOUT_PANEL_STATS_FOR_NERDS("revanced_hide_flyout_panel_stats_for_nerds", BOOLEAN, FALSE, true),
