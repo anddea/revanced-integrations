@@ -4,12 +4,16 @@ import static app.revanced.integrations.utils.ReVancedUtils.hideViewBy0dpUnderCo
 import static app.revanced.integrations.utils.ReVancedUtils.hideViewUnderCondition;
 import static app.revanced.integrations.utils.StringRef.str;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -21,6 +25,9 @@ import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+/**
+ * @noinspection ALL
+ */
 @SuppressWarnings("unused")
 public class GeneralPatch {
     private static final String MAIN_ACTIONS = "android.intent.action.MAIN";
@@ -65,6 +72,47 @@ public class GeneralPatch {
             return;
         }
         LogHelper.printDebug(() -> "Changing start page to " + startPage);
+    }
+
+    /**
+     * Injection point.
+     * <p>
+     * The {@link AlertDialog#getButton(int)} method must be used after {@link AlertDialog#show()} is called.
+     * Otherwise {@link AlertDialog#getButton(int)} method will always return null.
+     * https://stackoverflow.com/a/4604145
+     * <p>
+     * That's why {@link AlertDialog#show()} is absolutely necessary.
+     * Instead, use two tricks to hide Alertdialog.
+     * <p>
+     * 1. Change the size of AlertDialog to 0.
+     * 2. Disable AlertDialog's background dim.
+     * <p>
+     * This way, AlertDialog will be completely hidden,
+     * and {@link AlertDialog#getButton(int)} method can be used without issue.
+     */
+    public static void confirmDialog(final AlertDialog dialog) {
+        if (!SettingsEnum.REMOVE_VIEWER_DISCRETION_DIALOG.getBoolean()) {
+            return;
+        }
+
+        // This method is called after AlertDialog#show(),
+        // So we need to hide the AlertDialog before pressing the possitive button.
+        final Window window = dialog.getWindow();
+        final Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        if (window != null && button != null) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.height = 0;
+            params.width = 0;
+
+            // Change the size of AlertDialog to 0.
+            window.setAttributes(params);
+
+            // Disable AlertDialog's background dim.
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+            button.setSoundEffectsEnabled(false);
+            button.performClick();
+        }
     }
 
     public static boolean disableAutoCaptions(boolean original) {

@@ -172,6 +172,7 @@ public enum SettingsEnum {
     HIDE_SNACK_BAR("revanced_hide_snack_bar", BOOLEAN, FALSE),
     HIDE_TOOLBAR_CREATE_NOTIFICATION_BUTTON("revanced_hide_toolbar_create_notification_button", BOOLEAN, FALSE, true),
     HIDE_TRENDING_SEARCHES("revanced_hide_trending_searches", BOOLEAN, TRUE),
+    REMOVE_VIEWER_DISCRETION_DIALOG("revanced_remove_viewer_discretion_dialog", BOOLEAN, FALSE),
 
     // Layout
     CUSTOM_FILTER("revanced_custom_filter", BOOLEAN, FALSE),
