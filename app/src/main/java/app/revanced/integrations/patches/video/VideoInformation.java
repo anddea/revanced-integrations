@@ -65,19 +65,34 @@ public final class VideoInformation {
 
     /**
      * Seek on the current video.
-     * <b>Currently this does not function for Shorts playback.</b>
+     * Does not function for playback of Shorts.
      * <p>
      * Caution: If called from a videoTimeHook() callback,
      * this will cause a recursive call into the same videoTimeHook() callback.
      *
-     * @param millisecond The millisecond to seek the video to.
-     * @return if the seek was successful
+     * @param seekTime The seekTime to seek the video to.
+     * @return true if the seek was successful.
      */
-    public static boolean seekTo(long millisecond) {
+    public static boolean seekTo(final long seekTime) {
         ReVancedUtils.verifyOnMainThread();
         try {
+            final long videoTime = getVideoTime();
+            final long videoLength = getVideoLength();
+
+            // Prevent issues such as play/ pause button or autoplay not working.
+            final long adjustedSeekTime = Math.min(seekTime, videoLength - 250);
+            if (videoTime <= seekTime && videoTime >= adjustedSeekTime) {
+                // Both the current video time and the seekTo are in the last 250ms of the video.
+                // Ignore this seek call, otherwise if a video ends with multiple closely timed segments
+                // then seeking here can create an infinite loop of skip attempts.
+                LogHelper.printDebug(() -> "Ignoring seekTo call as video playback is almost finished. "
+                        + " videoTime: " + videoTime + " videoLength: " + videoLength + " seekTo: " + seekTime);
+                return false;
+            }
+
+            LogHelper.printDebug(() -> "Seeking to " + adjustedSeekTime);
             //noinspection DataFlowIssue
-            return (Boolean) seekMethod.invoke(playerControllerRef.get(), millisecond);
+            return (Boolean) seekMethod.invoke(playerControllerRef.get(), adjustedSeekTime);
         } catch (Exception ex) {
             LogHelper.printException(() -> "Failed to seek", ex);
         }
