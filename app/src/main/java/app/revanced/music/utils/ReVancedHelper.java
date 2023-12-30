@@ -85,10 +85,6 @@ public class ReVancedHelper {
         return new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert);
     }
 
-    public static AlertDialog.Builder getDialogBuilder(@NonNull Activity activity) {
-        return new AlertDialog.Builder(activity, android.R.style.Theme_DeviceDefault_Dialog_Alert);
-    }
-
     public static FrameLayout.LayoutParams getLayoutParams(@NonNull Activity activity) {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 

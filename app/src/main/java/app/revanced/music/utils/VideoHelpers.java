@@ -13,12 +13,12 @@ import android.graphics.Point;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.view.Display;
+import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 import app.revanced.music.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.music.patches.video.PlaybackSpeedPatch;
@@ -73,15 +73,17 @@ public class VideoHelpers {
                 })
                 .show();
 
-        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
+        final Window window = speedDialog.getWindow();
+        if (CustomPlaybackSpeedPatch.getLength(7) > 7 && window != null) {
+            Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
 
-        WindowManager.LayoutParams params = Objects.requireNonNull(speedDialog.getWindow()).getAttributes();
-        if (CustomPlaybackSpeedPatch.getLength(7) > 7)
+            WindowManager.LayoutParams params = window.getAttributes();
             params.height = (int) (size.y * 0.45);
 
-        speedDialog.getWindow().setAttributes(params);
+            window.setAttributes(params);
+        }
     }
 
     @SuppressLint("IntentReset")
