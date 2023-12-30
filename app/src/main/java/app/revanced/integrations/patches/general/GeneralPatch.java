@@ -115,6 +115,14 @@ public class GeneralPatch {
         }
     }
 
+    public static void confirmDialogAgeVerified(final AlertDialog dialog) {
+        final Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        if (!button.getText().toString().equals(str("og_continue")))
+            return;
+
+        confirmDialog(dialog);
+    }
+
     public static boolean disableAutoCaptions(boolean original) {
         if (!SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean())
             return original;
