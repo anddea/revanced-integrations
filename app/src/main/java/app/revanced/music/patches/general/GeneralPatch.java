@@ -78,6 +78,13 @@ public class GeneralPatch {
         return subtitlePrefetched;
     }
 
+    public static void disableDimBehind(Window window) {
+        if (window != null) {
+            // Disable AlertDialog's background dim.
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+    }
+
     public static boolean enableLandScapeMode(boolean original) {
         try {
             return SettingsEnum.ENABLE_LANDSCAPE_MODE.getBoolean() || original;
