@@ -236,16 +236,16 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
      * Add Preference to External downloader settings submenu
      */
     private static void setExternalDownloaderPreference(@NonNull Activity activity) {
-        final String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_label");
-        final String[] packageNameArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_package_name");
-        final String[] websiteArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_website");
-
-        final String[] mEntries = {str("revanced_external_downloader_download"), str("revanced_external_downloader_set"), str("accessibility_bottom_sheet_close_button")};
-
         try {
             final PreferenceScreen externalDownloaderPreferenceScreen = (PreferenceScreen) mPreferenceManager.findPreference("external_downloader");
             if (externalDownloaderPreferenceScreen == null)
                 return;
+
+            final String[] labelArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_label");
+            final String[] packageNameArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_package_name");
+            final String[] websiteArray = getStringArray(activity, EXTERNAL_DOWNLOADER_PREFERENCE_KEY + "_website");
+
+            final String[] mEntries = {str("revanced_external_downloader_download"), str("revanced_external_downloader_set"), str("accessibility_bottom_sheet_close_button")};
 
             for (int index = 0; index < labelArray.length; index++) {
                 final String label = labelArray[index];
