@@ -159,12 +159,12 @@ public enum SettingsEnum {
     RYD_USER_ID("revanced_ryd_user_id", STRING, ""),
     RYD_DISLIKE_PERCENTAGE("revanced_ryd_dislike_percentage", BOOLEAN, FALSE),
     RYD_COMPACT_LAYOUT("revanced_ryd_compact_layout", BOOLEAN, FALSE),
-    RYD_TOAST_ON_CONNECTION_ERROR("revanced_ryd_toast_on_connection_error", BOOLEAN, TRUE),
+    RYD_TOAST_ON_CONNECTION_ERROR("revanced_ryd_toast_on_connection_error", BOOLEAN, FALSE),
 
 
     // SponsorBlock
     SB_ENABLED("sb_enabled", BOOLEAN, TRUE),
-    SB_TOAST_ON_CONNECTION_ERROR("sb_toast_on_connection_error", BOOLEAN, TRUE),
+    SB_TOAST_ON_CONNECTION_ERROR("sb_toast_on_connection_error", BOOLEAN, FALSE),
     SB_TOAST_ON_SKIP("sb_toast_on_skip", BOOLEAN, TRUE),
     SB_API_URL("sb_api_url", STRING, "https://sponsor.ajay.app", 1),
     SB_PRIVATE_USER_ID("sb_private_user_id", STRING, ""),
