@@ -1,9 +1,7 @@
 package app.revanced.music.patches.utils;
 
-import static app.revanced.music.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.music.utils.StringRef.str;
 
-import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +30,7 @@ public class MicroGPatch {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setData(Uri.parse(uriString));
         context.startActivity(intent);
+        System.exit(0);
     }
 
     public static void checkAvailability(@NonNull Context context) {
@@ -40,10 +39,6 @@ public class MicroGPatch {
         } catch (PackageManager.NameNotFoundException exception) {
             LogHelper.printInfo(() -> "MicroG was not found", exception);
             startIntent(context, MICROG_DOWNLOAD_LINK, str("microg_not_installed_warning"), str("microg_not_installed_notice"));
-
-            final Activity activity = (Activity) context;
-            runOnMainThreadDelayed(activity::finish, 1000L);
-            return;
         }
 
         try (final ContentProviderClient client = context.getContentResolver().acquireContentProviderClient(MICROG_PROVIDER)) {
