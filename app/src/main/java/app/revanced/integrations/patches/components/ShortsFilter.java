@@ -85,13 +85,15 @@ public final class ShortsFilter extends Filter {
         final ByteArrayAsStringFilterGroup shortsDislikeButton =
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_SHORTS_PLAYER_DISLIKE_BUTTON,
-                        "reel_dislike_button"
+                        "reel_dislike_button",
+                        "reel_dislike_toggled_button"
                 );
 
         final ByteArrayAsStringFilterGroup shortsLikeButton =
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON,
-                        "reel_like_button"
+                        "reel_like_button",
+                        "reel_like_toggled_button"
                 );
 
         final ByteArrayAsStringFilterGroup shortsCommentButton =
