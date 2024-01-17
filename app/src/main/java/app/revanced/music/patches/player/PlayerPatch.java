@@ -47,6 +47,10 @@ public class PlayerPatch {
         return SettingsEnum.ENABLE_ZEN_MODE.getBoolean();
     }
 
+    public static int hideFullscreenShareButton(int original) {
+        return SettingsEnum.HIDE_FULLSCREEN_SHARE_BUTTON.getBoolean() ? 0 : original;
+    }
+
     public static boolean rememberRepeatState(boolean original) {
         return SettingsEnum.REMEMBER_REPEAT_SATE.getBoolean() || original;
     }
