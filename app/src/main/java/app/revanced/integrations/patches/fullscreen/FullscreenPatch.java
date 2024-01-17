@@ -77,7 +77,7 @@ public class FullscreenPatch {
 
         if (marginTop < 0 || marginTop > 64) {
             ReVancedUtils.showToastShort(str("revanced_quick_actions_margin_top_warning"));
-            SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.saveValue(DEFAULT_MARGIN_TOP);
+            SettingsEnum.QUICK_ACTIONS_MARGIN_TOP.saveValue(DEFAULT_MARGIN_TOP);
             marginTop = DEFAULT_MARGIN_TOP;
         }
 
