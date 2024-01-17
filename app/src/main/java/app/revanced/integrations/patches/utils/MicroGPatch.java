@@ -1,9 +1,7 @@
 package app.revanced.integrations.patches.utils;
 
-import static app.revanced.integrations.utils.ReVancedUtils.runOnMainThreadDelayed;
 import static app.revanced.integrations.utils.StringRef.str;
 
-import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +13,7 @@ import androidx.annotation.NonNull;
 import app.revanced.integrations.utils.LogHelper;
 import app.revanced.integrations.utils.ReVancedUtils;
 
+@SuppressWarnings("unused")
 public class MicroGPatch {
     private static final String DONT_KILL_MY_APP_LINK = "https://dontkillmyapp.com";
     private static final String MICROG_VENDOR = "com.mgoogle";
@@ -31,6 +30,7 @@ public class MicroGPatch {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setData(Uri.parse(uriString));
         context.startActivity(intent);
+        System.exit(0);
     }
 
     public static void checkAvailability(@NonNull Context context) {
@@ -39,10 +39,6 @@ public class MicroGPatch {
         } catch (PackageManager.NameNotFoundException exception) {
             LogHelper.printInfo(() -> "MicroG was not found", exception);
             startIntent(context, MICROG_DOWNLOAD_LINK, str("microg_not_installed_warning"), str("microg_not_installed_notice"));
-
-            final Activity activity = (Activity) context;
-            runOnMainThreadDelayed(activity::finish, 1000L);
-            return;
         }
 
         try (final ContentProviderClient client = context.getContentResolver().acquireContentProviderClient(MICROG_PROVIDER)) {
