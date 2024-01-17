@@ -267,11 +267,11 @@ public enum SettingsEnum {
 
     // Overlay Button
     ALWAYS_REPEAT("revanced_always_repeat", BOOLEAN, FALSE),
-    OVERLAY_BUTTON_ALWAYS_REPEAT("revanced_overlay_button_always_repeat", BOOLEAN, TRUE),
-    OVERLAY_BUTTON_COPY_VIDEO_URL("revanced_overlay_button_copy_video_url", BOOLEAN, TRUE),
+    OVERLAY_BUTTON_ALWAYS_REPEAT("revanced_overlay_button_always_repeat", BOOLEAN, FALSE),
+    OVERLAY_BUTTON_COPY_VIDEO_URL("revanced_overlay_button_copy_video_url", BOOLEAN, FALSE),
     OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP("revanced_overlay_button_copy_video_url_timestamp", BOOLEAN, FALSE),
-    OVERLAY_BUTTON_EXTERNAL_DOWNLOADER("revanced_overlay_button_external_downloader", BOOLEAN, TRUE),
-    OVERLAY_BUTTON_SPEED_DIALOG("revanced_overlay_button_speed_dialog", BOOLEAN, TRUE),
+    OVERLAY_BUTTON_EXTERNAL_DOWNLOADER("revanced_overlay_button_external_downloader", BOOLEAN, FALSE),
+    OVERLAY_BUTTON_SPEED_DIALOG("revanced_overlay_button_speed_dialog", BOOLEAN, FALSE),
     EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
 
     // Experimental Flags
