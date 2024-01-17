@@ -290,13 +290,16 @@ public class ReturnYouTubeDislikePatch {
     }
 
     //
-    // Litho Shorts player in the incognito mode.
+    // Litho Shorts player in the incognito mode / live stream.
     //
 
     /**
      * Injection point.
      * <p>
-     * It is used only when fetching the dislikes count of Shorts video in the incognito mode.
+     * This method is used in the following situations.
+     * <p>
+     * 1. When the dislike counts are fetched in the Incognito mode.
+     * 2. When the dislike counts are fetched in the live stream.
      *
      * @param original Original span that was created or reused by Litho.
      * @return The original span (if nothing should change), or a replacement span that contains dislikes.
@@ -304,7 +307,8 @@ public class ReturnYouTubeDislikePatch {
     public static CharSequence onCharSequenceLoaded(@NonNull Object conversionContext,
                                                     @NonNull CharSequence original) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean() || !isIncognito) {
+            String conversionContextString = conversionContext.toString();
+            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
                 return original;
             }
             if (!SettingsEnum.RYD_SHORTS.getBoolean()) {
@@ -315,10 +319,20 @@ public class ReturnYouTubeDislikePatch {
                 return original;
             }
 
-            if (!conversionContext.toString().contains("|shorts_dislike_button.eml|"))
-                return original;
+            final boolean fetchDislikeIncognito =
+                    conversionContextString.contains("|shorts_dislike_button.eml|")
+                            && isIncognito;
+            final boolean fetchDislikeLiveStream =
+                    conversionContextString.contains("immersive_live_video_action_bar.eml")
+                            && conversionContextString.contains("|dislike_button.eml|");
 
-            LogHelper.printDebug(() -> "setShortsDislikes in Incognito mode");
+            if (fetchDislikeIncognito) {
+                LogHelper.printDebug(() -> "setShortsDislikes in Incognito mode");
+            } else if (fetchDislikeLiveStream) {
+                LogHelper.printDebug(() -> "setShortsDislikes in LiveStream");
+            } else {
+                return original;
+            }
 
             ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(VideoInformation.getVideoId());
             videoData.setVideoIdIsShort(true);
