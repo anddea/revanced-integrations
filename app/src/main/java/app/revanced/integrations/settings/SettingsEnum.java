@@ -96,6 +96,7 @@ public enum SettingsEnum {
             parents(HIDE_FEED_FLYOUT_PANEL)),
 
     // Player Flyout Panel
+    CHANGE_PLAYER_FLYOUT_PANEL_TOGGLE("revanced_change_player_flyout_panel_toggle", BOOLEAN, TRUE, true),
     ENABLE_OLD_QUALITY_LAYOUT("revanced_enable_old_quality_layout", BOOLEAN, TRUE, true),
     HIDE_PLAYER_FLYOUT_PANEL_AUDIO_TRACK("revanced_hide_player_flyout_panel_audio_track", BOOLEAN, FALSE),
     HIDE_PLAYER_FLYOUT_PANEL_CAPTIONS("revanced_hide_player_flyout_panel_captions", BOOLEAN, FALSE),

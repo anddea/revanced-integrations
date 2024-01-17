@@ -14,6 +14,10 @@ import app.revanced.integrations.utils.ReVancedUtils;
 @SuppressWarnings("unused")
 public class FlyoutPanelPatch {
 
+    public static boolean changeSwitchToggle(boolean original) {
+        return !SettingsEnum.CHANGE_PLAYER_FLYOUT_PANEL_TOGGLE.getBoolean() && original;
+    }
+
     public static void enableOldQualityMenu(ListView listView) {
         if (!SettingsEnum.ENABLE_OLD_QUALITY_LAYOUT.getBoolean())
             return;
