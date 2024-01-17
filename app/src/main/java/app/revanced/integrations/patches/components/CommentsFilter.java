@@ -2,6 +2,8 @@ package app.revanced.integrations.patches.components;
 
 import androidx.annotation.Nullable;
 
+import java.util.regex.Pattern;
+
 import app.revanced.integrations.settings.SettingsEnum;
 import app.revanced.integrations.utils.StringTrieSearch;
 
@@ -11,11 +13,14 @@ import app.revanced.integrations.utils.StringTrieSearch;
 @SuppressWarnings("unused")
 final class CommentsFilter extends Filter {
     private static final String COMMENT_COMPOSER_PATH = "comment_composer";
+    private static final String COMMENT_ENTRY_POINT_TEASER_PATH = "comments_entry_point_teaser";
+    private static final Pattern COMMENT_PREVIEW_TEXT_PATTERN = Pattern.compile("comments_entry_point_teaser.+ContainerType");
     private static final String VIDEO_METADATA_CAROUSEL_PATH = "video_metadata_carousel.eml";
 
     private final StringFilterGroup commentsPreviewDots;
     private final StringFilterGroup createShorts;
     private final StringFilterGroup emojiPicker;
+    private final StringFilterGroup previewCommentText;
     private final StringFilterGroup thanks;
     private final StringTrieSearch exceptions = new StringTrieSearch();
 
@@ -36,7 +41,7 @@ final class CommentsFilter extends Filter {
         );
 
         commentsPreviewDots = new StringFilterGroup(
-                SettingsEnum.HIDE_PREVIEW_COMMENT,
+                SettingsEnum.HIDE_PREVIEW_COMMENT_OLD_METHOD,
                 "|ContainerType|ContainerType|ContainerType|"
         );
 
@@ -56,11 +61,16 @@ final class CommentsFilter extends Filter {
         );
 
         final StringFilterGroup previewComment = new StringFilterGroup(
-                SettingsEnum.HIDE_PREVIEW_COMMENT,
+                SettingsEnum.HIDE_PREVIEW_COMMENT_OLD_METHOD,
                 "|carousel_item",
                 "|carousel_listener",
-                "comments_entry_point_teaser",
+                COMMENT_ENTRY_POINT_TEASER_PATH,
                 "comments_entry_point_simplebox"
+        );
+
+        previewCommentText = new StringFilterGroup(
+                SettingsEnum.HIDE_PREVIEW_COMMENT_NEW_METHOD,
+                COMMENT_ENTRY_POINT_TEASER_PATH
         );
 
         thanks = new StringFilterGroup(
@@ -77,6 +87,7 @@ final class CommentsFilter extends Filter {
                 emojiPicker,
                 membersBanner,
                 previewComment,
+                previewCommentText,
                 thanks
         );
     }
@@ -91,6 +102,8 @@ final class CommentsFilter extends Filter {
             return path.startsWith(COMMENT_COMPOSER_PATH);
         } else if (matchedGroup == commentsPreviewDots) {
             return path.startsWith(VIDEO_METADATA_CAROUSEL_PATH);
+        } else if (matchedGroup == previewCommentText) {
+            return COMMENT_PREVIEW_TEXT_PATTERN.matcher(path).find();
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);

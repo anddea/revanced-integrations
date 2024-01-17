@@ -86,6 +86,9 @@ public enum SettingsEnum {
     HIDE_CREATE_SHORTS_BUTTON("revanced_hide_create_shorts_button", BOOLEAN, FALSE),
     HIDE_EMOJI_PICKER("revanced_hide_emoji_picker", BOOLEAN, FALSE),
     HIDE_PREVIEW_COMMENT("revanced_hide_preview_comment", BOOLEAN, FALSE),
+    HIDE_PREVIEW_COMMENT_TYPE("revanced_hide_preview_comment_type", BOOLEAN, FALSE),
+    HIDE_PREVIEW_COMMENT_OLD_METHOD("revanced_hide_preview_comment_old_method", BOOLEAN, FALSE),
+    HIDE_PREVIEW_COMMENT_NEW_METHOD("revanced_hide_preview_comment_new_method", BOOLEAN, FALSE),
 
 
     // Flyout Panel

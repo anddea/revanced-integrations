@@ -107,6 +107,14 @@ public class ReVancedHelper {
         }
     }
 
+    public static void setCommentPreviewSettings() {
+        final boolean enabled = SettingsEnum.HIDE_PREVIEW_COMMENT.getBoolean();
+        final boolean newMethod = SettingsEnum.HIDE_PREVIEW_COMMENT_TYPE.getBoolean();
+
+        SettingsEnum.HIDE_PREVIEW_COMMENT_OLD_METHOD.saveValue(enabled && !newMethod);
+        SettingsEnum.HIDE_PREVIEW_COMMENT_NEW_METHOD.saveValue(enabled && newMethod);
+    }
+
     public static void setPlayerFlyoutPanelAdditionalSettings() {
         SettingsEnum.HIDE_PLAYER_FLYOUT_PANEL_ADDITIONAL_SETTINGS.saveValue(isAdditionalSettingsEnabled());
     }

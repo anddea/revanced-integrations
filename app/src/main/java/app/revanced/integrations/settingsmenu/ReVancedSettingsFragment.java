@@ -82,6 +82,9 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                             SPOOF_APP_VERSION,
                             SPOOF_APP_VERSION_TARGET ->
                             ReVancedHelper.setPlayerFlyoutPanelAdditionalSettings();
+                    case HIDE_PREVIEW_COMMENT,
+                            HIDE_PREVIEW_COMMENT_TYPE ->
+                            ReVancedHelper.setCommentPreviewSettings();
                     case OVERLAY_BUTTON_ALWAYS_REPEAT -> AlwaysRepeat.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL -> CopyVideoUrl.refreshVisibility();
                     case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP ->
