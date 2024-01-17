@@ -1,5 +1,7 @@
 package app.revanced.music.patches.actionbar;
 
+import static app.revanced.music.utils.ReVancedUtils.hideViewUnderCondition;
+
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,13 @@ public class ActionBarPatch {
                 return true;
 
         return false;
+    }
+
+    public static void hideLikeDislikeButton(View view) {
+        hideViewUnderCondition(
+                SettingsEnum.HIDE_ACTION_BUTTON_LIKE_DISLIKE.getBoolean(),
+                view
+        );
     }
 
     public static void hookDownloadButton(View view) {

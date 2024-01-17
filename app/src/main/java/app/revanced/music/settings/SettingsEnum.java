@@ -42,6 +42,7 @@ public enum SettingsEnum {
     HIDE_ACTION_BUTTON_COMMENT("revanced_hide_action_button_comment", BOOLEAN, FALSE, true),
     HIDE_ACTION_BUTTON_DOWNLOAD("revanced_hide_action_button_download", BOOLEAN, FALSE, true),
     HIDE_ACTION_BUTTON_LABEL("revanced_hide_action_button_label", BOOLEAN, FALSE, true),
+    HIDE_ACTION_BUTTON_LIKE_DISLIKE("revanced_hide_action_button_like_dislike", BOOLEAN, FALSE, true),
     HIDE_ACTION_BUTTON_RADIO("revanced_hide_action_button_radio", BOOLEAN, FALSE, true),
     HIDE_ACTION_BUTTON_SHARE("revanced_hide_action_button_share", BOOLEAN, FALSE, true),
     HOOK_ACTION_BUTTON_DOWNLOAD("revanced_hook_action_button_download", BOOLEAN, FALSE, true),
