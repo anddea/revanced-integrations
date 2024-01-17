@@ -13,6 +13,7 @@ import org.json.JSONObject;
  * ReturnYouTubeDislike does not guarantee when the counts are updated.
  * So these values may lag behind what YouTube shows.
  */
+@SuppressWarnings("unused")
 public final class RYDVoteData {
     @NonNull
     public final String videoId;
@@ -23,9 +24,10 @@ public final class RYDVoteData {
     public final long viewCount;
 
     private final long fetchedLikeCount;
-    private final long fetchedDislikeCount;
     private volatile long likeCount; // read/write from different threads
     private volatile float likePercentage;
+
+    private final long fetchedDislikeCount;
     private volatile long dislikeCount; // read/write from different threads
     private volatile float dislikePercentage;
 
@@ -78,17 +80,21 @@ public final class RYDVoteData {
     }
 
     public void updateUsingVote(Vote vote) {
-        if (vote == Vote.LIKE) {
-            likeCount = fetchedLikeCount + 1;
-            dislikeCount = fetchedDislikeCount;
-        } else if (vote == Vote.DISLIKE) {
-            likeCount = fetchedLikeCount;
-            dislikeCount = fetchedDislikeCount + 1;
-        } else if (vote == Vote.LIKE_REMOVE) {
-            likeCount = fetchedLikeCount;
-            dislikeCount = fetchedDislikeCount;
-        } else {
-            throw new IllegalStateException();
+        switch (vote) {
+            case LIKE:
+                likeCount = fetchedLikeCount + 1;
+                dislikeCount = fetchedDislikeCount;
+                break;
+            case DISLIKE:
+                likeCount = fetchedLikeCount;
+                dislikeCount = fetchedDislikeCount + 1;
+                break;
+            case LIKE_REMOVE:
+                likeCount = fetchedLikeCount;
+                dislikeCount = fetchedDislikeCount;
+                break;
+            default:
+                throw new IllegalStateException();
         }
         updatePercentages();
     }

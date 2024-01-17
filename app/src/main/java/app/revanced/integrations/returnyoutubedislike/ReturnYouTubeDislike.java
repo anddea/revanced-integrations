@@ -51,6 +51,18 @@ import app.revanced.integrations.utils.ThemeHelper;
  */
 public class ReturnYouTubeDislike {
 
+    public enum Vote {
+        LIKE(1),
+        DISLIKE(-1),
+        LIKE_REMOVE(0);
+
+        public final int value;
+
+        Vote(int value) {
+            this.value = value;
+        }
+    }
+
     /**
      * Maximum amount of time to block the UI from updates while waiting for network call to complete.
      * <p>
@@ -58,39 +70,47 @@ public class ReturnYouTubeDislike {
      * <a href="https://developer.android.com/topic/performance/vitals/anr">...</a>
      */
     private static final long MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH = 4000;
+
     /**
      * How long to retain successful RYD fetches.
      */
     private static final long CACHE_TIMEOUT_SUCCESS_MILLISECONDS = 7 * 60 * 1000; // 7 Minutes
+
     /**
      * How long to retain unsuccessful RYD fetches,
      * and also the minimum time before retrying again.
      */
     private static final long CACHE_TIMEOUT_FAILURE_MILLISECONDS = 3 * 60 * 1000; // 3 Minutes
+
     /**
      * Unique placeholder character, used to detect if a segmented span already has dislikes added to it.
      * Must be something YouTube is unlikely to use, as it's searched for in all usage of Rolling Number.
      */
     private static final char MIDDLE_SEPARATOR_CHARACTER = '◎'; // 'bullseye'
+
     /**
      * Cached lookup of all video ids.
      */
     @GuardedBy("itself")
     private static final Map<String, ReturnYouTubeDislike> fetchCache = new HashMap<>();
+
     /**
      * Used to send votes, one by one, in the same order the user created them.
      */
     private static final ExecutorService voteSerialExecutor = Executors.newSingleThreadExecutor();
+
     /**
      * For formatting dislikes as number.
      */
     @GuardedBy("ReturnYouTubeDislike.class") // not thread safe
     private static CompactDecimalFormat dislikeCountFormatter;
+
     /**
      * For formatting dislikes as percentage.
      */
     @GuardedBy("ReturnYouTubeDislike.class")
     private static NumberFormat dislikePercentageFormatter;
+
     // Used for segmented dislike spans in Litho regular player.
     public static final Rect leftSeparatorBounds;
     private static final Rect middleSeparatorBounds;
@@ -118,32 +138,38 @@ public class ReturnYouTubeDislike {
     }
 
     private final String videoId;
+
     /**
      * Stores the results of the vote api fetch, and used as a barrier to wait until fetch completes.
      * Absolutely cannot be holding any lock during calls to {@link Future#get()}.
      */
     private final Future<RYDVoteData> future;
+
     /**
      * Time this instance and the future was created.
      */
     private final long timeFetched;
+
     /**
      * If this instance was previously used for a Short.
      */
     @GuardedBy("this")
     private boolean isShort;
+
     /**
      * Optional current vote status of the UI.  Used to apply a user vote that was done on a previous video viewing.
      */
     @Nullable
     @GuardedBy("this")
     private Vote userVote;
+
     /**
      * Original dislike span, before modifications.
      */
     @Nullable
     @GuardedBy("this")
     private Spanned originalDislikeSpan;
+
     /**
      * Replacement like/dislike span that includes formatted dislikes.
      * Used to prevent recreating the same span multiple times.
@@ -152,10 +178,15 @@ public class ReturnYouTubeDislike {
     @GuardedBy("this")
     private SpannableString replacementLikeDislikeSpan;
 
-    private ReturnYouTubeDislike(@NonNull String videoId) {
-        this.videoId = Objects.requireNonNull(videoId);
-        this.timeFetched = System.currentTimeMillis();
-        this.future = ReVancedUtils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
+    private static int getSeparatorColor() {
+        return ThemeHelper.getDayNightTheme()
+                ? 0x33FFFFFF  // transparent dark gray
+                : 0xFFD9D9D9; // light gray
+    }
+
+    public static ShapeDrawable getLeftSeparatorDrawable() {
+        leftSeparatorShape.getPaint().setColor(getSeparatorColor());
+        return leftSeparatorShape;
     }
 
     /**
@@ -194,7 +225,6 @@ public class ReturnYouTubeDislike {
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
         final boolean compactLayout = SettingsEnum.RYD_COMPACT_LAYOUT.getBoolean();
-        final int separatorColor = getSeparatorColor();
 
         if (!compactLayout) {
             String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout()
@@ -202,14 +232,16 @@ public class ReturnYouTubeDislike {
                     : "\u200E"; // u200E = left to right character
             final Spannable leftSeparatorSpan;
             if (isRollingNumber) {
-                leftSeparatorSpan = new SpannableString(leftSeparatorString);
+                 leftSeparatorSpan = new SpannableString(leftSeparatorString);
             } else {
                 leftSeparatorString += "  ";
                 leftSeparatorSpan = new SpannableString(leftSeparatorString);
                 // Styling spans cannot overwrite RTL or LTR character.
-                leftSeparatorSpan.setSpan(new VerticallyCenteredImageSpan(getLeftSeparatorDrawable(), false),
+                leftSeparatorSpan.setSpan(
+                        new VerticallyCenteredImageSpan(getLeftSeparatorDrawable(), false),
                         1, 2, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                leftSeparatorSpan.setSpan(new FixedWidthEmptySpan(leftSeparatorShapePaddingPixels),
+                leftSeparatorSpan.setSpan(
+                        new FixedWidthEmptySpan(leftSeparatorShapePaddingPixels),
                         2, 3, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             }
             builder.append(leftSeparatorSpan);
@@ -225,7 +257,7 @@ public class ReturnYouTubeDislike {
         final int shapeInsertionIndex = middleSeparatorString.length() / 2;
         Spannable middleSeparatorSpan = new SpannableString(middleSeparatorString);
         ShapeDrawable shapeDrawable = new ShapeDrawable(new OvalShape());
-        shapeDrawable.getPaint().setColor(separatorColor);
+        shapeDrawable.getPaint().setColor(getSeparatorColor());
         shapeDrawable.setBounds(middleSeparatorBounds);
         // Use original text width if using Rolling Number,
         // to ensure the replacement styled span has the same width as the measured String,
@@ -239,17 +271,6 @@ public class ReturnYouTubeDislike {
         builder.append(newSpannableWithDislikes(oldSpannable, voteData));
 
         return new SpannableString(builder);
-    }
-
-    private static int getSeparatorColor() {
-        return ThemeHelper.getDayNightTheme()
-                ? 0x29AAAAAA  // transparent dark gray
-                : 0xFFD9D9D9; // light gray
-    }
-
-    public static ShapeDrawable getLeftSeparatorDrawable() {
-        leftSeparatorShape.getPaint().setColor(getSeparatorColor());
-        return leftSeparatorShape;
     }
 
     /**
@@ -374,6 +395,12 @@ public class ReturnYouTubeDislike {
         }
     }
 
+    private ReturnYouTubeDislike(@NonNull String videoId) {
+        this.videoId = Objects.requireNonNull(videoId);
+        this.timeFetched = System.currentTimeMillis();
+        this.future = ReVancedUtils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
+    }
+
     private boolean isExpired(long now) {
         final long timeSinceCreation = now - timeFetched;
         if (timeSinceCreation < CACHE_TIMEOUT_FAILURE_MILLISECONDS) {
@@ -431,7 +458,7 @@ public class ReturnYouTubeDislike {
     public synchronized Spanned getDislikesSpanForRegularVideo(@NonNull Spanned original,
                                                                boolean isSegmentedButton,
                                                                boolean isRollingNumber) {
-        return waitForFetchAndUpdateReplacementSpan(original, isSegmentedButton, isRollingNumber, false);
+        return waitForFetchAndUpdateReplacementSpan(original, isSegmentedButton, isRollingNumber,false);
     }
 
     /**
@@ -566,18 +593,6 @@ public class ReturnYouTubeDislike {
             LogHelper.printException(() -> "setUserVote failure", ex);
         }
     }
-
-    public enum Vote {
-        LIKE(1),
-        DISLIKE(-1),
-        LIKE_REMOVE(0);
-
-        public final int value;
-
-        Vote(int value) {
-            this.value = value;
-        }
-    }
 }
 
 /**
@@ -585,7 +600,6 @@ public class ReturnYouTubeDislike {
  */
 class FixedWidthEmptySpan extends ReplacementSpan {
     final int fixedWidth;
-
     /**
      * @param fixedWith Fixed width in screen pixels.
      */
@@ -593,13 +607,11 @@ class FixedWidthEmptySpan extends ReplacementSpan {
         this.fixedWidth = fixedWith;
         if (fixedWith < 0) throw new IllegalArgumentException();
     }
-
     @Override
     public int getSize(@NonNull Paint paint, @NonNull CharSequence text,
                        int start, int end, @Nullable Paint.FontMetricsInt fontMetrics) {
         return fixedWidth;
     }
-
     @Override
     public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end,
                      float x, int top, int y, int bottom, @NonNull Paint paint) {
