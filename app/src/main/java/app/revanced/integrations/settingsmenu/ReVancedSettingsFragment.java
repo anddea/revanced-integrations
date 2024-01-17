@@ -91,7 +91,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                 }
             } else if (mPreference instanceof EditTextPreference editTextPreference) {
                 if (settingImportInProgress) {
-                    editTextPreference.getEditText().setText(setting.getObjectValue().toString());
+                    editTextPreference.setText(setting.getObjectValue().toString());
                 } else {
                     SettingsEnum.setValue(setting, editTextPreference.getText());
                 }

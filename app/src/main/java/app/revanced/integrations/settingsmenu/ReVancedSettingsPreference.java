@@ -72,8 +72,6 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
         if (entryIndex >= 0) {
             listPreference.setValue(objectStringValue);
             objectStringValue = listPreference.getEntries()[entryIndex].toString();
-        } else {
-            objectStringValue = ResourceHelper.getResources().getString(android.R.string.unknownName);
         }
 
         if (shouldSetSummary) {
