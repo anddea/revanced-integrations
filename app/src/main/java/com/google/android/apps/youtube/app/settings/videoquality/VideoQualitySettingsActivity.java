@@ -1,7 +1,7 @@
 package com.google.android.apps.youtube.app.settings.videoquality;
 
-import static app.revanced.integrations.utils.ReVancedUtils.getChildView;
-import static app.revanced.integrations.utils.ResourceUtils.identifier;
+import static app.revanced.integrations.youtube.utils.ReVancedUtils.getChildView;
+import static app.revanced.integrations.youtube.utils.ResourceUtils.identifier;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,13 +12,13 @@ import android.widget.TextView;
 
 import java.util.Objects;
 
-import app.revanced.integrations.settingsmenu.ReVancedSettingsFragment;
-import app.revanced.integrations.settingsmenu.ReturnYouTubeDislikeSettingsFragment;
-import app.revanced.integrations.settingsmenu.SponsorBlockSettingsFragment;
-import app.revanced.integrations.utils.LogHelper;
-import app.revanced.integrations.utils.ResourceHelper;
-import app.revanced.integrations.utils.ResourceType;
-import app.revanced.integrations.utils.ThemeHelper;
+import app.revanced.integrations.youtube.settingsmenu.ReVancedSettingsFragment;
+import app.revanced.integrations.youtube.settingsmenu.ReturnYouTubeDislikeSettingsFragment;
+import app.revanced.integrations.youtube.settingsmenu.SponsorBlockSettingsFragment;
+import app.revanced.integrations.youtube.utils.LogHelper;
+import app.revanced.integrations.youtube.utils.ResourceHelper;
+import app.revanced.integrations.youtube.utils.ResourceType;
+import app.revanced.integrations.youtube.utils.ThemeHelper;
 
 /**
  * @noinspection ALL
