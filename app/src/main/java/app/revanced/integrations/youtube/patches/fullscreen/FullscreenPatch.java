@@ -19,6 +19,7 @@ public class FullscreenPatch {
     @SuppressLint("StaticFieldLeak")
     public static Activity watchDescriptorActivity;
     private static boolean isLandScapeVideo = true;
+    private static volatile boolean isScreenOn;
 
     public static boolean disableAmbientMode() {
         return !SettingsEnum.DISABLE_AMBIENT_MODE_IN_FULLSCREEN.getBoolean();
@@ -38,6 +39,21 @@ public class FullscreenPatch {
 
         ReVancedUtils.runOnMainThreadDelayed(FullscreenPatch::setOrientation, 1000);
         return true;
+    }
+
+    public static boolean keepFullscreen(boolean original) {
+        if (!SettingsEnum.KEEP_LANDSCAPE_MODE.getBoolean())
+            return original;
+
+        return isScreenOn;
+    }
+
+    public static void setScreenStatus() {
+        if (!SettingsEnum.KEEP_LANDSCAPE_MODE.getBoolean())
+            return;
+
+        isScreenOn = true;
+        ReVancedUtils.runOnMainThreadDelayed(() -> isScreenOn = false, SettingsEnum.KEEP_LANDSCAPE_MODE_TIMEOUT.getLong());
     }
 
     public static boolean hideAutoPlayPreview() {

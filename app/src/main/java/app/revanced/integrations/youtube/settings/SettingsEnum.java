@@ -148,6 +148,8 @@ public enum SettingsEnum {
     DISABLE_LANDSCAPE_MODE("revanced_disable_landscape_mode", BOOLEAN, FALSE, true),
     ENABLE_COMPACT_CONTROLS_OVERLAY("revanced_enable_compact_controls_overlay", BOOLEAN, FALSE, true),
     FORCE_FULLSCREEN("revanced_force_fullscreen", BOOLEAN, FALSE, true),
+    KEEP_LANDSCAPE_MODE("revanced_keep_landscape_mode", BOOLEAN, FALSE, true),
+    KEEP_LANDSCAPE_MODE_TIMEOUT("revanced_keep_landscape_mode_timeout", LONG, 3000L, true),
 
 
     // General
