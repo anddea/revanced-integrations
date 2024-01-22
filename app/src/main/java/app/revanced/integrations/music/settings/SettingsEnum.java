@@ -58,7 +58,6 @@ public enum SettingsEnum {
 
     // Flyout
     ENABLE_COMPACT_DIALOG("revanced_enable_compact_dialog", BOOLEAN, TRUE),
-    ENABLE_SLEEP_TIMER("revanced_enable_sleep_timer", BOOLEAN, TRUE, true),
     ENABLE_FLYOUT_PANEL_PLAYBACK_SPEED("revanced_enable_flyout_panel_playback_speed", BOOLEAN, FALSE, true),
 
     HIDE_FLYOUT_PANEL_ADD_TO_QUEUE("revanced_hide_flyout_panel_add_to_queue", BOOLEAN, FALSE, true),

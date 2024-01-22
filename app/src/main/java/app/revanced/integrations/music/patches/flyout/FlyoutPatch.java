@@ -34,10 +34,6 @@ public class FlyoutPatch {
         return Math.max(original, 600);
     }
 
-    public static boolean enableSleepTimer() {
-        return SettingsEnum.ENABLE_SLEEP_TIMER.getBoolean();
-    }
-
     public static boolean hideFlyoutPanels(@Nullable Enum<?> flyoutPanelEnum) {
         if (flyoutPanelEnum == null)
             return false;
