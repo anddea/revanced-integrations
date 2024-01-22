@@ -35,7 +35,6 @@ public class InitializationPatch {
         showRestartDialog(mActivity, "revanced_restart_first_run", 1000);
 
         // set default value
-        SettingsEnum.ENABLE_NEW_PLAYER_BACKGROUND.saveValue(ReVancedHelper.isLastBuild2023(context));
         SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.saveValue(PatchStatus.RememberPlaybackSpeed());
     }
 

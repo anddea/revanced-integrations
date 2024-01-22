@@ -31,8 +31,8 @@ public class PlayerPatch {
         return SettingsEnum.ENABLE_FORCE_MINIMIZED_PLAYER.getBoolean() || original;
     }
 
-    public static boolean enableNewPlayerBackground() {
-        return SettingsEnum.ENABLE_NEW_PLAYER_BACKGROUND.getBoolean();
+    public static boolean enableOldPlayerBackground() {
+        return !SettingsEnum.ENABLE_OLD_PLAYER_BACKGROUND.getBoolean();
     }
 
     public static boolean enableOldPlayerLayout() {
