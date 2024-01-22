@@ -108,6 +108,7 @@ public class FlyoutPatch {
         SAVE_EPISODE_FOR_LATER("BOOKMARK_BORDER", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_EPISODE_FOR_LATER.getBoolean()),
         SHUFFLE_PLAY("SHUFFLE", SettingsEnum.HIDE_FLYOUT_PANEL_SHUFFLE_PLAY.getBoolean()),
         RADIO("MIX", SettingsEnum.HIDE_FLYOUT_PANEL_START_RADIO.getBoolean()),
+        SUBSCRIBE("SUBSCRIBE", SettingsEnum.HIDE_FLYOUT_PANEL_SUBSCRIBE.getBoolean()),
         EDIT_PLAYLIST("EDIT", SettingsEnum.HIDE_FLYOUT_PANEL_EDIT_PLAYLIST.getBoolean()),
         DELETE_PLAYLIST("DELETE", SettingsEnum.HIDE_FLYOUT_PANEL_DELETE_PLAYLIST.getBoolean()),
         PLAY_NEXT("QUEUE_PLAY_NEXT", SettingsEnum.HIDE_FLYOUT_PANEL_PLAY_NEXT.getBoolean()),
