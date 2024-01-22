@@ -76,7 +76,6 @@ public enum SettingsEnum {
     HIDE_SHARE_BUTTON("revanced_hide_button_share", BOOLEAN, FALSE),
     HIDE_SHOP_BUTTON("revanced_hide_button_shop", BOOLEAN, FALSE),
     HIDE_THANKS_BUTTON("revanced_hide_button_thanks", BOOLEAN, FALSE),
-    HIDE_TRANSCRIPT_BUTTON("revanced_hide_button_transcript", BOOLEAN, FALSE),
 
     // Comments
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
