@@ -69,6 +69,11 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
             return;
 
         for (SettingsEnum setting : SettingsEnum.values()) {
+            if (setting.equals(SettingsEnum.ENABLE_OLD_PLAYER_LAYOUT)) {
+                SettingsEnum.ENABLE_OLD_PLAYER_BACKGROUND.saveValue(newValue);
+            } else if (setting.equals(SettingsEnum.ENABLE_OLD_PLAYER_BACKGROUND) && !newValue) {
+                SettingsEnum.ENABLE_OLD_PLAYER_LAYOUT.saveValue(newValue);
+            }
             if (Objects.equals(setting.path, key)) {
                 setting.saveValue(newValue);
                 if (setting.rebootApp) {
