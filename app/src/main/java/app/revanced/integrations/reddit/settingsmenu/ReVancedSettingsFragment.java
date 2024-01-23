@@ -58,6 +58,8 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
         addPreferences(SettingsStatus.toolBarButton, SettingsEnum.HIDE_TOOLBAR_BUTTON);
         addPreferences(SettingsStatus.openLinksDirectly, SettingsEnum.OPEN_LINKS_DIRECTLY);
         addPreferences(SettingsStatus.openLinksExternally, SettingsEnum.OPEN_LINKS_EXTERNALLY);
+        addPreferences(SettingsStatus.removeSubRedditDialog, SettingsEnum.REMOVE_NSFW_DIALOG);
+        addPreferences(SettingsStatus.removeSubRedditDialog, SettingsEnum.REMOVE_NOTIFICATION_DIALOG);
         addPreferences(SettingsStatus.sanitizeUrlQuery, SettingsEnum.SANITIZE_URL_QUERY);
     }
 

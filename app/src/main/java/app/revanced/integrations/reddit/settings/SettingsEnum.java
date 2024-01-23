@@ -48,6 +48,12 @@ public enum SettingsEnum {
     OPEN_LINKS_EXTERNALLY("revanced_open_links_externally", BOOLEAN, TRUE,
             "Open links externally",
             "Opens links in your browser instead of in the in-app-browser."),
+    REMOVE_NSFW_DIALOG("revanced_remove_nsfw_dialog", BOOLEAN, FALSE, true,
+            "Remove NSFW warning dialog",
+            "Removes the NSFW warning dialog that appears when visiting a subreddit by accepting it automatically."),
+    REMOVE_NOTIFICATION_DIALOG("revanced_remove_notification_dialog", BOOLEAN, FALSE, true,
+            "Remove notification suggestion dialog",
+            "Removes the notifications suggestion dialog that appears when visiting a subreddit by dismissing it automatically."),
     SANITIZE_URL_QUERY("revanced_sanitize_url_query", BOOLEAN, TRUE,
             "Sanitize sharing links",
             "Removes tracking query parameters from URLs when sharing links.");
