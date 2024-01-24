@@ -102,11 +102,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "single_item_information_panel"
         );
 
-        final StringFilterGroup joinMembership = new StringFilterGroup(
-                SettingsEnum.HIDE_JOIN_BUTTON,
-                "compact_sponsor_button"
-        );
-
         final StringFilterGroup latestPosts = new StringFilterGroup(
                 SettingsEnum.HIDE_LATEST_POSTS,
                 "post_shelf"
@@ -137,11 +132,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "search_video_with_context.eml"
         );
 
-        final StringFilterGroup startTrial = new StringFilterGroup(
-                SettingsEnum.HIDE_START_TRIAL_BUTTON,
-                "channel_purchase_button"
-        );
-
         final StringFilterGroup ticketShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_TICKET_SHELF,
                 "ticket_horizontal_shelf",
@@ -164,13 +154,11 @@ public final class LayoutComponentsFilter extends Filter {
                 grayDescription,
                 homeVideoWithContext,
                 infoPanel,
-                joinMembership,
                 latestPosts,
                 medicalPanel,
                 movieShelf,
                 notifyMe,
                 searchVideoWithContext,
-                startTrial,
                 ticketShelf,
                 timedReactions
         );
