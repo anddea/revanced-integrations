@@ -19,9 +19,9 @@ import java.lang.ref.WeakReference
 
 /**
  * The main controller for volume and brightness swipe controls.
- * note that the superclass is overwritten to the superclass of the WatchWhileActivity at patch time
+ * note that the superclass is overwritten to the superclass of the MainActivity at patch time
  *
- * @smali Lapp/revanced/integrations/swipecontrols/SwipeControlsHostActivity;
+ * @smali Lapp/revanced/integrations/youtube/swipecontrols/SwipeControlsHostActivity;
  */
 class SwipeControlsHostActivity : Activity() {
     /**
