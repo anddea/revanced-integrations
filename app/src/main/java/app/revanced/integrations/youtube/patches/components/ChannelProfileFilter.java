@@ -13,28 +13,24 @@ import app.revanced.integrations.youtube.utils.ReVancedUtils;
  */
 @SuppressWarnings("unused")
 public final class ChannelProfileFilter extends Filter {
-    private static final String BROWSE_STORE_BUTTON_PHONE_PATH = "|ContainerType|button.eml|";
-    private static final String BROWSE_STORE_BUTTON_TABLET_PATH = "|ContainerType|ContainerType|ContainerType|ContainerType|button.eml|";
-    private static final String JOIN_BUTTON_PATH = "|ContainerType|ContainerType|ContainerType|button.eml|";
+    private static final String BROWSE_STORE_BUTTON_PATH = "|ContainerType|button.eml|";
     @SuppressLint("StaticFieldLeak")
     public static View channelTabView;
     /**
      * Last time the method was used
      */
     private static long lastTimeUsed = 0;
-    private final StringFilterGroup browseStoreButtonPhone;
-    private final StringFilterGroup browseStoreButtonTablet;
+    private final StringFilterGroup channelProfileButtonRule;
+    private static final ByteArrayAsStringFilterGroup browseStoreButton =
+            new ByteArrayAsStringFilterGroup(
+                    null,
+                    "header_store_button"
+            );
 
     public ChannelProfileFilter() {
-        browseStoreButtonPhone = new StringFilterGroup(
+        channelProfileButtonRule = new StringFilterGroup(
                 null,
-                "channel_profile_phone.eml",
-                "channel_action_buttons_phone.eml"
-        );
-
-        browseStoreButtonTablet = new StringFilterGroup(
-                null,
-                "channel_profile_tablet.eml"
+                "|channel_profile_"
         );
 
         final StringFilterGroup channelMemberShelf = new StringFilterGroup(
@@ -53,8 +49,7 @@ public final class ChannelProfileFilter extends Filter {
         );
 
         pathFilterGroupList.addAll(
-                browseStoreButtonPhone,
-                browseStoreButtonTablet,
+                channelProfileButtonRule,
                 channelMemberShelf,
                 channelProfileLinks,
                 forYouShelf
@@ -67,13 +62,13 @@ public final class ChannelProfileFilter extends Filter {
 
         final long currentTime = System.currentTimeMillis();
 
-        // Ignores method reuse in less than 1 second.
-        if (lastTimeUsed != 0 && currentTime - lastTimeUsed < 1000)
+        // Ignores method reuse in less than 3 second.
+        if (lastTimeUsed != 0 && currentTime - lastTimeUsed < 3000)
             return;
         lastTimeUsed = currentTime;
 
-        // This method is called before the channeltabView is created.
-        // Add a delay to hide after the channeltabView is created.
+        // This method is called before the channel tab is created.
+        // Add a delay to hide after the channel tab is created.
         ReVancedUtils.runOnMainThreadDelayed(() -> {
                     if (channelTabView != null) {
                         channelTabView.setVisibility(View.GONE);
@@ -86,15 +81,12 @@ public final class ChannelProfileFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        boolean isBrowseStoreButtonShown;
-        if (matchedGroup == browseStoreButtonPhone) {
-            isBrowseStoreButtonShown = path.contains(BROWSE_STORE_BUTTON_PHONE_PATH) && !path.contains(JOIN_BUTTON_PATH);
+        if (matchedGroup == channelProfileButtonRule) {
+            final boolean isBrowseStoreButtonShown = path.contains(BROWSE_STORE_BUTTON_PATH) && browseStoreButton.check(protobufBufferArray).isFiltered();
             hideStoreTab(isBrowseStoreButtonShown);
-            return isBrowseStoreButtonShown && SettingsEnum.HIDE_BROWSE_STORE_BUTTON.getBoolean();
-        } else if (matchedGroup == browseStoreButtonTablet) {
-            isBrowseStoreButtonShown = path.contains(BROWSE_STORE_BUTTON_TABLET_PATH);
-            hideStoreTab(isBrowseStoreButtonShown);
-            return isBrowseStoreButtonShown && SettingsEnum.HIDE_BROWSE_STORE_BUTTON.getBoolean();
+            if (!isBrowseStoreButtonShown || !SettingsEnum.HIDE_BROWSE_STORE_BUTTON.getBoolean()) {
+                return false;
+            }
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
