@@ -198,6 +198,10 @@ public class GeneralPatch {
         return SettingsEnum.HIDE_AUTO_PLAYER_POPUP_PANELS.getBoolean();
     }
 
+    public static int hideCastButton(int original) {
+        return SettingsEnum.HIDE_CAST_BUTTON.getBoolean() ? View.GONE : original;
+    }
+
     public static int hideCategoryBarInFeed(int original) {
         return SettingsEnum.HIDE_CATEGORY_BAR_IN_FEED.getBoolean() ? 0 : original;
     }

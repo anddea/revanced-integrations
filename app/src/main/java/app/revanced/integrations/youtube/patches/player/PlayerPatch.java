@@ -66,10 +66,6 @@ public class PlayerPatch {
         ReVancedUtils.hideViewByLayoutParams(view);
     }
 
-    public static int hideCastButton(int original) {
-        return SettingsEnum.HIDE_CAST_BUTTON.getBoolean() ? View.GONE : original;
-    }
-
     public static boolean hideChannelWatermark() {
         return !SettingsEnum.HIDE_CHANNEL_WATERMARK.getBoolean();
     }
