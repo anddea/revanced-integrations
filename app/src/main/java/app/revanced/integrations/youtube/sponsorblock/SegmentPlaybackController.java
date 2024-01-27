@@ -30,6 +30,7 @@ import app.revanced.integrations.youtube.sponsorblock.ui.SponsorBlockViewControl
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedUtils;
 import app.revanced.integrations.youtube.utils.VideoHelpers;
+import app.revanced.integrations.youtube.whitelist.Whitelist;
 
 /**
  * Handles showing, scheduling, and skipping of all {@link SponsorSegment} for the current video.
@@ -241,6 +242,8 @@ public class SegmentPlaybackController {
      * Must be called off main thread
      */
     static void executeDownloadSegments(@NonNull String videoId) {
+        if (Whitelist.isChannelSBWhitelisted())
+            return;
         Objects.requireNonNull(videoId);
         try {
             SponsorSegment[] segments = SBRequester.getSegments(videoId);

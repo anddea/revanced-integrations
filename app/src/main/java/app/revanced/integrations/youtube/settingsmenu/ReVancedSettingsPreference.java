@@ -21,16 +21,22 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+import app.revanced.integrations.youtube.patches.utils.PatchStatus;
+import app.revanced.integrations.youtube.patches.overlaybutton.Whitelists;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.settings.SettingsUtils;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedHelper;
+import app.revanced.integrations.youtube.whitelist.Whitelist;
+import app.revanced.integrations.youtube.whitelist.WhitelistType;
 
 /**
  * @noinspection ALL
  */
 public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
     private static final String EXTERNAL_DOWNLOADER_PREFERENCE_KEY = "revanced_external_downloader";
+    private static final String WHITELIST_PREFERENCE_KEY = "revanced_whitelisting";
+
     private static PreferenceManager mPreferenceManager;
 
     public static void setPreferenceManager(PreferenceManager mPreferenceManager) {
@@ -87,6 +93,7 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
         QuickActionsPreferenceLinks();
         TabletLayoutLinks();
         setExternalDownloaderPreference(activity);
+        setWhitelistPreference(activity);
         setOpenSettingsPreference(activity);
     }
 
@@ -298,6 +305,52 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
             externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
         } catch (Throwable th) {
             LogHelper.printException(() -> "Error setting setExternalDownloaderPreference" + th);
+        }
+    }
+
+    /**
+     * Add Preference to Whitelist settings submenu
+     */
+    private static void setWhitelistPreference(@NonNull Activity activity) {
+        try {
+            final PreferenceScreen whitelistingPreferenceScreen = (PreferenceScreen) mPreferenceManager.findPreference("whitelisting");
+            if (whitelistingPreferenceScreen == null)
+                return;
+
+            boolean isIncludedSB = PatchStatus.SponsorBlock();
+            boolean isIncludedSPEED = PatchStatus.VideoSpeed();
+
+            if (isIncludedSB || isIncludedSPEED) {
+                // Sponsorblock
+                if (isIncludedSB) {
+                    Whitelist.setEnabled(WhitelistType.SPONSORBLOCK, SettingsEnum.SB_WHITELIST.getBoolean());
+
+                    WhitelistedChannelsPreference WhitelistSB = new WhitelistedChannelsPreference(activity);
+                    WhitelistSB.setTitle(str(WHITELIST_PREFERENCE_KEY + "_sponsorblock"));
+                    WhitelistSB.setWhitelistType(WhitelistType.SPONSORBLOCK);
+                    whitelistingPreferenceScreen.addPreference(WhitelistSB);
+                }
+
+                // Video Speed
+                if (isIncludedSPEED) {
+                    Whitelist.setEnabled(WhitelistType.SPEED, SettingsEnum.SPEED_WHITELIST.getBoolean());
+
+                    WhitelistedChannelsPreference WhitelistSPEED = new WhitelistedChannelsPreference(activity);
+                    WhitelistSPEED.setTitle(str(WHITELIST_PREFERENCE_KEY + "_speed"));
+                    WhitelistSPEED.setWhitelistType(WhitelistType.SPEED);
+                    whitelistingPreferenceScreen.addPreference(WhitelistSPEED);
+                }
+            } else {
+                //True is disable
+                enableDisablePreferences(
+                    true,
+                    SettingsEnum.OVERLAY_BUTTON_WHITELIST,
+                    SettingsEnum.SPEED_WHITELIST,
+                    SettingsEnum.SB_WHITELIST
+            );
+            }
+        } catch (Throwable th) {
+            LogHelper.printException(() -> "Error setting setWhitelistPreference" + th);
         }
     }
 

@@ -37,9 +37,13 @@ import app.revanced.integrations.youtube.patches.overlaybutton.CopyVideoUrl;
 import app.revanced.integrations.youtube.patches.overlaybutton.CopyVideoUrlTimestamp;
 import app.revanced.integrations.youtube.patches.overlaybutton.ExternalDownload;
 import app.revanced.integrations.youtube.patches.overlaybutton.SpeedDialog;
+import app.revanced.integrations.youtube.patches.overlaybutton.Whitelists;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
+import app.revanced.integrations.youtube.patches.utils.PatchStatus;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.settings.SettingsUtils;
+import app.revanced.integrations.youtube.whitelist.Whitelist;
+import app.revanced.integrations.youtube.whitelist.WhitelistType;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedHelper;
 import app.revanced.integrations.youtube.utils.ResourceType;
@@ -90,6 +94,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     case OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP ->
                             CopyVideoUrlTimestamp.refreshVisibility();
                     case OVERLAY_BUTTON_EXTERNAL_DOWNLOADER -> ExternalDownload.refreshVisibility();
+                    case OVERLAY_BUTTON_WHITELIST -> Whitelists.refreshVisibility();
                     case OVERLAY_BUTTON_SPEED_DIALOG -> SpeedDialog.refreshVisibility();
                 }
             } else if (mPreference instanceof EditTextPreference editTextPreference) {

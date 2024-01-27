@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.utils.LogHelper;
+import app.revanced.integrations.youtube.whitelist.Whitelist;
 
 @SuppressWarnings("unused")
 public class PlaybackSpeedPatch {
@@ -23,7 +24,6 @@ public class PlaybackSpeedPatch {
 
             if (SettingsEnum.DISABLE_DEFAULT_PLAYBACK_SPEED_LIVE.getBoolean() && isLiveStream)
                 return;
-
             currentPlaybackSpeed = SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
 
             overrideSpeed(currentPlaybackSpeed);
@@ -39,7 +39,7 @@ public class PlaybackSpeedPatch {
         if (SettingsEnum.DISABLE_DEFAULT_PLAYBACK_SPEED_LIVE.getBoolean() && isLiveStream)
             return playbackSpeed;
 
-        return SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
+        return Whitelist.isChannelSPEEDWhitelisted() ? 1.0f : SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
     }
 
     public static void userChangedSpeed(final float playbackSpeed) {

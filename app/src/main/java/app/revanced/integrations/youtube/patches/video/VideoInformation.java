@@ -1,6 +1,7 @@
 package app.revanced.integrations.youtube.patches.video;
 
 import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.overrideSpeed;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import app.revanced.integrations.youtube.shared.VideoState;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedUtils;
 import app.revanced.integrations.youtube.utils.VideoHelpers;
+import app.revanced.integrations.youtube.whitelist.Whitelist;
 
 /**
  * Hooking class for the current playing video.
@@ -33,6 +35,9 @@ public final class VideoInformation {
 
     private static WeakReference<Object> playerControllerRef;
     private static Method seekMethod;
+
+    @NonNull
+    private static String channelName = "";
 
     @NonNull
     private static String videoId = "";
@@ -55,6 +60,7 @@ public final class VideoInformation {
             playerControllerRef = new WeakReference<>(Objects.requireNonNull(playerController));
             videoLength = 0;
             videoTime = -1;
+            channelName = "";
 
             seekMethod = playerController.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
             seekMethod.setAccessible(true);
@@ -139,6 +145,17 @@ public final class VideoInformation {
     }
 
     /**
+     * Channel name of the current video playing.
+     * <b>Currently this does not function for Shorts playback.</b>
+     *
+     * @return The channel name of the video. Empty string if not set yet.
+     */
+    @NonNull
+    public static String getChannelName() {
+        return channelName;
+    }
+
+    /**
      * Injection point.
      *
      * @param newlyLoadedVideoId id of the current video
@@ -148,6 +165,20 @@ public final class VideoInformation {
             return;
 
         videoId = newlyLoadedVideoId;
+    }
+
+    /**
+     * Injection point.
+     *
+     * @param newlyLoadedChannelName channel name of the current video
+     */
+    public static void setChannelName(@NonNull String newlyLoadedChannelName) {
+        if (channelName.equals(newlyLoadedChannelName))
+            return;
+
+        channelName = newlyLoadedChannelName;
+        if (Whitelist.isChannelSPEEDWhitelisted())
+            overrideSpeed(1.0f);
     }
 
     /**
