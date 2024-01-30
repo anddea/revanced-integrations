@@ -43,7 +43,7 @@ import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedUtils;
 import app.revanced.integrations.youtube.utils.ThemeHelper;
-import app.revanced.integrations.youtube.patches.spoof.SpoofAppVersionPatch;
+import app.revanced.integrations.youtube.patches.misc.SpoofAppVersionPatch;
 
 /**
  * Handles fetching and creation/replacing of RYD dislike text spans.
