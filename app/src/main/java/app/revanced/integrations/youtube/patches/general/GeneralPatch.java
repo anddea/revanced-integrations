@@ -130,6 +130,10 @@ public class GeneralPatch {
         return subtitlePrefetched;
     }
 
+    public static boolean disableRollingNumberAnimations() {
+        return SettingsEnum.DISABLE_ROLLING_NUMBER_ANIMATIONS.getBoolean();
+    }
+
     public static boolean enableGradientLoadingScreen() {
         return SettingsEnum.ENABLE_GRADIENT_LOADING_SCREEN.getBoolean();
     }
