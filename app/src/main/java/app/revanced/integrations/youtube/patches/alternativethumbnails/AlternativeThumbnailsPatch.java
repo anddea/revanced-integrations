@@ -186,6 +186,7 @@ public final class AlternativeThumbnailsPatch {
             if (!usingDeArrow && !usingVideoStills) {
                 return originalUrl;
             }
+            if (originalUrl.contains("_live.")) return originalUrl; // Livestream video in feed.
 
             final var decodedUrl = DecodedThumbnailUrl.decodeImageUrl(originalUrl);
             if (decodedUrl == null) {
