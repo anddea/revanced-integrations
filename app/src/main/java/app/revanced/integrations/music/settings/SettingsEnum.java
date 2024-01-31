@@ -99,6 +99,7 @@ public enum SettingsEnum {
     ENABLE_OLD_STYLE_LIBRARY_SHELF("revanced_enable_old_style_library_shelf", BOOLEAN, FALSE, true),
     HIDE_BUTTON_SHELF("revanced_hide_button_shelf", BOOLEAN, FALSE, true),
     HIDE_CAROUSEL_SHELF("revanced_hide_carousel_shelf", BOOLEAN, FALSE, true),
+    HIDE_FOR_YOU_SHELF("revanced_hide_for_you_shelf", BOOLEAN, FALSE, true),
     HIDE_CAST_BUTTON("revanced_hide_cast_button", BOOLEAN, TRUE),
     HIDE_CATEGORY_BAR("revanced_hide_category_bar", BOOLEAN, FALSE, true),
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
