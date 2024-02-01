@@ -1,7 +1,5 @@
 package app.revanced.integrations.youtube.patches.components;
 
-import static app.revanced.integrations.youtube.utils.StringRef.str;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -132,25 +130,6 @@ class StringFilterGroup extends FilterGroup<String> {
             }
         }
         return new FilterGroupResult(setting, matchedIndex, matchedLength);
-    }
-}
-
-final class CustomFilterGroup extends StringFilterGroup {
-
-    public CustomFilterGroup(SettingsEnum setting, SettingsEnum filter) {
-        super(setting, getFilterPatterns(filter));
-    }
-
-    private static String[] getFilterPatterns(SettingsEnum setting) {
-        String[] patterns = setting.getString().split("\\s+");
-        for (String pattern : patterns) {
-            if (!StringTrieSearch.isValidPattern(pattern)) {
-                ReVancedUtils.showToastShort(str("revanced_custom_filter_strings_warning"));
-                setting.resetToDefault();
-                return getFilterPatterns(setting);
-            }
-        }
-        return patterns;
     }
 }
 

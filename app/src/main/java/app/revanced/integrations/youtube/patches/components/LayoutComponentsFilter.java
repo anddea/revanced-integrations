@@ -67,11 +67,6 @@ public final class LayoutComponentsFilter extends Filter {
                 "post_base_wrapper"
         );
 
-        final StringFilterGroup customFilter = new CustomFilterGroup(
-                SettingsEnum.CUSTOM_FILTER,
-                SettingsEnum.CUSTOM_FILTER_STRINGS
-        );
-
         final StringFilterGroup expandableMetadata = new StringFilterGroup(
                 SettingsEnum.HIDE_EXPANDABLE_CHIP,
                 "inline_expander"
@@ -148,7 +143,6 @@ public final class LayoutComponentsFilter extends Filter {
                 albumCard,
                 audioTrackButton,
                 communityPosts,
-                customFilter,
                 expandableMetadata,
                 feedSurvey,
                 grayDescription,
