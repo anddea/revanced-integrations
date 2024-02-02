@@ -33,7 +33,9 @@ public class WhitelistRequester {
         try {
             var context = Objects.requireNonNull(ReVancedUtils.getContext());
             String videoId = VideoInformation.getVideoId();
+            // Use TVHTML5_SIMPLY_EMBEDDED_PLAYER by default to bypass age restriction video
             final byte[] innerTubeBody = String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId).getBytes(StandardCharsets.UTF_8);
+
             HttpURLConnection connection = PlayerRoutes.getPlayerResponseConnectionFromRoute(GET_CHANNEL_INFORMATION);
             connection.getOutputStream().write(innerTubeBody, 0, innerTubeBody.length);
 
