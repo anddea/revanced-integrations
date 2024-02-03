@@ -5,6 +5,10 @@ import static app.revanced.integrations.youtube.utils.ResourceUtils.findView;
 import static app.revanced.integrations.youtube.utils.ResourceUtils.integer;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,6 +25,7 @@ public class AlwaysRepeat {
     volatile static boolean isShowing;
     volatile static boolean isScrubbed;
     static WeakReference<ImageView> buttonView = new WeakReference<>(null);
+    static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#fffffc79"), PorterDuff.Mode.SRC_ATOP);
     @SuppressLint("StaticFieldLeak")
     static ConstraintLayout constraintLayout;
     static int fadeDurationFast;
@@ -35,7 +40,12 @@ public class AlwaysRepeat {
             ImageView imageView = findView(constraintLayout, "always_repeat_button");
             imageView.setSelected(SettingsEnum.ALWAYS_REPEAT.getBoolean());
             imageView.setOnClickListener(view -> AlwaysRepeat.changeSelected(!view.isSelected(), false));
+            imageView.setOnLongClickListener(view -> {
+                AlwaysRepeat.changeColorFilter();
+                return true;
+            });
             buttonView = new WeakReference<>(imageView);
+            AlwaysRepeat.setColorFilter(SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean());
 
             fadeDurationFast = integer("fade_duration_fast");
             fadeDurationScheduled = integer("fade_duration_scheduled");
@@ -91,15 +101,38 @@ public class AlwaysRepeat {
 
     public static void changeSelected(boolean selected, boolean onlyView) {
         ImageView imageView = buttonView.get();
-        if (constraintLayout == null || imageView == null)
+        if (constraintLayout == null || imageView == null || imageView.getColorFilter() == cf)
             return;
 
         imageView.setSelected(selected);
         if (!onlyView) SettingsEnum.ALWAYS_REPEAT.saveValue(selected);
     }
 
+    private static void changeColorFilter() {
+        ImageView imageView = buttonView.get();
+        if (constraintLayout == null || imageView == null) return;
+
+        imageView.setSelected(true);
+        SettingsEnum.ALWAYS_REPEAT.saveValue(true);
+
+        final boolean newValue = !SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean();
+        SettingsEnum.ALWAYS_REPEAT_PAUSE.saveValue(newValue);
+        setColorFilter(newValue);
+    }
+
     public static void refreshVisibility() {
         isButtonEnabled = setValue();
+    }
+
+    private static void setColorFilter(boolean selected) {
+        ImageView imageView = buttonView.get();
+        if (constraintLayout == null || imageView == null)
+            return;
+
+        if (selected)
+            imageView.setColorFilter(cf);
+        else
+            imageView.clearColorFilter();
     }
 
     private static boolean setValue() {

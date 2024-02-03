@@ -2,6 +2,7 @@ package app.revanced.integrations.youtube.patches.video;
 
 import static app.revanced.integrations.youtube.utils.StringRef.str;
 import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.overrideSpeed;
+import static app.revanced.integrations.youtube.patches.utils.AlwaysRepeatPatch.shouldRepeatAndPause;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -129,8 +130,12 @@ public final class VideoInformation {
         if (!SettingsEnum.ALWAYS_REPEAT.getBoolean())
             return false;
 
-        ReVancedUtils.runOnMainThreadDelayed(() -> seekTo(0), 0);
-
+        ReVancedUtils.runOnMainThreadDelayed(() -> {
+            final boolean seekResult = seekTo(0);
+            if (SettingsEnum.ALWAYS_REPEAT_PAUSE.getBoolean() && seekResult)
+                shouldRepeatAndPause();
+            }, 0
+        );
         return true;
     }
 
