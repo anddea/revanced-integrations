@@ -204,6 +204,7 @@ public enum SettingsEnum {
     // Experimental Flags
     HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, FALSE, true),
     HIDE_SUGGESTIONS_SHELF_METHOD("revanced_hide_suggestions_shelf_method", BOOLEAN, FALSE, true),
+    HIDE_HOME_FEED_MEMBERSHIP_VIDEO("revanced_hide_home_feed_membership_video", BOOLEAN, FALSE, true),
     HIDE_VIDEO_WITH_GRAY_DESCRIPTION("revanced_hide_video_with_gray_description", BOOLEAN, FALSE, true),
     HIDE_VIDEO_WITH_LOW_VIEW("revanced_hide_video_with_low_view", BOOLEAN, FALSE, true),
 

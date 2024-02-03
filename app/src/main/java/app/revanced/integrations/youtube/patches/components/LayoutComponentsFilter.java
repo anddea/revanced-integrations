@@ -20,6 +20,11 @@ public final class LayoutComponentsFilter extends Filter {
                     SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
                     "g-highZ"
             );
+    private static final ByteArrayAsStringFilterGroup membershipVideoIdentifier =
+            new ByteArrayAsStringFilterGroup(
+                    SettingsEnum.HIDE_HOME_FEED_MEMBERSHIP_VIDEO,
+                    "high-ptsZ"
+            );
     private final StringFilterGroup communityPosts;
     private final StringFilterGroupList communityPostsGroupList = new StringFilterGroupList();
     private final StringFilterGroup homeVideoWithContext;
@@ -173,7 +178,8 @@ public final class LayoutComponentsFilter extends Filter {
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
         if (matchedGroup == homeVideoWithContext) {
-            return lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered();
+            return (membershipVideoIdentifier.check(protobufBufferArray).isFiltered()
+                    || lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered());
         } else if (matchedGroup == searchVideoWithContext) {
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         } else if (matchedGroup == communityPosts) {
