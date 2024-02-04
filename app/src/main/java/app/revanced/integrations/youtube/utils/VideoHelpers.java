@@ -25,11 +25,6 @@ import app.revanced.integrations.youtube.patches.video.VideoQualityPatch;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 
 public class VideoHelpers {
-
-    /**
-     * Injection point.
-     */
-    public static String currentQuality = "";
     /**
      * Injection point.
      */
@@ -39,6 +34,20 @@ public class VideoHelpers {
      */
     public static String qualityAutoString = "Auto";
     private static volatile boolean isPiPAvailable = true;
+
+    public static String currentQuality = "";
+
+    /**
+     * Injection point.
+     *
+     * @param quality Current video quality in human readable form: 1080p
+     */
+    public static void onQualityChanges(String quality) {
+        if (currentQuality == quality)
+            return;
+        currentQuality = quality;
+        VideoQualityPatch.forceVideoQuality();
+    }
 
     public static void copyUrl(boolean withTimestamp) {
         StringBuilder builder = new StringBuilder("https://youtu.be/");
@@ -171,7 +180,7 @@ public class VideoHelpers {
 
     public static String getQualityString() {
         if (currentQuality.isEmpty()) {
-            VideoQualityPatch.overrideQuality(720);
+            VideoQualityPatch.forceVideoQuality();
             return qualityAutoString;
         } else if (currentQuality.equals(qualityAutoString)) {
             return qualityAutoString;

@@ -42,9 +42,13 @@ public class VideoQualityPatch {
         ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName(), defaultQuality + "p"));
     }
 
+    /**
+     * Injection point.
+     * 
+     * The remaining code will be implemented by patch.
+     */
     public static void overrideQuality(final int qualityValue) {
         LogHelper.printDebug(() -> "Quality changed to: " + qualityValue);
-        // Rest of the implementation added by patch.
     }
 
     /**
@@ -84,10 +88,7 @@ public class VideoQualityPatch {
         overrideQuality(preferredQuality);
     }
 
-    /**
-     * Injection point.
-     */
-    public static void newVideoStarted(final String ignoredVideoId) {
+    public static void forceVideoQuality() {
         final int preferredQuality =
                 ReVancedUtils.getNetworkType() == ReVancedUtils.NetworkType.MOBILE
                         ? mobileQualitySetting.getInt()
@@ -96,7 +97,7 @@ public class VideoQualityPatch {
         if (preferredQuality == -2)
             return;
 
-        ReVancedUtils.runOnMainThreadDelayed(() -> setVideoQuality(preferredQuality), 500);
+        ReVancedUtils.runOnMainThreadDelayed(() -> setVideoQuality(preferredQuality), 300);
     }
 
     /**
