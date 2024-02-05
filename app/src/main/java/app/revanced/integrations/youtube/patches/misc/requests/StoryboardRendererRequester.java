@@ -3,6 +3,7 @@ package app.revanced.integrations.youtube.patches.misc.requests;
 import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.ANDROID_INNER_TUBE_BODY;
 import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.GET_STORYBOARD_SPEC_RENDERER;
 import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.TV_EMBED_INNER_TUBE_BODY;
+import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.WEB_INNER_TUBE_BODY;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,14 +75,14 @@ public class StoryboardRendererRequester {
         return null;
     }
 
-    private static boolean isPlayabilityStatusOk(@NonNull JSONObject playerResponse) {
+    private static String GetPlayabilityStatus(@NonNull JSONObject playerResponse) {
         try {
-            return playerResponse.getJSONObject("playabilityStatus").getString("status").equals("OK");
+            return playerResponse.getJSONObject("playabilityStatus").getString("status");
         } catch (JSONException e) {
             LogHelper.printDebug(() -> "Failed to get playabilityStatus for response: " + playerResponse);
         }
-
-        return false;
+        // Prevent NullPointerException
+        return "";
     }
 
     /**
@@ -92,10 +93,40 @@ public class StoryboardRendererRequester {
      */
     @Nullable
     private static StoryboardRenderer getStoryboardRendererUsingBody(@NonNull String innerTubeBody,
-                                                                     boolean showToastOnIOException) {
+                                                                     boolean showToastOnIOException,
+                                                                     @NonNull String videoId) {
         final JSONObject playerResponse = fetchPlayerResponse(innerTubeBody, showToastOnIOException);
-        if (playerResponse != null && isPlayabilityStatusOk(playerResponse))
+        if (playerResponse == null)
+            return null;
+
+        final String playabilityStatus = GetPlayabilityStatus(playerResponse);
+
+        if (playabilityStatus.equals("OK"))
             return getStoryboardRendererUsingResponse(playerResponse);
+
+        // Get the StoryboardRenderer from Premieres Video.
+        // In Android client, YouTube used weird base64-like encoding for PlayerResponse.
+        // So additational fetching with WEB client is required for getting unserialized ones.
+        if (playabilityStatus.equals("LIVE_STREAM_OFFLINE"))
+            return getTrailerStoryboardRenderer(videoId);
+        return null;
+    }
+
+    @Nullable
+    private static StoryboardRenderer getTrailerStoryboardRenderer(@NonNull String videoId) {
+        try {
+            final JSONObject playerResponse = fetchPlayerResponse(
+                        String.format(WEB_INNER_TUBE_BODY, videoId), false);
+
+            JSONObject unserializedPlayerResponse = playerResponse.getJSONObject("playabilityStatus")
+                        .getJSONObject("errorScreen").getJSONObject("ypcTrailerRenderer").getJSONObject("unserializedPlayerResponse");
+
+            if (GetPlayabilityStatus(unserializedPlayerResponse).equals("OK"))
+                return getStoryboardRendererUsingResponse(unserializedPlayerResponse);
+            return null;
+        } catch (JSONException e) {
+            LogHelper.printException(() -> "Failed to get unserializedPlayerResponse", e);
+        }
 
         return null;
     }
@@ -103,7 +134,7 @@ public class StoryboardRendererRequester {
     @Nullable
     private static StoryboardRenderer getStoryboardRendererUsingResponse(@NonNull JSONObject playerResponse) {
         try {
-            LogHelper.printDebug(() -> "Parsing response: " + playerResponse);
+            LogHelper.printDebug(() -> "Parsing storyboardRenderer from response: " + playerResponse);
             if (!playerResponse.has("storyboards")) {
                 LogHelper.printDebug(() -> "Using empty storyboard");
                 return emptyStoryboard;
@@ -138,11 +169,11 @@ public class StoryboardRendererRequester {
         Objects.requireNonNull(videoId);
 
         StoryboardRenderer renderer = getStoryboardRendererUsingBody(
-                String.format(ANDROID_INNER_TUBE_BODY, videoId), false);
+                String.format(ANDROID_INNER_TUBE_BODY, videoId), false, videoId);
         if (renderer == null) {
             LogHelper.printDebug(() -> videoId + " not available using Android client");
             renderer = getStoryboardRendererUsingBody(
-                    String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId), true);
+                    String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId), true, videoId);
             if (renderer == null) {
                 LogHelper.printDebug(() -> videoId + " not available using TV embedded client");
             }

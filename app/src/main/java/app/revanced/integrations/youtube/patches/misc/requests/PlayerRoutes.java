@@ -19,16 +19,22 @@ public final class PlayerRoutes {
                     "?fields=videoDetails.channelId," +
                     "videoDetails.author"
     ).compile();
+
     public static final Route.CompiledRoute GET_STORYBOARD_SPEC_RENDERER = new Route(
             Route.Method.POST,
             "player" +
                     "?fields=storyboards.playerStoryboardSpecRenderer," +
                     "storyboards.playerLiveStoryboardSpecRenderer," +
-                    "playabilityStatus.status"
+                    "playabilityStatus.status," +
+                    "playabilityStatus.errorScreen"
     ).compile();
+
+    public static final String WEB_INNER_TUBE_BODY;
     public static final String ANDROID_INNER_TUBE_BODY;
     public static final String TV_EMBED_INNER_TUBE_BODY;
+
     private static final String YT_API_URL = "https://www.youtube.com/youtubei/v1/";
+
     /**
      * TCP connection and HTTP read timeout
      */
@@ -52,7 +58,6 @@ public final class PlayerRoutes {
         } catch (JSONException e) {
             LogHelper.printException(() -> "Failed to create innerTubeBody", e);
         }
-
         ANDROID_INNER_TUBE_BODY = innerTubeBody.toString();
 
         JSONObject tvEmbedInnerTubeBody = new JSONObject();
@@ -77,8 +82,26 @@ public final class PlayerRoutes {
         } catch (JSONException e) {
             LogHelper.printException(() -> "Failed to create tvEmbedInnerTubeBody", e);
         }
-
         TV_EMBED_INNER_TUBE_BODY = tvEmbedInnerTubeBody.toString();
+
+        JSONObject webInnerTubeBody = new JSONObject();
+
+        try {
+            JSONObject context = new JSONObject();
+
+            JSONObject client = new JSONObject();
+            client.put("clientName", "WEB");
+            client.put("clientVersion", "2.20240201.01.00");
+            client.put("clientScreen", "WATCH");
+
+            context.put("client", client);
+
+            webInnerTubeBody.put("context", context);
+            webInnerTubeBody.put("videoId", "%s");
+        } catch (JSONException e) {
+            LogHelper.printException(() -> "Failed to create webInnerTubeBody", e);
+        }
+        WEB_INNER_TUBE_BODY = webInnerTubeBody.toString();
     }
 
     private PlayerRoutes() {
