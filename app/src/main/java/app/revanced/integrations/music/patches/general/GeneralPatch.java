@@ -122,6 +122,10 @@ public class GeneralPatch {
         return SettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
     }
 
+    public static boolean hideTapToUpdateButton() {
+        return SettingsEnum.HIDE_TAP_TO_UPDATE_BUTTON.getBoolean();
+    }
+
     public static void newVideoStarted(@NonNull String newlyLoadedVideoId) {
         if (Objects.equals(newlyLoadedVideoId, videoId)) {
             return;

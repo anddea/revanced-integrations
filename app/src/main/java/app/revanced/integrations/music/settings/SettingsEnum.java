@@ -107,6 +107,7 @@ public enum SettingsEnum {
     HIDE_HISTORY_BUTTON("revanced_hide_history_button", BOOLEAN, FALSE),
     HIDE_NEW_PLAYLIST_BUTTON("revanced_hide_new_playlist_button", BOOLEAN, FALSE),
     HIDE_PLAYLIST_CARD("revanced_hide_playlist_card", BOOLEAN, FALSE, true),
+    HIDE_TAP_TO_UPDATE_BUTTON("revanced_hide_tap_to_update_button", BOOLEAN, TRUE),
     REMOVE_VIEWER_DISCRETION_DIALOG("revanced_remove_viewer_discretion_dialog", BOOLEAN, FALSE),
 
 
