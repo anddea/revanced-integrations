@@ -34,6 +34,10 @@ public class ActionBarPatch {
         );
     }
 
+    public static void hideLikeDislikeButton(boolean original) {
+        return SettingsEnum.HIDE_ACTION_BUTTON_LIKE_DISLIKE.getBoolean() || original;
+    }
+
     public static void hookDownloadButton(View view) {
         if (!SettingsEnum.HOOK_ACTION_BUTTON_DOWNLOAD.getBoolean()) {
             return;
