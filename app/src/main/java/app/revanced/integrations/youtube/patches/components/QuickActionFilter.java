@@ -50,6 +50,10 @@ final class QuickActionFilter extends Filter {
 
         bufferButtonsGroupList.addAll(
                 new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_QUICK_ACTIONS_COMMENT_BUTTON,
+                        "yt_outline_message_bubble_right"
+                ),
+                new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_QUICK_ACTIONS_LIVE_CHAT_BUTTON,
                         "yt_outline_message_bubble_overlap"
                 ),
