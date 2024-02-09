@@ -34,7 +34,7 @@ public class ActionBarPatch {
         );
     }
 
-    public static void hideLikeDislikeButton(boolean original) {
+    public static boolean hideLikeDislikeButton(boolean original) {
         return SettingsEnum.HIDE_ACTION_BUTTON_LIKE_DISLIKE.getBoolean() || original;
     }
 
