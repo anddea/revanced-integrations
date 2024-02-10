@@ -3,6 +3,7 @@ package app.revanced.integrations.youtube.patches.components;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
 
 /**
  * @noinspection rawtypes
@@ -161,29 +162,22 @@ public final class LayoutComponentsFilter extends Filter {
                 ticketShelf,
                 timedReactions
         );
-
-        communityPostsGroupList.addAll(
-                new StringFilterGroup(
-                        SettingsEnum.HIDE_COMMUNITY_POSTS_HOME,
-                        "horizontalCollectionSwipeProtector=null"
-                ),
-                new StringFilterGroup(
-                        SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS,
-                        "heightConstraint=null"
-                )
-        );
     }
 
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (matchedGroup == homeVideoWithContext) {
+        if (matchedGroup == homeVideoWithContext)
             return (membershipVideoIdentifier.check(protobufBufferArray).isFiltered()
                     || lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered());
-        } else if (matchedGroup == searchVideoWithContext) {
+        if (matchedGroup == searchVideoWithContext) {
+            BrowseIdPatch.setDefaultBrowseIdToField();
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
-        } else if (matchedGroup == communityPosts) {
-            return communityPostsGroupList.check(allValue).isFiltered();
+        }
+        if (matchedGroup == communityPosts) {
+            if (BrowseIdPatch.isHomeFeed())
+                return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
+            return HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean();
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
