@@ -82,6 +82,10 @@ public class VideoHelpers {
     }
 
     public static void download(@NonNull Context context) {
+        download(context, VideoInformation.getVideoId());
+    }
+
+    public static void download(@NonNull Context context, @NonNull String videoId) {
         String downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString().trim();
 
         if (downloaderPackageName.isEmpty()) {
@@ -95,7 +99,7 @@ public class VideoHelpers {
         }
 
         isPiPAvailable = false;
-        startDownloaderActivity(context, downloaderPackageName, String.format("https://youtu.be/%s", VideoInformation.getVideoId()));
+        startDownloaderActivity(context, downloaderPackageName, String.format("https://youtu.be/%s", videoId));
         ReVancedUtils.runOnMainThreadDelayed(() -> isPiPAvailable = true, 500L);
     }
 
@@ -180,7 +184,7 @@ public class VideoHelpers {
 
     public static String getQualityString() {
         if (currentQuality.isEmpty()) {
-            VideoQualityPatch.forceVideoQuality();
+            VideoQualityPatch.overrideQuality(720);
             return qualityAutoString;
         } else if (currentQuality.equals(qualityAutoString)) {
             return qualityAutoString;
