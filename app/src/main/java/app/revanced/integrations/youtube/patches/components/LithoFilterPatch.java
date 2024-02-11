@@ -354,6 +354,8 @@ public final class LithoFilterPatch {
     private static final StringTrieSearch identifierSearchTree = new StringTrieSearch();
     private static final StringTrieSearch allValueSearchTree = new StringTrieSearch();
 
+    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+
     /**
      * Because litho filtering is multi-threaded and the buffer is passed in from a different injection point,
      * the buffer is saved to a ThreadLocal so each calling thread does not interfere with other threads.
@@ -396,12 +398,18 @@ public final class LithoFilterPatch {
      * Injection point.  Called off the main thread.
      */
     @SuppressWarnings("unused")
-    public static void setProtoBuffer(@NonNull ByteBuffer protobufBuffer) {
+    public static void setProtoBuffer(@Nullable ByteBuffer protobufBuffer) {
         // Set the buffer to a thread local.  The buffer will remain in memory, even after the call to #filter completes.
         // This is intentional, as it appears the buffer can be set once and then filtered multiple times.
         // The buffer will be cleared from memory after a new buffer is set by the same thread,
         // or when the calling thread eventually dies.
-        bufferThreadLocal.set(protobufBuffer);
+        if (protobufBuffer == null) {
+            // It appears the buffer can be cleared out just before the call to #filter()
+            // Ignore this null value and retain the last buffer that was set.
+            LogHelper.printDebug(() -> "Ignoring null protobuffer");
+        } else {
+            bufferThreadLocal.set(protobufBuffer);
+        }
     }
 
     /**
@@ -414,14 +422,17 @@ public final class LithoFilterPatch {
                 return false;
 
             ByteBuffer protobufBuffer = bufferThreadLocal.get();
+            final byte[] bufferArray;
+            // Potentially the buffer may have been null or never set up until now.
+            // Use an empty buffer so the litho id/path filters still work correctly.
             if (protobufBuffer == null) {
-                LogHelper.printException(() -> "Proto buffer is null"); // Should never happen.
-                return false;
-            }
-
-            if (!protobufBuffer.hasArray()) {
-                LogHelper.printDebug(() -> "Proto buffer does not have an array");
-                return false;
+                LogHelper.printDebug(() -> "Proto buffer is null, using an empty buffer array");
+                bufferArray = EMPTY_BYTE_ARRAY;
+            } else if (!protobufBuffer.hasArray()) {
+                LogHelper.printDebug(() -> "Proto buffer does not have an array, using an empty buffer array");
+                bufferArray = EMPTY_BYTE_ARRAY;
+            } else {
+                bufferArray = protobufBuffer.array();
             }
 
             LithoFilterParameters parameter = new LithoFilterParameters(pathBuilder.toString(), identifier, object.toString(), protobufBuffer.array());
@@ -488,7 +499,7 @@ public final class LithoFilterPatch {
         @Override
         public String toString() {
             // Estimate the percentage of the buffer that are Strings.
-            StringBuilder builder = new StringBuilder(protoBuffer.length / 2);
+            StringBuilder builder = new StringBuilder(Math.max(100, protoBuffer.length / 2));
             builder.append("\nID: ");
             builder.append(identifier);
             builder.append("\nPath: ");

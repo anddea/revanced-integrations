@@ -177,7 +177,7 @@ public final class LayoutComponentsFilter extends Filter {
         if (matchedGroup == communityPosts) {
             if (BrowseIdPatch.isHomeFeed())
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
-            return HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean();
+            return SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean();
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
