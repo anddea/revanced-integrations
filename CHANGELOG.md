@@ -1,3 +1,19 @@
+# [0.144.0](https://github.com/YT-Advanced/ReX-integrations/compare/v0.143.0...v0.144.0) (2024-02-11)
+
+
+### Bug Fixes
+
+* **Hide channel avatar section:** Not worked as excepted ([3f1d94f](https://github.com/YT-Advanced/ReX-integrations/commit/3f1d94f8e9ad8d2e29e543d106f5c0e07388ca15))
+* **Hide Layout Component:** `Hide community posts in home feed` no longer working ([57d0a39](https://github.com/YT-Advanced/ReX-integrations/commit/57d0a3903bc9b69a274cc680c1b71df57f551066))
+* **YouTube - Litho Filter:** Ignore null buffers ([a99dca7](https://github.com/YT-Advanced/ReX-integrations/commit/a99dca7e95de7d12f4d7b37e6b82e2bf9f6eed30))
+* **YouTube - Quick Action:** `Hide comment button` not working ([7b5a5a3](https://github.com/YT-Advanced/ReX-integrations/commit/7b5a5a3c11604d1645e6fdf7797b32472720a67f))
+* **YT Music - Hide action bar component:** Hide Like/Dislike button not worked in v6.35+ ([5217b20](https://github.com/YT-Advanced/ReX-integrations/commit/5217b2087efd387263d3b08382398289dee1a46c))
+
+
+### Features
+
+* **YouTube:** Hook download button for Flyout Menu ([3693293](https://github.com/YT-Advanced/ReX-integrations/commit/3693293f65bbbba0798aedf823f7195e2a797f6b))
+
 # [0.143.0](https://github.com/YT-Advanced/ReX-integrations/compare/v0.142.0...v0.143.0) (2024-02-07)
 
 
