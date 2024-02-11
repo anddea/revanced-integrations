@@ -70,7 +70,8 @@ public final class LayoutComponentsFilter extends Filter {
 
         communityPosts = new StringFilterGroup(
                 null,
-                "post_base_wrapper"
+                "post_base_wrapper",
+                "image_post_root"
         );
 
         final StringFilterGroup expandableMetadata = new StringFilterGroup(
