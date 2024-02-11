@@ -1,3 +1,10 @@
+## [0.144.1](https://github.com/YT-Advanced/ReX-integrations/compare/v0.144.0...v0.144.1) (2024-02-11)
+
+
+### Bug Fixes
+
+* **Hide Layout Component:** Hide `Community Post` not worked due to A/B Testing ([625d8a5](https://github.com/YT-Advanced/ReX-integrations/commit/625d8a5b2a01f1803d9ddf461e93b9a9ac7df8bb))
+
 # [0.144.0](https://github.com/YT-Advanced/ReX-integrations/compare/v0.143.0...v0.144.0) (2024-02-11)
 
 
