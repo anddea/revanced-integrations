@@ -46,7 +46,7 @@ public class VideoHelpers {
         if (currentQuality == quality)
             return;
         currentQuality = quality;
-        VideoQualityPatch.forceVideoQuality();
+        VideoQualityPatch.overideDefaultVideoQuality();
     }
 
     public static void copyUrl(boolean withTimestamp) {

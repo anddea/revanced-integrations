@@ -3,6 +3,7 @@ package app.revanced.integrations.youtube.patches.video;
 import static app.revanced.integrations.youtube.utils.StringRef.str;
 import static app.revanced.integrations.youtube.utils.VideoHelpers.getCurrentQuality;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.lang.reflect.Field;
@@ -18,6 +19,20 @@ public class VideoQualityPatch {
     private static final SettingsEnum mobileQualitySetting = SettingsEnum.DEFAULT_VIDEO_QUALITY_MOBILE;
     private static final SettingsEnum wifiQualitySetting = SettingsEnum.DEFAULT_VIDEO_QUALITY_WIFI;
 
+    private static Boolean useCustomQuality = false;
+    @Nullable
+    private static int customQuality;
+
+    /**
+     * Injection point.
+     *
+     * @param ignoredVideoId id of the current video
+     */
+    public static void initialize(@NonNull String ignoredVideoId) {
+        useCustomQuality = false;
+        customQuality = 0;
+    }
+
     /**
      * The available qualities of the current video in human readable form: [1080, 720, 480]
      */
@@ -25,6 +40,9 @@ public class VideoQualityPatch {
     private static List<Integer> videoQualities;
 
     private static void changeDefaultQuality(final int defaultQuality) {
+        // When user manual change the quality, force this quality until video ended.
+        overrideCustomQuality(defaultQuality);
+
         if (!SettingsEnum.ENABLE_SAVE_VIDEO_QUALITY.getBoolean())
             return;
 
@@ -40,6 +58,27 @@ public class VideoQualityPatch {
         }
 
         ReVancedUtils.showToastShort(str("revanced_save_video_quality_" + networkType.getName(), defaultQuality + "p"));
+    }
+
+    public static void overrideCustomQuality(final int defaultQuality) {
+        customQuality = defaultQuality;
+        useCustomQuality = true;
+        overrideQuality(defaultQuality);
+    }
+    
+    public static void overideDefaultVideoQuality() {
+        final int preferredQuality =
+                ReVancedUtils.getNetworkType() == ReVancedUtils.NetworkType.MOBILE
+                        ? mobileQualitySetting.getInt()
+                        : wifiQualitySetting.getInt();
+
+        if (preferredQuality == -2)
+            return;
+
+        ReVancedUtils.runOnMainThreadDelayed(() -> 
+            setVideoQuality((useCustomQuality) ? customQuality 
+                                               : preferredQuality)
+        , 300);
     }
 
     /**
@@ -86,18 +125,6 @@ public class VideoQualityPatch {
             preferredQuality = qualityToUse;
         }
         overrideQuality(preferredQuality);
-    }
-
-    public static void forceVideoQuality() {
-        final int preferredQuality =
-                ReVancedUtils.getNetworkType() == ReVancedUtils.NetworkType.MOBILE
-                        ? mobileQualitySetting.getInt()
-                        : wifiQualitySetting.getInt();
-
-        if (preferredQuality == -2)
-            return;
-
-        ReVancedUtils.runOnMainThreadDelayed(() -> setVideoQuality(preferredQuality), 300);
     }
 
     /**
