@@ -1,3 +1,11 @@
+## [0.144.2](https://github.com/YT-Advanced/ReX-integrations/compare/v0.144.1...v0.144.2) (2024-02-14)
+
+
+### Bug Fixes
+
+* **Default Video Quality:** Video quality is not changeable if default ones is already set ([6656f1a](https://github.com/YT-Advanced/ReX-integrations/commit/6656f1a030dc0066a83954b5c1498eda478d679b))
+* **Hide interstitial ads:** Crashing when trying to hide ([f898e7d](https://github.com/YT-Advanced/ReX-integrations/commit/f898e7de97f5de81e30ffce1eef42780fbbe98fe))
+
 ## [0.144.1](https://github.com/YT-Advanced/ReX-integrations/compare/v0.144.0...v0.144.1) (2024-02-11)
 
 
