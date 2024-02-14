@@ -11,7 +11,8 @@ public class InterstitialBannerPatch {
     /**
      * Last time method is called
      */
-    private static long lastTimeCalled = 0;
+    private static volatile long lastTimeCalled = 0;
+    private static final Instrumentation instrumentation = new Instrumentation();
 
     public static void onBackPressed() {
         final long currentTime = System.currentTimeMillis();
@@ -19,7 +20,10 @@ public class InterstitialBannerPatch {
             return;
 
         lastTimeCalled = currentTime;
-        ReVancedUtils.runOnMainThreadDelayed(() -> new Thread(() -> new Instrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)).start(), 1000);
+        ReVancedUtils.runOnMainThreadDelayed(() -> {
+            // Must run off main thread (Odd, but whatever).
+            ReVancedUtils.runOnBackgroundThread(() -> instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK));
+        }, 1000);
         ReVancedUtils.runOnMainThreadDelayed(() -> ReVancedUtils.showToastShort(str("revanced_close_interstitial_ads_toast")), 1000);
     }
 }
