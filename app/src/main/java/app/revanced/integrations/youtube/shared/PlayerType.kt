@@ -127,4 +127,13 @@ enum class PlayerType {
         return isNoneHiddenOrSlidingMinimized() || this == WATCH_WHILE_MINIMIZED
     }
 
+    /**
+     * Check if the current player type is [WATCH_WHILE_MAXIMIZED].
+     *
+     * @return If a regular video is being played in maximized mode.
+     */
+    fun isMaximized(): Boolean {
+        return this == WATCH_WHILE_MAXIMIZED
+    }
+
 }

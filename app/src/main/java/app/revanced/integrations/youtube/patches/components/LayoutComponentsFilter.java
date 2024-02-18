@@ -3,6 +3,7 @@ package app.revanced.integrations.youtube.patches.components;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
 
 /**
@@ -176,6 +177,8 @@ public final class LayoutComponentsFilter extends Filter {
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         }
         if (matchedGroup == communityPosts) {
+            if (BrowseIdPatch.isMaximized())
+                return SettingsEnum.HIDE_COMMUNITY_POSTS_RELATED_VIDEO.getBoolean();
             if (BrowseIdPatch.isHomeFeed())
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
             return SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean();

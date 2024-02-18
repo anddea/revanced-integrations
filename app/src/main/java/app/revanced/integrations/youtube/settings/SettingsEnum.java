@@ -189,6 +189,7 @@ public enum SettingsEnum {
     HIDE_CHIPS_SHELF("revanced_hide_chips_shelf", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_HOME("revanced_hide_community_posts_home", BOOLEAN, TRUE),
     HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS("revanced_hide_community_posts_subscriptions", BOOLEAN, FALSE),
+    HIDE_COMMUNITY_POSTS_RELATED_VIDEO("revanced_hide_community_posts_related_video", BOOLEAN, TRUE),
     HIDE_EXPANDABLE_CHIP("revanced_hide_expandable_chip", BOOLEAN, TRUE),
     HIDE_FEED_SURVEY("revanced_hide_feed_survey", BOOLEAN, TRUE),
     HIDE_GRAY_DESCRIPTION("revanced_hide_gray_description", BOOLEAN, TRUE),
