@@ -177,7 +177,7 @@ public final class LayoutComponentsFilter extends Filter {
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         }
         if (matchedGroup == communityPosts) {
-            if (BrowseIdPatch.isMaximized())
+            if (PlayerType.isMaximized())
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_RELATED_VIDEO.getBoolean();
             if (BrowseIdPatch.isHomeFeed())
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
