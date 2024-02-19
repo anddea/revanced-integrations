@@ -284,6 +284,8 @@ public enum SettingsEnum {
     SPEED_WHITELIST("revanced_whitelisting_speed", BOOLEAN, FALSE),
     SB_WHITELIST("revanced_whitelisting_sponsorblock", BOOLEAN, FALSE),
 
+    OVERLAY_BUTTON_PLAYLIST("revanced_overlay_button_playlist", BOOLEAN, FALSE),
+
     // Experimental Flags
     HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, FALSE),
 
