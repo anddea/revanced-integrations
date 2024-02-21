@@ -12,6 +12,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -127,6 +128,21 @@ public class VideoHelpers {
         intent.setPackage(downloaderPackageName);
         intent.putExtra("android.intent.extra.TEXT", content);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void playlistFromChannelVideosListener(@NonNull Context context, boolean activated) {
+        // This patches require Open links directly to be worked
+        if (!SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.getBoolean()) {
+            SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.saveBoolean(true);
+            ReVancedUtils.runOnMainThreadDelayed(() -> SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.saveBoolean(false), 1000L);
+        }
+        String baseUri = "https://youtu.be/" + VideoInformation.getVideoId() + "?t=" + VideoInformation.getVideoTime() / 1000;
+        if (activated) {
+            baseUri += "&list=UL" + VideoInformation.getVideoId();
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUri));
         context.startActivity(intent);
     }
 
