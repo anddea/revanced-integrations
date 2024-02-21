@@ -5,10 +5,6 @@ import static app.revanced.integrations.youtube.utils.ResourceUtils.findView;
 import static app.revanced.integrations.youtube.utils.ResourceUtils.integer;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,6 +16,7 @@ import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.VideoHelpers;
 
+@SuppressWarnings("unused")
 public class PlaylistFromChannelVideos {
     volatile static boolean isButtonEnabled;
     volatile static boolean isShowing;
@@ -32,27 +29,17 @@ public class PlaylistFromChannelVideos {
     static Animation fadeIn;
     static Animation fadeOut;
 
-    static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#ff3ea6ff"), PorterDuff.Mode.SRC_ATOP);
     public static void initialize(Object obj) {
         try {
             constraintLayout = (ConstraintLayout) obj;
             isButtonEnabled = setValue();
-            ImageView imageView = findView(constraintLayout, "play_all_channel_button");
+            ImageView imageView = findView(constraintLayout, "time_ordered_playlist_button");
 
             imageView.setOnClickListener(view -> {
-                if (imageView.getColorFilter() == cf)
-                    return;
-
                 VideoHelpers.playlistFromChannelVideosListener(view.getContext(), true);
-                imageView.setColorFilter(cf);
             });
             imageView.setOnLongClickListener(view -> {
-                if (imageView.getColorFilter() != cf)
-                    return true;
-
                 VideoHelpers.playlistFromChannelVideosListener(view.getContext(), false);
-                imageView.clearColorFilter();
-                return true;
             });
             buttonView = new WeakReference<>(imageView);
 
@@ -113,6 +100,6 @@ public class PlaylistFromChannelVideos {
     }
 
     private static boolean setValue() {
-        return SettingsEnum.OVERLAY_BUTTON_PLAYLIST.getBoolean();
+        return SettingsEnum.OVERLAY_BUTTON_TIME_ORDERED_PLAYLIST.getBoolean();
     }
 }
