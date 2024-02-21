@@ -35,11 +35,10 @@ public class PlaylistFromChannelVideos {
             isButtonEnabled = setValue();
             ImageView imageView = findView(constraintLayout, "time_ordered_playlist_button");
 
-            imageView.setOnClickListener(view -> {
-                VideoHelpers.playlistFromChannelVideosListener(view.getContext(), true);
-            });
+            imageView.setOnClickListener(view -> VideoHelpers.playlistFromChannelVideosListener(view.getContext(), true));
             imageView.setOnLongClickListener(view -> {
                 VideoHelpers.playlistFromChannelVideosListener(view.getContext(), false);
+                return true;
             });
             buttonView = new WeakReference<>(imageView);
 
