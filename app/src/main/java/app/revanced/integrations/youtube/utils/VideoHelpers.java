@@ -12,6 +12,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -127,6 +128,16 @@ public class VideoHelpers {
         intent.setPackage(downloaderPackageName);
         intent.putExtra("android.intent.extra.TEXT", content);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void playlistFromChannelVideosListener(@NonNull Context context, boolean activated) {
+        String baseUri = "vnd.youtube://" + VideoInformation.getVideoId() + "?start=" + VideoInformation.getVideoTime() / 1000;
+        if (activated) {
+            baseUri += "&list=UL" + VideoInformation.getVideoId();
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUri));
         context.startActivity(intent);
     }
 
