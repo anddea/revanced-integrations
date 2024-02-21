@@ -132,17 +132,12 @@ public class VideoHelpers {
     }
 
     public static void playlistFromChannelVideosListener(@NonNull Context context, boolean activated) {
-        String baseUri = "https://youtu.be/" + VideoInformation.getVideoId();
+        String baseUri = "https://youtu.be/" + VideoInformation.getVideoId() + "?t=" + VideoInformation.getVideoTime() / 1000;
         if (activated) {
             baseUri += "&list=UL" + VideoInformation.getVideoId();
         }
 
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUri));
-
-        // Set flags to ensure that the intent is handled properly
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         context.startActivity(intent);
     }
 
