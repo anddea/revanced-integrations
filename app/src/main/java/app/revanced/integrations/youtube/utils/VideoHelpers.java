@@ -132,12 +132,7 @@ public class VideoHelpers {
     }
 
     public static void playlistFromChannelVideosListener(@NonNull Context context, boolean activated) {
-        // This patches require Open links directly to be worked
-        if (!SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.getBoolean()) {
-            SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.saveBoolean(true);
-            ReVancedUtils.runOnMainThreadDelayed(() -> SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.saveBoolean(false), 1000L);
-        }
-        String baseUri = "https://youtu.be/" + VideoInformation.getVideoId() + "?t=" + VideoInformation.getVideoTime() / 1000;
+        String baseUri = "vnd.youtube://" + VideoInformation.getVideoId() + "?start=" + VideoInformation.getVideoTime() / 1000;
         if (activated) {
             baseUri += "&list=UL" + VideoInformation.getVideoId();
         }
