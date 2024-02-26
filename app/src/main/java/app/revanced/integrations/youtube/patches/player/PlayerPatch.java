@@ -14,6 +14,8 @@ import app.revanced.integrations.youtube.utils.ResourceHelper;
 
 @SuppressWarnings("unused")
 public class PlayerPatch {
+    private static boolean isAutoplayOn = false;
+
     public static void changePlayerOpacity(ImageView imageView) {
         int opacity = SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.getInt();
 
@@ -105,7 +107,7 @@ public class PlayerPatch {
     }
 
     public static void hideSuggestedVideoOverlay(View view) {
-        if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || !SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY_AUTO_PLAY.getBoolean())
+        if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || !isAutoplayOn)
             return;
 
         if (view != null) {
@@ -115,7 +117,7 @@ public class PlayerPatch {
     }
 
     public static void hideSuggestedVideoOverlay(ViewGroup viewGroup) {
-        if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY_AUTO_PLAY.getBoolean())
+        if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || isAutoplayOn)
             return;
 
         viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
@@ -129,5 +131,9 @@ public class PlayerPatch {
                 LogHelper.printException(() -> "hideSuggestedVideoOverlay failure", ex);
             }
         });
+    }
+
+    public static void saveAutoplay(boolean originalValue) {
+        isAutoplayOn = originalValue;
     }
 }
