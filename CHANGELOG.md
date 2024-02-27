@@ -1,3 +1,11 @@
+## [0.145.2](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.1...v0.145.2) (2024-02-27)
+
+
+### Bug Fixes
+
+* Import missing deps ([6103e5d](https://github.com/YT-Advanced/ReX-integrations/commit/6103e5d605beb67ef3650796047cbfc105591e89))
+* Time-ordered button required restart ([fcf755a](https://github.com/YT-Advanced/ReX-integrations/commit/fcf755ad85c15da5986170dd6f92627917d16754))
+
 ## [0.145.1](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.0...v0.145.1) (2024-02-27)
 
 
