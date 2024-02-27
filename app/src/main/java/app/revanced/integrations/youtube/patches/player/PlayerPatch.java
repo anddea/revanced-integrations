@@ -4,6 +4,7 @@ import static app.revanced.integrations.youtube.utils.StringRef.str;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
