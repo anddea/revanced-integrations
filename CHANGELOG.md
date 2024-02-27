@@ -1,3 +1,10 @@
+## [0.145.1](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.0...v0.145.1) (2024-02-27)
+
+
+### Bug Fixes
+
+* **Hide Community Post:** Community posts not showing on Community Tab of a channel ([72b87b9](https://github.com/YT-Advanced/ReX-integrations/commit/72b87b92761afde409b527a20af01ec8d0551c58))
+
 # [0.145.0](https://github.com/YT-Advanced/ReX-integrations/compare/v0.144.3...v0.145.0) (2024-02-27)
 
 
