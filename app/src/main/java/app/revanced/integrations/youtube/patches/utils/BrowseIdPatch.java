@@ -100,6 +100,10 @@ public class BrowseIdPatch {
     public static boolean isHomeFeed() {
         return browseId.equals(DEFAULT_BROWSE_ID);
     }
+
+    public static boolean isVaildBrowseId() {
+        return browseId.startsWith("FE");
+    }
 }
 
 

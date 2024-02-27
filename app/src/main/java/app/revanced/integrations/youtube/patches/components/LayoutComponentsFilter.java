@@ -179,6 +179,8 @@ public final class LayoutComponentsFilter extends Filter {
         if (matchedGroup == communityPosts) {
             if (PlayerType.getCurrent() == PlayerType.WATCH_WHILE_MAXIMIZED)
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_RELATED_VIDEO.getBoolean();
+            if (!BrowseIdPatch.isVaildBrowseId()) return false;
+
             if (BrowseIdPatch.isHomeFeed())
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
             return SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean();
