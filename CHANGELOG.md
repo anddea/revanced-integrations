@@ -1,3 +1,17 @@
+# [0.145.0](https://github.com/YT-Advanced/ReX-integrations/compare/v0.144.3...v0.145.0) (2024-02-27)
+
+
+### Bug Fixes
+
+* **General Ads:** Hide product ads in video descriptions ([d4a4c96](https://github.com/YT-Advanced/ReX-integrations/commit/d4a4c9687cec476bd0664cc5481c2c1f240698c0))
+* **Hide Suggested Video Overlay:** Autoplay options followed the system settings ([2872632](https://github.com/YT-Advanced/ReX-integrations/commit/287263241ce6e935a6102d802030489a0452406e))
+* **YouTube/Sponsorblock:** Modernize skip buttons ([9ce00f6](https://github.com/YT-Advanced/ReX-integrations/commit/9ce00f6d4599baad9008559d1238bea8e0610242))
+
+
+### Features
+
+* **YouTube - Overlay button:** Add `Time-ordered Playlist` button ([6c4817c](https://github.com/YT-Advanced/ReX-integrations/commit/6c4817cd24de1c03a1ba55ae175de0e1870b759a))
+
 ## [0.144.2](https://github.com/YT-Advanced/ReX-integrations/compare/v0.144.1...v0.144.2) (2024-02-14)
 
 
