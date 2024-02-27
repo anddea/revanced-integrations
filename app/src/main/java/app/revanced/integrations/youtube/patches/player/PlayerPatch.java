@@ -16,6 +16,8 @@ import app.revanced.integrations.youtube.utils.ResourceHelper;
 public class PlayerPatch {
     private static boolean isAutoplayOn = false;
 
+    private static ImageView lastView;
+
     public static void changePlayerOpacity(ImageView imageView) {
         int opacity = SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.getInt();
 
@@ -116,20 +118,16 @@ public class PlayerPatch {
         }
     }
 
-    public static void hideSuggestedVideoOverlay(ViewGroup viewGroup) {
+    public static void hideSuggestedVideoOverlay(ImageView imageView) {
         if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || isAutoplayOn)
             return;
 
-        viewGroup.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            try {
-                final View closeButton = ((LinearLayout) viewGroup.getChildAt(0)).getChildAt(1);
-                if (closeButton != null) {
-                    closeButton.setSoundEffectsEnabled(false);
-                    closeButton.performClick();
-                }
-            } catch (Exception ex) {
-                LogHelper.printException(() -> "hideSuggestedVideoOverlay failure", ex);
-            }
+        // Prevent adding the listener multiple times.
+        if (lastView == imageView) return;
+        lastView = imageView;
+
+        imageView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (imageView.isShown()) imageView.callOnClick();
         });
     }
 
