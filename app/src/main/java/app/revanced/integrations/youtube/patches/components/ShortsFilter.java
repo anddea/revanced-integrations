@@ -13,6 +13,9 @@ public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
     private static final String SHORTS_SHELF_HEADER_CONVERSION_CONTEXT = "horizontalCollectionSwipeProtector=null";
 
+    private final StringFilterGroup shortsCompactFeedVideoPath;
+    private final ByteArrayAsStringFilterGroup shortsCompactFeedVideoBuffer;
+
     private final StringTrieSearch exceptions = new StringTrieSearch();
     private final StringFilterGroup infoPanel;
     private final StringFilterGroup shelfHeader;
@@ -46,10 +49,25 @@ public final class ShortsFilter extends Filter {
                 "shorts_video_cell"
         );
 
+
         identifierFilterGroupList.addAll(
                 shelfHeader,
                 shorts,
                 thanksButton
+        );
+
+        // Shorts that appear in the feed/search when the device is using tablet layout.
+        shortsCompactFeedVideoPath = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_SHELF,
+                "compact_video.eml"
+        );
+
+        // Filter out items that use the 'frame0' thumbnail.
+        // This is a valid thumbnail for both regular videos and Shorts,
+        // but it appears these thumbnails are used only for Shorts.
+        shortsCompactFeedVideoBuffer = new ByteArrayAsStringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_SHELF,
+                "/frame0.jpg"
         );
 
         final StringFilterGroup joinButton = new StringFilterGroup(
@@ -76,6 +94,7 @@ public final class ShortsFilter extends Filter {
         );
 
         pathFilterGroupList.addAll(
+                shortsCompactFeedVideoPath,
                 joinButton,
                 subscribeButton,
                 infoPanel,
@@ -133,6 +152,10 @@ public final class ShortsFilter extends Filter {
             if (matchedGroup == infoPanel) {
                 // Always filter if matched.
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+            } else if (matchedGroup == shortsCompactFeedVideoPath) {
+                if (matchedIndex == 0 && shortsCompactFeedVideoBuffer.check(protobufBufferArray).isFiltered())
+                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+                return false;
             } else if (matchedGroup == videoActionButton) {
                 // Video action buttons have the same path.
                 return videoActionButtonGroupList.check(protobufBufferArray).isFiltered();
