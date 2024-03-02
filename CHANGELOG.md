@@ -1,3 +1,10 @@
+## [0.145.3](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.2...v0.145.3) (2024-03-02)
+
+
+### Bug Fixes
+
+* **YouTube - Hide Shorts:** Hide Shorts in feed when using tablet layout ([ed80746](https://github.com/YT-Advanced/ReX-integrations/commit/ed8074684a9bcc195dd5cbb5956af9dc0526b461))
+
 ## [0.145.2](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.1...v0.145.2) (2024-02-27)
 
 
