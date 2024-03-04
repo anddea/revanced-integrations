@@ -1,3 +1,10 @@
+## [0.145.4](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.3...v0.145.4) (2024-03-04)
+
+
+### Bug Fixes
+
+* **Spoof Player Parameter:** Playback issues appears when opening a YouTube link ([754c94f](https://github.com/YT-Advanced/ReX-integrations/commit/754c94faec6771684e1debfb3b0005af4ca93977))
+
 ## [0.145.3](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.2...v0.145.3) (2024-03-02)
 
 
