@@ -12,10 +12,21 @@ public class HookDownloadButtonPatch {
      *
      * @param videoId id of the video that user want to download
      */
-    public static void startDownloadActivity(@Nullable String videoId) {
+    public static void startVideoDownloadActivity(@Nullable String videoId) {
         if (videoId == null || !shouldHookDownloadButton())
             return;
-        download(ReVancedUtils.getContext(), videoId);
+        download(ReVancedUtils.getContext(), videoId, false);
+    }
+
+    /**
+     * Injection point.
+     *
+     * @param playlistId id of the playlist that user want to download
+     */
+    public static void startPlaylistDownloadActivity(@Nullable String playlistId) {
+        if (playlistId == null || !shouldHookDownloadButton())
+            return;
+        download(ReVancedUtils.getContext(), playlistId, true);
     }
     
     /**

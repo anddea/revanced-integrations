@@ -83,10 +83,10 @@ public class VideoHelpers {
     }
 
     public static void download(@NonNull Context context) {
-        download(context, VideoInformation.getVideoId());
+        download(context, VideoInformation.getVideoId(), false);
     }
 
-    public static void download(@NonNull Context context, @NonNull String videoId) {
+    public static void download(@NonNull Context context, @NonNull String videoId, boolean isPlaylistDownload) {
         String downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString().trim();
 
         if (downloaderPackageName.isEmpty()) {
@@ -100,7 +100,9 @@ public class VideoHelpers {
         }
 
         isPiPAvailable = false;
-        startDownloaderActivity(context, downloaderPackageName, String.format("https://youtu.be/%s", videoId));
+        startDownloaderActivity(context, downloaderPackageName, 
+                String.format(isPlaylistDownload ? "https://youtu.be/playlist?list=%s": "https://youtu.be/%s", videoId)
+        );
         ReVancedUtils.runOnMainThreadDelayed(() -> isPiPAvailable = true, 500L);
     }
 
