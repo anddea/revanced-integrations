@@ -1,3 +1,10 @@
+# [0.146.0](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.4...v0.146.0) (2024-03-05)
+
+
+### Features
+
+* **YouTube - Hook Download Button:** Hook playlist download button ([e79c73c](https://github.com/YT-Advanced/ReX-integrations/commit/e79c73cbc756cacd8c7b831ce2911ea98c13c3c0))
+
 ## [0.145.4](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.3...v0.145.4) (2024-03-04)
 
 
