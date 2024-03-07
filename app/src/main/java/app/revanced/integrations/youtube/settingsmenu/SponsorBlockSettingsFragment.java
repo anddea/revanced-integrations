@@ -173,22 +173,6 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         screen.addPreference(category);
         category.setTitle(str("sb_appearance_category"));
 
-        votingEnabled = new SwitchPreference(context);
-        votingEnabled.setTitle(str("sb_enable_voting"));
-        votingEnabled.setSummaryOn(str("sb_enable_voting_sum_on"));
-        votingEnabled.setSummaryOff(str("sb_enable_voting_sum_off"));
-        @SuppressLint("DiscouragedApi") int iconResourceId = context.getResources().getIdentifier("sb_enable_voting_icon", "drawable", context.getPackageName());
-        if (iconResourceId != 0) {
-            Drawable iconDrawable = context.getResources().getDrawable(iconResourceId);
-            votingEnabled.setIcon(iconDrawable);
-        }
-        category.addPreference(votingEnabled);
-        votingEnabled.setOnPreferenceChangeListener((preference1, newValue) -> {
-            SettingsEnum.SB_VOTING_BUTTON.saveValue(newValue);
-            updateUI();
-            return true;
-        });
-
         compactSkipButton = new SwitchPreference(context);
         compactSkipButton.setTitle(str("sb_enable_compact_skip_button"));
         compactSkipButton.setSummaryOn(str("sb_enable_compact_skip_button_sum_on"));
@@ -293,6 +277,29 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
             return true;
         });
         category.addPreference(guidelinePreferences);
+
+        @SuppressLint("DiscouragedApi") int emptyResourceId = context.getResources().getIdentifier("empty_icon", "drawable", context.getPackageName());
+        if (emptyResourceId != 0) {
+            Drawable iconDrawable = context.getResources().getDrawable(emptyResourceId);
+            newSegmentStep.setIcon(iconDrawable);
+            guidelinePreferences.setIcon(iconDrawable);
+        }
+
+        votingEnabled = new SwitchPreference(context);
+        votingEnabled.setTitle(str("sb_enable_voting"));
+        votingEnabled.setSummaryOn(str("sb_enable_voting_sum_on"));
+        votingEnabled.setSummaryOff(str("sb_enable_voting_sum_off"));
+        @SuppressLint("DiscouragedApi") int votingResourceId = context.getResources().getIdentifier("sb_enable_voting_icon", "drawable", context.getPackageName());
+        if (votingResourceId != 0) {
+            Drawable iconDrawable = context.getResources().getDrawable(votingResourceId);
+            votingEnabled.setIcon(iconDrawable);
+        }
+        category.addPreference(votingEnabled);
+        votingEnabled.setOnPreferenceChangeListener((preference1, newValue) -> {
+            SettingsEnum.SB_VOTING_BUTTON.saveValue(newValue);
+            updateUI();
+            return true;
+        });
     }
 
     @TargetApi(26)
