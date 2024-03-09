@@ -1,7 +1,7 @@
 package app.revanced.integrations.youtube.sponsorblock.objects;
 
-import static app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour.IGNORE;
-import static app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY;
+import static app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY_ONCE;
+import static app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour.MANUAL_SKIP;
 import static app.revanced.integrations.youtube.utils.StringRef.sf;
 
 import android.content.SharedPreferences;
@@ -30,32 +30,32 @@ import app.revanced.integrations.youtube.utils.StringRef;
 
 public enum SegmentCategory {
     SPONSOR("sponsor", sf("sb_segments_sponsor"), sf("sb_segments_sponsor_sum"), sf("sb_skip_button_sponsor"), sf("sb_skipped_sponsor"),
-            SKIP_AUTOMATICALLY, 0x00D400),
+            SKIP_AUTOMATICALLY_ONCE, 0x00D400),
     SELF_PROMO("selfpromo", sf("sb_segments_selfpromo"), sf("sb_segments_selfpromo_sum"), sf("sb_skip_button_selfpromo"), sf("sb_skipped_selfpromo"),
-            SKIP_AUTOMATICALLY, 0xFFFF00),
+            SKIP_AUTOMATICALLY_ONCE, 0xFFFF00),
     INTERACTION("interaction", sf("sb_segments_interaction"), sf("sb_segments_interaction_sum"), sf("sb_skip_button_interaction"), sf("sb_skipped_interaction"),
-            SKIP_AUTOMATICALLY, 0xCC00FF),
+            SKIP_AUTOMATICALLY_ONCE, 0xCC00FF),
     /**
      * Unique category that is treated differently than the rest.
      */
     HIGHLIGHT("poi_highlight", sf("sb_segments_highlight"), sf("sb_segments_highlight_sum"), sf("sb_skip_button_highlight"), sf("sb_skipped_highlight"),
-            IGNORE, 0xFF1684),
+            MANUAL_SKIP, 0xFF1684),
     INTRO("intro", sf("sb_segments_intro"), sf("sb_segments_intro_sum"),
             sf("sb_skip_button_intro_beginning"), sf("sb_skip_button_intro_middle"), sf("sb_skip_button_intro_end"),
             sf("sb_skipped_intro_beginning"), sf("sb_skipped_intro_middle"), sf("sb_skipped_intro_end"),
-            SKIP_AUTOMATICALLY, 0x00FFFF),
+            SKIP_AUTOMATICALLY_ONCE, 0x00FFFF),
     OUTRO("outro", sf("sb_segments_outro"), sf("sb_segments_outro_sum"), sf("sb_skip_button_outro"), sf("sb_skipped_outro"),
-            SKIP_AUTOMATICALLY, 0x0202ED),
+            SKIP_AUTOMATICALLY_ONCE, 0x0202ED),
     PREVIEW("preview", sf("sb_segments_preview"), sf("sb_segments_preview_sum"),
             sf("sb_skip_button_preview_beginning"), sf("sb_skip_button_preview_middle"), sf("sb_skip_button_preview_end"),
             sf("sb_skipped_preview_beginning"), sf("sb_skipped_preview_middle"), sf("sb_skipped_preview_end"),
-            SKIP_AUTOMATICALLY, 0x008FD6),
+            SKIP_AUTOMATICALLY_ONCE, 0x008FD6),
     FILLER("filler", sf("sb_segments_filler"), sf("sb_segments_filler_sum"), sf("sb_skip_button_filler"), sf("sb_skipped_filler"),
-            SKIP_AUTOMATICALLY, 0x7300FF),
+            SKIP_AUTOMATICALLY_ONCE, 0x7300FF),
     MUSIC_OFFTOPIC("music_offtopic", sf("sb_segments_nomusic"), sf("sb_segments_nomusic_sum"), sf("sb_skip_button_nomusic"), sf("sb_skipped_nomusic"),
-            SKIP_AUTOMATICALLY, 0xFF9900),
+            SKIP_AUTOMATICALLY_ONCE, 0xFF9900),
     UNSUBMITTED("unsubmitted", StringRef.empty, StringRef.empty, sf("sb_skip_button_unsubmitted"), sf("sb_skipped_unsubmitted"),
-            SKIP_AUTOMATICALLY, 0xFFFFFF);
+            SKIP_AUTOMATICALLY_ONCE, 0xFFFFFF);
 
     private static final StringRef skipSponsorTextCompact = sf("sb_skip_button_compact");
     private static final StringRef skipSponsorTextCompactHighlight = sf("sb_skip_button_compact_highlight");
