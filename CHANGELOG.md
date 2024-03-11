@@ -1,3 +1,10 @@
+## [0.146.1](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.0...v0.146.1) (2024-03-11)
+
+
+### Bug Fixes
+
+* **Spoof Player Parameter:** Forced to use incognito parameter even if the parameter is not initialized ([c82464f](https://github.com/YT-Advanced/ReX-integrations/commit/c82464f7a5dce88e9612b7bc36ddd409738f8b88))
+
 # [0.146.0](https://github.com/YT-Advanced/ReX-integrations/compare/v0.145.4...v0.146.0) (2024-03-05)
 
 
