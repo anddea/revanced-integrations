@@ -92,8 +92,12 @@ public class SpoofPlayerParameterPatch {
         try {
             LogHelper.printDebug(() -> "Original player parameter value: " + parameters);
 
-            if (parameters == null || !spoofParameter) {
+            if (!spoofParameter) {
                 return parameters;
+            }
+
+            if (parameters == null) {
+                return INCOGNITO_PARAMETERS;
             }
 
             // Shorts do not need to be spoofed.
