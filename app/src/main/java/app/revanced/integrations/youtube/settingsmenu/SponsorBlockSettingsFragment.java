@@ -4,12 +4,14 @@ import static android.text.Html.fromHtml;
 import static app.revanced.integrations.youtube.settings.SharedPrefCategory.SPONSOR_BLOCK;
 import static app.revanced.integrations.youtube.utils.StringRef.str;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -143,14 +145,13 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
                 return true;
             });
 
+            addCreateSegmentCategory(context, preferenceScreen);
             addAppearanceCategory(context, preferenceScreen);
 
             segmentCategory = new PreferenceCategory(context);
             segmentCategory.setTitle(str("sb_diff_segments"));
             preferenceScreen.addPreference(segmentCategory);
             updateSegmentCategories();
-
-            addCreateSegmentCategory(context, preferenceScreen);
 
             addGeneralCategory(context, preferenceScreen);
 
@@ -171,17 +172,6 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         PreferenceCategory category = new PreferenceCategory(context);
         screen.addPreference(category);
         category.setTitle(str("sb_appearance_category"));
-
-        votingEnabled = new SwitchPreference(context);
-        votingEnabled.setTitle(str("sb_enable_voting"));
-        votingEnabled.setSummaryOn(str("sb_enable_voting_sum_on"));
-        votingEnabled.setSummaryOff(str("sb_enable_voting_sum_off"));
-        category.addPreference(votingEnabled);
-        votingEnabled.setOnPreferenceChangeListener((preference1, newValue) -> {
-            SettingsEnum.SB_VOTING_BUTTON.saveValue(newValue);
-            updateUI();
-            return true;
-        });
 
         compactSkipButton = new SwitchPreference(context);
         compactSkipButton.setTitle(str("sb_enable_compact_skip_button"));
@@ -241,6 +231,11 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         addNewSegment.setTitle(str("sb_enable_create_segment"));
         addNewSegment.setSummaryOn(str("sb_enable_create_segment_sum_on"));
         addNewSegment.setSummaryOff(str("sb_enable_create_segment_sum_off"));
+        @SuppressLint("DiscouragedApi") int iconResourceId = context.getResources().getIdentifier("sb_enable_create_segment_icon", "drawable", context.getPackageName());
+        if (iconResourceId != 0) {
+            Drawable iconDrawable = context.getResources().getDrawable(iconResourceId);
+            addNewSegment.setIcon(iconDrawable);
+        }
         category.addPreference(addNewSegment);
         addNewSegment.setOnPreferenceChangeListener((preference1, o) -> {
             Boolean newValue = (Boolean) o;
@@ -282,6 +277,29 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
             return true;
         });
         category.addPreference(guidelinePreferences);
+
+        @SuppressLint("DiscouragedApi") int emptyResourceId = context.getResources().getIdentifier("empty_icon", "drawable", context.getPackageName());
+        if (emptyResourceId != 0) {
+            Drawable iconDrawable = context.getResources().getDrawable(emptyResourceId);
+            newSegmentStep.setIcon(iconDrawable);
+            guidelinePreferences.setIcon(iconDrawable);
+        }
+
+        votingEnabled = new SwitchPreference(context);
+        votingEnabled.setTitle(str("sb_enable_voting"));
+        votingEnabled.setSummaryOn(str("sb_enable_voting_sum_on"));
+        votingEnabled.setSummaryOff(str("sb_enable_voting_sum_off"));
+        @SuppressLint("DiscouragedApi") int votingResourceId = context.getResources().getIdentifier("sb_enable_voting_icon", "drawable", context.getPackageName());
+        if (votingResourceId != 0) {
+            Drawable iconDrawable = context.getResources().getDrawable(votingResourceId);
+            votingEnabled.setIcon(iconDrawable);
+        }
+        category.addPreference(votingEnabled);
+        votingEnabled.setOnPreferenceChangeListener((preference1, newValue) -> {
+            SettingsEnum.SB_VOTING_BUTTON.saveValue(newValue);
+            updateUI();
+            return true;
+        });
     }
 
     @TargetApi(26)

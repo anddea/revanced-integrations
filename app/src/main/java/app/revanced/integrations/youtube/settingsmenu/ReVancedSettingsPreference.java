@@ -299,7 +299,7 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
             hookDownloadButtonPreference.setTitle(str("revanced_hook_download_button_title"));
             hookDownloadButtonPreference.setSummary(str("revanced_hook_download_button_summary"));
             hookDownloadButtonPreference.setKey("revanced_hook_download_button");
-            hookDownloadButtonPreference.setDefaultValue(false);
+            hookDownloadButtonPreference.setDefaultValue(true);
 
             externalDownloaderPreferenceScreen.addPreference(experimentalPreference);
             externalDownloaderPreferenceScreen.addPreference(hookDownloadButtonPreference);
