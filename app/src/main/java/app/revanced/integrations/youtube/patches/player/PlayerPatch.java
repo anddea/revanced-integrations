@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.utils.LogHelper;
@@ -15,9 +14,9 @@ import app.revanced.integrations.youtube.utils.ResourceHelper;
 
 @SuppressWarnings("unused")
 public class PlayerPatch {
-    private static boolean isAutoplayOn = false;
-
     private static ImageView lastView;
+
+    private static boolean isAutoplayOn = false;
 
     public static void changePlayerOpacity(ImageView imageView) {
         int opacity = SettingsEnum.CUSTOM_PLAYER_OVERLAY_OPACITY.getInt();
@@ -119,7 +118,7 @@ public class PlayerPatch {
         }
     }
 
-    public static void hideSuggestedVideoOverlay(ImageView imageView) {
+    public static void hideSuggestedVideoOverlay(final ImageView imageView) {
         if (!SettingsEnum.HIDE_SUGGESTED_VIDEO_OVERLAY.getBoolean() || isAutoplayOn)
             return;
 
