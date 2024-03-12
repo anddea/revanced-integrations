@@ -14,7 +14,6 @@ import java.util.function.Consumer;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.utils.ByteTrieSearch;
 import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
 import app.revanced.integrations.youtube.utils.StringTrieSearch;
 import app.revanced.integrations.youtube.utils.TrieSearch;
 
@@ -219,7 +218,7 @@ class ByteArrayFilterGroup extends FilterGroup<byte[]> {
 final class ByteArrayAsStringFilterGroup extends ByteArrayFilterGroup {
 
     public ByteArrayAsStringFilterGroup(SettingsEnum setting, String... filters) {
-        super(setting, Arrays.stream(filters).map(String::getBytes).toArray(byte[][]::new));
+        super(setting, ByteTrieSearch.convertStringsToBytes(filters));
     }
 }
 
@@ -435,7 +434,7 @@ public final class LithoFilterPatch {
                 bufferArray = protobufBuffer.array();
             }
 
-            LithoFilterParameters parameter = new LithoFilterParameters(pathBuilder.toString(), identifier, object.toString(), protobufBuffer.array());
+            LithoFilterParameters parameter = new LithoFilterParameters(pathBuilder.toString(), identifier, object.toString(), bufferArray);
             LogHelper.printDebug(() -> "Searching " + parameter);
 
             if (parameter.identifier != null) {

@@ -9,18 +9,6 @@ public final class StringTrieSearch extends TrieSearch<String> {
         super(new StringTrieNode());
     }
 
-    /**
-     * @return If the pattern is valid to add to this instance.
-     */
-    public static boolean isValidPattern(String pattern) {
-        for (int i = 0, length = pattern.length(); i < length; i++) {
-            if (TrieNode.isInvalidRange(pattern.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static final class StringTrieNode extends TrieNode<String> {
         StringTrieNode() {
             super();

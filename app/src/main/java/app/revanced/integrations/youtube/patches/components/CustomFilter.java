@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,8 +17,6 @@ import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.utils.ByteTrieSearch;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedUtils;
-import app.revanced.integrations.youtube.utils.StringTrieSearch;
-import app.revanced.integrations.youtube.utils.TrieSearch;
 
 /**
  * Allows custom filtering using a path and optionally a proto buffer string.
@@ -74,7 +71,7 @@ final class CustomFilter extends Filter {
                 Matcher matcher = pattern.matcher(expression);
                 if (!matcher.find()) {
                     showInvalidSyntaxToast(expression);
-                    return null;
+                    continue;
                 }
 
                 final String mapKey = matcher.group(1);
@@ -85,13 +82,7 @@ final class CustomFilter extends Filter {
 
                 if (path.isBlank() || (hasBufferSymbol && bufferString.isBlank())) {
                     showInvalidSyntaxToast(expression);
-                    return null;
-                }
-                if (!StringTrieSearch.isValidPattern(path)
-                        || (hasBufferSymbol && !StringTrieSearch.isValidPattern(bufferString))) {
-                    // Currently only ASCII is allowed.
-                    showInvalidCharactersToast(path);
-                    return null;
+                    continue;
                 }
 
                 // Use one group object for all expressions with the same path.
@@ -150,12 +141,8 @@ final class CustomFilter extends Filter {
 
     public CustomFilter() {
         Collection<CustomFilterGroup> groups = CustomFilterGroup.parseCustomFilterGroups();
-        if (groups == null) {
-            SettingsEnum.CUSTOM_FILTER_STRINGS.resetToDefault();
-            ReVancedUtils.showToastLong(str("revanced_custom_filter_toast_reset"));
-            groups = Objects.requireNonNull(CustomFilterGroup.parseCustomFilterGroups());
-        }
 
+        assert groups != null;
         if (!groups.isEmpty()) {
             CustomFilterGroup[] groupsArray = groups.toArray(new CustomFilterGroup[0]);
             LogHelper.printDebug(()-> "Using Custom filters: " + Arrays.toString(groupsArray));
