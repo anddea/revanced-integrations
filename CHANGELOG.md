@@ -1,3 +1,10 @@
+## [0.146.2](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.1...v0.146.2) (2024-03-14)
+
+
+### Bug Fixes
+
+* **YouTube - Hide Community Post:** Not be hidden correctly ([0714f4b](https://github.com/YT-Advanced/ReX-integrations/commit/0714f4b17574a25b79119e71b435d45bc9042e65))
+
 ## [0.146.1](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.0...v0.146.1) (2024-03-11)
 
 
