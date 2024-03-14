@@ -164,6 +164,17 @@ public final class LayoutComponentsFilter extends Filter {
                 ticketShelf,
                 timedReactions
         );
+
+        communityPostsGroupList.addAll(
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_COMMUNITY_POSTS_HOME,
+                        "horizontalCollectionSwipeProtector=null"
+                ),
+                new StringFilterGroup(
+                        SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS,
+                        "heightConstraint=null"
+                )
+        );
     }
 
     @Override
@@ -173,17 +184,16 @@ public final class LayoutComponentsFilter extends Filter {
             return (membershipVideoIdentifier.check(protobufBufferArray).isFiltered()
                     || lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered());
         if (matchedGroup == searchVideoWithContext) {
-            BrowseIdPatch.setDefaultBrowseIdToField();
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         }
         if (matchedGroup == communityPosts) {
             if (PlayerType.getCurrent() == PlayerType.WATCH_WHILE_MAXIMIZED)
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_RELATED_VIDEO.getBoolean();
-            if (!BrowseIdPatch.isVaildBrowseId()) return false;
 
+            // YouTube is testing new community post component in home feed
             if (BrowseIdPatch.isHomeFeed())
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
-            return SettingsEnum.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS.getBoolean();
+            return communityPostsGroupList.check(allValue).isFiltered();
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
