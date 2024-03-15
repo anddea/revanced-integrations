@@ -266,7 +266,7 @@ public enum SettingsEnum {
     HIDE_NOTIFICATIONS_BUTTON("revanced_hide_notifications_button", BOOLEAN, FALSE, true),
     HIDE_SHORTS_BUTTON("revanced_hide_shorts_button", BOOLEAN, TRUE, true),
     HIDE_SUBSCRIPTIONS_BUTTON("revanced_hide_subscriptions_button", BOOLEAN, FALSE, true),
-    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", BOOLEAN, FALSE, true),
+    SWITCH_CREATE_NOTIFICATION("revanced_switching_create_notification", BOOLEAN, TRUE, true),
 
     // Settings not exported
     INITIALIZED("revanced_initialized", BOOLEAN, FALSE, YOUTUBE),
