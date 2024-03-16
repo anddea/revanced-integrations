@@ -83,10 +83,10 @@ public class VideoHelpers {
     }
 
     public static void download(@NonNull Context context) {
-        download(context, VideoInformation.getVideoId(), false);
+        download(context, true, VideoInformation.getVideoId(), false);
     }
 
-    public static void download(@NonNull Context context, @NonNull String videoId, boolean isPlaylistDownload) {
+    public static void download(@NonNull Context context, boolean isActivityContext, @NonNull String videoId, boolean isPlaylistDownload) {
         String downloaderPackageName = SettingsEnum.EXTERNAL_DOWNLOADER_PACKAGE_NAME.getString().trim();
 
         if (downloaderPackageName.isEmpty()) {
@@ -100,7 +100,7 @@ public class VideoHelpers {
         }
 
         isPiPAvailable = false;
-        startDownloaderActivity(context, downloaderPackageName, 
+        startDownloaderActivity(context, isActivityContext, downloaderPackageName, 
                 String.format(isPlaylistDownload ? "https://youtu.be/playlist?list=%s": "https://youtu.be/%s", videoId)
         );
         ReVancedUtils.runOnMainThreadDelayed(() -> isPiPAvailable = true, 500L);
@@ -124,12 +124,14 @@ public class VideoHelpers {
         return packageName;
     }
 
-    public static void startDownloaderActivity(@NonNull Context context, @NonNull String downloaderPackageName, @NonNull String content) {
+    public static void startDownloaderActivity(@NonNull Context context, boolean isActivityContext, @NonNull String downloaderPackageName, @NonNull String content) {
         Intent intent = new Intent("android.intent.action.SEND");
         intent.setType("text/plain");
         intent.setPackage(downloaderPackageName);
         intent.putExtra("android.intent.extra.TEXT", content);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (!isActivityContext) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         context.startActivity(intent);
     }
 
@@ -179,12 +181,12 @@ public class VideoHelpers {
         userChangedSpeed(speed);
     }
 
-    public static boolean isPiPAvailable(boolean original) {
-        return original && isPiPAvailable;
-    }
-
     public static float getCurrentSpeed() {
         return currentSpeed;
+    }
+
+    public static boolean isPiPAvailable(boolean original) {
+        return original && isPiPAvailable;
     }
 
     public static int getCurrentQuality(int original) {
