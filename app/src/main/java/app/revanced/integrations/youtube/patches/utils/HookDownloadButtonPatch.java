@@ -12,10 +12,11 @@ public class HookDownloadButtonPatch {
      *
      * @param videoId id of the video that user want to download
      */
-    public static void startVideoDownloadActivity(@Nullable String videoId) {
-        if (videoId == null || !shouldHookDownloadButton())
-            return;
+    public static boolean startVideoDownloadActivity(@Nullable String videoId) {
+        if (videoId == null || !SettingsEnum.HOOK_DOWNLOAD_BUTTON.getBoolean())
+            return false;
         download(ReVancedUtils.getContext(), videoId, false);
+        return true;
     }
 
     /**
@@ -23,16 +24,10 @@ public class HookDownloadButtonPatch {
      *
      * @param playlistId id of the playlist that user want to download
      */
-    public static void startPlaylistDownloadActivity(@Nullable String playlistId) {
-        if (playlistId == null || !shouldHookDownloadButton())
-            return;
+    public static boolean startPlaylistDownloadActivity(@Nullable String playlistId) {
+        if (playlistId == null || !SettingsEnum.HOOK_DOWNLOAD_BUTTON.getBoolean())
+            return false;
         download(ReVancedUtils.getContext(), playlistId, true);
-    }
-    
-    /**
-     * Injection point.
-     */
-    public static boolean shouldHookDownloadButton() {
-        return SettingsEnum.HOOK_DOWNLOAD_BUTTON.getBoolean();
+        return true;
     }
 }
