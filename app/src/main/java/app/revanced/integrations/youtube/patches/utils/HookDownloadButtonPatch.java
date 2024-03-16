@@ -30,7 +30,7 @@ public class HookDownloadButtonPatch {
             context = ReVancedUtils.getContext();
             isActivityContext = false;
         }
-        download(context, isActivityContext, id, false);
+        download(context, isActivityContext, id, isPlaylist);
     }
 
     /**
