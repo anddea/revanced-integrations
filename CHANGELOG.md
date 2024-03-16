@@ -1,3 +1,10 @@
+## [0.146.3](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.2...v0.146.3) (2024-03-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hook Download Button:** Failed to resolve fingerprint ([fa92038](https://github.com/YT-Advanced/ReX-integrations/commit/fa9203825f54bcc02abff32f6db7fad7eeec46c6))
+
 ## [0.146.2](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.1...v0.146.2) (2024-03-14)
 
 
