@@ -1,3 +1,10 @@
+## [0.146.5](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.4...v0.146.5) (2024-03-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hook Download Button:** Playlist isn't downloadable ([b2ce2d9](https://github.com/YT-Advanced/ReX-integrations/commit/b2ce2d96a8e6931d73995592370d9f186340062e))
+
 ## [0.146.4](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.3...v0.146.4) (2024-03-16)
 
 
