@@ -1,3 +1,10 @@
+## [0.147.3](https://github.com/anddea/revanced-integrations/compare/v0.147.2...v0.147.3) (2024-03-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hook Download Button:** Failed to resolve fingerprint ([57876d2](https://github.com/anddea/revanced-integrations/commit/57876d21af625cd59211a8da52f066112407251b))
+
 ## [0.146.2](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.1...v0.146.2) (2024-03-14)
 
 
