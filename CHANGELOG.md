@@ -1,3 +1,10 @@
+## [0.146.4](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.3...v0.146.4) (2024-03-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hook Download Button:** Use `MainActivity` for download actions ([467b257](https://github.com/YT-Advanced/ReX-integrations/commit/467b25710a1904a5bd9715bf8f9c388b0a543502))
+
 ## [0.146.3](https://github.com/YT-Advanced/ReX-integrations/compare/v0.146.2...v0.146.3) (2024-03-16)
 
 
