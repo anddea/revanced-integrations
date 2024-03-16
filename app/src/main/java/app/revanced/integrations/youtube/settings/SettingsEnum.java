@@ -304,7 +304,6 @@ public enum SettingsEnum {
     HIDE_INFO_CARDS("revanced_hide_info_cards", BOOLEAN, TRUE, true),
     HIDE_KEYWORD_CONTENT("revanced_hide_keyword_content", BOOLEAN, FALSE),
     HIDE_KEYWORD_CONTENT_PHRASES("revanced_hide_keyword_content_strings", STRING, "", parents(HIDE_KEYWORD_CONTENT)),
-    HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", BOOLEAN, FALSE, true),
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", BOOLEAN, TRUE),
     HIDE_SEEK_MESSAGE("revanced_hide_seek_message", BOOLEAN, FALSE, true),
     HIDE_SEEK_UNDO_MESSAGE("revanced_hide_seek_undo_message", BOOLEAN, FALSE, true),
