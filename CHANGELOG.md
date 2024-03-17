@@ -1,3 +1,23 @@
+# [0.148.0](https://github.com/anddea/revanced-integrations/compare/v0.147.3...v0.148.0) (2024-03-17)
+
+
+### Bug Fixes
+
+* **YouTube - Custom playback speed:** Update max value ([5cd9c71](https://github.com/anddea/revanced-integrations/commit/5cd9c716212a90a6936b02cda5db86fa5986b724))
+* **YouTube - Hook Download Button:** Failed to resolve fingerprint ([fa92038](https://github.com/anddea/revanced-integrations/commit/fa9203825f54bcc02abff32f6db7fad7eeec46c6))
+* **YouTube - Hook Download Button:** Playlist isn't downloadable ([b2ce2d9](https://github.com/anddea/revanced-integrations/commit/b2ce2d96a8e6931d73995592370d9f186340062e))
+* **YouTube - Hook Download Button:** Use `MainActivity` for download actions ([467b257](https://github.com/anddea/revanced-integrations/commit/467b25710a1904a5bd9715bf8f9c388b0a543502))
+
+
+### Features
+
+* **YouTube - Swipe controls:** Add an option to select swipeable area size ([07ad52e](https://github.com/anddea/revanced-integrations/commit/07ad52e4f7824714ee13e814120d2383d0471be9))
+
+
+### Reverts
+
+* feat(YouTube - Hide player buttons background): Add a toggle switch to the settings. ([2046273](https://github.com/anddea/revanced-integrations/commit/2046273fe688cc034ac22a386aa1057d3bbb32be))
+
 ## [0.147.3](https://github.com/anddea/revanced-integrations/compare/v0.147.2...v0.147.3) (2024-03-16)
 
 
