@@ -378,6 +378,8 @@ public enum SettingsEnum {
             parents(ENABLE_SWIPE_BRIGHTNESS, ENABLE_SWIPE_VOLUME)),
     SWIPE_OVERLAY_TIMEOUT("revanced_swipe_overlay_timeout", LONG, 500L, true,
             parents(ENABLE_SWIPE_BRIGHTNESS, ENABLE_SWIPE_VOLUME)),
+    SWIPE_OVERLAY_RECT("revanced_swipe_overlay_rect", INTEGER, 20, true,
+            parents(ENABLE_SWIPE_BRIGHTNESS, ENABLE_SWIPE_VOLUME)),
 
     //Experimental Flags
     DISABLE_HDR_AUTO_BRIGHTNESS("revanced_disable_hdr_auto_brightness", BOOLEAN, TRUE, true,
