@@ -22,7 +22,7 @@ public class CustomPlaybackSpeedPatch {
     /**
      * Maximum playback speed, exclusive value.  Custom speeds must be less than this value.
      */
-    public static final float MAXIMUM_PLAYBACK_SPEED = 9;
+    public static final float MAXIMUM_PLAYBACK_SPEED = 8;
     public static final String[] defaultSpeedEntries = {str("quality_auto"), "0.25x", "0.5x", "0.75x", str("revanced_playback_speed_normal"), "1.25x", "1.5x", "1.75x", "2.0x"};
     public static final String[] defaultSpeedEntryValues = {"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
     /**
@@ -72,7 +72,7 @@ public class CustomPlaybackSpeedPatch {
                 if (speed <= 0 || arrayContains(playbackSpeeds, speed)) {
                     throw new IllegalArgumentException();
                 }
-                if (speed >= MAXIMUM_PLAYBACK_SPEED) {
+                if (speed > MAXIMUM_PLAYBACK_SPEED) {
                     resetCustomSpeeds(str("revanced_custom_playback_speeds_warning", MAXIMUM_PLAYBACK_SPEED + ""));
                     loadSpeeds();
                     return;
