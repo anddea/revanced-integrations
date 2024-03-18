@@ -90,7 +90,7 @@ class SwipeZonesController(
         if (overlayRectSize > MAXIMUM_OVERLAY_RECT_SIZE) {
             ReVancedUtils.showToastLong(str("revanced_swipe_overlay_rect_warning", MAXIMUM_OVERLAY_RECT_SIZE.toString()))
             SettingsEnum.SWIPE_OVERLAY_RECT.resetToDefault()
-            return validateOverlayRectSize()
+            return SettingsEnum.SWIPE_OVERLAY_RECT.int // Return the default value
         }
 
         return overlayRectSize
