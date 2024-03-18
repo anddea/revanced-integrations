@@ -1,27 +1,26 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin)
 }
 
 android {
-    // noinspection GradleDependency
-    compileSdk = 33
-    buildToolsVersion = "33.0.2"
     namespace = "app.revanced.integrations"
+    compileSdk = 33
+
+    applicationVariants.all {
+        outputs.all {
+            this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+
+            outputFileName = "${rootProject.name}-$versionName.apk"
+        }
+    }
 
     defaultConfig {
         applicationId = "app.revanced.integrations"
-        minSdk = 24
-        // noinspection EditedTargetSdkVersion, ExpiredTargetSdkVersion
-        targetSdk = 31
+        minSdk = 23
+        targetSdk = 33
         multiDexEnabled = false
         versionName = project.version as String
-    }
-
-    buildFeatures {
-        buildConfig = true
     }
 
     buildTypes {
@@ -29,30 +28,37 @@ android {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
-        applicationVariants.all {
-            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
-            outputs.all {
-                this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+    }
 
-                outputFileName = "${rootProject.name}-$versionName.apk"
-            }
-        }
-    }
     compileOptions {
-        sourceCompatibility(JavaVersion.VERSION_17)
-        targetCompatibility(JavaVersion.VERSION_17)
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
 dependencies {
-    compileOnly(project(mapOf("path" to ":dummy")))
-    compileOnly("androidx.annotation:annotation:1.7.1")
+    compileOnly(libs.appcompat)
+    compileOnly(libs.annotation)
+    compileOnly(libs.okhttp)
+    compileOnly(libs.retrofit)
+
+    compileOnly(project(":dummy"))
 }
 
-tasks.register("publish") { dependsOn("build") }
+tasks {
+    // Required to run tasks because Gradle semantic-release plugin runs the publish task.
+    // Tracking: https://github.com/KengoTODA/gradle-semantic-release-plugin/issues/435
+    register("publish") {
+        group = "publishing"
+        description = "Publishes all publications produced by this project."
+
+        dependsOn(build)
+    }
+}
