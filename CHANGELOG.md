@@ -1,3 +1,10 @@
+## [0.148.1-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.148.0...v0.148.1-dev.1) (2024-03-19)
+
+
+### Bug Fixes
+
+* **YouTube - Swipe controls:** Toast issue ([fc37630](https://github.com/anddea/revanced-integrations/commit/fc37630b7539e458d240263275d2d3211789c622))
+
 # [0.148.0](https://github.com/anddea/revanced-integrations/compare/v0.147.3...v0.148.0) (2024-03-17)
 
 
