@@ -7,7 +7,13 @@ android {
     namespace = "app.revanced.integrations"
     compileSdk = 33
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     applicationVariants.all {
+        buildConfigField("String", "VERSION_NAME", "\"$versionName\"")
+
         outputs.all {
             this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
 
