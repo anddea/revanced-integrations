@@ -134,7 +134,7 @@ class StringFilterGroup extends FilterGroup<String> {
 
 /**
  * If you have more than 1 filter patterns, then all instances of
- * this class should filtered using {@link ByteArrayFilterGroupList#check(byte[])},
+ * this class should be filtered using {@link ByteArrayFilterGroupList#check(byte[])},
  * which uses a prefix tree to give better performance.
  */
 class ByteArrayFilterGroup extends FilterGroup<byte[]> {
@@ -165,7 +165,7 @@ class ByteArrayFilterGroup extends FilterGroup<byte[]> {
     }
 
     private static int[] createFailurePattern(byte[] pattern) {
-        // Computes the failure function using a boot-strapping process,
+        // Computes the failure function using a bootstrapping process,
         // where the pattern is matched against itself.
         final int patternLength = pattern.length;
         final int[] failure = new int[patternLength];
@@ -237,7 +237,7 @@ abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<
     }
 
     protected final synchronized void buildSearch() {
-        // Since litho filtering is multi-threaded, this method can be concurrently called by multiple threads.
+        // Since litho filtering is multithreaded, this method can be concurrently called by multiple threads.
         if (search != null)
             return; // Thread race and another thread already initialized the search.
         LogHelper.printDebug(() -> "Creating prefix search tree for: " + this);
@@ -356,7 +356,7 @@ public final class LithoFilterPatch {
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     /**
-     * Because litho filtering is multi-threaded and the buffer is passed in from a different injection point,
+     * Because litho filtering is multithreaded and the buffer is passed in from a different injection point,
      * the buffer is saved to a ThreadLocal so each calling thread does not interfere with other threads.
      */
     private static final ThreadLocal<ByteBuffer> bufferThreadLocal = new ThreadLocal<>();
