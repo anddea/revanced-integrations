@@ -122,7 +122,8 @@ public final class LayoutComponentsFilter extends Filter {
                 "horizontal_movie_shelf",
                 "movie_and_show_upsell_card",
                 "compact_tvfilm_item",
-                "offer_module"
+                "offer_module",
+                "offer_module_root"
         );
 
         final StringFilterGroup notifyMe = new StringFilterGroup(
