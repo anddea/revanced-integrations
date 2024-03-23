@@ -1,3 +1,20 @@
+# [0.149.0](https://github.com/anddea/revanced-integrations/compare/v0.148.0...v0.149.0) (2024-03-23)
+
+
+### Bug Fixes
+
+* **YouTube - Hide ads:** Add more filters ([4905812](https://github.com/anddea/revanced-integrations/commit/49058129faac1a8ec1613b65a18770c9f5c5ba12))
+* **YouTube - Hide layout components:** Add more filters ([39c2b8b](https://github.com/anddea/revanced-integrations/commit/39c2b8b84702fba4060601e8c4d9a4524c348024))
+* **YouTube - Hide suggested video overlay:** Add more filters ([1268f80](https://github.com/anddea/revanced-integrations/commit/1268f807606f74603bc6195d637eadcddcc0a46e))
+* **YouTube - Settings:** Update default settings ([71904fa](https://github.com/anddea/revanced-integrations/commit/71904fafc58d77c38af65f9e3df03f75d281bf2f))
+* **YouTube - Swipe controls:** Toast issue ([fc37630](https://github.com/anddea/revanced-integrations/commit/fc37630b7539e458d240263275d2d3211789c622))
+
+
+### Features
+
+* **YouTube - Hide layout components:** Add `Subscriptions` tab and `Comments` to `Keyword filter` ([cefca5c](https://github.com/anddea/revanced-integrations/commit/cefca5cbf15cca7a4b1f35caf44cbb88f18aa544))
+* **YouTube:** Changing default settings ([9cc3b36](https://github.com/anddea/revanced-integrations/commit/9cc3b363956bb58c00fdeb1af1adfd050fc993b3))
+
 # [0.149.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.148.1-dev.1...v0.149.0-dev.1) (2024-03-21)
 
 
