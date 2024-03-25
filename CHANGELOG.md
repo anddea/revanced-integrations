@@ -1,3 +1,10 @@
+# [0.150.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.149.0...v0.150.0-dev.1) (2024-03-25)
+
+
+### Features
+
+* **YouTube - Layout component filter:** Hide videos based on the number of views ([3d1643d](https://github.com/anddea/revanced-integrations/commit/3d1643d4b08482f1f8dd930f630a28e66b52b944))
+
 # [0.149.0](https://github.com/anddea/revanced-integrations/compare/v0.148.0...v0.149.0) (2024-03-23)
 
 
