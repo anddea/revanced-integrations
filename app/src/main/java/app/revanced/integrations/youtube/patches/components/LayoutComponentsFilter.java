@@ -6,6 +6,10 @@ import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
 
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @noinspection rawtypes
  */
@@ -17,11 +21,6 @@ public final class LayoutComponentsFilter extends Filter {
                     SettingsEnum.HIDE_VIDEO_WITH_GRAY_DESCRIPTION,
                     ENDORSEMENT_HEADER_FOOTER_PATH
             );
-    private static final ByteArrayAsStringFilterGroup lowViewsVideoIdentifier =
-            new ByteArrayAsStringFilterGroup(
-                    SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
-                    "g-highZ"
-            );
     private static final ByteArrayAsStringFilterGroup membershipVideoIdentifier =
             new ByteArrayAsStringFilterGroup(
                     SettingsEnum.HIDE_HOME_FEED_MEMBERSHIP_VIDEO,
@@ -29,8 +28,9 @@ public final class LayoutComponentsFilter extends Filter {
             );
     private final StringFilterGroup communityPosts;
     private final StringFilterGroupList communityPostsGroupList = new StringFilterGroupList();
-    private final StringFilterGroup homeVideoWithContext;
+    private final StringFilterGroup videoWithContext;
     private final StringFilterGroup searchVideoWithContext;
+    private static final Pattern VIEW_COUNT_PATTERN = Pattern.compile("\\b(\\d+(?:\\.\\d+)?)([KMB]?)\\s*views?\\b");
 
     public LayoutComponentsFilter() {
         // Identifiers.
@@ -93,9 +93,9 @@ public final class LayoutComponentsFilter extends Filter {
                 ENDORSEMENT_HEADER_FOOTER_PATH
         );
 
-        homeVideoWithContext = new StringFilterGroup(
-                SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
-                "home_video_with_context.eml"
+        videoWithContext = new StringFilterGroup(
+                SettingsEnum.HIDE_VIDEO_WITH_VIEW,
+                "video_with_context"
         );
 
         final StringFilterGroup infoPanel = new StringFilterGroup(
@@ -155,7 +155,7 @@ public final class LayoutComponentsFilter extends Filter {
                 expandableMetadata,
                 feedSurvey,
                 grayDescription,
-                homeVideoWithContext,
+                videoWithContext,
                 infoPanel,
                 latestPosts,
                 medicalPanel,
@@ -181,9 +181,12 @@ public final class LayoutComponentsFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (matchedGroup == homeVideoWithContext)
-            return (membershipVideoIdentifier.check(protobufBufferArray).isFiltered()
-                    || lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered());
+
+        if (matchedGroup == videoWithContext) {
+            String protobufString = new String(protobufBufferArray);
+            return isLowViewsVideo(protobufString);
+        }
+
         if (matchedGroup == searchVideoWithContext) {
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         }
@@ -198,5 +201,25 @@ public final class LayoutComponentsFilter extends Filter {
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+    }
+
+    private boolean isLowViewsVideo(String protobufString) {
+        Matcher matcher = VIEW_COUNT_PATTERN.matcher(protobufString);
+        if (matcher.find()) {
+            double num = Double.parseDouble(Objects.requireNonNull(matcher.group(1)));
+            String multiplier = matcher.group(2);
+            long multiplierValue = getMultiplierValue(Objects.requireNonNull(multiplier));
+            return num * multiplierValue < SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM.getLong();
+        }
+        return false;
+    }
+
+    private long getMultiplierValue(String multiplier) {
+        return switch (multiplier) {
+            case "K" -> 1000L;
+            case "M" -> 1000000L;
+            case "B" -> 1000000000L;
+            default -> 1L;
+        };
     }
 }

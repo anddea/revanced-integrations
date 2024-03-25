@@ -209,7 +209,8 @@ public enum SettingsEnum {
     HIDE_SUGGESTIONS_SHELF_METHOD("revanced_hide_suggestions_shelf_method", BOOLEAN, FALSE, true),
     HIDE_HOME_FEED_MEMBERSHIP_VIDEO("revanced_hide_home_feed_membership_video", BOOLEAN, FALSE, true),
     HIDE_VIDEO_WITH_GRAY_DESCRIPTION("revanced_hide_video_with_gray_description", BOOLEAN, FALSE, true),
-    HIDE_VIDEO_WITH_LOW_VIEW("revanced_hide_video_with_low_view", BOOLEAN, FALSE, true),
+    HIDE_VIDEO_WITH_VIEW("revanced_hide_video_with_view", BOOLEAN, FALSE),
+    HIDE_VIDEO_WITH_VIEW_NUM("revanced_hide_video_with_view_num", LONG, 1000L, parents(HIDE_VIDEO_WITH_VIEW)),
 
     // Channel Profile
     HIDE_BROWSE_STORE_BUTTON("revanced_hide_browse_store_button", BOOLEAN, TRUE),
