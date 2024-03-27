@@ -211,6 +211,8 @@ public enum SettingsEnum {
     HIDE_VIDEO_WITH_GRAY_DESCRIPTION("revanced_hide_video_with_gray_description", BOOLEAN, FALSE, true),
     HIDE_VIDEO_WITH_VIEW("revanced_hide_video_with_view", BOOLEAN, FALSE),
     HIDE_VIDEO_WITH_VIEW_NUM("revanced_hide_video_with_view_num", LONG, 1000L, parents(HIDE_VIDEO_WITH_VIEW)),
+    HIDE_VIDEO_WITH_VIEW_NUM_KEYS("revanced_hide_video_with_low_view_num_multiplier", STRING, str("revanced_hide_video_with_low_view_num_multiplier_value"), parents(HIDE_VIDEO_WITH_VIEW)),
+    HIDE_VIDEO_WITH_LOW_VIEW_OLD("revanced_hide_video_with_low_view_old", BOOLEAN, FALSE),
 
     // Channel Profile
     HIDE_BROWSE_STORE_BUTTON("revanced_hide_browse_store_button", BOOLEAN, TRUE),

@@ -5,10 +5,14 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
+import app.revanced.integrations.youtube.utils.LogHelper;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static app.revanced.integrations.youtube.utils.StringRef.str;
 
 /**
  * @noinspection rawtypes
@@ -21,6 +25,12 @@ public final class LayoutComponentsFilter extends Filter {
                     SettingsEnum.HIDE_VIDEO_WITH_GRAY_DESCRIPTION,
                     ENDORSEMENT_HEADER_FOOTER_PATH
             );
+
+    private static final ByteArrayAsStringFilterGroup lowViewsVideoIdentifier =
+            new ByteArrayAsStringFilterGroup(
+                    SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW_OLD,
+                    "g-highZ"
+            );
     private static final ByteArrayAsStringFilterGroup membershipVideoIdentifier =
             new ByteArrayAsStringFilterGroup(
                     SettingsEnum.HIDE_HOME_FEED_MEMBERSHIP_VIDEO,
@@ -29,8 +39,8 @@ public final class LayoutComponentsFilter extends Filter {
     private final StringFilterGroup communityPosts;
     private final StringFilterGroupList communityPostsGroupList = new StringFilterGroupList();
     private final StringFilterGroup videoWithContext;
+    private final StringFilterGroup homeVideoWithContext;
     private final StringFilterGroup searchVideoWithContext;
-    private static final Pattern VIEW_COUNT_PATTERN = Pattern.compile("\\b(\\d+(?:\\.\\d+)?)([KMB]?)\\s*views?\\b");
 
     public LayoutComponentsFilter() {
         // Identifiers.
@@ -98,6 +108,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "video_with_context"
         );
 
+        homeVideoWithContext = new StringFilterGroup(
+                SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW_OLD,
+                "home_video_with_context.eml"
+        );
+
         final StringFilterGroup infoPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_INFO_PANEL,
                 "compact_banner",
@@ -155,7 +170,7 @@ public final class LayoutComponentsFilter extends Filter {
                 expandableMetadata,
                 feedSurvey,
                 grayDescription,
-                videoWithContext,
+                homeVideoWithContext,
                 infoPanel,
                 latestPosts,
                 medicalPanel,
@@ -163,7 +178,8 @@ public final class LayoutComponentsFilter extends Filter {
                 notifyMe,
                 searchVideoWithContext,
                 ticketShelf,
-                timedReactions
+                timedReactions,
+                videoWithContext
         );
 
         communityPostsGroupList.addAll(
@@ -187,6 +203,10 @@ public final class LayoutComponentsFilter extends Filter {
             return isLowViewsVideo(protobufString);
         }
 
+        if (matchedGroup == homeVideoWithContext)
+            return (membershipVideoIdentifier.check(protobufBufferArray).isFiltered()
+                    || lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered());
+
         if (matchedGroup == searchVideoWithContext) {
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         }
@@ -204,22 +224,54 @@ public final class LayoutComponentsFilter extends Filter {
     }
 
     private boolean isLowViewsVideo(String protobufString) {
-        Matcher matcher = VIEW_COUNT_PATTERN.matcher(protobufString);
+        Matcher matcher = getViewCountPattern().matcher(protobufString);
+
         if (matcher.find()) {
-            double num = Double.parseDouble(Objects.requireNonNull(matcher.group(1)));
-            String multiplier = matcher.group(2);
-            long multiplierValue = getMultiplierValue(Objects.requireNonNull(multiplier));
+            double num = Double.parseDouble(Objects.requireNonNull(matcher.group(1)).replace(",", "."));
+            String multiplierKey = matcher.group(2);
+            long multiplierValue = getMultiplierValue(multiplierKey);
+
             return num * multiplierValue < SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM.getLong();
         }
+
         return false;
     }
 
+    private static Pattern getViewCountPattern() {
+        String[] parts = SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM_KEYS.getString().split("\\n");
+        StringBuilder patternBuilder = new StringBuilder("(\\d+(?:[.,]\\d+)?)\\s?(");
+        StringBuilder suffixBuilder = new StringBuilder();
+
+        for (String part : parts) {
+            String[] pair = part.split(" -> ");
+
+            if (pair.length == 2 && !pair[1].trim().equals("views")) {
+                patternBuilder.append(pair[0].trim()).append("|");
+            }
+
+            if (pair.length == 2 && pair[1].trim().equals("views")) {
+                suffixBuilder.append(pair[0].trim());
+            }
+        }
+
+        patternBuilder.deleteCharAt(patternBuilder.length() - 1); // Remove the trailing |
+        patternBuilder.append(")?\\s*");
+        patternBuilder.append(suffixBuilder.length() > 0 ? suffixBuilder.toString() : "views");
+
+        return Pattern.compile(patternBuilder.toString());
+    }
+
     private long getMultiplierValue(String multiplier) {
-        return switch (multiplier) {
-            case "K" -> 1000L;
-            case "M" -> 1000000L;
-            case "B" -> 1000000000L;
-            default -> 1L;
-        };
+        String[] parts = SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM_KEYS.getString().split("\\n");
+
+        for (String part : parts) {
+            String[] pair = part.split(" -> ");
+
+            if (pair.length == 2 && pair[0].trim().equals(multiplier) && !pair[1].trim().equals("views")) {
+                return Long.parseLong(pair[1].replaceAll("[^\\d]", ""));
+            }
+        }
+
+        return 1L; // Default value if not found
     }
 }
