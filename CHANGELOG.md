@@ -1,3 +1,10 @@
+# [0.150.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.2...v0.150.0-dev.3) (2024-03-27)
+
+
+### Features
+
+* **YouTube - Layout component filter:** Add locale support for a video filter based on view count ([fc7be68](https://github.com/anddea/revanced-integrations/commit/fc7be688f6565b86e85fa5d351df3d966f006b21))
+
 # [0.150.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.1...v0.150.0-dev.2) (2024-03-26)
 
 
