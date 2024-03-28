@@ -1,3 +1,10 @@
+# [0.150.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.3...v0.150.0-dev.4) (2024-03-28)
+
+
+### Features
+
+* **YouTube - Layout component filter:** Adjust filter for more patterns ([8fbb0b6](https://github.com/anddea/revanced-integrations/commit/8fbb0b6c2893ffcb69968c3ee85070ac10a4793c))
+
 # [0.150.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.2...v0.150.0-dev.3) (2024-03-27)
 
 
