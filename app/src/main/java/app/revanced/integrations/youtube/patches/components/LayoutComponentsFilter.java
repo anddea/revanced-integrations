@@ -224,41 +224,76 @@ public final class LayoutComponentsFilter extends Filter {
     }
 
     private boolean isLowViewsVideo(String protobufString) {
-        Matcher matcher = getViewCountPattern().matcher(protobufString);
+        Pattern[] viewCountPatterns = getViewCountPatterns();
 
-        if (matcher.find()) {
-            double num = Double.parseDouble(Objects.requireNonNull(matcher.group(1)).replace(",", "."));
-            String multiplierKey = matcher.group(2);
-            long multiplierValue = getMultiplierValue(multiplierKey);
-
-            return num * multiplierValue < SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM.getLong();
+        for (Pattern pattern : viewCountPatterns) {
+            Matcher matcher = pattern.matcher(protobufString);
+            if (matcher.find()) {
+                String numString = Objects.requireNonNull(matcher.group(1));
+                double num = parseNumber(numString);
+                String multiplierKey = matcher.group(2);
+                long multiplierValue = getMultiplierValue(multiplierKey);
+                return num * multiplierValue < SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM.getLong();
+            }
         }
 
         return false;
     }
 
-    private static Pattern getViewCountPattern() {
+    private double parseNumber(String numString) {
+        /**
+         * Some languages have comma (,) as a decimal separator.
+         * In order to detect those numbers as doubles in Java
+         * we convert commas (,) to dots (.).
+         * Unless we find a language that has commas used in
+         * a different manner, it should work.
+         */
+        numString = numString.replace(",", ".");
+
+        /**
+         * Some languages have dot (.) as a kilo separator.
+         * So we check with regex if there is a number with 3+
+         * digits after dot (.), we replace it with nothing
+         * to make Java understand the number as a whole.
+         */
+        if (numString.matches("\\d+\\.\\d{3,}")) {
+            numString = numString.replace(".", "");
+        }
+
+        return Double.parseDouble(numString);
+    }
+
+    private static Pattern[] getViewCountPatterns() {
         String[] parts = SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM_KEYS.getString().split("\\n");
-        StringBuilder patternBuilder = new StringBuilder("(\\d+(?:[.,]\\d+)?)\\s?(");
+        StringBuilder prefixPatternBuilder = new StringBuilder("(\\d+(?:[.,]\\d+)?)\\s?(");
+        StringBuilder secondPatternBuilder = new StringBuilder();
         StringBuilder suffixBuilder = new StringBuilder();
 
         for (String part : parts) {
             String[] pair = part.split(" -> ");
 
             if (pair.length == 2 && !pair[1].trim().equals("views")) {
-                patternBuilder.append(pair[0].trim()).append("|");
+                prefixPatternBuilder.append(pair[0].trim()).append("|");
             }
 
             if (pair.length == 2 && pair[1].trim().equals("views")) {
                 suffixBuilder.append(pair[0].trim());
+                secondPatternBuilder.append(pair[0].trim()).append("\\s*").append(prefixPatternBuilder);
             }
         }
 
-        patternBuilder.deleteCharAt(patternBuilder.length() - 1); // Remove the trailing |
-        patternBuilder.append(")?\\s*");
-        patternBuilder.append(suffixBuilder.length() > 0 ? suffixBuilder.toString() : "views");
+        prefixPatternBuilder.deleteCharAt(prefixPatternBuilder.length() - 1); // Remove the trailing |
+        prefixPatternBuilder.append(")?\\s*");
+        prefixPatternBuilder.append(suffixBuilder.length() > 0 ? suffixBuilder.toString() : "views");
 
-        return Pattern.compile(patternBuilder.toString());
+        secondPatternBuilder.deleteCharAt(secondPatternBuilder.length() - 1); // Remove the trailing |
+        secondPatternBuilder.append(")?");
+
+        Pattern[] patterns = new Pattern[2];
+        patterns[0] = Pattern.compile(prefixPatternBuilder.toString());
+        patterns[1] = Pattern.compile(secondPatternBuilder.toString());
+
+        return patterns;
     }
 
     private long getMultiplierValue(String multiplier) {
