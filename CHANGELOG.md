@@ -1,3 +1,10 @@
+# [0.150.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.4...v0.150.0-dev.5) (2024-03-31)
+
+
+### Bug Fixes
+
+* **YouTube:** Remove redundant filters and disable spoof player parameter ([9d917b8](https://github.com/anddea/revanced-integrations/commit/9d917b890a7e0ea8eb92674e9549f30d2aafb300))
+
 # [0.150.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.3...v0.150.0-dev.4) (2024-03-28)
 
 
