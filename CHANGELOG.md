@@ -1,3 +1,10 @@
+# [0.150.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.5...v0.150.0-dev.6) (2024-04-01)
+
+
+### Bug Fixes
+
+* **YouTube - Quick actions components:** Hide comment and share buttons ([4231097](https://github.com/anddea/revanced-integrations/commit/42310978ac3e9c5ab54007428a273d39fac9938f))
+
 # [0.150.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.4...v0.150.0-dev.5) (2024-03-31)
 
 
