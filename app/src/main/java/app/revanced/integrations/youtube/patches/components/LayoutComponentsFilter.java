@@ -5,6 +5,14 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
+import app.revanced.integrations.youtube.utils.LogHelper;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static app.revanced.integrations.youtube.utils.StringRef.str;
 
 /**
  * @noinspection rawtypes
@@ -17,9 +25,10 @@ public final class LayoutComponentsFilter extends Filter {
                     SettingsEnum.HIDE_VIDEO_WITH_GRAY_DESCRIPTION,
                     ENDORSEMENT_HEADER_FOOTER_PATH
             );
+
     private static final ByteArrayAsStringFilterGroup lowViewsVideoIdentifier =
             new ByteArrayAsStringFilterGroup(
-                    SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
+                    SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW_OLD,
                     "g-highZ"
             );
     private static final ByteArrayAsStringFilterGroup membershipVideoIdentifier =
@@ -29,6 +38,7 @@ public final class LayoutComponentsFilter extends Filter {
             );
     private final StringFilterGroup communityPosts;
     private final StringFilterGroupList communityPostsGroupList = new StringFilterGroupList();
+    private final StringFilterGroup videoWithContext;
     private final StringFilterGroup homeVideoWithContext;
     private final StringFilterGroup searchVideoWithContext;
 
@@ -93,8 +103,13 @@ public final class LayoutComponentsFilter extends Filter {
                 ENDORSEMENT_HEADER_FOOTER_PATH
         );
 
+        videoWithContext = new StringFilterGroup(
+                SettingsEnum.HIDE_VIDEO_WITH_VIEW,
+                "video_with_context"
+        );
+
         homeVideoWithContext = new StringFilterGroup(
-                SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW,
+                SettingsEnum.HIDE_VIDEO_WITH_LOW_VIEW_OLD,
                 "home_video_with_context.eml"
         );
 
@@ -163,7 +178,8 @@ public final class LayoutComponentsFilter extends Filter {
                 notifyMe,
                 searchVideoWithContext,
                 ticketShelf,
-                timedReactions
+                timedReactions,
+                videoWithContext
         );
 
         communityPostsGroupList.addAll(
@@ -181,9 +197,16 @@ public final class LayoutComponentsFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+
+        if (matchedGroup == videoWithContext) {
+            String protobufString = new String(protobufBufferArray);
+            return isLowViewsVideo(protobufString);
+        }
+
         if (matchedGroup == homeVideoWithContext)
             return (membershipVideoIdentifier.check(protobufBufferArray).isFiltered()
                     || lowViewsVideoIdentifier.check(protobufBufferArray).isFiltered());
+
         if (matchedGroup == searchVideoWithContext) {
             return grayDescriptionIdentifier.check(protobufBufferArray).isFiltered();
         }
@@ -198,5 +221,92 @@ public final class LayoutComponentsFilter extends Filter {
         }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+    }
+
+    private boolean isLowViewsVideo(String protobufString) {
+        Pattern[] viewCountPatterns = getViewCountPatterns();
+
+        for (Pattern pattern : viewCountPatterns) {
+            Matcher matcher = pattern.matcher(protobufString);
+            if (matcher.find()) {
+                String numString = Objects.requireNonNull(matcher.group(1));
+                double num = parseNumber(numString);
+                String multiplierKey = matcher.group(2);
+                long multiplierValue = getMultiplierValue(multiplierKey);
+                return num * multiplierValue < SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM.getLong();
+            }
+        }
+
+        return false;
+    }
+
+    private double parseNumber(String numString) {
+        /**
+         * Some languages have comma (,) as a decimal separator.
+         * In order to detect those numbers as doubles in Java
+         * we convert commas (,) to dots (.).
+         * Unless we find a language that has commas used in
+         * a different manner, it should work.
+         */
+        numString = numString.replace(",", ".");
+
+        /**
+         * Some languages have dot (.) as a kilo separator.
+         * So we check with regex if there is a number with 3+
+         * digits after dot (.), we replace it with nothing
+         * to make Java understand the number as a whole.
+         */
+        if (numString.matches("\\d+\\.\\d{3,}")) {
+            numString = numString.replace(".", "");
+        }
+
+        return Double.parseDouble(numString);
+    }
+
+    private static Pattern[] getViewCountPatterns() {
+        String[] parts = SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM_KEYS.getString().split("\\n");
+        StringBuilder prefixPatternBuilder = new StringBuilder("(\\d+(?:[.,]\\d+)?)\\s?(");
+        StringBuilder secondPatternBuilder = new StringBuilder();
+        StringBuilder suffixBuilder = new StringBuilder();
+
+        for (String part : parts) {
+            String[] pair = part.split(" -> ");
+
+            if (pair.length == 2 && !pair[1].trim().equals("views")) {
+                prefixPatternBuilder.append(pair[0].trim()).append("|");
+            }
+
+            if (pair.length == 2 && pair[1].trim().equals("views")) {
+                suffixBuilder.append(pair[0].trim());
+                secondPatternBuilder.append(pair[0].trim()).append("\\s*").append(prefixPatternBuilder);
+            }
+        }
+
+        prefixPatternBuilder.deleteCharAt(prefixPatternBuilder.length() - 1); // Remove the trailing |
+        prefixPatternBuilder.append(")?\\s*");
+        prefixPatternBuilder.append(suffixBuilder.length() > 0 ? suffixBuilder.toString() : "views");
+
+        secondPatternBuilder.deleteCharAt(secondPatternBuilder.length() - 1); // Remove the trailing |
+        secondPatternBuilder.append(")?");
+
+        Pattern[] patterns = new Pattern[2];
+        patterns[0] = Pattern.compile(prefixPatternBuilder.toString());
+        patterns[1] = Pattern.compile(secondPatternBuilder.toString());
+
+        return patterns;
+    }
+
+    private long getMultiplierValue(String multiplier) {
+        String[] parts = SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM_KEYS.getString().split("\\n");
+
+        for (String part : parts) {
+            String[] pair = part.split(" -> ");
+
+            if (pair.length == 2 && pair[0].trim().equals(multiplier) && !pair[1].trim().equals("views")) {
+                return Long.parseLong(pair[1].replaceAll("[^\\d]", ""));
+            }
+        }
+
+        return 1L; // Default value if not found
     }
 }

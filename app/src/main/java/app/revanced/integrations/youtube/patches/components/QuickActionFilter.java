@@ -13,12 +13,14 @@ final class QuickActionFilter extends Filter {
     private final StringFilterGroup quickActionRule;
 
     private final StringFilterGroup bufferFilterPathRule;
+    private final StringFilterGroup bufferFilterPathRuleCommentShare;
     private final ByteArrayFilterGroupList bufferButtonsGroupList = new ByteArrayFilterGroupList();
 
     public QuickActionFilter() {
         quickActionRule = new StringFilterGroup(null, QUICK_ACTION_PATH);
         identifierFilterGroupList.addAll(quickActionRule);
         bufferFilterPathRule = new StringFilterGroup(null, "|fullscreen_video_action_button.eml|");
+        bufferFilterPathRuleCommentShare = new StringFilterGroup(null, "|ContainerType|button.eml|");
 
         pathFilterGroupList.addAll(
                 new StringFilterGroup(
@@ -45,7 +47,8 @@ final class QuickActionFilter extends Filter {
                         SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
                         "fullscreen_related_videos"
                 ),
-                bufferFilterPathRule
+                bufferFilterPathRule,
+                bufferFilterPathRuleCommentShare
         );
 
         bufferButtonsGroupList.addAll(
@@ -91,7 +94,7 @@ final class QuickActionFilter extends Filter {
         if (matchedGroup == quickActionRule && !isEveryFilterGroupEnabled()) {
             return false;
         }
-        if (matchedGroup == bufferFilterPathRule) {
+        if (matchedGroup == bufferFilterPathRule || matchedGroup == bufferFilterPathRuleCommentShare) {
             return bufferButtonsGroupList.check(protobufBufferArray).isFiltered();
         }
 

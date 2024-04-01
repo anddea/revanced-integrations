@@ -1,3 +1,51 @@
+# [0.150.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.5...v0.150.0-dev.6) (2024-04-01)
+
+
+### Bug Fixes
+
+* **YouTube - Quick actions components:** Hide comment and share buttons ([4231097](https://github.com/anddea/revanced-integrations/commit/42310978ac3e9c5ab54007428a273d39fac9938f))
+
+# [0.150.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.4...v0.150.0-dev.5) (2024-03-31)
+
+
+### Bug Fixes
+
+* **YouTube:** Remove redundant filters and disable spoof player parameter ([9d917b8](https://github.com/anddea/revanced-integrations/commit/9d917b890a7e0ea8eb92674e9549f30d2aafb300))
+
+# [0.150.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.3...v0.150.0-dev.4) (2024-03-28)
+
+
+### Features
+
+* **YouTube - Layout component filter:** Adjust filter for more patterns ([8fbb0b6](https://github.com/anddea/revanced-integrations/commit/8fbb0b6c2893ffcb69968c3ee85070ac10a4793c))
+
+# [0.150.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.2...v0.150.0-dev.3) (2024-03-27)
+
+
+### Features
+
+* **YouTube - Layout component filter:** Add locale support for a video filter based on view count ([fc7be68](https://github.com/anddea/revanced-integrations/commit/fc7be688f6565b86e85fa5d351df3d966f006b21))
+
+# [0.150.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.150.0-dev.1...v0.150.0-dev.2) (2024-03-26)
+
+
+### Bug Fixes
+
+* **YouTube - Hide interstitial ads:** Prevent app crash if hiding interstitial ads is not possible ([89d9b17](https://github.com/anddea/revanced-integrations/commit/89d9b17e3f163a7c0f2c9461dda65c808db4b07c))
+
+
+### Features
+
+* **MicroG Support:** Switch to GMSCore ([4e4554a](https://github.com/anddea/revanced-integrations/commit/4e4554a622b5e6e2307c36ab62f19f0fb0e7a235))
+* **YouTube - Settings:** Add new settings for Shorts and Player buttons… … background ([68cce84](https://github.com/anddea/revanced-integrations/commit/68cce84d15ed1e12e219bc591b37516c12382169))
+
+# [0.150.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.149.0...v0.150.0-dev.1) (2024-03-25)
+
+
+### Features
+
+* **YouTube - Layout component filter:** Hide videos based on the number of views ([3d1643d](https://github.com/anddea/revanced-integrations/commit/3d1643d4b08482f1f8dd930f630a28e66b52b944))
+
 # [0.149.0](https://github.com/anddea/revanced-integrations/compare/v0.148.0...v0.149.0) (2024-03-23)
 
 
