@@ -1,3 +1,10 @@
+# [0.151.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.150.0...v0.151.0-dev.1) (2024-04-03)
+
+
+### Features
+
+* **YouTube - Overlay buttons:** Tap and hold the speed button to reset to the default and normal speed back and forth ([ca322fd](https://github.com/anddea/revanced-integrations/commit/ca322fda34c793dcb618a1c10e1ce5ce09104dd2))
+
 # [0.150.0](https://github.com/anddea/revanced-integrations/compare/v0.149.0...v0.150.0) (2024-04-01)
 
 
