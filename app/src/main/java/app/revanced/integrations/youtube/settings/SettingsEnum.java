@@ -79,7 +79,7 @@ public enum SettingsEnum {
 
     // Comments
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
-    HIDE_COMMENTS_BY_MEMBERS("revanced_hide_comments_by_members", BOOLEAN, FALSE),
+    HIDE_COMMENTS_BY_MEMBERS("revanced_hide_comments_by_members", BOOLEAN, TRUE),
     HIDE_COMMENTS_SECTION("revanced_hide_comments_section", BOOLEAN, FALSE),
     HIDE_COMMENTS_THANKS_BUTTON("revanced_hide_comments_thanks_button", BOOLEAN, TRUE),
     HIDE_CREATE_SHORTS_BUTTON("revanced_hide_create_shorts_button", BOOLEAN, TRUE),
@@ -122,7 +122,7 @@ public enum SettingsEnum {
 
 
     // Fullscreen
-    DISABLE_AMBIENT_MODE_IN_FULLSCREEN("revanced_disable_ambient_mode_in_fullscreen", BOOLEAN, FALSE, true),
+    DISABLE_AMBIENT_MODE_IN_FULLSCREEN("revanced_disable_ambient_mode_in_fullscreen", BOOLEAN, TRUE, true),
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", BOOLEAN, FALSE, true),
     HIDE_END_SCREEN_OVERLAY("revanced_hide_end_screen_overlay", BOOLEAN, TRUE, true),
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", BOOLEAN, FALSE, true),
@@ -234,7 +234,7 @@ public enum SettingsEnum {
 
     // Misc
     BYPASS_AMBIENT_MODE_RESTRICTIONS("revanced_bypass_ambient_mode_restrictions", BOOLEAN, FALSE),
-    DISABLE_AMBIENT_MODE("revanced_disable_ambient_mode", BOOLEAN, TRUE, true),
+    DISABLE_AMBIENT_MODE("revanced_disable_ambient_mode", BOOLEAN, FALSE, true),
     DISABLE_UPDATE_SCREEN("revanced_disable_update_screen", BOOLEAN, TRUE, true),
     ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE),
     ENABLE_DEBUG_BUFFER_LOGGING("revanced_enable_debug_buffer_logging", BOOLEAN, FALSE),
