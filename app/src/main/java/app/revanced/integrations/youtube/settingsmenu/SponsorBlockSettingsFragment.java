@@ -233,7 +233,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         addNewSegment.setSummaryOff(str("sb_enable_create_segment_sum_off"));
         @SuppressLint("DiscouragedApi") int iconResourceId = context.getResources().getIdentifier("sb_enable_create_segment_icon", "drawable", context.getPackageName());
         if (iconResourceId != 0) {
-            Drawable iconDrawable = context.getResources().getDrawable(iconResourceId);
+            @SuppressLint("UseCompatLoadingForDrawables") Drawable iconDrawable = context.getResources().getDrawable(iconResourceId, context.getTheme());
             addNewSegment.setIcon(iconDrawable);
         }
         category.addPreference(addNewSegment);
@@ -291,7 +291,7 @@ public class SponsorBlockSettingsFragment extends PreferenceFragment {
         votingEnabled.setSummaryOff(str("sb_enable_voting_sum_off"));
         @SuppressLint("DiscouragedApi") int votingResourceId = context.getResources().getIdentifier("sb_enable_voting_icon", "drawable", context.getPackageName());
         if (votingResourceId != 0) {
-            Drawable iconDrawable = context.getResources().getDrawable(votingResourceId);
+            @SuppressLint("UseCompatLoadingForDrawables") Drawable iconDrawable = context.getResources().getDrawable(votingResourceId, context.getTheme());
             votingEnabled.setIcon(iconDrawable);
         }
         category.addPreference(votingEnabled);
