@@ -17,6 +17,9 @@ public final class ShortsFilter extends Filter {
     private final ByteArrayAsStringFilterGroup shortsCompactFeedVideoBuffer;
 
     private final StringTrieSearch exceptions = new StringTrieSearch();
+    private final StringFilterGroup reelSoundMetadata;
+    private final StringFilterGroup videoTitle;
+    private final StringFilterGroup videoLinkLabel;
     private final StringFilterGroup infoPanel;
     private final StringFilterGroup shelfHeader;
 
@@ -75,7 +78,7 @@ public final class ShortsFilter extends Filter {
                 "sponsor_button"
         );
 
-        final StringFilterGroup reelSoundMetadata = new StringFilterGroup(
+        reelSoundMetadata = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_SOUND_METADATA_LABEL,
                 "reel_sound_metadata"
         );
@@ -98,12 +101,12 @@ public final class ShortsFilter extends Filter {
                 "shorts_video_action_button"
         );
 
-        final StringFilterGroup videoLinkLabel = new StringFilterGroup(
+        videoLinkLabel = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_VIDEO_LINK_LABEL,
                 "reel_multi_format_link"
         );
 
-        final StringFilterGroup videoTitle = new StringFilterGroup(
+        videoTitle = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_VIDEO_TITLE,
                 "shorts_video_title_item"
         );
@@ -167,7 +170,8 @@ public final class ShortsFilter extends Filter {
             return false;
 
         if (matchedList == pathFilterGroupList) {
-            if (matchedGroup == infoPanel) {
+            if (matchedGroup == infoPanel || matchedGroup == videoLinkLabel ||
+                    matchedGroup == videoTitle || matchedGroup == reelSoundMetadata) {
                 // Always filter if matched.
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
             } else if (matchedGroup == shortsCompactFeedVideoPath) {
