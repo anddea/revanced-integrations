@@ -1,3 +1,15 @@
+# [0.151.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.1...v0.151.0-dev.2) (2024-04-06)
+
+
+### Bug Fixes
+
+* **YouTube - Hide shorts components:** Fix new options ([853b227](https://github.com/anddea/revanced-integrations/commit/853b2279cc50b4db40473e887c9dafead41e62b0))
+
+
+### Features
+
+* **YouTube - Visual preferences icons:** New vector icons ([73d4890](https://github.com/anddea/revanced-integrations/commit/73d4890fe2fd9ca370fc09ba60e4e63c6fb3276f))
+
 # [0.151.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.150.0...v0.151.0-dev.1) (2024-04-03)
 
 
