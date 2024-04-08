@@ -3,6 +3,8 @@ package app.revanced.integrations.youtube.patches.components;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.shared.NavigationBar;
+import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.StringTrieSearch;
 
 /**
@@ -175,7 +177,8 @@ public final class ShortsFilter extends Filter {
                 // Always filter if matched.
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
             } else if (matchedGroup == shortsCompactFeedVideoPath) {
-                if (matchedIndex == 0 && shortsCompactFeedVideoBuffer.check(protobufBufferArray).isFiltered())
+                if (shouldHideShortsFeedItems() && matchedIndex == 0
+                        && shortsCompactFeedVideoBuffer.check(protobufBufferArray).isFiltered())
                     return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
                 return false;
             } else if (matchedGroup == videoActionButton) {
@@ -186,13 +189,30 @@ public final class ShortsFilter extends Filter {
                 // to avoid false positives.
                 return path.startsWith(REEL_CHANNEL_BAR_PATH);
             }
-        } else if (matchedGroup == shelfHeader) {
-            // Check ConversationContext to not hide shelf header in channel profile
-            // This value does not exist in the shelf header in the channel profile
-            return allValue.contains(SHORTS_SHELF_HEADER_CONVERSION_CONTEXT);
+        } else {
+            // Feed/search path components.
+            if (matchedGroup == shelfHeader) {
+                // Because the header is used in watch history and possibly other places, check for the index,
+                // which is 0 when the shelf header is used for Shorts.
+                if (matchedIndex != 0) return false;
+            }
+
+            if (!shouldHideShortsFeedItems()) return false;
         }
 
         // Super class handles logging.
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+    }
+
+    private static boolean shouldHideShortsFeedItems() {
+        if (NavigationBar.isSearchBarActive()) { // Must check search first.
+            return SettingsEnum.HIDE_SHORTS_SEARCH.getBoolean();
+        } else if (PlayerType.getCurrent().isMaximizedOrFullscreen()
+                || NavigationBar.NavigationButton.HOME.isSelected()) {
+            return SettingsEnum.HIDE_SHORTS_HOME.getBoolean();
+        } else if (NavigationBar.NavigationButton.SUBSCRIPTIONS.isSelected()) {
+            return SettingsEnum.HIDE_SHORTS_SUBSCRIPTIONS.getBoolean();
+        }
+        return false;
     }
 }
