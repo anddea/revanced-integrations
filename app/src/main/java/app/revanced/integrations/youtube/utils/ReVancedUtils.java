@@ -59,11 +59,18 @@ public class ReVancedUtils {
      * @return The first child view that matches the filter.
      */
     @Nullable
-    public static <T extends View> T getChildView(@NonNull ViewGroup viewGroup, @NonNull MatchFilter filter) {
+    public static <T extends View> T getChildView(@NonNull ViewGroup viewGroup, boolean searchRecursively,
+                                                  @NonNull MatchFilter<View> filter) {
         for (int i = 0, childCount = viewGroup.getChildCount(); i < childCount; i++) {
             View childAt = viewGroup.getChildAt(i);
             if (filter.matches(childAt)) {
+                //noinspection unchecked
                 return (T) childAt;
+            }
+            // Must do recursive after filter check, in case the filter is looking for a ViewGroup.
+            if (searchRecursively && childAt instanceof ViewGroup) {
+                T match = getChildView((ViewGroup) childAt, true, filter);
+                if (match != null) return match;
             }
         }
         return null;
