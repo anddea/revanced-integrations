@@ -43,8 +43,11 @@ public class SpeedDialog {
                 if (!SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.getBoolean() ||
                         VideoHelpers.getCurrentSpeed() == SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat()) {
                     overrideSpeed(1.0f);
+                    showToastShort(view.getContext(), str("revanced_overlay_button_speed_dialog_reset", "1.0"));
                 } else {
-                    overrideSpeed(SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat());
+                    float defaultSpeed = SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
+                    overrideSpeed(defaultSpeed);
+                    showToastShort(view.getContext(), str("revanced_overlay_button_speed_dialog_reset", defaultSpeed));
                 }
 
                 return true;
