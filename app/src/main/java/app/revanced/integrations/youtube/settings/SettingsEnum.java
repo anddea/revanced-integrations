@@ -334,7 +334,7 @@ public enum SettingsEnum {
     // Seekbar
     APPEND_TIME_STAMP_INFORMATION("revanced_append_time_stamp_information", BOOLEAN, TRUE),
     APPEND_TIME_STAMP_INFORMATION_TYPE("revanced_append_time_stamp_information_type", BOOLEAN, FALSE),
-    ENABLE_CUSTOM_SEEKBAR_COLOR("revanced_enable_custom_seekbar_color", BOOLEAN, FALSE, true),
+    ENABLE_CUSTOM_SEEKBAR_COLOR("revanced_enable_custom_seekbar_color", BOOLEAN, TRUE, true),
     ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE("revanced_custom_seekbar_color_value", STRING, "#ffff0000", true,
             parents(ENABLE_CUSTOM_SEEKBAR_COLOR)),
     ENABLE_SEEKBAR_TAPPING("revanced_enable_seekbar_tapping", BOOLEAN, TRUE),
@@ -417,7 +417,7 @@ public enum SettingsEnum {
     ENABLE_SAVE_PLAYBACK_SPEED("revanced_enable_save_playback_speed", BOOLEAN, TRUE),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, TRUE),
     // Experimental Flags
-    ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS("revanced_enable_default_playback_speed_shorts", BOOLEAN, TRUE),
+    ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS("revanced_enable_default_playback_speed_shorts", BOOLEAN, FALSE),
     SKIP_PRELOADED_BUFFER("revanced_skip_preloaded_buffer", BOOLEAN, FALSE),
     SKIP_PRELOADED_BUFFER_TOAST("revanced_skip_preloaded_buffer_toast", BOOLEAN, TRUE),
 
