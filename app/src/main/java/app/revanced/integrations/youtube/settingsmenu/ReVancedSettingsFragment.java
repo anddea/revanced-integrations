@@ -32,12 +32,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Objects;
 
-import app.revanced.integrations.youtube.patches.overlaybutton.AlwaysRepeat;
-import app.revanced.integrations.youtube.patches.overlaybutton.CopyVideoUrl;
-import app.revanced.integrations.youtube.patches.overlaybutton.CopyVideoUrlTimestamp;
-import app.revanced.integrations.youtube.patches.overlaybutton.ExternalDownload;
-import app.revanced.integrations.youtube.patches.overlaybutton.SpeedDialog;
-import app.revanced.integrations.youtube.patches.overlaybutton.Whitelists;
+import app.revanced.integrations.youtube.patches.overlaybutton.*;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.patches.utils.PatchStatus;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
@@ -96,6 +91,7 @@ public class ReVancedSettingsFragment extends PreferenceFragment {
                     case OVERLAY_BUTTON_EXTERNAL_DOWNLOADER -> ExternalDownload.refreshVisibility();
                     case OVERLAY_BUTTON_WHITELIST -> Whitelists.refreshVisibility();
                     case OVERLAY_BUTTON_SPEED_DIALOG -> SpeedDialog.refreshVisibility();
+                    case OVERLAY_BUTTON_TIME_ORDERED_PLAYLIST -> PlaylistFromChannelVideos.refreshVisibility();
                 }
             } else if (mPreference instanceof EditTextPreference editTextPreference) {
                 if (settingImportInProgress) {
