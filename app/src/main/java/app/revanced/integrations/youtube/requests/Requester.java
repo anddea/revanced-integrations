@@ -35,6 +35,19 @@ public class Requester {
     }
 
     /**
+     * Parse the {@link HttpURLConnection}, close the underlying InputStream, and disconnect.
+     *
+     * <b>Should only be used if other requests to the server are unlikely in the near future</b>
+     *
+     * @see #parseJson(HttpURLConnection)
+     */
+    public static String parseJsonAndDisconnect(HttpURLConnection connection) throws IOException {
+        String result = parseJson(connection);
+        connection.disconnect();
+        return result;
+    }
+
+    /**
      * Parse the {@link HttpURLConnection}, and closes the underlying InputStream.
      *
      * @param stripNewLineCharacters if newline (\n) characters should be stripped from the InputStream
