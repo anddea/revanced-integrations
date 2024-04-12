@@ -1,3 +1,20 @@
+# [0.151.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.2...v0.151.0-dev.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* **YouTube - Overlay buttons:** Add toast message for speed reset ([cd50c84](https://github.com/anddea/revanced-integrations/commit/cd50c84645abe34a3ed4f6a237a18fd87b8705f1))
+* **YouTube - Return YouTube Dislike:** Update success status response ([4220a35](https://github.com/anddea/revanced-integrations/commit/4220a3555b693f15f004a766c8ee77456cfc4be4))
+* **YT Music - Return YouTube Dislike:** Update success status response ([9b680d2](https://github.com/anddea/revanced-integrations/commit/9b680d28643f75a54bb2144d4e4c70e084ec2c67))
+
+
+### Features
+
+* **YouTube - Alternative thumbnails:** Selectively enable for home / subscriptions / search / player / library ([5956816](https://github.com/anddea/revanced-integrations/commit/5956816afa178f5654e62a2ba2993bf5b0e32173))
+* **YouTube - Hide layout components:** Rewrite navigation patch and use new method for keyword filter ([6c79a49](https://github.com/anddea/revanced-integrations/commit/6c79a49681d610a4e7fb0549aab0ac243115c503))
+* **YouTube - Hide Shorts components:** Selectively hide Shorts for home / subscriptions / search ([9867334](https://github.com/anddea/revanced-integrations/commit/9867334eceaedf8d58938c58b0c14c69622a2ed2))
+* **YouTube - Overlay buttons:** Enable/disable time-ordered button without app restart ([1230df5](https://github.com/anddea/revanced-integrations/commit/1230df5ae99e557817e9411b7d47c0ed6f1ceb4d))
+
 # [0.151.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.1...v0.151.0-dev.2) (2024-04-06)
 
 
