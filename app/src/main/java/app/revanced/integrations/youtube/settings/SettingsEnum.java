@@ -18,6 +18,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,13 +50,18 @@ public enum SettingsEnum {
 
 
     // Alternative Thumbnails
-    ALT_THUMBNAIL_DEARROW("revanced_alt_thumbnail_dearrow", BOOLEAN, FALSE),
     ALT_THUMBNAIL_DEARROW_API_URL("revanced_alt_thumbnail_dearrow_api_url", STRING,
-            "https://dearrow-thumb.ajay.app/api/v1/getThumbnail", true, parents(ALT_THUMBNAIL_DEARROW)),
-    ALT_THUMBNAIL_DEARROW_CONNECTION_TOAST("revanced_alt_thumbnail_dearrow_connection_toast", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_DEARROW)),
-    ALT_THUMBNAIL_STILLS("revanced_alt_thumbnail_stills", BOOLEAN, FALSE),
-    ALT_THUMBNAIL_STILLS_FAST("revanced_alt_thumbnail_stills_fast", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_STILLS)),
-    ALT_THUMBNAIL_STILLS_TIME("revanced_alt_thumbnail_stills_time", INTEGER, 2, parents(ALT_THUMBNAIL_STILLS)),
+            "https://dearrow-thumb.ajay.app/api/v1/getThumbnail", true, new DeArrowAvailability()),
+    ALT_THUMBNAIL_DEARROW_CONNECTION_TOAST("revanced_alt_thumbnail_dearrow_connection_toast", BOOLEAN, FALSE, new DeArrowAvailability()),
+    ALT_THUMBNAIL_STILLS_FAST("revanced_alt_thumbnail_stills_fast", BOOLEAN, FALSE, new StillImagesAvailability()),
+    ALT_THUMBNAIL_STILLS_TIME("revanced_alt_thumbnail_stills_time", INTEGER, ThumbnailStillTime.MIDDLE.altImageNumber, new StillImagesAvailability()),
+
+    ALT_THUMBNAIL_HOME("revanced_alt_thumbnail_home", INTEGER, 0),
+    ALT_THUMBNAIL_SUBSCRIPTIONS("revanced_alt_thumbnail_subscription", INTEGER, 0),
+    ALT_THUMBNAIL_LIBRARY("revanced_alt_thumbnail_library", INTEGER, 0),
+    ALT_THUMBNAIL_PLAYER("revanced_alt_thumbnail_player", INTEGER, 0),
+
+    ALT_THUMBNAIL_SEARCH("revanced_alt_thumbnail_search", INTEGER, 0),
 
 
     // Bottom Player
@@ -284,7 +290,7 @@ public enum SettingsEnum {
     OVERLAY_BUTTON_EXTERNAL_DOWNLOADER("revanced_overlay_button_external_downloader", BOOLEAN, FALSE),
     OVERLAY_BUTTON_TIME_ORDERED_PLAYLIST("revanced_overlay_button_time_ordered_playlist", BOOLEAN, FALSE, true),
     OVERLAY_BUTTON_SPEED_DIALOG("revanced_overlay_button_speed_dialog", BOOLEAN, TRUE),
-    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true, parents(OVERLAY_BUTTON_EXTERNAL_DOWNLOADER)),
     OVERLAY_BUTTON_WHITELIST("revanced_overlay_button_whitelisting", BOOLEAN, FALSE),
 
     // Channel Whitelist
@@ -456,6 +462,37 @@ public enum SettingsEnum {
     SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS("sb_local_time_saved_number_segments", INTEGER, 0, SPONSOR_BLOCK),
     SB_LOCAL_TIME_SAVED_MILLISECONDS("sb_local_time_saved_milliseconds", LONG, 0L, SPONSOR_BLOCK);
 
+    /**
+     * Indicates if a {@link SettingsEnum} is available to edit and use.
+     * Typically, this is dependent upon other BooleanSetting(s) set to 'true',
+     * but this can be used to call into integrations code and check other conditions.
+     */
+    public interface Availability {
+        boolean isAvailable();
+    }
+
+    /**
+     * Availability based on any parent being enabled.
+     */
+    @NonNull
+    public static Availability parents(@NonNull SettingsEnum... parents) {
+        return () -> {
+            for (SettingsEnum parent : parents) {
+                if (parent.getBoolean()) {
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
+    /**
+     * @return if this setting can be configured and used.
+     */
+    public boolean isAvailable() {
+        return availability == null || availability.isAvailable();
+    }
+
     private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
 
     static {
@@ -480,7 +517,7 @@ public enum SettingsEnum {
     public final boolean rebootApp;
 
     @Nullable
-    private final SettingsEnum[] parents;
+    private final Availability availability;
     // Must be volatile, as some settings are read/write from different threads.
     // Of note, the object value is persistently stored using SharedPreferences (which is thread safe).
     @NonNull
@@ -495,45 +532,32 @@ public enum SettingsEnum {
         this(path, returnType, defaultValue, REVANCED, rebootApp, null);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue,
-                 SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, REVANCED, false, parents);
-    }
-
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue,
-                 boolean rebootApp, SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, REVANCED, rebootApp, parents);
-    }
-
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName) {
         this(path, returnType, defaultValue, prefName, false, null);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
-                 SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, prefName, false, parents);
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, Availability availability) {
+        this(path, returnType, defaultValue, REVANCED, false, availability);
+    }
+
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue,
+                 boolean rebootApp, Availability availability) {
+        this(path, returnType, defaultValue, REVANCED, rebootApp, availability);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
-                 boolean rebootApp, @Nullable SettingsEnum[] parents) {
+                 Availability availability) {
+        this(path, returnType, defaultValue, prefName, false, availability);
+    }
+
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
+                 boolean rebootApp, @Nullable Availability availability) {
         this.path = Objects.requireNonNull(path);
         this.returnType = Objects.requireNonNull(returnType);
         this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
         this.sharedPref = Objects.requireNonNull(prefName);
         this.rebootApp = rebootApp;
-        this.parents = parents;
-
-        if (parents != null) {
-            for (SettingsEnum parent : parents) {
-                if (parent.returnType != ReturnType.BOOLEAN) {
-                    throw new IllegalArgumentException("parent must be Boolean type: " + parent);
-                }
-            }
-        }
-    }
-
-    private static SettingsEnum[] parents(SettingsEnum... parents) {
-        return parents;
+        this.availability = availability;
     }
 
     @Nullable
@@ -624,21 +648,6 @@ public enum SettingsEnum {
     }
 
     /**
-     * @return if this setting can be configured and used.
-     * <p>
-     * Not to be confused with {@link #getBoolean()}
-     */
-    public boolean isAvailable() {
-        if (parents == null) {
-            return true;
-        }
-        for (SettingsEnum parent : parents) {
-            if (parent.getBoolean()) return true;
-        }
-        return false;
-    }
-
-    /**
      * @return if the currently set value is different from {@link #defaultValue}
      */
     public boolean isNotSetToDefault() {
@@ -667,7 +676,7 @@ public enum SettingsEnum {
     }
 
     /**
-     * @return the value of this setting as as generic object type.
+     * @return the value of this setting as generic object type.
      */
     @NonNull
     public Object getObjectValue() {
@@ -730,7 +739,7 @@ public enum SettingsEnum {
                 if (json.has(importExportKey)) {
                     throw new IllegalArgumentException("duplicate key found: " + importExportKey);
                 }
-                final boolean exportDefaultValues = false; // Enable to see what all settings looks like in the UI.
+                final boolean exportDefaultValues = false; // Enable to see what all settings look like in the UI.
                 if (setting.includeWithImportExport() && (setting.isNotSetToDefault() | exportDefaultValues)) {
                     json.put(importExportKey, setting.getObjectValue());
                 }
