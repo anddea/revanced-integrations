@@ -13,6 +13,7 @@ import java.util.Set;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.NavigationBar;
+import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.ByteTrieSearch;
 import app.revanced.integrations.youtube.utils.LogHelper;
@@ -124,21 +125,34 @@ final class KeywordContentFilter extends Filter {
             // Player active
             return SettingsEnum.HIDE_KEYWORD_CONTENT_HOME.getBoolean();
         }
+
         // Must check second, as search can be from any tab.
         if (NavigationBar.isSearchBarActive()) {
             // Search
             return SettingsEnum.HIDE_KEYWORD_CONTENT_SEARCH.getBoolean();
         }
-        if (NavigationBar.NavigationButton.HOME.isSelected()) {
-            // Home tab
-            return SettingsEnum.HIDE_KEYWORD_CONTENT_HOME.getBoolean();
+
+        // Avoid checking navigation button status if all other settings are off.
+        final boolean hideHome = SettingsEnum.HIDE_KEYWORD_CONTENT_HOME.getBoolean();
+        final boolean hideSubscriptions = SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean();
+        if (!hideHome && !hideSubscriptions) {
+            return false;
         }
-        if (NavigationBar.NavigationButton.SUBSCRIPTIONS.isSelected()) {
-            // Subscription tab
-            return SettingsEnum.HIDE_KEYWORD_CONTENT_SUB.getBoolean();
+
+        NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
+        if (selectedNavButton == null) {
+            return hideHome; // Unknown tab, treat the same as home.
         }
+
+        if (selectedNavButton == NavigationButton.HOME) {
+            return hideHome;
+        }
+
+        if (selectedNavButton == NavigationButton.SUBSCRIPTIONS) {
+            return hideSubscriptions;
+        }
+
         // User is in the Library or Notifications tab.
-        // Ignored tab
         return false;
     }
 

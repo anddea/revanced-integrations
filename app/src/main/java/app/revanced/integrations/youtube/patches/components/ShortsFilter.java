@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.NavigationBar;
-import app.revanced.integrations.youtube.shared.PlayerType;
+import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 import app.revanced.integrations.youtube.utils.StringTrieSearch;
 
 /**
@@ -207,12 +207,29 @@ public final class ShortsFilter extends Filter {
     private static boolean shouldHideShortsFeedItems() {
         if (NavigationBar.isSearchBarActive()) { // Must check search first.
             return SettingsEnum.HIDE_SHORTS_SEARCH.getBoolean();
-        } else if (PlayerType.getCurrent().isMaximizedOrFullscreen()
-                || NavigationBar.NavigationButton.HOME.isSelected()) {
-            return SettingsEnum.HIDE_SHORTS_HOME.getBoolean();
-        } else if (NavigationBar.NavigationButton.SUBSCRIPTIONS.isSelected()) {
-            return SettingsEnum.HIDE_SHORTS_SUBSCRIPTIONS.getBoolean();
         }
+
+        // Avoid checking navigation button status if all other settings are off.
+        final boolean hideHome = SettingsEnum.HIDE_SHORTS_HOME.getBoolean();
+        final boolean hideSubscriptions = SettingsEnum.HIDE_SHORTS_SUBSCRIPTIONS.getBoolean();
+        if (!hideHome && !hideSubscriptions) {
+            return false;
+        }
+
+        NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
+        if (selectedNavButton == null) {
+            return hideHome; // Unknown tab, treat the same as home.
+        }
+
+        if (selectedNavButton == NavigationButton.HOME) {
+            return hideHome;
+        }
+
+        if (selectedNavButton == NavigationButton.SUBSCRIPTIONS) {
+            return hideSubscriptions;
+        }
+
+        // User must be in the library tab. Don't hide the history or any playlists here.
         return false;
     }
 }

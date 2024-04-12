@@ -166,21 +166,37 @@ public final class AlternativeThumbnailsPatch {
         return apiUri;
     }
 
-    private static int optionSettingForCurrentNavigation() {
+    private static ThumbnailOption optionSettingForCurrentNavigation() {
         if (NavigationBar.isSearchBarActive()) { // Must check search first.
-            return ALT_THUMBNAIL_SEARCH.getInt();
+            return ThumbnailOption.fromValue(ALT_THUMBNAIL_SEARCH.getInt());
         }
         if (PlayerType.getCurrent().isMaximizedOrFullscreen()) {
-            return ALT_THUMBNAIL_PLAYER.getInt();
+            return ThumbnailOption.fromValue(ALT_THUMBNAIL_PLAYER.getInt());
         }
-        if (NavigationButton.HOME.isSelected()) {
-            return ALT_THUMBNAIL_HOME.getInt();
+
+        // Avoid checking which navigation button is selected, if all other settings are the same.
+        ThumbnailOption homeOption = ThumbnailOption.fromValue(ALT_THUMBNAIL_HOME.getInt());
+        ThumbnailOption subscriptionsOption = ThumbnailOption.fromValue(ALT_THUMBNAIL_SUBSCRIPTIONS.getInt());
+        ThumbnailOption libraryOption = ThumbnailOption.fromValue(ALT_THUMBNAIL_LIBRARY.getInt());
+
+        if ((homeOption == subscriptionsOption) && (homeOption == libraryOption)) {
+            return homeOption; // All are the same option.
         }
-        if (NavigationButton.SUBSCRIPTIONS.isSelected() || NavigationButton.NOTIFICATIONS.isSelected()) {
-            return ALT_THUMBNAIL_SUBSCRIPTIONS.getInt();
+
+        NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
+        if (selectedNavButton == null) {
+            // Unknown tab, treat as the home tab;
+            return homeOption;
+        }
+
+        if (selectedNavButton == NavigationButton.HOME) {
+            return homeOption;
+        }
+        if (selectedNavButton == NavigationButton.SUBSCRIPTIONS || selectedNavButton == NavigationButton.NOTIFICATIONS) {
+            return subscriptionsOption;
         }
         // A library tab variant is active.
-        return ALT_THUMBNAIL_LIBRARY.getInt();
+        return libraryOption;
     }
 
     /**
@@ -252,27 +268,15 @@ public final class AlternativeThumbnailsPatch {
     }
 
     /**
-     * Used only for debug logging.
-     */
-    private static volatile ThumbnailOption currentOptionSetting;
-
-    /**
      * Injection point.  Called off the main thread and by multiple threads at the same time.
      *
      * @param originalUrl Image url for all url images loaded, including video thumbnails.
      */
     public static String overrideImageURL(String originalUrl) {
         try {
-            int optionValue = optionSettingForCurrentNavigation();
-            ThumbnailOption thumbnailOption = ThumbnailOption.fromValue(optionValue);
-            if (SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) {
-                if (currentOptionSetting.getValue() != optionValue) {
-                    currentOptionSetting = thumbnailOption;
-                    LogHelper.printDebug(() -> "Changed to setting: " + thumbnailOption);
-                }
-            }
+            ThumbnailOption option = optionSettingForCurrentNavigation();
 
-            if (thumbnailOption == ThumbnailOption.ORIGINAL) {
+            if (option == ThumbnailOption.ORIGINAL) {
                 return originalUrl;
             }
             if (originalUrl.contains("_live.")) return originalUrl; // Livestream video in feed.
@@ -292,14 +296,14 @@ public final class AlternativeThumbnailsPatch {
 
             String sanitizedReplacementUrl;
             final boolean includeTracking;
-            if (thumbnailOption.useDeArrow && canUseDeArrowAPI()) {
+            if (option.useDeArrow && canUseDeArrowAPI()) {
                 includeTracking = false; // Do not include view tracking parameters with API call.
-                final String fallbackUrl = thumbnailOption.useStillImages
+                final String fallbackUrl = option.useStillImages
                         ? buildYoutubeVideoStillURL(decodedUrl, qualityToUse)
                         : decodedUrl.sanitizedUrl;
 
                 sanitizedReplacementUrl = buildDeArrowThumbnailURL(decodedUrl.videoId, fallbackUrl);
-            } else if (thumbnailOption.useStillImages) {
+            } else if (option.useStillImages) {
                 includeTracking = true; // Include view tracking parameters if present.
                 sanitizedReplacementUrl = buildYoutubeVideoStillURL(decodedUrl, qualityToUse);
             } else {

@@ -2,6 +2,7 @@ package app.revanced.integrations.youtube.shared;
 
 import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton.CREATE;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,10 +13,17 @@ import app.revanced.integrations.youtube.utils.ReVancedUtils;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
 public final class NavigationBar {
 
+    //
+    // Search bar
+    //
     private static volatile WeakReference<View> searchBarResultsRef = new WeakReference<>(null);
 
     /**
@@ -35,11 +43,101 @@ public final class NavigationBar {
         return searchbarResults != null && searchbarResults.getParent() != null;
     }
 
+    //
+    // Navigation bar buttons
+    //
+
     /**
-     * Last YT navigation enum loaded.  Not necessarily the active navigation tab.
+     * How long to wait for the set nav button latch to be released.  Maximum wait time must
+     * be as small as possible while still allowing enough time for the nav bar to update.
+     *
+     * YT calls it's back button handlers out of order,
+     * and litho starts filtering before the navigation bar is updated.
+     *
+     * Fixing this situation and not needlessly waiting requires somehow
+     * detecting if a back button key-press will cause a tab change.
+     *
+     * Typically after pressing the back button, the time between the first litho event and
+     * when the nav button is updated is about 10-20ms. Using 50-100ms here should be enough time
+     * and not noticeable, since YT typically takes 100-200ms (or more) to update the view anyways.
+     *
+     * This issue can also be avoided on a patch by patch basis, by avoiding calls to
+     * {@link NavigationButton#getSelectedNavigationButton()} unless absolutely necessary.
+     */
+    private static final long LATCH_AWAIT_TIMEOUT_MILLISECONDS = 75;
+
+    /**
+     * Used as a workaround to fix the issue of YT calling back button handlers out of order.
+     * Used to hold calls to {@link NavigationButton#getSelectedNavigationButton()}
+     * until the current navigation button can be determined.
+     *
+     * Only used when the hardware back button is pressed.
      */
     @Nullable
-    private static volatile String lastYTNavigationEnumName;
+    private static volatile CountDownLatch navButtonLatch;
+
+    /**
+     * Map of nav button layout views to Enum type.
+     * No synchronization is needed, and this is always accessed from the main thread.
+     */
+    private static final Map<View, NavigationButton> viewToButtonMap = new WeakHashMap<>();
+
+    static {
+        // On app startup litho can start before the navigation bar is initialized.
+        // Force it to wait until the nav bar is updated.
+        createNavButtonLatch();
+    }
+
+    private static void createNavButtonLatch() {
+        navButtonLatch = new CountDownLatch(1);
+    }
+
+    private static void releaseNavButtonLatch() {
+        CountDownLatch latch = navButtonLatch;
+        if (latch != null) {
+            navButtonLatch = null;
+            latch.countDown();
+        }
+    }
+
+    private static void waitForNavButtonLatchIfNeeded() {
+        CountDownLatch latch = navButtonLatch;
+        if (latch == null) {
+            return;
+        }
+
+        if (ReVancedUtils.isCurrentlyOnMainThread()) {
+            // The latch is released from the main thread, and waiting from the main thread will always timeout.
+            // This situation has only been observed when navigating out of a submenu and not changing tabs.
+            // and for that use case the nav bar does not change so it's safe to return here.
+            LogHelper.printDebug(() -> "Cannot block main thread waiting for nav button. Using last known navbar button status.");
+            return;
+        }
+
+        try {
+            LogHelper.printDebug(() -> "Latch wait started");
+            if (latch.await(LATCH_AWAIT_TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS)) {
+                // Back button changed the navigation tab.
+                LogHelper.printDebug(() -> "Latch wait complete");
+                return;
+            }
+
+            // Timeout occurred, and a normal event when pressing the physical back button
+            // does not change navigation tabs.
+            releaseNavButtonLatch(); // Prevent other threads from waiting for no reason.
+            LogHelper.printDebug(() -> "Latch wait timed out");
+
+        } catch (InterruptedException ex) {
+            LogHelper.printException(() -> "Latch wait interrupted failure", ex); // Will never happen.
+        }
+    }
+
+    /**
+     * Last YT navigation enum loaded.  Not necessarily the active navigation tab.
+     * Always accessed from the main thread.
+     */
+    @Nullable
+    private static String lastYTNavigationEnumName;
 
     /**
      * Injection point.
@@ -58,17 +156,10 @@ public final class NavigationBar {
             String lastEnumName = lastYTNavigationEnumName;
             for (NavigationButton button : NavigationButton.values()) {
                 if (button.ytEnumName.equals(lastEnumName)) {
-                    ImageView imageView = ReVancedUtils.getChildView((ViewGroup) navigationButtonGroup,
-                            true, view -> view instanceof ImageView);
-
-                    if (imageView != null) {
-                        LogHelper.printDebug(() -> "navigationTabLoaded: " + lastEnumName);
-
-                        button.imageViewRef = new WeakReference<>(imageView);
-                        navigationTabCreatedCallback(button, navigationButtonGroup);
-
-                        return;
-                    }
+                    LogHelper.printDebug(() -> "navigationTabLoaded: " + lastEnumName);
+                    viewToButtonMap.put(navigationButtonGroup, button);
+                    navigationTabCreatedCallback(button, navigationButtonGroup);
+                    return;
                 }
             }
             // Log the unknown tab as exception level, only if debug is enabled.
@@ -98,6 +189,46 @@ public final class NavigationBar {
         }
     }
 
+    /**
+     * Injection point.
+     */
+    public static void navigationTabSelected(View navButtonImageView, boolean isSelected) {
+        try {
+            NavigationButton button = viewToButtonMap.get(navButtonImageView);
+
+            if (button == null) { // An unknown tab was selected.
+                // Show a toast only if debug mode is enabled.
+                if (SettingsEnum.ENABLE_DEBUG_LOGGING.getBoolean()) {
+                    LogHelper.printException(() -> "Unknown navigation view selected: " + navButtonImageView);
+                }
+
+                NavigationButton.selectedNavigationButton = null;
+                return;
+            }
+
+            if (isSelected) {
+                NavigationButton.selectedNavigationButton = button;
+                LogHelper.printDebug(() -> "Changed to navigation button: " + button);
+
+                // Release any threads waiting for the selected nav button.
+                releaseNavButtonLatch();
+            } else if (NavigationButton.selectedNavigationButton == button) {
+                NavigationButton.selectedNavigationButton = null;
+                LogHelper.printDebug(() -> "Navigated away from button: " + button);
+            }
+        } catch (Exception ex) {
+            LogHelper.printException(() -> "navigationTabSelected failure", ex);
+        }
+    }
+
+    /**
+     * Injection point.
+     */
+    public static void onBackPressed(Activity activity) {
+        LogHelper.printDebug(() -> "Back button pressed");
+        createNavButtonLatch();
+    }
+
     /** @noinspection EmptyMethod*/
     private static void navigationTabCreatedCallback(NavigationButton button, View tabView) {
         // Code is added during patching.
@@ -108,8 +239,7 @@ public final class NavigationBar {
         SHORTS("TAB_SHORTS"),
         /**
          * Create new video tab.
-         * <p>
-         * {@link #isSelected()} always returns false, even if the create video UI is on screen.
+         * This tab will never be in a selected state, even if the create video UI is on screen.
          */
         CREATE("CREATION_TAB_LARGE"),
         SUBSCRIPTIONS("PIVOT_SUBSCRIPTIONS"),
@@ -144,41 +274,43 @@ public final class NavigationBar {
         // The hooked YT code does not use an enum, and a dummy name is used here.
         LIBRARY_YOU("YOU_LIBRARY_DUMMY_PLACEHOLDER_NAME");
 
+        @Nullable
+        private static volatile NavigationButton selectedNavigationButton;
+
         /**
+         * This will return null only if the currently selected tab is unknown.
+         * This scenario will only happen if the UI has different tabs due to an A/B user test
+         * or YT abruptly changes the navigation layout for some other reason.
+         * <p>
+         * All code calling this method should handle a null return value.
+         * <p>
+         * <b>Due to issues with how YT processes physical back button events,
+         * this patch uses workarounds that can cause this method to take up to 75ms
+         * if the device back button was recently pressed.</b>
+         *
          * @return The active navigation tab.
-         *         If the user is in the create new video UI, this returns NULL.
+         *         If the user is in the upload video UI, this returns tab that is still visually
+         *         selected on screen (whatever tab the user was on before tapping the upload button).
          */
         @Nullable
         public static NavigationButton getSelectedNavigationButton() {
-            for (NavigationButton button : values()) {
-                if (button.isSelected()) return button;
-            }
-            return null;
-        }
-
-        /**
-         * @return If the currently selected tab is a 'You' or library type.
-         *         Covers all known app states including incognito mode and version spoofing.
-         */
-        public static boolean libraryOrYouTabIsSelected() {
-            return LIBRARY_YOU.isSelected() || LIBRARY_PIVOT_UNKNOWN.isSelected()
-                    || LIBRARY_OLD_UI.isSelected() || LIBRARY_INCOGNITO.isSelected()
-                    || LIBRARY_LOGGED_OUT.isSelected();
+            waitForNavButtonLatchIfNeeded();
+            return selectedNavigationButton;
         }
 
         /**
          * YouTube enum name for this tab.
          */
         private final String ytEnumName;
-        private volatile WeakReference<ImageView> imageViewRef = new WeakReference<>(null);
 
         NavigationButton(String ytEnumName) {
             this.ytEnumName = ytEnumName;
         }
 
-        public boolean isSelected() {
-            ImageView view = imageViewRef.get();
-            return view != null && view.isSelected();
+        public boolean isLibraryOrYouTab() {
+            return this == LIBRARY_YOU || this == LIBRARY_PIVOT_UNKNOWN
+                    || this == LIBRARY_OLD_UI || this == LIBRARY_INCOGNITO
+                    || this == LIBRARY_LOGGED_OUT;
         }
     }
 }
