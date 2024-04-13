@@ -1,3 +1,16 @@
+# [0.151.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.3...v0.151.0-dev.4) (2024-04-13)
+
+
+### Bug Fixes
+
+* **YouTube - Hide Shorts components:** Do not show Shorts suggestions in video player, if all hide Shorts options are enabled ([2845258](https://github.com/anddea/revanced-integrations/commit/28452583982bc4a315a3f005f0c6751b3902bd70))
+* **YouTube - Return YouTube Dislike:** Do not clip compact text when not using English ([a7dfc42](https://github.com/anddea/revanced-integrations/commit/a7dfc42b45df00ee6f8d21cb3ccd7a51848e7bae))
+
+
+### Features
+
+* **YouTube - Hide Shorts components:** Hide `Shop`, `Location` and `Save sound to playlist` buttons ([fa1e2c9](https://github.com/anddea/revanced-integrations/commit/fa1e2c9dd095ef0da353b8f6726ba5bad80f6816))
+
 # [0.151.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.2...v0.151.0-dev.3) (2024-04-12)
 
 
