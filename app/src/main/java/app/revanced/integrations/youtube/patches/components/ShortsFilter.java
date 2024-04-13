@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.NavigationBar;
 import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
+import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.StringTrieSearch;
 
 /**
@@ -234,13 +235,33 @@ public final class ShortsFilter extends Filter {
     }
 
     private static boolean shouldHideShortsFeedItems() {
-        if (NavigationBar.isSearchBarActive()) { // Must check search first.
-            return SettingsEnum.HIDE_SHORTS_SEARCH.getBoolean();
-        }
-
-        // Avoid checking navigation button status if all other settings are off.
         final boolean hideHome = SettingsEnum.HIDE_SHORTS_HOME.getBoolean();
         final boolean hideSubscriptions = SettingsEnum.HIDE_SHORTS_SUBSCRIPTIONS.getBoolean();
+        final boolean hideSearch = SettingsEnum.HIDE_SHORTS_SEARCH.getBoolean();
+
+        if (hideHome && hideSubscriptions && hideSearch) {
+            // Shorts suggestions can load in the background if a video is opened and
+            // then immediately minimized before any suggestions are loaded.
+            // In this state the player type will show minimized, which makes it not possible to
+            // distinguish between Shorts suggestions loading in the player and between
+            // scrolling through search/home/subscription tabs while a player is minimized.
+            //
+            // To avoid this situation for users that never want to show Shorts (all hide Shorts options are enabled)
+            // then hide all Shorts everywhere including the Library history and Library playlists.
+            return true;
+        }
+
+        // Must check player type first, as search bar can be active behind the player.
+        if (PlayerType.getCurrent().isMaximizedOrFullscreen()) {
+            // For now, consider the under video results the same as the home feed.
+            return hideHome;
+        }
+
+        if (NavigationBar.isSearchBarActive()) { // Must check search first.
+            return hideSearch;
+        }
+
+        // Avoid checking navigation button status if all other Shorts should show.
         if (!hideHome && !hideSubscriptions) {
             return false;
         }
