@@ -26,6 +26,8 @@ public final class ShortsFilter extends Filter {
     private final StringFilterGroup shelfHeader;
 
     private final StringFilterGroup videoActionButton;
+    private final StringFilterGroup suggestedActionPath;
+    private final ByteArrayFilterGroupList suggestedActions =  new ByteArrayFilterGroupList();
     private final ByteArrayFilterGroupList videoActionButtonGroupList = new ByteArrayFilterGroupList();
 
 
@@ -98,6 +100,11 @@ public final class ShortsFilter extends Filter {
                 "shorts_info_panel_overview"
         );
 
+        suggestedActionPath = new StringFilterGroup(
+                null,
+                "suggested_action.eml"
+        );
+
         videoActionButton = new StringFilterGroup(
                 null,
                 "shorts_video_action_button"
@@ -118,6 +125,7 @@ public final class ShortsFilter extends Filter {
                 joinButton,
                 reelSoundMetadata,
                 subscribeButton,
+                suggestedActionPath,
                 infoPanel,
                 videoActionButton,
                 videoLinkLabel,
@@ -163,6 +171,24 @@ public final class ShortsFilter extends Filter {
                 shortsRemixButton,
                 shortsShareButton
         );
+
+        //
+        // Suggested actions.
+        //
+        suggestedActions.addAll(
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_SHOP_BUTTON,
+                        "yt_outline_bag_"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_LOCATION_BUTTON,
+                        "yt_outline_location_point_"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_SAVE_SOUND_BUTTON,
+                        "yt_outline_list_add_"
+                )
+        );
     }
 
     @Override
@@ -184,6 +210,9 @@ public final class ShortsFilter extends Filter {
             } else if (matchedGroup == videoActionButton) {
                 // Video action buttons have the same path.
                 return videoActionButtonGroupList.check(protobufBufferArray).isFiltered();
+            } else if (matchedGroup == suggestedActionPath) {
+                if (matchedIndex == 0 && suggestedActions.check(protobufBufferArray).isFiltered())
+                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
             } else {
                 // Filter other path groups from pathFilterGroupList, only when reelChannelBar is visible
                 // to avoid false positives.
