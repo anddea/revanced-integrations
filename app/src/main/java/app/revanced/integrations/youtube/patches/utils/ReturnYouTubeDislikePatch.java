@@ -382,14 +382,19 @@ public class ReturnYouTubeDislikePatch {
      */
     public static float onRollingNumberMeasured(String text, float measuredTextWidth) {
         try {
-            if (SettingsEnum.RYD_ENABLED.getBoolean() && !SettingsEnum.RYD_COMPACT_LAYOUT.getBoolean()) {
+            if (SettingsEnum.RYD_ENABLED.getBoolean()) {
                 if (ReturnYouTubeDislike.isPreviouslyCreatedSegmentedSpan(text)) {
                     // +1 pixel is needed for some foreign languages that measure
                     // the text different from what is used for layout (Greek in particular).
                     // Probably a bug in Android, but who knows.
                     // Single line mode is also used as an additional fix for this issue.
-                    return measuredTextWidth + ReturnYouTubeDislike.leftSeparatorBounds.right
-                            + ReturnYouTubeDislike.leftSeparatorShapePaddingPixels + 1;
+                    if (SettingsEnum.RYD_COMPACT_LAYOUT.getBoolean()) {
+                        return measuredTextWidth + 1;
+                    }
+
+                    return measuredTextWidth + 1
+                            + ReturnYouTubeDislike.leftSeparatorBounds.right
+                            + ReturnYouTubeDislike.leftSeparatorShapePaddingPixels;
                 }
             }
         } catch (Exception ex) {
