@@ -29,6 +29,7 @@ public class NavigationPatch {
             put(NavigationBar.NavigationButton.CREATE, SettingsEnum.HIDE_CREATE_BUTTON.getBoolean());
             put(NavigationBar.NavigationButton.SHORTS, SettingsEnum.HIDE_SHORTS_BUTTON.getBoolean());
             put(NavigationBar.NavigationButton.SUBSCRIPTIONS, SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean());
+            put(NavigationBar.NavigationButton.NOTIFICATIONS, SettingsEnum.HIDE_NOTIFICATIONS_BUTTON.getBoolean());
         }
     };
 
