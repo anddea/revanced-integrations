@@ -3,16 +3,12 @@ package app.revanced.integrations.youtube.patches.components;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.shared.NavigationBar;
 import app.revanced.integrations.youtube.shared.PlayerType;
-import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
-import app.revanced.integrations.youtube.utils.LogHelper;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static app.revanced.integrations.youtube.utils.StringRef.str;
 
 /**
  * @noinspection rawtypes
@@ -215,8 +211,10 @@ public final class LayoutComponentsFilter extends Filter {
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_RELATED_VIDEO.getBoolean();
 
             // YouTube is testing new community post component in home feed
-            if (BrowseIdPatch.isHomeFeed())
+            NavigationBar.NavigationButton selectedNavButton = NavigationBar.NavigationButton.getSelectedNavigationButton();
+            if (selectedNavButton == NavigationBar.NavigationButton.HOME) {
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
+            }
             return communityPostsGroupList.check(allValue).isFiltered();
         }
 
