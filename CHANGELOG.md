@@ -1,3 +1,16 @@
+# [0.151.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.4...v0.151.0-dev.5) (2024-04-15)
+
+
+### Bug Fixes
+
+* **YouTube - Hide navigation buttons:** Notifications tab was not hidden ([674a009](https://github.com/anddea/revanced-integrations/commit/674a00931bc57c2f1e5b92a3786579212b59f647))
+* **YouTube - Overlay buttons:** Add padding to Whitelist dialog in Settings ([22f3ed0](https://github.com/anddea/revanced-integrations/commit/22f3ed0698d83226becfe219d94103cd4234589f))
+
+
+### Features
+
+* **YouTube:** Use new Navigation Bar fingerprint for Suggestions Shelves and Community posts instead of BrowseID ([c3cff9f](https://github.com/anddea/revanced-integrations/commit/c3cff9fc7a5b6e7e1625f168f8b1b4a0e1bbe8e1))
+
 # [0.151.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.3...v0.151.0-dev.4) (2024-04-13)
 
 
