@@ -48,9 +48,13 @@ public class WhitelistedChannelsPreference extends DialogPreference {
         Context context = getContext();
         if (mEntries.isEmpty()) {
             TextView emptyView = new TextView(context);
-            emptyView.setText("\n" + str("revanced_whitelisting_empty"));
-            emptyView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            emptyView.setText(str("revanced_whitelisting_empty"));
+            emptyView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             emptyView.setTextSize(18);
+
+            int padding = 60;
+            emptyView.setPadding(padding, padding, padding, padding);
+
             builder.setView(emptyView);
         } else {
             builder.setView(getEntriesListView(context));
