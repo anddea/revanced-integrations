@@ -315,7 +315,7 @@ public enum SettingsEnum {
     HIDE_KEYWORD_CONTENT_SEARCH("revanced_hide_keyword_content_search", BOOLEAN, TRUE, parents(HIDE_KEYWORD_CONTENT)),
     HIDE_KEYWORD_CONTENT_SUB("revanced_hide_keyword_content_sub", BOOLEAN, TRUE, parents(HIDE_KEYWORD_CONTENT)),
     HIDE_KEYWORD_CONTENT_COMMENT("revanced_hide_keyword_content_comment", BOOLEAN, TRUE, parents(HIDE_KEYWORD_CONTENT)),
-    HIDE_KEYWORD_CONTENT_PHRASES("revanced_hide_keyword_content_strings", STRING, "", parents(HIDE_KEYWORD_CONTENT_HOME, HIDE_KEYWORD_CONTENT_SEARCH, HIDE_KEYWORD_CONTENT_SUB, HIDE_KEYWORD_CONTENT_COMMENT)),
+    HIDE_KEYWORD_CONTENT_PHRASES("revanced_hide_keyword_content_strings", STRING, "", parentsMaster(HIDE_KEYWORD_CONTENT, HIDE_KEYWORD_CONTENT_HOME, HIDE_KEYWORD_CONTENT_SEARCH, HIDE_KEYWORD_CONTENT_SUB, HIDE_KEYWORD_CONTENT_COMMENT)),
     HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", BOOLEAN, FALSE, true),
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", BOOLEAN, TRUE),
     HIDE_SEEK_MESSAGE("revanced_hide_seek_message", BOOLEAN, FALSE, true),
@@ -479,6 +479,27 @@ public enum SettingsEnum {
     @NonNull
     public static Availability parents(@NonNull SettingsEnum... parents) {
         return () -> {
+            for (SettingsEnum parent : parents) {
+                if (parent.getBoolean()) {
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
+    /**
+     * Availability based on any parent being enabled dependent on master setting.
+     */
+    @NonNull
+    public static Availability parentsMaster(@NonNull SettingsEnum master, @NonNull SettingsEnum... parents) {
+        return () -> {
+            // Check if the master switch is false, if so, return false immediately.
+            if (!master.getBoolean()) {
+                return false;
+            }
+
+            // If the master switch is true, check other parents.
             for (SettingsEnum parent : parents) {
                 if (parent.getBoolean()) {
                     return true;
