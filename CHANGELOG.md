@@ -1,3 +1,10 @@
+# [0.151.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.5...v0.151.0-dev.6) (2024-04-16)
+
+
+### Bug Fixes
+
+* **YouTube:** Add master parent for keyword content ([4343c54](https://github.com/anddea/revanced-integrations/commit/4343c54078bc333d37edb5bb1c5ab0fac0e9b652))
+
 # [0.151.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.4...v0.151.0-dev.5) (2024-04-15)
 
 
