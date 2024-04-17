@@ -1,3 +1,12 @@
+# [0.151.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.6...v0.151.0-dev.7) (2024-04-17)
+
+
+### Features
+
+* **YouTube - Hide layout components:** Hide playables ([568dccb](https://github.com/anddea/revanced-integrations/commit/568dccbb03a5591beef7c233f7ee4265ff8fd621))
+* **YouTube - Hide Shorts components:** Hide live chat messages and header in Shorts ([ac30094](https://github.com/anddea/revanced-integrations/commit/ac30094336167471a8b72897390d77a74f2cf863))
+* **YouTube - Hide Shorts components:** Hide tagged products, hide search suggestions, fix subscribe button not hidden ([34560c2](https://github.com/anddea/revanced-integrations/commit/34560c2dc01750767132cc04cd572afbca1ef1d1))
+
 # [0.151.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.5...v0.151.0-dev.6) (2024-04-16)
 
 
