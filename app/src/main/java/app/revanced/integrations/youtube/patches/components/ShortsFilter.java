@@ -14,6 +14,8 @@ import app.revanced.integrations.youtube.utils.StringTrieSearch;
 @SuppressWarnings("unused")
 public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
+    private static final String REEL_METAPANEL_PATH = "reel_metapanel.eml";
+
     private static final String SHORTS_SHELF_HEADER_CONVERSION_CONTEXT = "horizontalCollectionSwipeProtector=null";
 
     private final StringFilterGroup shortsCompactFeedVideoPath;
@@ -24,22 +26,20 @@ public final class ShortsFilter extends Filter {
     private final StringFilterGroup videoTitle;
     private final StringFilterGroup videoLinkLabel;
     private final StringFilterGroup infoPanel;
+    private final StringFilterGroup joinButton;
+
     private final StringFilterGroup shelfHeader;
+    private final StringFilterGroup subscribeButton;
 
     private final StringFilterGroup videoActionButton;
-    private final StringFilterGroup suggestedActionPath;
-    private final ByteArrayFilterGroupList suggestedActions =  new ByteArrayFilterGroupList();
+    private final StringFilterGroup suggestedAction;
+    private final ByteArrayFilterGroupList suggestedActionsGroupList =  new ByteArrayFilterGroupList();
     private final ByteArrayFilterGroupList videoActionButtonGroupList = new ByteArrayFilterGroupList();
 
 
     public ShortsFilter() {
         exceptions.addPatterns(
                 "lock_mode_suggested_action"
-        );
-
-        final StringFilterGroup thanksButton = new StringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_THANKS_BUTTON,
-                "suggested_action"
         );
 
         // Feed Shorts shelf header.
@@ -60,8 +60,7 @@ public final class ShortsFilter extends Filter {
 
         identifierFilterGroupList.addAll(
                 shelfHeader,
-                shorts,
-                thanksButton
+                shorts
         );
 
         // Shorts that appear in the feed/search when the device is using tablet layout.
@@ -78,7 +77,7 @@ public final class ShortsFilter extends Filter {
                 "/frame0.jpg"
         );
 
-        final StringFilterGroup joinButton = new StringFilterGroup(
+        joinButton = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_JOIN_BUTTON,
                 "sponsor_button"
         );
@@ -88,10 +87,9 @@ public final class ShortsFilter extends Filter {
                 "reel_sound_metadata"
         );
 
-        final StringFilterGroup subscribeButton = new StringFilterGroup(
-                SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON,
-                "shorts_paused_state",
-                "subscribe_button"
+        StringFilterGroup pausedOverlayButtons = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PAUSED_OVERLAY_BUTTONS,
+                "shorts_paused_state"
         );
 
         infoPanel = new StringFilterGroup(
@@ -101,9 +99,14 @@ public final class ShortsFilter extends Filter {
                 "shorts_info_panel_overview"
         );
 
-        suggestedActionPath = new StringFilterGroup(
+        suggestedAction = new StringFilterGroup(
                 null,
                 "suggested_action.eml"
+        );
+
+        subscribeButton = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_SUBSCRIBE_BUTTON,
+                "subscribe_button"
         );
 
         videoActionButton = new StringFilterGroup(
@@ -125,9 +128,10 @@ public final class ShortsFilter extends Filter {
                 shortsCompactFeedVideoPath,
                 joinButton,
                 reelSoundMetadata,
-                subscribeButton,
-                suggestedActionPath,
+                pausedOverlayButtons,
+                suggestedAction,
                 infoPanel,
+                subscribeButton,
                 videoActionButton,
                 videoLinkLabel,
                 videoTitle
@@ -176,18 +180,28 @@ public final class ShortsFilter extends Filter {
         //
         // Suggested actions.
         //
-        suggestedActions.addAll(
+        suggestedActionsGroupList.addAll(
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_SHORTS_SHOP_BUTTON,
                         "yt_outline_bag_"
                 ),
                 new ByteArrayAsStringFilterGroup(
-                        SettingsEnum.HIDE_SHORTS_LOCATION_BUTTON,
+                        SettingsEnum.HIDE_SHORTS_TAGGED_PRODUCTS,
+                        // Product buttons show pictures of the products, and does not have any unique icons to identify.
+                        // Instead, use a unique identifier found in the buffer.
+                        "PAproduct_listZ"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_LOCATION_LABEL,
                         "yt_outline_location_point_"
                 ),
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_SHORTS_SAVE_SOUND_BUTTON,
                         "yt_outline_list_add_"
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_SEARCH_SUGGESTIONS,
+                        "yt_outline_search_"
                 )
         );
     }
@@ -199,6 +213,14 @@ public final class ShortsFilter extends Filter {
             return false;
 
         if (matchedList == pathFilterGroupList) {
+            if (matchedGroup == subscribeButton || matchedGroup == joinButton) {
+                // Filter only when reelChannelBar or reelMetapanel is visible to avoid false positives.
+                if (path.startsWith(REEL_CHANNEL_BAR_PATH) || path.startsWith(REEL_METAPANEL_PATH)) {
+                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+                }
+                return false;
+            }
+
             if (matchedGroup == infoPanel || matchedGroup == videoLinkLabel ||
                     matchedGroup == videoTitle || matchedGroup == reelSoundMetadata) {
                 // Always filter if matched.
@@ -211,8 +233,9 @@ public final class ShortsFilter extends Filter {
             } else if (matchedGroup == videoActionButton) {
                 // Video action buttons have the same path.
                 return videoActionButtonGroupList.check(protobufBufferArray).isFiltered();
-            } else if (matchedGroup == suggestedActionPath) {
-                if (matchedIndex == 0 && suggestedActions.check(protobufBufferArray).isFiltered())
+            } else if (matchedGroup == suggestedAction) {
+                // Suggested actions can be at the start or in the middle of a path.
+                if (suggestedActionsGroupList.check(protobufBufferArray).isFiltered())
                     return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
             } else {
                 // Filter other path groups from pathFilterGroupList, only when reelChannelBar is visible
