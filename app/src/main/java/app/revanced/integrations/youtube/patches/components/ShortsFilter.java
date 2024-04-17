@@ -27,7 +27,8 @@ public final class ShortsFilter extends Filter {
     private final StringFilterGroup videoLinkLabel;
     private final StringFilterGroup infoPanel;
     private final StringFilterGroup joinButton;
-
+    private final StringFilterGroup liveChat;
+    private final StringFilterGroup liveHeader;
     private final StringFilterGroup shelfHeader;
     private final StringFilterGroup subscribeButton;
 
@@ -92,6 +93,17 @@ public final class ShortsFilter extends Filter {
                 "shorts_paused_state"
         );
 
+        liveHeader = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_LIVE_HEADER,
+                "immersive_live_header"
+        );
+
+        liveChat = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_LIVE_CHAT,
+                "live_chat_text_message",
+                "viewer_engagement_message" // message about poll, not poll itself
+        );
+
         infoPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_INFO_PANEL,
                 "reel_multi_format_link",
@@ -127,6 +139,8 @@ public final class ShortsFilter extends Filter {
         pathFilterGroupList.addAll(
                 shortsCompactFeedVideoPath,
                 joinButton,
+                liveChat,
+                liveHeader,
                 reelSoundMetadata,
                 pausedOverlayButtons,
                 suggestedAction,
@@ -222,7 +236,8 @@ public final class ShortsFilter extends Filter {
             }
 
             if (matchedGroup == infoPanel || matchedGroup == videoLinkLabel ||
-                    matchedGroup == videoTitle || matchedGroup == reelSoundMetadata) {
+                    matchedGroup == videoTitle || matchedGroup == reelSoundMetadata ||
+                    matchedGroup == liveChat || matchedGroup == liveHeader) {
                 // Always filter if matched.
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
             } else if (matchedGroup == shortsCompactFeedVideoPath) {

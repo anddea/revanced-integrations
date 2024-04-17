@@ -364,6 +364,8 @@ public enum SettingsEnum {
     HIDE_SHORTS_TAGGED_PRODUCTS("revanced_hide_shorts_tagged_products", BOOLEAN, TRUE),
     HIDE_SHORTS_SEARCH_SUGGESTIONS("revanced_hide_shorts_search_suggestions", BOOLEAN, TRUE),
     HIDE_SHORTS_SUBSCRIBE_BUTTON("revanced_hide_shorts_subscribe_button", BOOLEAN, TRUE),
+    HIDE_SHORTS_LIVE_CHAT("revanced_hide_shorts_live_chat", BOOLEAN, FALSE),
+    HIDE_SHORTS_LIVE_HEADER("revanced_hide_shorts_live_header", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_PIVOT_BUTTON("revanced_hide_shorts_player_pivot_button", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_VIDEO_TITLE("revanced_hide_shorts_player_video_title", BOOLEAN, FALSE),
