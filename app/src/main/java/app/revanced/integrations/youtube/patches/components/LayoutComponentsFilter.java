@@ -86,6 +86,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "inline_expander"
         );
 
+        final StringFilterGroup playables = new StringFilterGroup(
+                SettingsEnum.HIDE_PLAYABLES,
+                "horizontal_gaming_shelf.eml"
+        );
+
         final StringFilterGroup feedSurvey = new StringFilterGroup(
                 SettingsEnum.HIDE_FEED_SURVEY,
                 "feed_nudge",
@@ -172,6 +177,7 @@ public final class LayoutComponentsFilter extends Filter {
                 medicalPanel,
                 movieShelf,
                 notifyMe,
+                playables,
                 searchVideoWithContext,
                 ticketShelf,
                 timedReactions,

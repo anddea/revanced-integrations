@@ -210,6 +210,7 @@ public enum SettingsEnum {
     HIDE_SEARCH_BAR("revanced_hide_search_bar", BOOLEAN, FALSE),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
+    HIDE_PLAYABLES("revanced_hide_playables", BOOLEAN, TRUE),
     // Experimental Flags
     HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, TRUE),
     HIDE_HOME_FEED_MEMBERSHIP_VIDEO("revanced_hide_home_feed_membership_video", BOOLEAN, FALSE, true),
