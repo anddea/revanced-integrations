@@ -1,3 +1,11 @@
+# [0.151.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.7...v0.151.0-dev.8) (2024-04-18)
+
+
+### Bug Fixes
+
+* **YouTube - Hide layout components:** Hide horizontal tile shelves ([6e5ae31](https://github.com/anddea/revanced-integrations/commit/6e5ae31c92d3ce41775315f41de090abcc6e82ce))
+* **YouTube - Hide Shorts components:** Hide paid promotion banner ([5cffac0](https://github.com/anddea/revanced-integrations/commit/5cffac0be351ab44ad73334bbf8e686e53cf3dd6))
+
 # [0.151.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.6...v0.151.0-dev.7) (2024-04-17)
 
 
