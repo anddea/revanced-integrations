@@ -29,6 +29,7 @@ public final class ShortsFilter extends Filter {
     private final StringFilterGroup joinButton;
     private final StringFilterGroup liveChat;
     private final StringFilterGroup liveHeader;
+    private final StringFilterGroup paidPromotion;
     private final StringFilterGroup shelfHeader;
     private final StringFilterGroup subscribeButton;
 
@@ -111,6 +112,11 @@ public final class ShortsFilter extends Filter {
                 "shorts_info_panel_overview"
         );
 
+        paidPromotion = new StringFilterGroup(
+                SettingsEnum.HIDE_SHORTS_PLAYER_PAID_PROMOTION,
+                "reel_player_disclosure"
+        );
+
         suggestedAction = new StringFilterGroup(
                 null,
                 "suggested_action.eml"
@@ -137,15 +143,16 @@ public final class ShortsFilter extends Filter {
         );
 
         pathFilterGroupList.addAll(
-                shortsCompactFeedVideoPath,
+                infoPanel,
                 joinButton,
                 liveChat,
                 liveHeader,
-                reelSoundMetadata,
+                paidPromotion,
                 pausedOverlayButtons,
-                suggestedAction,
-                infoPanel,
+                reelSoundMetadata,
+                shortsCompactFeedVideoPath,
                 subscribeButton,
+                suggestedAction,
                 videoActionButton,
                 videoLinkLabel,
                 videoTitle
@@ -227,7 +234,7 @@ public final class ShortsFilter extends Filter {
             return false;
 
         if (matchedList == pathFilterGroupList) {
-            if (matchedGroup == subscribeButton || matchedGroup == joinButton) {
+            if (matchedGroup == subscribeButton || matchedGroup == joinButton || matchedGroup == paidPromotion) {
                 // Filter only when reelChannelBar or reelMetapanel is visible to avoid false positives.
                 if (path.startsWith(REEL_CHANNEL_BAR_PATH) || path.startsWith(REEL_METAPANEL_PATH)) {
                     return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
