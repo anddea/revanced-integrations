@@ -1,3 +1,10 @@
+# [0.151.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.8...v0.151.0-dev.9) (2024-04-19)
+
+
+### Bug Fixes
+
+* **YouTube - Hide description components:** Hide games section did not work, hide music section was hiding both Games and Music ([b280974](https://github.com/anddea/revanced-integrations/commit/b280974c1f61a255e77c3246a172936a4a2e5a02))
+
 # [0.151.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.7...v0.151.0-dev.8) (2024-04-18)
 
 
