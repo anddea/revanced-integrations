@@ -14,6 +14,9 @@ final class DescriptionsFilter extends Filter {
     private final StringTrieSearch exceptions = new StringTrieSearch();
     private final StringFilterGroup shoppingLinks;
 
+    private final StringFilterGroup videoAttributesFilterPath;
+    private final ByteArrayFilterGroupList bufferFilterGroupList = new ByteArrayFilterGroupList();
+
     public DescriptionsFilter() {
         exceptions.addPatterns(
                 "compact_channel",
@@ -21,6 +24,12 @@ final class DescriptionsFilter extends Filter {
                 "grid_video",
                 "inline_expander",
                 "metadata"
+        );
+
+        // Video attributes section includes both Games and Music sections for new YT versions
+        videoAttributesFilterPath = new StringFilterGroup(
+                null,
+                "video_attributes_section"
         );
 
         final StringFilterGroup chapterSection = new StringFilterGroup(
@@ -40,8 +49,7 @@ final class DescriptionsFilter extends Filter {
 
         final StringFilterGroup musicSection = new StringFilterGroup(
                 SettingsEnum.HIDE_MUSIC_SECTION,
-                "music_section",
-                "video_attributes_section"
+                "music_section"
         );
 
         final StringFilterGroup placeSection = new StringFilterGroup(
@@ -64,7 +72,6 @@ final class DescriptionsFilter extends Filter {
                 "transcript_section"
         );
 
-
         pathFilterGroupList.addAll(
                 chapterSection,
                 infoCardsSection,
@@ -73,7 +80,27 @@ final class DescriptionsFilter extends Filter {
                 placeSection,
                 podcastSection,
                 shoppingLinks,
-                transcriptSection
+                transcriptSection,
+                videoAttributesFilterPath
+        );
+
+        // Buffer filter for video attributes section
+        // If one of the options is enabled header will be hidden for both of them,
+        // first solution that comes to mind is either just join two options into one,
+        // or use pattern checking: games header has one "sans-serif" string, music - 2.
+        bufferFilterGroupList.addAll(
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_GAME_SECTION,
+                        "eml.shelf_header", // header
+                        "GamC", // Game info
+                        "yt_outline_gaming" // footer button
+                ),
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_MUSIC_SECTION,
+                        "eml.shelf_header", // header
+                        "overflow_button", // Music info
+                        "yt_outline_audio" // footer button
+                )
         );
     }
 
@@ -86,6 +113,10 @@ final class DescriptionsFilter extends Filter {
         // Check for the index because of likelihood of false positives.
         if (matchedGroup == shoppingLinks && matchedIndex != 0)
             return false;
+
+        if (matchedGroup == videoAttributesFilterPath) {
+            return bufferFilterGroupList.check(protobufBufferArray).isFiltered();
+        }
 
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
