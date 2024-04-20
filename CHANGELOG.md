@@ -1,3 +1,10 @@
+# [0.151.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.9...v0.151.0-dev.10) (2024-04-20)
+
+
+### Bug Fixes
+
+* **YouTube - Default video quality:** Match original ReVanced code ([19b5a55](https://github.com/anddea/revanced-integrations/commit/19b5a55aa147ba170db7a93e1bceadae3e30f292))
+
 # [0.151.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.8...v0.151.0-dev.9) (2024-04-19)
 
 
