@@ -2,7 +2,7 @@ package app.revanced.integrations.youtube.utils;
 
 import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.overrideSpeed;
 import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.userChangedSpeed;
-import static app.revanced.integrations.youtube.patches.video.RememberVideoQualityPatch.overideDefaultVideoQuality;
+import static app.revanced.integrations.youtube.patches.video.RememberVideoQualityPatch.overrideDefaultVideoQuality;
 import static app.revanced.integrations.youtube.patches.video.RememberVideoQualityPatch.overrideQuality;
 import static app.revanced.integrations.youtube.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.youtube.utils.ReVancedHelper.isPackageEnabled;
@@ -48,7 +48,7 @@ public class VideoHelpers {
         if (currentQuality == quality)
             return;
         currentQuality = quality;
-        overideDefaultVideoQuality();
+        overrideDefaultVideoQuality();
     }
 
     public static void copyUrl(boolean withTimestamp) {

@@ -180,7 +180,7 @@ public class RememberVideoQualityPatch {
         overrideQuality(preferredQuality);
     }
 
-    public static void overideDefaultVideoQuality() {
+    public static void overrideDefaultVideoQuality() {
         final int preferredQuality = ReVancedUtils.getNetworkType() == ReVancedUtils.NetworkType.MOBILE ? mobileQualitySetting.getInt() : wifiQualitySetting.getInt();
 
         if (preferredQuality == -2) return;
