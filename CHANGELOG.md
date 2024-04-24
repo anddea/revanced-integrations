@@ -1,3 +1,10 @@
+# [0.151.0-dev.11](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.10...v0.151.0-dev.11) (2024-04-24)
+
+
+### Bug Fixes
+
+* **YouTube:** Unhook download button by default ([590b7c5](https://github.com/anddea/revanced-integrations/commit/590b7c5641cbf0dc5bc6e09cefa7b95e7632b13c))
+
 # [0.151.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.9...v0.151.0-dev.10) (2024-04-20)
 
 
