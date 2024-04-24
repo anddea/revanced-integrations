@@ -298,7 +298,7 @@ public enum SettingsEnum {
     SB_WHITELIST("revanced_whitelisting_sponsorblock", BOOLEAN, FALSE),
 
     // Experimental Flags
-    HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, TRUE),
+    HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, FALSE),
 
 
     // Player
