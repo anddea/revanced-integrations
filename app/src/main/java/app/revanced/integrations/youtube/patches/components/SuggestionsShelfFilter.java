@@ -7,9 +7,10 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
-import app.revanced.integrations.youtube.patches.utils.NavBarIndexPatch;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.shared.NavigationBar;
+import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
+import app.revanced.integrations.youtube.shared.PlayerType;
 
 /**
  * @noinspection rawtypes
@@ -17,29 +18,15 @@ import app.revanced.integrations.youtube.settings.SettingsEnum;
 @SuppressWarnings("unused")
 public final class SuggestionsShelfFilter extends Filter {
     private final StringFilterGroup horizontalShelf;
-    private final StringFilterGroup libraryShelf;
-    private final StringFilterGroup searchResult;
 
     public SuggestionsShelfFilter() {
         horizontalShelf = new StringFilterGroup(
                 SettingsEnum.HIDE_SUGGESTIONS_SHELF,
-                "horizontal_tile_shelf.eml",
                 "horizontal_video_shelf.eml",
-                "horizontal_shelf.eml"
+                "horizontal_shelf.eml",
+                "horizontal_tile_shelf.eml"
         );
 
-        libraryShelf = new StringFilterGroup(
-                SettingsEnum.HIDE_SUGGESTIONS_SHELF,
-                "library_recent_shelf.eml"
-        );
-
-        searchResult = new StringFilterGroup(
-                SettingsEnum.HIDE_SUGGESTIONS_SHELF,
-                "compact_channel.eml",
-                "search_video_with_context.eml"
-        );
-
-        identifierFilterGroupList.addAll(libraryShelf, searchResult);
         pathFilterGroupList.addAll(horizontalShelf);
     }
 
@@ -59,30 +46,30 @@ public final class SuggestionsShelfFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (SettingsEnum.HIDE_SUGGESTIONS_SHELF_METHOD.getBoolean()) {
-            // Even though [NavBarIndex] has not been set yet, but [LithoFilterPatch] can be called.
-            // In this case, the patch may not work normally.
-            // To prevent this, you need to detect a specific component that exists only in some [NavBarIndex],
-            // And manually update the [NavBarIndex].
-            if (matchedGroup == searchResult) {
-                NavBarIndexPatch.setNavBarIndex(0);
-            } else if (matchedGroup == libraryShelf) {
-                NavBarIndexPatch.setNavBarIndex(4);
-            } else if (matchedGroup == horizontalShelf) {
-                return NavBarIndexPatch.isNotLibraryTab();
+        if (matchedGroup == horizontalShelf) {
+            if (matchedIndex == 0 && hideShelves()) {
+                return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
             }
-        } else {
-            if (matchedGroup == searchResult) {
-                // In search results, [BrowseId] is not set.
-                // To avoid the issue of [BrowseId] not being updated in search results,
-                // Manually set the default [BrowseId].
-                BrowseIdPatch.setDefaultBrowseIdToField();
-            } else if (matchedGroup == horizontalShelf) {
-                // Identify the suggested shelf using BrowseId
-                // Hides only the suggestions shelf from home feed and search results
-                return BrowseIdPatch.isHomeFeed();
-            }
+
+            return false;
         }
-        return false;
+
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+    }
+
+    private static boolean hideShelves() {
+        // If the player is opened while library is selected,
+        // then filter any recommendations below the player.
+        if (PlayerType.getCurrent().isMaximizedOrFullscreen()
+                // Or if the search is active while library is selected, then also filter.
+                || NavigationBar.isSearchBarActive()) {
+            return true;
+        }
+
+        // Check navigation button last.
+        // Only filter if the library tab is not selected.
+        // This check is important as the shelf layout is used for the library tab playlists.
+        NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
+        return selectedNavButton != null && !selectedNavButton.isLibraryOrYouTab();
     }
 }

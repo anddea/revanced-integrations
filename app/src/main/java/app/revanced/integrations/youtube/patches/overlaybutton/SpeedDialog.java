@@ -40,8 +40,16 @@ public class SpeedDialog {
 
             imageView.setOnClickListener(view -> VideoHelpers.playbackSpeedDialogListener(view.getContext()));
             imageView.setOnLongClickListener(view -> {
-                overrideSpeed(1.0f);
-                showToastShort(view.getContext(), str("revanced_overlay_button_speed_dialog_reset"));
+                if (!SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.getBoolean() ||
+                        VideoHelpers.getCurrentSpeed() == SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat()) {
+                    overrideSpeed(1.0f);
+                    showToastShort(view.getContext(), str("revanced_overlay_button_speed_dialog_reset", "1.0"));
+                } else {
+                    float defaultSpeed = SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
+                    overrideSpeed(defaultSpeed);
+                    showToastShort(view.getContext(), str("revanced_overlay_button_speed_dialog_reset", defaultSpeed));
+                }
+
                 return true;
             });
             buttonView = new WeakReference<>(imageView);

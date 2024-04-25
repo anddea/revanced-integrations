@@ -71,11 +71,11 @@ public class ShortsPatch {
     }
 
     public static void hideShortsPlayerSubscriptionsButton(View view) {
-        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean(), view);
+        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_SHORTS_PAUSED_OVERLAY_BUTTONS.getBoolean(), view);
     }
 
     public static int hideShortsPlayerSubscriptionsButton(int original) {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON.getBoolean() ? 0 : original;
+        return SettingsEnum.HIDE_SHORTS_PAUSED_OVERLAY_BUTTONS.getBoolean() ? 0 : original;
     }
 
     public static boolean hideShortsToolBarBanner() {

@@ -18,6 +18,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,13 +50,18 @@ public enum SettingsEnum {
 
 
     // Alternative Thumbnails
-    ALT_THUMBNAIL_DEARROW("revanced_alt_thumbnail_dearrow", BOOLEAN, FALSE),
     ALT_THUMBNAIL_DEARROW_API_URL("revanced_alt_thumbnail_dearrow_api_url", STRING,
-            "https://dearrow-thumb.ajay.app/api/v1/getThumbnail", true, parents(ALT_THUMBNAIL_DEARROW)),
-    ALT_THUMBNAIL_DEARROW_CONNECTION_TOAST("revanced_alt_thumbnail_dearrow_connection_toast", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_DEARROW)),
-    ALT_THUMBNAIL_STILLS("revanced_alt_thumbnail_stills", BOOLEAN, FALSE),
-    ALT_THUMBNAIL_STILLS_FAST("revanced_alt_thumbnail_stills_fast", BOOLEAN, FALSE, parents(ALT_THUMBNAIL_STILLS)),
-    ALT_THUMBNAIL_STILLS_TIME("revanced_alt_thumbnail_stills_time", INTEGER, 2, parents(ALT_THUMBNAIL_STILLS)),
+            "https://dearrow-thumb.ajay.app/api/v1/getThumbnail", true, new DeArrowAvailability()),
+    ALT_THUMBNAIL_DEARROW_CONNECTION_TOAST("revanced_alt_thumbnail_dearrow_connection_toast", BOOLEAN, FALSE, new DeArrowAvailability()),
+    ALT_THUMBNAIL_STILLS_FAST("revanced_alt_thumbnail_stills_fast", BOOLEAN, FALSE, new StillImagesAvailability()),
+    ALT_THUMBNAIL_STILLS_TIME("revanced_alt_thumbnail_stills_time", INTEGER, ThumbnailStillTime.MIDDLE.altImageNumber, new StillImagesAvailability()),
+
+    ALT_THUMBNAIL_HOME("revanced_alt_thumbnail_home", INTEGER, 0),
+    ALT_THUMBNAIL_SUBSCRIPTIONS("revanced_alt_thumbnail_subscription", INTEGER, 0),
+    ALT_THUMBNAIL_LIBRARY("revanced_alt_thumbnail_library", INTEGER, 0),
+    ALT_THUMBNAIL_PLAYER("revanced_alt_thumbnail_player", INTEGER, 0),
+
+    ALT_THUMBNAIL_SEARCH("revanced_alt_thumbnail_search", INTEGER, 0),
 
 
     // Bottom Player
@@ -79,7 +85,7 @@ public enum SettingsEnum {
 
     // Comments
     HIDE_CHANNEL_GUIDELINES("revanced_hide_channel_guidelines", BOOLEAN, TRUE),
-    HIDE_COMMENTS_BY_MEMBERS("revanced_hide_comments_by_members", BOOLEAN, FALSE),
+    HIDE_COMMENTS_BY_MEMBERS("revanced_hide_comments_by_members", BOOLEAN, TRUE),
     HIDE_COMMENTS_SECTION("revanced_hide_comments_section", BOOLEAN, FALSE),
     HIDE_COMMENTS_THANKS_BUTTON("revanced_hide_comments_thanks_button", BOOLEAN, TRUE),
     HIDE_CREATE_SHORTS_BUTTON("revanced_hide_create_shorts_button", BOOLEAN, TRUE),
@@ -122,7 +128,7 @@ public enum SettingsEnum {
 
 
     // Fullscreen
-    DISABLE_AMBIENT_MODE_IN_FULLSCREEN("revanced_disable_ambient_mode_in_fullscreen", BOOLEAN, FALSE, true),
+    DISABLE_AMBIENT_MODE_IN_FULLSCREEN("revanced_disable_ambient_mode_in_fullscreen", BOOLEAN, TRUE, true),
     HIDE_AUTOPLAY_PREVIEW("revanced_hide_autoplay_preview", BOOLEAN, FALSE, true),
     HIDE_END_SCREEN_OVERLAY("revanced_hide_end_screen_overlay", BOOLEAN, TRUE, true),
     HIDE_FULLSCREEN_PANELS("revanced_hide_fullscreen_panels", BOOLEAN, FALSE, true),
@@ -199,14 +205,15 @@ public enum SettingsEnum {
     HIDE_INFO_PANEL("revanced_hide_info_panel", BOOLEAN, TRUE),
     HIDE_NOTIFY_ME_BUTTON("revanced_hide_notify_me_button", BOOLEAN, FALSE),
     HIDE_LATEST_POSTS("revanced_hide_latest_posts", BOOLEAN, TRUE),
+    HIDE_LIVE_CHAT_MESSAGES("revanced_hide_live_chat_messages", BOOLEAN, FALSE),
     HIDE_MEDICAL_PANEL("revanced_hide_medical_panel", BOOLEAN, TRUE),
     HIDE_MOVIE_SHELF("revanced_hide_movie_shelf", BOOLEAN, TRUE),
     HIDE_SEARCH_BAR("revanced_hide_search_bar", BOOLEAN, FALSE),
     HIDE_TICKET_SHELF("revanced_hide_ticket_shelf", BOOLEAN, TRUE),
     HIDE_TIMED_REACTIONS("revanced_hide_timed_reactions", BOOLEAN, FALSE),
+    HIDE_PLAYABLES("revanced_hide_playables", BOOLEAN, TRUE),
     // Experimental Flags
-    HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, TRUE, true),
-    HIDE_SUGGESTIONS_SHELF_METHOD("revanced_hide_suggestions_shelf_method", BOOLEAN, FALSE, true),
+    HIDE_SUGGESTIONS_SHELF("revanced_hide_suggestions_shelf", BOOLEAN, TRUE),
     HIDE_HOME_FEED_MEMBERSHIP_VIDEO("revanced_hide_home_feed_membership_video", BOOLEAN, FALSE, true),
     HIDE_VIDEO_WITH_GRAY_DESCRIPTION("revanced_hide_video_with_gray_description", BOOLEAN, FALSE, true),
     HIDE_VIDEO_WITH_VIEW("revanced_hide_video_with_view", BOOLEAN, FALSE),
@@ -234,7 +241,7 @@ public enum SettingsEnum {
 
     // Misc
     BYPASS_AMBIENT_MODE_RESTRICTIONS("revanced_bypass_ambient_mode_restrictions", BOOLEAN, FALSE),
-    DISABLE_AMBIENT_MODE("revanced_disable_ambient_mode", BOOLEAN, TRUE, true),
+    DISABLE_AMBIENT_MODE("revanced_disable_ambient_mode", BOOLEAN, FALSE, true),
     DISABLE_UPDATE_SCREEN("revanced_disable_update_screen", BOOLEAN, TRUE, true),
     ENABLE_DEBUG_LOGGING("revanced_enable_debug_logging", BOOLEAN, FALSE),
     ENABLE_DEBUG_BUFFER_LOGGING("revanced_enable_debug_buffer_logging", BOOLEAN, FALSE),
@@ -282,9 +289,9 @@ public enum SettingsEnum {
     OVERLAY_BUTTON_COPY_VIDEO_URL("revanced_overlay_button_copy_video_url", BOOLEAN, TRUE),
     OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP("revanced_overlay_button_copy_video_url_timestamp", BOOLEAN, FALSE),
     OVERLAY_BUTTON_EXTERNAL_DOWNLOADER("revanced_overlay_button_external_downloader", BOOLEAN, FALSE),
-    OVERLAY_BUTTON_TIME_ORDERED_PLAYLIST("revanced_overlay_button_time_ordered_playlist", BOOLEAN, FALSE, true),
+    OVERLAY_BUTTON_TIME_ORDERED_PLAYLIST("revanced_overlay_button_time_ordered_playlist", BOOLEAN, FALSE),
     OVERLAY_BUTTON_SPEED_DIALOG("revanced_overlay_button_speed_dialog", BOOLEAN, TRUE),
-    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true),
+    EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING, "com.deniscerri.ytdl", true, parents(OVERLAY_BUTTON_EXTERNAL_DOWNLOADER)),
     OVERLAY_BUTTON_WHITELIST("revanced_overlay_button_whitelisting", BOOLEAN, FALSE),
 
     // Channel Whitelist
@@ -292,7 +299,7 @@ public enum SettingsEnum {
     SB_WHITELIST("revanced_whitelisting_sponsorblock", BOOLEAN, FALSE),
 
     // Experimental Flags
-    HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, TRUE),
+    HOOK_DOWNLOAD_BUTTON("revanced_hook_download_button", BOOLEAN, FALSE),
 
 
     // Player
@@ -306,9 +313,11 @@ public enum SettingsEnum {
     HIDE_END_SCREEN_CARDS("revanced_hide_end_screen_cards", BOOLEAN, TRUE, true),
     HIDE_INFO_CARDS("revanced_hide_info_cards", BOOLEAN, TRUE, true),
     HIDE_KEYWORD_CONTENT("revanced_hide_keyword_content_feed", BOOLEAN, FALSE),
-    HIDE_KEYWORD_CONTENT_SUB("revanced_hide_keyword_content_sub", BOOLEAN, FALSE),
-    HIDE_KEYWORD_CONTENT_COMMENT("revanced_hide_keyword_content_comment", BOOLEAN, FALSE),
-    HIDE_KEYWORD_CONTENT_PHRASES("revanced_hide_keyword_content_strings", STRING, "", parents(HIDE_KEYWORD_CONTENT, HIDE_KEYWORD_CONTENT_SUB, HIDE_KEYWORD_CONTENT_COMMENT)),
+    HIDE_KEYWORD_CONTENT_HOME("revanced_hide_keyword_content_home", BOOLEAN, TRUE, parents(HIDE_KEYWORD_CONTENT)),
+    HIDE_KEYWORD_CONTENT_SEARCH("revanced_hide_keyword_content_search", BOOLEAN, TRUE, parents(HIDE_KEYWORD_CONTENT)),
+    HIDE_KEYWORD_CONTENT_SUB("revanced_hide_keyword_content_sub", BOOLEAN, TRUE, parents(HIDE_KEYWORD_CONTENT)),
+    HIDE_KEYWORD_CONTENT_COMMENT("revanced_hide_keyword_content_comment", BOOLEAN, TRUE, parents(HIDE_KEYWORD_CONTENT)),
+    HIDE_KEYWORD_CONTENT_PHRASES("revanced_hide_keyword_content_strings", STRING, "", parentsMaster(HIDE_KEYWORD_CONTENT, HIDE_KEYWORD_CONTENT_HOME, HIDE_KEYWORD_CONTENT_SEARCH, HIDE_KEYWORD_CONTENT_SUB, HIDE_KEYWORD_CONTENT_COMMENT)),
     HIDE_PLAYER_BUTTON_BACKGROUND("revanced_hide_player_button_background", BOOLEAN, FALSE, true),
     HIDE_PREVIOUS_NEXT_BUTTON("revanced_hide_previous_next_button", BOOLEAN, TRUE),
     HIDE_SEEK_MESSAGE("revanced_hide_seek_message", BOOLEAN, FALSE, true),
@@ -332,7 +341,7 @@ public enum SettingsEnum {
     // Seekbar
     APPEND_TIME_STAMP_INFORMATION("revanced_append_time_stamp_information", BOOLEAN, TRUE),
     APPEND_TIME_STAMP_INFORMATION_TYPE("revanced_append_time_stamp_information_type", BOOLEAN, FALSE),
-    ENABLE_CUSTOM_SEEKBAR_COLOR("revanced_enable_custom_seekbar_color", BOOLEAN, FALSE, true),
+    ENABLE_CUSTOM_SEEKBAR_COLOR("revanced_enable_custom_seekbar_color", BOOLEAN, TRUE, true),
     ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE("revanced_custom_seekbar_color_value", STRING, "#ffff0000", true,
             parents(ENABLE_CUSTOM_SEEKBAR_COLOR)),
     ENABLE_SEEKBAR_TAPPING("revanced_enable_seekbar_tapping", BOOLEAN, TRUE),
@@ -352,17 +361,27 @@ public enum SettingsEnum {
     HIDE_SHORTS_PLAYER_PAID_PROMOTION("revanced_hide_shorts_player_paid_promotion_banner", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_REMIX_BUTTON("revanced_hide_shorts_player_remix_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_SHARE_BUTTON("revanced_hide_shorts_player_share_button", BOOLEAN, FALSE),
-    HIDE_SHORTS_PLAYER_SUBSCRIPTIONS_BUTTON("revanced_hide_shorts_player_subscriptions_button", BOOLEAN, TRUE),
+    HIDE_SHORTS_PAUSED_OVERLAY_BUTTONS("revanced_hide_shorts_paused_overlay_buttons", BOOLEAN, TRUE),
+    HIDE_SHORTS_TAGGED_PRODUCTS("revanced_hide_shorts_tagged_products", BOOLEAN, TRUE),
+    HIDE_SHORTS_SEARCH_SUGGESTIONS("revanced_hide_shorts_search_suggestions", BOOLEAN, TRUE),
+    HIDE_SHORTS_SUBSCRIBE_BUTTON("revanced_hide_shorts_subscribe_button", BOOLEAN, TRUE),
+    HIDE_SHORTS_LIVE_HEADER("revanced_hide_shorts_live_header", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_THANKS_BUTTON("revanced_hide_shorts_player_thanks_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_PIVOT_BUTTON("revanced_hide_shorts_player_pivot_button", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_VIDEO_TITLE("revanced_hide_shorts_player_video_title", BOOLEAN, FALSE),
+    HIDE_SHORTS_SHOP_BUTTON("revanced_hide_shorts_player_shop_button", BOOLEAN, FALSE),
+    HIDE_SHORTS_LOCATION_LABEL("revanced_hide_shorts_location_label", BOOLEAN, FALSE),
+    HIDE_SHORTS_SAVE_SOUND_BUTTON("revanced_hide_shorts_player_save_sound_button", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_SOUND_METADATA_LABEL("revanced_hide_shorts_player_sound_metadata_label", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_VIDEO_LINK_LABEL("revanced_hide_shorts_player_video_link_label", BOOLEAN, TRUE),
     HIDE_SHORTS_TOOLBAR_BANNER("revanced_hide_shorts_toolbar_banner", BOOLEAN, FALSE, true),
     HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON("revanced_hide_shorts_toolbar_camera_button", BOOLEAN, FALSE, true),
     HIDE_SHORTS_TOOLBAR_MENU_BUTTON("revanced_hide_shorts_toolbar_menu_button", BOOLEAN, FALSE, true),
     HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON("revanced_hide_shorts_toolbar_search_button", BOOLEAN, FALSE, true),
-    HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", BOOLEAN, TRUE),
+    HIDE_SHORTS_SHELF("revanced_hide_shorts_shelf", BOOLEAN, FALSE),
+    HIDE_SHORTS_HOME("revanced_hide_shorts_shelf_home", BOOLEAN, TRUE, parents(HIDE_SHORTS_SHELF)),
+    HIDE_SHORTS_SEARCH("revanced_hide_shorts_shelf_search", BOOLEAN, TRUE, parents(HIDE_SHORTS_SHELF)),
+    HIDE_SHORTS_SUBSCRIPTIONS("revanced_hide_shorts_shelf_subscriptions", BOOLEAN, TRUE, parents(HIDE_SHORTS_SHELF)),
 
     // Experimental Flags
     HIDE_SHORTS_PLAYER_NAVIGATION_BAR("revanced_hide_shorts_player_navigation_bar", BOOLEAN, FALSE, true),
@@ -412,7 +431,7 @@ public enum SettingsEnum {
     ENABLE_SAVE_PLAYBACK_SPEED("revanced_enable_save_playback_speed", BOOLEAN, TRUE),
     ENABLE_SAVE_VIDEO_QUALITY("revanced_enable_save_video_quality", BOOLEAN, TRUE),
     // Experimental Flags
-    ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS("revanced_enable_default_playback_speed_shorts", BOOLEAN, TRUE),
+    ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS("revanced_enable_default_playback_speed_shorts", BOOLEAN, FALSE),
     SKIP_PRELOADED_BUFFER("revanced_skip_preloaded_buffer", BOOLEAN, FALSE),
     SKIP_PRELOADED_BUFFER_TOAST("revanced_skip_preloaded_buffer_toast", BOOLEAN, TRUE),
 
@@ -451,6 +470,58 @@ public enum SettingsEnum {
     SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS("sb_local_time_saved_number_segments", INTEGER, 0, SPONSOR_BLOCK),
     SB_LOCAL_TIME_SAVED_MILLISECONDS("sb_local_time_saved_milliseconds", LONG, 0L, SPONSOR_BLOCK);
 
+    /**
+     * Indicates if a {@link SettingsEnum} is available to edit and use.
+     * Typically, this is dependent upon other BooleanSetting(s) set to 'true',
+     * but this can be used to call into integrations code and check other conditions.
+     */
+    public interface Availability {
+        boolean isAvailable();
+    }
+
+    /**
+     * Availability based on any parent being enabled.
+     */
+    @NonNull
+    public static Availability parents(@NonNull SettingsEnum... parents) {
+        return () -> {
+            for (SettingsEnum parent : parents) {
+                if (parent.getBoolean()) {
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
+    /**
+     * Availability based on any parent being enabled dependent on master setting.
+     */
+    @NonNull
+    public static Availability parentsMaster(@NonNull SettingsEnum master, @NonNull SettingsEnum... parents) {
+        return () -> {
+            // Check if the master switch is false, if so, return false immediately.
+            if (!master.getBoolean()) {
+                return false;
+            }
+
+            // If the master switch is true, check other parents.
+            for (SettingsEnum parent : parents) {
+                if (parent.getBoolean()) {
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
+    /**
+     * @return if this setting can be configured and used.
+     */
+    public boolean isAvailable() {
+        return availability == null || availability.isAvailable();
+    }
+
     private static final Map<String, SettingsEnum> pathToSetting = new HashMap<>(2 * values().length);
 
     static {
@@ -475,7 +546,7 @@ public enum SettingsEnum {
     public final boolean rebootApp;
 
     @Nullable
-    private final SettingsEnum[] parents;
+    private final Availability availability;
     // Must be volatile, as some settings are read/write from different threads.
     // Of note, the object value is persistently stored using SharedPreferences (which is thread safe).
     @NonNull
@@ -490,45 +561,32 @@ public enum SettingsEnum {
         this(path, returnType, defaultValue, REVANCED, rebootApp, null);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue,
-                 SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, REVANCED, false, parents);
-    }
-
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue,
-                 boolean rebootApp, SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, REVANCED, rebootApp, parents);
-    }
-
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName) {
         this(path, returnType, defaultValue, prefName, false, null);
     }
 
-    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
-                 SettingsEnum[] parents) {
-        this(path, returnType, defaultValue, prefName, false, parents);
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, Availability availability) {
+        this(path, returnType, defaultValue, REVANCED, false, availability);
+    }
+
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue,
+                 boolean rebootApp, Availability availability) {
+        this(path, returnType, defaultValue, REVANCED, rebootApp, availability);
     }
 
     SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
-                 boolean rebootApp, @Nullable SettingsEnum[] parents) {
+                 Availability availability) {
+        this(path, returnType, defaultValue, prefName, false, availability);
+    }
+
+    SettingsEnum(String path, ReturnType returnType, Object defaultValue, SharedPrefCategory prefName,
+                 boolean rebootApp, @Nullable Availability availability) {
         this.path = Objects.requireNonNull(path);
         this.returnType = Objects.requireNonNull(returnType);
         this.value = this.defaultValue = Objects.requireNonNull(defaultValue);
         this.sharedPref = Objects.requireNonNull(prefName);
         this.rebootApp = rebootApp;
-        this.parents = parents;
-
-        if (parents != null) {
-            for (SettingsEnum parent : parents) {
-                if (parent.returnType != ReturnType.BOOLEAN) {
-                    throw new IllegalArgumentException("parent must be Boolean type: " + parent);
-                }
-            }
-        }
-    }
-
-    private static SettingsEnum[] parents(SettingsEnum... parents) {
-        return parents;
+        this.availability = availability;
     }
 
     @Nullable
@@ -619,21 +677,6 @@ public enum SettingsEnum {
     }
 
     /**
-     * @return if this setting can be configured and used.
-     * <p>
-     * Not to be confused with {@link #getBoolean()}
-     */
-    public boolean isAvailable() {
-        if (parents == null) {
-            return true;
-        }
-        for (SettingsEnum parent : parents) {
-            if (parent.getBoolean()) return true;
-        }
-        return false;
-    }
-
-    /**
      * @return if the currently set value is different from {@link #defaultValue}
      */
     public boolean isNotSetToDefault() {
@@ -662,7 +705,7 @@ public enum SettingsEnum {
     }
 
     /**
-     * @return the value of this setting as as generic object type.
+     * @return the value of this setting as generic object type.
      */
     @NonNull
     public Object getObjectValue() {
@@ -725,7 +768,7 @@ public enum SettingsEnum {
                 if (json.has(importExportKey)) {
                     throw new IllegalArgumentException("duplicate key found: " + importExportKey);
                 }
-                final boolean exportDefaultValues = false; // Enable to see what all settings looks like in the UI.
+                final boolean exportDefaultValues = false; // Enable to see what all settings look like in the UI.
                 if (setting.includeWithImportExport() && (setting.isNotSetToDefault() | exportDefaultValues)) {
                     json.put(importExportKey, setting.getObjectValue());
                 }

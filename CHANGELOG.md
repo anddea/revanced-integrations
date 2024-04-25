@@ -1,3 +1,117 @@
+# [0.151.0-dev.12](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.11...v0.151.0-dev.12) (2024-04-25)
+
+
+### Bug Fixes
+
+* **YouTube:** Move `Hide live chat messages` to `General` ([ff44e53](https://github.com/anddea/revanced-integrations/commit/ff44e53b1412843bf7e3fe8f65a92a3270844efb))
+
+# [0.151.0-dev.11](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.10...v0.151.0-dev.11) (2024-04-24)
+
+
+### Bug Fixes
+
+* **YouTube:** Unhook download button by default ([590b7c5](https://github.com/anddea/revanced-integrations/commit/590b7c5641cbf0dc5bc6e09cefa7b95e7632b13c))
+
+# [0.151.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.9...v0.151.0-dev.10) (2024-04-20)
+
+
+### Bug Fixes
+
+* **YouTube - Default video quality:** Match original ReVanced code ([19b5a55](https://github.com/anddea/revanced-integrations/commit/19b5a55aa147ba170db7a93e1bceadae3e30f292))
+
+# [0.151.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.8...v0.151.0-dev.9) (2024-04-19)
+
+
+### Bug Fixes
+
+* **YouTube - Hide description components:** Hide games section did not work, hide music section was hiding both Games and Music ([b280974](https://github.com/anddea/revanced-integrations/commit/b280974c1f61a255e77c3246a172936a4a2e5a02))
+
+# [0.151.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.7...v0.151.0-dev.8) (2024-04-18)
+
+
+### Bug Fixes
+
+* **YouTube - Hide layout components:** Hide horizontal tile shelves ([6e5ae31](https://github.com/anddea/revanced-integrations/commit/6e5ae31c92d3ce41775315f41de090abcc6e82ce))
+* **YouTube - Hide Shorts components:** Hide paid promotion banner ([5cffac0](https://github.com/anddea/revanced-integrations/commit/5cffac0be351ab44ad73334bbf8e686e53cf3dd6))
+
+# [0.151.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.6...v0.151.0-dev.7) (2024-04-17)
+
+
+### Features
+
+* **YouTube - Hide layout components:** Hide playables ([568dccb](https://github.com/anddea/revanced-integrations/commit/568dccbb03a5591beef7c233f7ee4265ff8fd621))
+* **YouTube - Hide Shorts components:** Hide live chat messages and header in Shorts ([ac30094](https://github.com/anddea/revanced-integrations/commit/ac30094336167471a8b72897390d77a74f2cf863))
+* **YouTube - Hide Shorts components:** Hide tagged products, hide search suggestions, fix subscribe button not hidden ([34560c2](https://github.com/anddea/revanced-integrations/commit/34560c2dc01750767132cc04cd572afbca1ef1d1))
+
+# [0.151.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.5...v0.151.0-dev.6) (2024-04-16)
+
+
+### Bug Fixes
+
+* **YouTube:** Add master parent for keyword content ([4343c54](https://github.com/anddea/revanced-integrations/commit/4343c54078bc333d37edb5bb1c5ab0fac0e9b652))
+
+# [0.151.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.4...v0.151.0-dev.5) (2024-04-15)
+
+
+### Bug Fixes
+
+* **YouTube - Hide navigation buttons:** Notifications tab was not hidden ([674a009](https://github.com/anddea/revanced-integrations/commit/674a00931bc57c2f1e5b92a3786579212b59f647))
+* **YouTube - Overlay buttons:** Add padding to Whitelist dialog in Settings ([22f3ed0](https://github.com/anddea/revanced-integrations/commit/22f3ed0698d83226becfe219d94103cd4234589f))
+
+
+### Features
+
+* **YouTube:** Use new Navigation Bar fingerprint for Suggestions Shelves and Community posts instead of BrowseID ([c3cff9f](https://github.com/anddea/revanced-integrations/commit/c3cff9fc7a5b6e7e1625f168f8b1b4a0e1bbe8e1))
+
+# [0.151.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.3...v0.151.0-dev.4) (2024-04-13)
+
+
+### Bug Fixes
+
+* **YouTube - Hide Shorts components:** Do not show Shorts suggestions in video player, if all hide Shorts options are enabled ([2845258](https://github.com/anddea/revanced-integrations/commit/28452583982bc4a315a3f005f0c6751b3902bd70))
+* **YouTube - Return YouTube Dislike:** Do not clip compact text when not using English ([a7dfc42](https://github.com/anddea/revanced-integrations/commit/a7dfc42b45df00ee6f8d21cb3ccd7a51848e7bae))
+
+
+### Features
+
+* **YouTube - Hide Shorts components:** Hide `Shop`, `Location` and `Save sound to playlist` buttons ([fa1e2c9](https://github.com/anddea/revanced-integrations/commit/fa1e2c9dd095ef0da353b8f6726ba5bad80f6816))
+
+# [0.151.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.2...v0.151.0-dev.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* **YouTube - Overlay buttons:** Add toast message for speed reset ([cd50c84](https://github.com/anddea/revanced-integrations/commit/cd50c84645abe34a3ed4f6a237a18fd87b8705f1))
+* **YouTube - Return YouTube Dislike:** Update success status response ([4220a35](https://github.com/anddea/revanced-integrations/commit/4220a3555b693f15f004a766c8ee77456cfc4be4))
+* **YT Music - Return YouTube Dislike:** Update success status response ([9b680d2](https://github.com/anddea/revanced-integrations/commit/9b680d28643f75a54bb2144d4e4c70e084ec2c67))
+
+
+### Features
+
+* **YouTube - Alternative thumbnails:** Selectively enable for home / subscriptions / search / player / library ([5956816](https://github.com/anddea/revanced-integrations/commit/5956816afa178f5654e62a2ba2993bf5b0e32173))
+* **YouTube - Hide layout components:** Rewrite navigation patch and use new method for keyword filter ([6c79a49](https://github.com/anddea/revanced-integrations/commit/6c79a49681d610a4e7fb0549aab0ac243115c503))
+* **YouTube - Hide Shorts components:** Selectively hide Shorts for home / subscriptions / search ([9867334](https://github.com/anddea/revanced-integrations/commit/9867334eceaedf8d58938c58b0c14c69622a2ed2))
+* **YouTube - Overlay buttons:** Enable/disable time-ordered button without app restart ([1230df5](https://github.com/anddea/revanced-integrations/commit/1230df5ae99e557817e9411b7d47c0ed6f1ceb4d))
+
+# [0.151.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.1...v0.151.0-dev.2) (2024-04-06)
+
+
+### Bug Fixes
+
+* **YouTube - Hide shorts components:** Fix new options ([853b227](https://github.com/anddea/revanced-integrations/commit/853b2279cc50b4db40473e887c9dafead41e62b0))
+
+
+### Features
+
+* **YouTube - Visual preferences icons:** New vector icons ([73d4890](https://github.com/anddea/revanced-integrations/commit/73d4890fe2fd9ca370fc09ba60e4e63c6fb3276f))
+
+# [0.151.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.150.0...v0.151.0-dev.1) (2024-04-03)
+
+
+### Features
+
+* **YouTube - Overlay buttons:** Tap and hold the speed button to reset to the default and normal speed back and forth ([ca322fd](https://github.com/anddea/revanced-integrations/commit/ca322fda34c793dcb618a1c10e1ce5ce09104dd2))
+
 # [0.150.0](https://github.com/anddea/revanced-integrations/compare/v0.149.0...v0.150.0) (2024-04-01)
 
 

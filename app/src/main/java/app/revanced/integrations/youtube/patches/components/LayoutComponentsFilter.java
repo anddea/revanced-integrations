@@ -3,16 +3,12 @@ package app.revanced.integrations.youtube.patches.components;
 import androidx.annotation.Nullable;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.shared.NavigationBar;
 import app.revanced.integrations.youtube.shared.PlayerType;
-import app.revanced.integrations.youtube.patches.utils.BrowseIdPatch;
-import app.revanced.integrations.youtube.utils.LogHelper;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static app.revanced.integrations.youtube.utils.StringRef.str;
 
 /**
  * @noinspection rawtypes
@@ -90,6 +86,11 @@ public final class LayoutComponentsFilter extends Filter {
                 "inline_expander"
         );
 
+        final StringFilterGroup playables = new StringFilterGroup(
+                SettingsEnum.HIDE_PLAYABLES,
+                "horizontal_gaming_shelf.eml"
+        );
+
         final StringFilterGroup feedSurvey = new StringFilterGroup(
                 SettingsEnum.HIDE_FEED_SURVEY,
                 "feed_nudge",
@@ -123,6 +124,12 @@ public final class LayoutComponentsFilter extends Filter {
         final StringFilterGroup latestPosts = new StringFilterGroup(
                 SettingsEnum.HIDE_LATEST_POSTS,
                 "post_shelf"
+        );
+
+        final StringFilterGroup liveChat = new StringFilterGroup(
+                SettingsEnum.HIDE_LIVE_CHAT_MESSAGES,
+                "live_chat_text_message",
+                "viewer_engagement_message" // message about poll, not poll itself
         );
 
         final StringFilterGroup medicalPanel = new StringFilterGroup(
@@ -173,9 +180,11 @@ public final class LayoutComponentsFilter extends Filter {
                 homeVideoWithContext,
                 infoPanel,
                 latestPosts,
+                liveChat,
                 medicalPanel,
                 movieShelf,
                 notifyMe,
+                playables,
                 searchVideoWithContext,
                 ticketShelf,
                 timedReactions,
@@ -215,8 +224,10 @@ public final class LayoutComponentsFilter extends Filter {
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_RELATED_VIDEO.getBoolean();
 
             // YouTube is testing new community post component in home feed
-            if (BrowseIdPatch.isHomeFeed())
+            NavigationBar.NavigationButton selectedNavButton = NavigationBar.NavigationButton.getSelectedNavigationButton();
+            if (selectedNavButton == NavigationBar.NavigationButton.HOME) {
                 return SettingsEnum.HIDE_COMMUNITY_POSTS_HOME.getBoolean();
+            }
             return communityPostsGroupList.check(allValue).isFiltered();
         }
 

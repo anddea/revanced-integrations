@@ -127,4 +127,8 @@ enum class PlayerType {
         return isNoneHiddenOrSlidingMinimized() || this == WATCH_WHILE_MINIMIZED
     }
 
+    fun isMaximizedOrFullscreen(): Boolean {
+        return this == WATCH_WHILE_MAXIMIZED || this == WATCH_WHILE_FULLSCREEN
+    }
+
 }

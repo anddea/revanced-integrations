@@ -12,6 +12,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.shared.NavigationBar;
+import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
+import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.ByteTrieSearch;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedUtils;
@@ -78,7 +81,8 @@ final class KeywordContentFilter extends Filter {
             SettingsEnum.HIDE_KEYWORD_CONTENT,
             "home_video_with_context.eml",
             "search_video_with_context.eml",
-            "related_video_with_context",
+            "video_with_context.eml", // Subscription tab videos.
+            "related_video_with_context.eml",
             "compact_video.eml",
             "inline_shorts",
             "shorts_video_cell",
@@ -93,12 +97,7 @@ final class KeywordContentFilter extends Filter {
     final StringFilterGroup containsFilter = new StringFilterGroup(
             SettingsEnum.HIDE_KEYWORD_CONTENT,
             "modern_type_shelf_header_content.eml",
-            "shorts_lockup_cell.eml"
-    );
-
-    final StringFilterGroup subscriptionFilter = new StringFilterGroup(
-            SettingsEnum.HIDE_KEYWORD_CONTENT_SUB,
-            "video_with_context.eml"
+            "shorts_lockup_cell.eml" // Part of 'shorts_shelf_carousel.eml'
     );
 
     final StringFilterGroup commentFilter = new StringFilterGroup(
@@ -118,6 +117,44 @@ final class KeywordContentFilter extends Filter {
 
     @GuardedBy("this")
     private volatile ByteTrieSearch bufferSearch;
+
+    private static boolean hideKeywordSettingIsActive() {
+        // Must check player type first, as search bar can be active behind the player.
+        if (PlayerType.getCurrent().isMaximizedOrFullscreen()) {
+            // For now, consider the under video results the same as the home feed.
+            // Player active
+            return SettingsEnum.HIDE_KEYWORD_CONTENT_HOME.getBoolean();
+        }
+
+        // Must check second, as search can be from any tab.
+        if (NavigationBar.isSearchBarActive()) {
+            // Search
+            return SettingsEnum.HIDE_KEYWORD_CONTENT_SEARCH.getBoolean();
+        }
+
+        // Avoid checking navigation button status if all other settings are off.
+        final boolean hideHome = SettingsEnum.HIDE_KEYWORD_CONTENT_HOME.getBoolean();
+        final boolean hideSubscriptions = SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean();
+        if (!hideHome && !hideSubscriptions) {
+            return false;
+        }
+
+        NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
+        if (selectedNavButton == null) {
+            return hideHome; // Unknown tab, treat the same as home.
+        }
+
+        if (selectedNavButton == NavigationButton.HOME) {
+            return hideHome;
+        }
+
+        if (selectedNavButton == NavigationButton.SUBSCRIPTIONS) {
+            return hideSubscriptions;
+        }
+
+        // User is in the Library or Notifications tab.
+        return false;
+    }
 
     /**
      * Change first letter of the first word to use title case.
@@ -196,7 +233,7 @@ final class KeywordContentFilter extends Filter {
                 // Add common casing that might appear.
                 //
                 // This could be simplified by adding case-insensitive search to the prefix search,
-                // which is very simple to add to StringTreSearch for Unicode and ByteTrieSearch for ASCII.
+                // which is very simple to add to StringTrieSearch for Unicode and ByteTrieSearch for ASCII.
                 //
                 // But to support Unicode with ByteTrieSearch would require major changes because
                 // UTF-8 characters can be different byte lengths, which does
@@ -227,22 +264,27 @@ final class KeywordContentFilter extends Filter {
     }
 
     public KeywordContentFilter() {
-        pathFilterGroupList.addAll(startsWithFilter, containsFilter, subscriptionFilter, commentFilter);
+        pathFilterGroupList.addAll(startsWithFilter, containsFilter, commentFilter);
     }
 
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (matchedIndex != 0 && (matchedGroup == startsWithFilter || matchedGroup == subscriptionFilter)) {
+        if (matchedIndex != 0 && matchedGroup == startsWithFilter) {
             return false;
         }
+
+        if (!hideKeywordSettingIsActive()) return false;
+
         if (!SettingsEnum.HIDE_KEYWORD_CONTENT_PHRASES.getString().equals(lastKeywordPhrasesParsed)) {
             // User changed the keywords.
             parseKeywords();
         }
+
         if (!bufferSearch.matches(protobufBufferArray)) {
             return false;
         }
+
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 }
