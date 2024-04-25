@@ -1,3 +1,10 @@
+# [0.151.0-dev.12](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.11...v0.151.0-dev.12) (2024-04-25)
+
+
+### Bug Fixes
+
+* **YouTube:** Move `Hide live chat messages` to `General` ([ff44e53](https://github.com/anddea/revanced-integrations/commit/ff44e53b1412843bf7e3fe8f65a92a3270844efb))
+
 # [0.151.0-dev.11](https://github.com/anddea/revanced-integrations/compare/v0.151.0-dev.10...v0.151.0-dev.11) (2024-04-24)
 
 
