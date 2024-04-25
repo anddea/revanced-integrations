@@ -126,6 +126,12 @@ public final class LayoutComponentsFilter extends Filter {
                 "post_shelf"
         );
 
+        final StringFilterGroup liveChat = new StringFilterGroup(
+                SettingsEnum.HIDE_LIVE_CHAT_MESSAGES,
+                "live_chat_text_message",
+                "viewer_engagement_message" // message about poll, not poll itself
+        );
+
         final StringFilterGroup medicalPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_MEDICAL_PANEL,
                 "emergency_onebox",
@@ -174,6 +180,7 @@ public final class LayoutComponentsFilter extends Filter {
                 homeVideoWithContext,
                 infoPanel,
                 latestPosts,
+                liveChat,
                 medicalPanel,
                 movieShelf,
                 notifyMe,
