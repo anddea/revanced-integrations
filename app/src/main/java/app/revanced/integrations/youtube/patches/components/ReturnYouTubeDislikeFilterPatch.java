@@ -36,13 +36,13 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
     @GuardedBy("itself")
     private static final Map<String, Boolean> lastVideoIds = new LinkedHashMap<>() {
         /**
-         * Number of video id's to keep track of for searching thru the buffer.
+         * Number of video id's to keep track of for searching through the buffer.
          * A minimum value of 3 should be sufficient, but check a few more just in case.
          */
         private static final int NUMBER_OF_LAST_VIDEO_IDS_TO_TRACK = 5;
 
         @Override
-        protected boolean removeEldestEntry(Map.Entry eldest) {
+        protected boolean removeEldestEntry(Entry eldest) {
             return size() > NUMBER_OF_LAST_VIDEO_IDS_TO_TRACK;
         }
     };
@@ -64,6 +64,7 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
     /**
      * Injection point.
      */
+    @SuppressWarnings("unused")
     public static void newPlayerResponseVideoId(String videoId, boolean isShortAndOpeningOrPlaying) {
         try {
             if (!isShortAndOpeningOrPlaying || !SettingsEnum.RYD_SHORTS.getBoolean()) {
@@ -110,7 +111,7 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
             String matchedVideoId = findVideoId(protobufBufferArray);
             // Matched video will be null if in incognito mode.
             // Must pass a null id to correctly clear out the current video data.
-            // Otherwise if a Short is opened in non-incognito, then incognito is enabled and another Short is opened,
+            // Otherwise, if a Short is opened in non-incognito, then incognito is enabled and another Short is opened,
             // the new incognito Short will show the old prior data.
             ReturnYouTubeDislikePatch.setLastLithoShortsVideoId(matchedVideoId);
         }
