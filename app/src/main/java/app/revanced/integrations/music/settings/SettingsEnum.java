@@ -123,19 +123,19 @@ public enum SettingsEnum {
 
 
     // Navigation
-    ENABLE_BLACK_NAVIGATION_BAR("revanced_enable_black_navigation_bar", BOOLEAN, TRUE),
+    ENABLE_BLACK_NAVIGATION_BAR("revanced_enable_black_navigation_bar", BOOLEAN, FALSE),
     HIDE_EXPLORE_BUTTON("revanced_hide_explore_button", BOOLEAN, FALSE, true),
     HIDE_HOME_BUTTON("revanced_hide_home_button", BOOLEAN, FALSE, true),
     HIDE_LIBRARY_BUTTON("revanced_hide_library_button", BOOLEAN, FALSE, true),
     HIDE_NAVIGATION_BAR("revanced_hide_navigation_bar", BOOLEAN, FALSE, true),
-    HIDE_NAVIGATION_LABEL("revanced_hide_navigation_label", BOOLEAN, FALSE, true),
-    HIDE_SAMPLES_BUTTON("revanced_hide_samples_button", BOOLEAN, FALSE, true),
+    HIDE_NAVIGATION_LABEL("revanced_hide_navigation_label", BOOLEAN, TRUE, true),
+    HIDE_SAMPLES_BUTTON("revanced_hide_samples_button", BOOLEAN, TRUE, true),
     HIDE_UPGRADE_BUTTON("revanced_hide_upgrade_button", BOOLEAN, TRUE, true),
 
 
     // Player
     ENABLE_COLOR_MATCH_PLAYER("revanced_enable_color_match_player", BOOLEAN, TRUE),
-    ENABLE_FORCE_MINIMIZED_PLAYER("revanced_enable_force_minimized_player", BOOLEAN, TRUE),
+    ENABLE_FORCE_MINIMIZED_PLAYER("revanced_enable_force_minimized_player", BOOLEAN, FALSE),
     ENABLE_OLD_PLAYER_BACKGROUND("revanced_enable_old_player_background", BOOLEAN, FALSE, true),
     ENABLE_OLD_PLAYER_LAYOUT("revanced_enable_old_player_layout", BOOLEAN, FALSE, true),
     ENABLE_OLD_STYLE_MINI_PLAYER("revanced_enable_old_style_mini_player", BOOLEAN, TRUE, true),
