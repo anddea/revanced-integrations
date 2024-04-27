@@ -1,3 +1,10 @@
+## [0.151.1-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.151.0...v0.151.1-dev.1) (2024-04-27)
+
+
+### Bug Fixes
+
+* **YouTube - Return YouTube Dislike:** Fix some issues ([281dbe3](https://github.com/anddea/revanced-integrations/commit/281dbe3e54ba4663a6c20756a8cf52b1d027bd27))
+
 # [0.151.0](https://github.com/anddea/revanced-integrations/compare/v0.150.0...v0.151.0) (2024-04-25)
 
 
