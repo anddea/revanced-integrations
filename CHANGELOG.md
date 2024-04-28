@@ -1,3 +1,10 @@
+## [0.151.1-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.151.1-dev.2...v0.151.1-dev.3) (2024-04-28)
+
+
+### Bug Fixes
+
+* **YT Music - Hide terms container:** Patch doesn't require restart to apply the changes ([e987b6d](https://github.com/anddea/revanced-integrations/commit/e987b6d7465dd2e821238beec1d998b8b6c742a5))
+
 ## [0.151.1-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.151.1-dev.1...v0.151.1-dev.2) (2024-04-28)
 
 
