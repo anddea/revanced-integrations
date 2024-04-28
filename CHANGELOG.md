@@ -1,3 +1,10 @@
+## [0.151.1-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.151.1-dev.1...v0.151.1-dev.2) (2024-04-28)
+
+
+### Bug Fixes
+
+* **YouTube - Default video quality:** Revert back ([d6da339](https://github.com/anddea/revanced-integrations/commit/d6da33920cab54c7efc893d31b9e2defcc07cc73))
+
 ## [0.151.1-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.151.0...v0.151.1-dev.1) (2024-04-27)
 
 
