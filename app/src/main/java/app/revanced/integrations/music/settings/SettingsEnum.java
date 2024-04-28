@@ -32,9 +32,8 @@ public enum SettingsEnum {
     HIDE_ACCOUNT_MENU_FILTER_STRINGS("revanced_hide_account_menu_filter_strings", STRING, "", 1),
     HIDE_ACCOUNT_MENU_EMPTY_COMPONENT("revanced_hide_account_menu_empty_component", BOOLEAN, FALSE),
     HIDE_HANDLE("revanced_hide_handle", BOOLEAN, TRUE, true),
-    HIDE_TERMS_CONTAINER("revanced_hide_terms_container", BOOLEAN, FALSE, true),
-
-
+    HIDE_TERMS_CONTAINER("revanced_hide_terms_container", BOOLEAN, FALSE),
+    
     // Action Bar
     EXTERNAL_DOWNLOADER_PACKAGE_NAME("revanced_external_downloader_package_name", STRING,
             "com.deniscerri.ytdl", true, 1),
