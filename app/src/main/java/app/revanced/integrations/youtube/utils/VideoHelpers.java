@@ -2,8 +2,6 @@ package app.revanced.integrations.youtube.utils;
 
 import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.overrideSpeed;
 import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.userChangedSpeed;
-import static app.revanced.integrations.youtube.patches.video.RememberVideoQualityPatch.overrideDefaultVideoQuality;
-import static app.revanced.integrations.youtube.patches.video.RememberVideoQualityPatch.overrideQuality;
 import static app.revanced.integrations.youtube.utils.ReVancedHelper.getStringArray;
 import static app.revanced.integrations.youtube.utils.ReVancedHelper.isPackageEnabled;
 import static app.revanced.integrations.youtube.utils.ReVancedUtils.showToastShort;
@@ -24,6 +22,7 @@ import java.util.Arrays;
 
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.patches.video.VideoInformation;
+import app.revanced.integrations.youtube.patches.video.VideoQualityPatch;
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 
 public class VideoHelpers {
@@ -48,7 +47,7 @@ public class VideoHelpers {
         if (currentQuality == quality)
             return;
         currentQuality = quality;
-        overrideDefaultVideoQuality();
+        VideoQualityPatch.overideDefaultVideoQuality();
     }
 
     public static void copyUrl(boolean withTimestamp) {
@@ -200,7 +199,7 @@ public class VideoHelpers {
 
     public static String getQualityString() {
         if (currentQuality.isEmpty()) {
-            overrideQuality(720);
+            VideoQualityPatch.overrideQuality(720);
             return qualityAutoString;
         } else if (currentQuality.equals(qualityAutoString)) {
             return qualityAutoString;
