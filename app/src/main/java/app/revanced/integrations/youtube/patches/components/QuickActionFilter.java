@@ -12,6 +12,7 @@ final class QuickActionFilter extends Filter {
     private static final String QUICK_ACTION_PATH = "quick_actions.eml";
     private final StringFilterGroup quickActionRule;
 
+    private final StringFilterGroup liveChatReplay;
     private final StringFilterGroup bufferFilterPathRule;
     private final StringFilterGroup bufferFilterPathRuleCommentShare;
     private final ByteArrayFilterGroupList bufferButtonsGroupList = new ByteArrayFilterGroupList();
@@ -21,6 +22,11 @@ final class QuickActionFilter extends Filter {
         identifierFilterGroupList.addAll(quickActionRule);
         bufferFilterPathRule = new StringFilterGroup(null, "|fullscreen_video_action_button.eml|");
         bufferFilterPathRuleCommentShare = new StringFilterGroup(null, "|ContainerType|button.eml|");
+
+        liveChatReplay = new StringFilterGroup(
+                SettingsEnum.HIDE_LIVE_CHAT_REPLAY,
+                "live_chat_ep_entrypoint"
+        );
 
         pathFilterGroupList.addAll(
                 new StringFilterGroup(
@@ -48,7 +54,8 @@ final class QuickActionFilter extends Filter {
                         "fullscreen_related_videos"
                 ),
                 bufferFilterPathRule,
-                bufferFilterPathRuleCommentShare
+                bufferFilterPathRuleCommentShare,
+                liveChatReplay
         );
 
         bufferButtonsGroupList.addAll(
@@ -88,6 +95,9 @@ final class QuickActionFilter extends Filter {
     @Override
     boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                        FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+        if (matchedGroup == liveChatReplay) {
+            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+        }
         if (!path.startsWith(QUICK_ACTION_PATH)) {
             return false;
         }
