@@ -1,3 +1,16 @@
+# [0.152.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.151.1-dev.3...v0.152.0-dev.1) (2024-04-29)
+
+
+### Bug Fixes
+
+* **YouTube - Hide Shorts components:** Hide Shorts in search result horizontal shelves ([2be49fc](https://github.com/anddea/revanced-integrations/commit/2be49fca45157e0dd4e91c13be52c6dad6ea5b42))
+
+
+### Features
+
+* **YouTube - Hide shorts components:** Hide comments button if disabled or with label "0" ([44f3c2f](https://github.com/anddea/revanced-integrations/commit/44f3c2f0349a8ea294471c9bc8dc88f963159d2c))
+* **YouTube:** Hide live chat replay in fullscreen ([e8184a1](https://github.com/anddea/revanced-integrations/commit/e8184a1a1b200d8c759abd588ed664dbf0db9b54))
+
 ## [0.151.1-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.151.1-dev.2...v0.151.1-dev.3) (2024-04-28)
 
 
