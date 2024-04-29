@@ -355,6 +355,7 @@ public enum SettingsEnum {
     // Shorts
     DISABLE_STARTUP_SHORTS_PLAYER("revanced_disable_startup_shorts_player", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_COMMENTS_BUTTON("revanced_hide_shorts_player_comments_button", BOOLEAN, FALSE),
+    HIDE_SHORTS_PLAYER_COMMENTS_DISABLED_BUTTON("revanced_hide_shorts_player_comments_disabled_button", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_DISLIKE_BUTTON("revanced_hide_shorts_player_dislike_button", BOOLEAN, FALSE),
     HIDE_SHORTS_PLAYER_INFO_PANEL("revanced_hide_shorts_player_info_panel", BOOLEAN, TRUE),
     HIDE_SHORTS_PLAYER_JOIN_BUTTON("revanced_hide_shorts_player_join_button", BOOLEAN, TRUE),

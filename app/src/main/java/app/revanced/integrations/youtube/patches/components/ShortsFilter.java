@@ -6,7 +6,10 @@ import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.NavigationBar;
 import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 import app.revanced.integrations.youtube.shared.PlayerType;
+import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.StringTrieSearch;
+
+import java.util.regex.Pattern;
 
 /**
  * @noinspection rawtypes
@@ -15,11 +18,17 @@ import app.revanced.integrations.youtube.utils.StringTrieSearch;
 public final class ShortsFilter extends Filter {
     private static final String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
     private static final String REEL_METAPANEL_PATH = "reel_metapanel.eml";
+    private static final String REEL_COMMENT_BUTTON = "reel_comment_button";
 
+    // Pattern to match any number/digit (\d+)
+    // Disabled comments button or with label "0"
+    // won't have any number in protobuf, so it will be filtered out
+    private static final Pattern REEL_COMMENTS_DISABLED_PATTERN = Pattern.compile("reel_comment_button.+\\d+");
     private static final String SHORTS_SHELF_HEADER_CONVERSION_CONTEXT = "horizontalCollectionSwipeProtector=null";
 
     private final StringFilterGroup shortsCompactFeedVideoPath;
     private final ByteArrayAsStringFilterGroup shortsCompactFeedVideoBuffer;
+    private final ByteArrayAsStringFilterGroup shortsCommentDisabled;
 
     private final StringTrieSearch exceptions = new StringTrieSearch();
     private final StringFilterGroup reelSoundMetadata;
@@ -150,6 +159,12 @@ public final class ShortsFilter extends Filter {
                 videoTitle
         );
 
+        shortsCommentDisabled =
+                new ByteArrayAsStringFilterGroup(
+                        SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_DISABLED_BUTTON,
+                        REEL_COMMENT_BUTTON
+                );
+
         final ByteArrayAsStringFilterGroup shortsDislikeButton =
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_SHORTS_PLAYER_DISLIKE_BUTTON,
@@ -167,7 +182,7 @@ public final class ShortsFilter extends Filter {
         final ByteArrayAsStringFilterGroup shortsCommentButton =
                 new ByteArrayAsStringFilterGroup(
                         SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON,
-                        "reel_comment_button"
+                        REEL_COMMENT_BUTTON
                 );
 
         final ByteArrayAsStringFilterGroup shortsRemixButton =
@@ -245,6 +260,11 @@ public final class ShortsFilter extends Filter {
                     return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
                 return false;
             } else if (matchedGroup == videoActionButton) {
+                String protobufString = new String(protobufBufferArray);
+                if (shortsCommentDisabled.check(protobufBufferArray).isFiltered()) {
+                    return !REEL_COMMENTS_DISABLED_PATTERN.matcher(protobufString).find();
+                }
+
                 // Video action buttons have the same path.
                 return videoActionButtonGroupList.check(protobufBufferArray).isFiltered();
             } else if (matchedGroup == suggestedAction) {
