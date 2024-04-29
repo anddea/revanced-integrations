@@ -76,7 +76,10 @@ public final class ShortsFilter extends Filter {
         // Shorts that appear in the feed/search when the device is using tablet layout.
         shortsCompactFeedVideoPath = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_SHELF,
-                "compact_video.eml"
+                // Shorts that appear in the feed/search when the device is using tablet layout.
+                "compact_video.eml",
+                // Search results that appear in a horizontal shelf.
+                "video_card.eml"
         );
 
         // Filter out items that use the 'frame0' thumbnail.
@@ -255,8 +258,7 @@ public final class ShortsFilter extends Filter {
                 // Always filter if matched.
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
             } else if (matchedGroup == shortsCompactFeedVideoPath) {
-                if (shouldHideShortsFeedItems() && matchedIndex == 0
-                        && shortsCompactFeedVideoBuffer.check(protobufBufferArray).isFiltered())
+                if (shouldHideShortsFeedItems() && shortsCompactFeedVideoBuffer.check(protobufBufferArray).isFiltered())
                     return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
                 return false;
             } else if (matchedGroup == videoActionButton) {
