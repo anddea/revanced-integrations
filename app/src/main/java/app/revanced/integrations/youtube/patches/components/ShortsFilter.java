@@ -112,8 +112,6 @@ public final class ShortsFilter extends Filter {
 
         infoPanel = new StringFilterGroup(
                 SettingsEnum.HIDE_SHORTS_PLAYER_INFO_PANEL,
-                "reel_multi_format_link",
-                "reel_sound_metadata",
                 "shorts_info_panel_overview"
         );
 
