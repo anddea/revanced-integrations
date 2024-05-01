@@ -3,9 +3,6 @@ package app.revanced.integrations.youtube.patches.seekbar;
 import android.graphics.Color;
 import android.view.View;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.utils.VideoHelpers;
 
@@ -17,30 +14,20 @@ public class SeekBarPatch {
     public static final int ORIGINAL_SEEKBAR_COLOR = 0xFFFF0000;
 
     public static String appendTimeStampInformation(String original) {
-        if (!SettingsEnum.APPEND_TIME_STAMP_INFORMATION.getBoolean())
-            return original;
+        if (!SettingsEnum.APPEND_TIME_STAMP_INFORMATION.getBoolean()) return original;
 
-        final String regex = "\\((.*?)\\)";
-        final Matcher matcher = Pattern.compile(regex).matcher(original);
+        String appendString = SettingsEnum.APPEND_TIME_STAMP_INFORMATION_TYPE.getBoolean()
+                ? VideoHelpers.getFormattedQualityString(null)
+                : VideoHelpers.getFormattedSpeedString(null);
 
-        if (matcher.find()) {
-            String matcherGroup = matcher.group(1);
-            String appendString = String.format(
-                    "\u2009•\u2009%s",
-                    SettingsEnum.APPEND_TIME_STAMP_INFORMATION_TYPE.getBoolean()
-                            ? VideoHelpers.getFormattedQualityString(matcherGroup)
-                            : VideoHelpers.getFormattedSpeedString(matcherGroup)
-            );
-            return original.replaceAll(regex, "") + appendString;
-        } else {
-            String appendString = String.format(
-                    "\u2009•\u2009%s",
-                    SettingsEnum.APPEND_TIME_STAMP_INFORMATION_TYPE.getBoolean()
-                            ? VideoHelpers.getFormattedQualityString(null)
-                            : VideoHelpers.getFormattedSpeedString(null)
-            );
-            return original + appendString;
-        }
+        // Encapsulate the entire appendString with bidi control characters
+        appendString = "\u2066" + appendString + "\u2069";
+
+        // Format the original string with the appended time stamp information
+        return String.format(
+                "%s\u2009•\u2009%s", // Add the separator and the appended information
+                original, appendString
+        );
     }
 
     public static boolean enableNewThumbnailPreview() {
@@ -60,38 +47,31 @@ public class SeekBarPatch {
     }
 
     public static void setContainerClickListener(View view) {
-        if (!SettingsEnum.APPEND_TIME_STAMP_INFORMATION.getBoolean())
-            return;
+        if (!SettingsEnum.APPEND_TIME_STAMP_INFORMATION.getBoolean()) return;
 
-        if (!(view.getParent() instanceof View containerView))
-            return;
+        if (!(view.getParent() instanceof View containerView)) return;
 
         final SettingsEnum appendTypeSetting = SettingsEnum.APPEND_TIME_STAMP_INFORMATION_TYPE;
         final boolean previousBoolean = appendTypeSetting.getBoolean();
 
         containerView.setOnLongClickListener(timeStampContainerView -> {
-                    appendTypeSetting.saveValue(!previousBoolean);
-                    return true;
-                }
-        );
+            appendTypeSetting.saveValue(!previousBoolean);
+            return true;
+        });
     }
 
     /**
      * Injection point.
      */
     public static int getSeekbarClickedColorValue(final int colorValue) {
-        return colorValue == ORIGINAL_SEEKBAR_COLOR
-                ? overrideSeekbarColor(colorValue)
-                : colorValue;
+        return colorValue == ORIGINAL_SEEKBAR_COLOR ? overrideSeekbarColor(colorValue) : colorValue;
     }
 
     /**
      * Injection point.
      */
     public static int resumedProgressBarColor(final int colorValue) {
-        return SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean()
-                ? getSeekbarClickedColorValue(colorValue)
-                : colorValue;
+        return SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean() ? getSeekbarClickedColorValue(colorValue) : colorValue;
     }
 
     /**
@@ -117,9 +97,7 @@ public class SeekBarPatch {
      */
     public static int overrideSeekbarColor(final int colorValue) {
         try {
-            return SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean()
-                    ? Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString())
-                    : colorValue;
+            return SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR.getBoolean() ? Color.parseColor(SettingsEnum.ENABLE_CUSTOM_SEEKBAR_COLOR_VALUE.getString()) : colorValue;
         } catch (Exception ignored) {
         }
         return colorValue;
