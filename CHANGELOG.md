@@ -1,3 +1,12 @@
+# [0.152.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.1...v0.152.0-dev.2) (2024-05-01)
+
+
+### Bug Fixes
+
+* **YouTube - Append timestamp information:** Ensure correct RTL layout ([027b948](https://github.com/anddea/revanced-integrations/commit/027b9484a82e59b9b375dac6aa612be99d6e25cb))
+* **YouTube - Hide keyword content:** Filter Shorts found in horizontal shelves ([25465e2](https://github.com/anddea/revanced-integrations/commit/25465e24038ed563b88b473c382bc86a210ddf42))
+* **YouTube - Hide Shorts components:** Exclude `Hide sound metadata label` and `Hide video link label` from `Hide info panel` ([a510788](https://github.com/anddea/revanced-integrations/commit/a510788f68e146acbe05f4e804bb56e9206f99e7))
+
 # [0.152.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.151.1-dev.3...v0.152.0-dev.1) (2024-04-29)
 
 
