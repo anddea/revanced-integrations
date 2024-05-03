@@ -295,6 +295,7 @@ public final class ShortsFilter extends Filter {
         final boolean hideHome = SettingsEnum.HIDE_SHORTS_HOME.getBoolean();
         final boolean hideSubscriptions = SettingsEnum.HIDE_SHORTS_SUBSCRIPTIONS.getBoolean();
         final boolean hideSearch = SettingsEnum.HIDE_SHORTS_SEARCH.getBoolean();
+        final boolean hidePlayer = SettingsEnum.HIDE_SHORTS_PLAYER.getBoolean();
 
         if (hideHome && hideSubscriptions && hideSearch) {
             // Shorts suggestions can load in the background if a video is opened and
@@ -311,7 +312,7 @@ public final class ShortsFilter extends Filter {
         // Must check player type first, as search bar can be active behind the player.
         if (PlayerType.getCurrent().isMaximizedOrFullscreen()) {
             // For now, consider the under video results the same as the home feed.
-            return hideHome;
+            return hidePlayer;
         }
 
         if (NavigationBar.isSearchBarActive()) { // Must check search first.

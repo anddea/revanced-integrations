@@ -384,6 +384,7 @@ public enum SettingsEnum {
     HIDE_SHORTS_HOME("revanced_hide_shorts_shelf_home", BOOLEAN, TRUE, parents(HIDE_SHORTS_SHELF)),
     HIDE_SHORTS_SEARCH("revanced_hide_shorts_shelf_search", BOOLEAN, TRUE, parents(HIDE_SHORTS_SHELF)),
     HIDE_SHORTS_SUBSCRIPTIONS("revanced_hide_shorts_shelf_subscriptions", BOOLEAN, TRUE, parents(HIDE_SHORTS_SHELF)),
+    HIDE_SHORTS_PLAYER("revanced_hide_shorts_shelf_player", BOOLEAN, TRUE, parents(HIDE_SHORTS_SHELF)),
 
     // Experimental Flags
     HIDE_SHORTS_PLAYER_NAVIGATION_BAR("revanced_hide_shorts_player_navigation_bar", BOOLEAN, FALSE, true),
