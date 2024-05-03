@@ -1,3 +1,10 @@
+# [0.152.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.2...v0.152.0-dev.3) (2024-05-03)
+
+
+### Features
+
+* **YouTube - Hide shorts components:** Add separate option to hide in player ([67cfeb8](https://github.com/anddea/revanced-integrations/commit/67cfeb88c0c125523524cf96a17b2da6a1f031da))
+
 # [0.152.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.1...v0.152.0-dev.2) (2024-05-01)
 
 
