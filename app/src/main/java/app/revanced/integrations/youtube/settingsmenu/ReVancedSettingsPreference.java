@@ -218,7 +218,8 @@ public class ReVancedSettingsPreference extends ReVancedSettingsFragment {
                 SettingsEnum.HIDE_QUICK_ACTIONS_OPEN_PLAYLIST_BUTTON,
                 SettingsEnum.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
                 SettingsEnum.HIDE_QUICK_ACTIONS_SAVE_TO_PLAYLIST_BUTTON,
-                SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON
+                SettingsEnum.HIDE_QUICK_ACTIONS_SHARE_BUTTON,
+                SettingsEnum.HIDE_LIVE_CHAT_REPLAY
         );
     }
 
