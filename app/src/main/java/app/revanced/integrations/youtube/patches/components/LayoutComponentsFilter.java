@@ -105,7 +105,7 @@ public final class LayoutComponentsFilter extends Filter {
         );
 
         videoWithContext = new StringFilterGroup(
-                SettingsEnum.HIDE_VIDEO_WITH_VIEW,
+                null,
                 "video_with_context"
         );
 
@@ -209,7 +209,7 @@ public final class LayoutComponentsFilter extends Filter {
 
         if (matchedGroup == videoWithContext) {
             String protobufString = new String(protobufBufferArray);
-            return isLowViewsVideo(protobufString);
+            return hideVideos(protobufString);
         }
 
         if (matchedGroup == homeVideoWithContext)
@@ -234,8 +234,19 @@ public final class LayoutComponentsFilter extends Filter {
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 
-    private boolean isLowViewsVideo(String protobufString) {
+
+    private boolean hideVideos(String protobufString) {
+        if (SettingsEnum.HIDE_VIDEO_WITH_VIEW.getBoolean())
+            return hideVideoBasedOnViews(protobufString);
+
+        return false;
+    }
+
+    private boolean hideVideoBasedOnViews(String protobufString) {
         Pattern[] viewCountPatterns = getViewCountPatterns();
+
+        long lessThan = SettingsEnum.HIDE_VIDEO_WITH_LESS_THAN_VIEW_NUM.getLong();
+        long greaterThan = SettingsEnum.HIDE_VIDEO_WITH_GREATER_THAN_VIEW_NUM.getLong();
 
         for (Pattern pattern : viewCountPatterns) {
             Matcher matcher = pattern.matcher(protobufString);
@@ -244,7 +255,7 @@ public final class LayoutComponentsFilter extends Filter {
                 double num = parseNumber(numString);
                 String multiplierKey = matcher.group(2);
                 long multiplierValue = getMultiplierValue(multiplierKey);
-                return num * multiplierValue < SettingsEnum.HIDE_VIDEO_WITH_VIEW_NUM.getLong();
+                return num * multiplierValue < lessThan || num * multiplierValue > greaterThan;
             }
         }
 
