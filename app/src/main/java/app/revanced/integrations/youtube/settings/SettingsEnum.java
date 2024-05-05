@@ -222,6 +222,9 @@ public enum SettingsEnum {
     HIDE_VIDEO_WITH_GREATER_THAN_VIEW_NUM("revanced_hide_video_with_greater_than_views_num", LONG, 1_000_000_000_000L, parents(HIDE_VIDEO_WITH_VIEW)),
     HIDE_VIDEO_WITH_VIEW_NUM_KEYS("revanced_hide_video_with_low_view_num_multiplier", STRING, str("revanced_hide_video_with_low_view_num_multiplier_value"), parents(HIDE_VIDEO_WITH_VIEW)),
     HIDE_VIDEO_WITH_LOW_VIEW_OLD("revanced_hide_video_with_low_view_old", BOOLEAN, FALSE),
+    HIDE_VIDEO_WITH_DURATION("revanced_hide_video_with_duration", BOOLEAN, FALSE),
+    HIDE_VIDEO_SHORTER_THAN_DURATION("revanced_hide_video_with_duration_shorter_than", STRING, "0:10", parents(HIDE_VIDEO_WITH_DURATION)),
+    HIDE_VIDEO_LONGER_THAN_DURATION("revanced_hide_video_with_duration_longer_than", STRING, "10:10:10:10", parents(HIDE_VIDEO_WITH_DURATION)),
 
     // Channel Profile
     HIDE_BROWSE_STORE_BUTTON("revanced_hide_browse_store_button", BOOLEAN, TRUE),

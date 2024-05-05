@@ -234,14 +234,70 @@ public final class LayoutComponentsFilter extends Filter {
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
     }
 
-
     private boolean hideVideos(String protobufString) {
+        boolean hideBasedOnDuration = false;
+        boolean hideBasedOnViews = false;
+
+        if (SettingsEnum.HIDE_VIDEO_WITH_DURATION.getBoolean())
+            hideBasedOnDuration = hideVideoBasedOnDuration(protobufString);
+
         if (SettingsEnum.HIDE_VIDEO_WITH_VIEW.getBoolean())
-            return hideVideoBasedOnViews(protobufString);
+            hideBasedOnViews = hideVideoBasedOnViews(protobufString);
+
+        return hideBasedOnDuration || hideBasedOnViews;
+    }
+
+    // Hide videos based on duration
+    private boolean hideVideoBasedOnDuration(String protobufString) {
+        Pattern durationPattern = getDurationPattern();
+
+        String shorterThanStr = SettingsEnum.HIDE_VIDEO_SHORTER_THAN_DURATION.getString();
+        String longerThanStr = SettingsEnum.HIDE_VIDEO_LONGER_THAN_DURATION.getString();
+
+        long shorterThan = parseDuration(shorterThanStr);
+        long longerThan = parseDuration(longerThanStr);
+
+        Matcher matcher = durationPattern.matcher(protobufString);
+        if (matcher.find()) {
+            String durationString = Objects.requireNonNull(matcher.group());
+            long durationInSeconds = convertToSeconds(durationString);
+            return checkDuration(durationInSeconds, shorterThan, longerThan);
+        }
 
         return false;
     }
 
+    private long parseDuration(String durationString) {
+        if (durationString.contains(":")) {
+            return convertToSeconds(durationString);
+        } else {
+            return Long.parseLong(durationString);
+        }
+    }
+
+    private Pattern getDurationPattern() {
+        // Pattern: hours? : minutes : seconds
+        return Pattern.compile("(?:(\\d+):)?(\\d+):(\\d+)");
+    }
+
+    private long convertToSeconds(String durationString) {
+        String[] parts = durationString.split(":");
+        int length = parts.length;
+        long seconds = 0;
+        for (int i = length - 1; i >= 0; i--) {
+            long value = Long.parseLong(parts[i]);
+            seconds += (long) (value * Math.pow(60, length - 1 - i));
+        }
+        return seconds;
+    }
+
+    private boolean checkDuration(long durationInSeconds, long shorterThan, long longerThan) {
+        if (shorterThan < 0 || longerThan < 0) throw new IllegalArgumentException("Duration cannot be negative.");
+
+        return durationInSeconds < shorterThan || durationInSeconds > longerThan;
+    }
+
+    // Hide videos based on views
     private boolean hideVideoBasedOnViews(String protobufString) {
         Pattern[] viewCountPatterns = getViewCountPatterns();
 
