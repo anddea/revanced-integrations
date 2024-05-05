@@ -1,3 +1,11 @@
+# [0.152.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.3...v0.152.0-dev.4) (2024-05-05)
+
+
+### Features
+
+* **YouTube - Hide layout components:** Add `Hide videos based on duration` ([b6bd93a](https://github.com/anddea/revanced-integrations/commit/b6bd93a1e9bf8473dadc78a867558f82ceac26e7))
+* **YouTube - Hide layout components:** Add an option to hide videos with views greater than specified value ([14d4756](https://github.com/anddea/revanced-integrations/commit/14d475637680a913a8b706cc92785b2abb857d4f))
+
 # [0.152.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.2...v0.152.0-dev.3) (2024-05-03)
 
 
