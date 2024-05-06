@@ -24,4 +24,5 @@ class ReturnYouTubeDislikeRoutes {
     static HttpURLConnection getRYDConnectionFromRoute(Route route, String... params) throws IOException {
         return Requester.getConnectionFromRoute(RYD_API_URL, route, params);
     }
+
 }

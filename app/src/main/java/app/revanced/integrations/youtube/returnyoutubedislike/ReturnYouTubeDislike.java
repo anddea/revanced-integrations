@@ -10,7 +10,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.icu.text.CompactDecimalFormat;
-import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -43,7 +42,6 @@ import app.revanced.integrations.youtube.settings.SettingsEnum;
 import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.LogHelper;
 import app.revanced.integrations.youtube.utils.ReVancedUtils;
-
 import app.revanced.integrations.youtube.utils.ThemeHelper;
 import app.revanced.integrations.youtube.patches.misc.SpoofAppVersionPatch;
 
@@ -152,7 +150,7 @@ public class ReturnYouTubeDislike {
     private final Future<RYDVoteData> future;
 
     /**
-     * Time this instance and the fetch future was created.
+     * Time this instance and the future was created.
      */
     private final long timeFetched;
 
@@ -186,12 +184,12 @@ public class ReturnYouTubeDislike {
 
     /**
      * Color of the left and middle separator, based on the color of the right separator.
-     * It's unknown where YT gets the color from, and the values here are approximated by hand.
-     * Ideally, this would be the actual color YT uses at runtime.
+     * It's unknown where YT gets the color from, and the colors here are approximated by hand.
+     * Ideally, the color here would be the actual color YT uses at runtime.
      *
      * Older versions before the 'Me' library tab use a slightly different color.
      * If spoofing was previously used and is now turned off,
-     * or an old version was recently upgraded then the old colors are sometimes still used.
+     * or an old version was recently upgraded then the old colors are sometimes used.
      */
     private static int getSeparatorColor() {
         if (IS_SPOOFING_TO_OLD_SEPARATOR_COLOR) {
@@ -200,8 +198,8 @@ public class ReturnYouTubeDislike {
                     : 0xFFD9D9D9; // light gray
         }
         return ThemeHelper.getDayNightTheme()
-                ? 0x33FFFFFF
-                : 0xFFD9D9D9;
+                ? 0x33FFFFFF  // transparent dark gray
+                : 0xFFD9D9D9; // light gray
     }
 
     public static ShapeDrawable getLeftSeparatorDrawable() {
@@ -252,7 +250,7 @@ public class ReturnYouTubeDislike {
                     : "\u200E"; // u200E = left to right character
             final Spannable leftSeparatorSpan;
             if (isRollingNumber) {
-                leftSeparatorSpan = new SpannableString(leftSeparatorString);
+                 leftSeparatorSpan = new SpannableString(leftSeparatorString);
             } else {
                 leftSeparatorString += "  ";
                 leftSeparatorSpan = new SpannableString(leftSeparatorString);
@@ -352,23 +350,18 @@ public class ReturnYouTubeDislike {
     }
 
     private static String formatDislikeCount(long dislikeCount) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
-                if (dislikeCountFormatter == null) {
-                    // Note: Java number formatters will use the locale specific number characters.
-                    // such as Arabic which formats "1.234" into "۱,۲۳٤"
-                    // But YouTube disregards locale specific number characters
-                    // and instead shows english number characters everywhere.
-                    Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                    LogHelper.printDebug(() -> "Locale: " + locale);
-                    dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
-                }
-                return dislikeCountFormatter.format(dislikeCount);
+        synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
+            if (dislikeCountFormatter == null) {
+                // Note: Java number formatters will use the locale specific number characters.
+                // such as Arabic which formats "1.234" into "۱,۲۳٤"
+                // But YouTube disregards locale specific number characters
+                // and instead shows english number characters everywhere.
+                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
+                LogHelper.printDebug(() -> "Locale: " + locale);
+                dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
             }
+            return dislikeCountFormatter.format(dislikeCount);
         }
-
-        // Will never be reached, as the oldest supported YouTube app requires Android N or greater.
-        return String.valueOf(dislikeCount);
     }
 
     private static String formatDislikePercentage(float dislikePercentage) {
@@ -392,15 +385,13 @@ public class ReturnYouTubeDislike {
         Objects.requireNonNull(videoId);
         synchronized (fetchCache) {
             // Remove any expired entries.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                final long now = System.currentTimeMillis();
-                fetchCache.values().removeIf(value -> {
-                    final boolean expired = value.isExpired(now);
-                    if (expired)
-                        LogHelper.printDebug(() -> "Removing expired fetch: " + value.videoId);
-                    return expired;
-                });
-            }
+            final long now = System.currentTimeMillis();
+            fetchCache.values().removeIf(value -> {
+                final boolean expired = value.isExpired(now);
+                if (expired)
+                    LogHelper.printDebug(() -> "Removing expired fetch: " + value.videoId);
+                return expired;
+            });
 
             ReturnYouTubeDislike fetch = fetchCache.get(videoId);
             if (fetch == null) {
@@ -412,7 +403,7 @@ public class ReturnYouTubeDislike {
     }
 
     /**
-     * Should be called if the user changes dislikes appearance settings.
+     * Should be called if the user changes settings for dislikes appearance.
      */
     public static void clearAllUICaches() {
         synchronized (fetchCache) {
@@ -592,7 +583,7 @@ public class ReturnYouTubeDislike {
 
     /**
      * Sets the current user vote value, and does not send the vote to the RYD API.
-     *
+     * <p>
      * Only used to set value if thumbs up/down is already selected on video load.
      */
     public void setUserVote(@NonNull Vote vote) {
@@ -654,8 +645,8 @@ class VerticallyCenteredImageSpan extends ImageSpan {
 
     /**
      * @param useOriginalWidth Use the original layout width of the text this span is applied to,
-     * and not the bounds of the Drawable. Drawable is always displayed using it's own bounds,
-     * and this setting only affects the layout width of the entire span.
+     *                         and not the bounds of the Drawable. Drawable is always displayed using it's own bounds,
+     *                         and this setting only affects the layout width of the entire span.
      */
     public VerticallyCenteredImageSpan(Drawable drawable, boolean useOriginalWidth) {
         super(drawable);
