@@ -24,6 +24,7 @@ public final class ShortsFilter extends Filter {
     // Disabled comments button or with label "0"
     // won't have any number in protobuf, so it will be filtered out
     private static final Pattern REEL_COMMENTS_DISABLED_PATTERN = Pattern.compile("reel_comment_button.+\\d+");
+    private static final Pattern SHORTS_HEADER_PATTERN = Pattern.compile("Shorts.+eml.shelf_header");
     private static final String SHORTS_SHELF_HEADER_CONVERSION_CONTEXT = "horizontalCollectionSwipeProtector=null";
 
     private final StringFilterGroup shortsCompactFeedVideoPath;
@@ -64,12 +65,12 @@ public final class ShortsFilter extends Filter {
                 "shorts_shelf",
                 "inline_shorts",
                 "shorts_grid",
+                "shorts_pivot_item", // Shorts pivot item in Channel Home tab
                 "shorts_video_cell"
         );
 
 
         identifierFilterGroupList.addAll(
-                shelfHeader,
                 shorts
         );
 
@@ -152,6 +153,7 @@ public final class ShortsFilter extends Filter {
                 paidPromotion,
                 pausedOverlayButtons,
                 reelSoundMetadata,
+                shelfHeader,
                 shortsCompactFeedVideoPath,
                 subscribeButton,
                 suggestedAction,
@@ -250,6 +252,18 @@ public final class ShortsFilter extends Filter {
                 return false;
             }
 
+            if (matchedGroup == shelfHeader) {
+                if (!shouldHideShortsFeedItems()) return false;
+
+                String protobufString = new String(protobufBufferArray).replaceAll("\\s+", " ");
+
+                // The headers for the channel (Home tab) sections are hidden if Shorts are disabled.
+                // For now, the regular expression is used to hide the header only if this header contains "Shorts". 
+                // A potential issue: if there is "Shorts" in the title of a section provided by channel itself
+                // (for example, the title of a playlist containing "Shorts"), it will also be hidden.
+                return SHORTS_HEADER_PATTERN.matcher(protobufString).find();
+            }
+
             if (matchedGroup == infoPanel || matchedGroup == videoLinkLabel ||
                     matchedGroup == videoTitle || matchedGroup == reelSoundMetadata ||
                     matchedGroup == liveHeader) {
@@ -277,13 +291,6 @@ public final class ShortsFilter extends Filter {
                 return path.startsWith(REEL_CHANNEL_BAR_PATH);
             }
         } else {
-            // Feed/search path components.
-            if (matchedGroup == shelfHeader) {
-                // Because the header is used in watch history and possibly other places, check for the index,
-                // which is 0 when the shelf header is used for Shorts.
-                if (matchedIndex != 0) return false;
-            }
-
             if (!shouldHideShortsFeedItems()) return false;
         }
 
