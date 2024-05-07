@@ -1,3 +1,10 @@
+# [0.152.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.5...v0.152.0-dev.6) (2024-05-07)
+
+
+### Bug Fixes
+
+* **YouTube - Hide Shorts components:** Channel headers were hidden if Shorts is disabled ([5451719](https://github.com/anddea/revanced-integrations/commit/54517192a9fd3855544bf79d5ee5c125219cc26d))
+
 # [0.152.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.4...v0.152.0-dev.5) (2024-05-07)
 
 
