@@ -1,3 +1,10 @@
+# [0.152.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.4...v0.152.0-dev.5) (2024-05-07)
+
+
+### Bug Fixes
+
+* **YouTube - Return YouTube Dislike:** Disabling `Show dislikes in Shorts` disabled dislikes everywhere ([#11](https://github.com/anddea/revanced-integrations/issues/11)) ([1b317db](https://github.com/anddea/revanced-integrations/commit/1b317db4aaf5db3bfe43999b28442d4d70b4c08e))
+
 # [0.152.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.3...v0.152.0-dev.4) (2024-05-05)
 
 
