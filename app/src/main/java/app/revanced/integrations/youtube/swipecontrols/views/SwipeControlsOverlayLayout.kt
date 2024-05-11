@@ -11,13 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import app.revanced.integrations.youtube.settings.SettingsEnum
+import app.revanced.integrations.shared.utils.ResourceUtils.ResourceType
+import app.revanced.integrations.shared.utils.ResourceUtils.getIdentifier
+import app.revanced.integrations.shared.utils.StringRef.str
 import app.revanced.integrations.youtube.swipecontrols.SwipeControlsConfigurationProvider
 import app.revanced.integrations.youtube.swipecontrols.misc.SwipeControlsOverlay
 import app.revanced.integrations.youtube.swipecontrols.misc.applyDimension
-import app.revanced.integrations.youtube.utils.ResourceType
-import app.revanced.integrations.youtube.utils.ResourceUtils.identifier
-import app.revanced.integrations.youtube.utils.StringRef.str
 import kotlin.math.round
 
 /**
@@ -42,7 +41,7 @@ class SwipeControlsOverlayLayout(
 
     private fun getDrawable(name: String, width: Int, height: Int): Drawable {
         return resources.getDrawable(
-            identifier(name, ResourceType.DRAWABLE, context),
+            getIdentifier(name, ResourceType.DRAWABLE, context),
             context.theme
         ).apply {
             setTint(config.overlayForegroundColor)
@@ -57,6 +56,8 @@ class SwipeControlsOverlayLayout(
 
     init {
         // init views
+        val feedbackYTextViewPadding = 5.applyDimension(context, TypedValue.COMPLEX_UNIT_DIP)
+        val feedbackXTextViewPadding = 12.applyDimension(context, TypedValue.COMPLEX_UNIT_DIP)
         val compoundIconPadding = 4.applyDimension(context, TypedValue.COMPLEX_UNIT_DIP)
         feedbackTextView = TextView(context).apply {
             layoutParams = LayoutParams(
@@ -65,10 +66,10 @@ class SwipeControlsOverlayLayout(
             ).apply {
                 addRule(CENTER_IN_PARENT, TRUE)
                 setPadding(
-                    10.applyDimension(context, TypedValue.COMPLEX_UNIT_DIP),
-                    5.applyDimension(context, TypedValue.COMPLEX_UNIT_DIP),
-                    10.applyDimension(context, TypedValue.COMPLEX_UNIT_DIP),
-                    5.applyDimension(context, TypedValue.COMPLEX_UNIT_DIP)
+                    feedbackXTextViewPadding,
+                    feedbackYTextViewPadding,
+                    feedbackXTextViewPadding,
+                    feedbackYTextViewPadding
                 )
             }
             background = GradientDrawable().apply {
@@ -124,20 +125,15 @@ class SwipeControlsOverlayLayout(
     }
 
     override fun onBrightnessChanged(brightness: Double) {
-        SettingsEnum.SWIPE_BRIGHTNESS_AUTO.saveValue(false)
-        if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.boolean) {
-            if (brightness >= 0) {
-                showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
-            } else {
-                showFeedbackView("${round(0.0).toInt()}%", manualBrightnessIcon)
-            }
-        } else {
-            if (brightness > 0) {
-                showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
-            } else {
-                showFeedbackView(str("quality_auto"), autoBrightnessIcon)
-                SettingsEnum.SWIPE_BRIGHTNESS_AUTO.saveValue(true)
-            }
+        if (config.shouldEnableLowestValueAutoBrightness && brightness <= 0) {
+            showFeedbackView(
+                str("revanced_swipe_lowest_value_auto_brightness_overlay_text"),
+                autoBrightnessIcon
+            )
+            config.lastUsedBrightnessIsAuto = true
+        } else if (brightness >= 0) {
+            showFeedbackView("${round(brightness).toInt()}%", manualBrightnessIcon)
+            config.lastUsedBrightnessIsAuto = false
         }
     }
 

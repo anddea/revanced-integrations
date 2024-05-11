@@ -1,14 +1,11 @@
 package app.revanced.integrations.music.sponsorblock.objects;
 
-import static app.revanced.integrations.music.utils.StringRef.sf;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-import app.revanced.integrations.music.patches.video.VideoInformation;
-import app.revanced.integrations.music.utils.StringRef;
+import app.revanced.integrations.music.shared.VideoInformation;
 
 public class SponsorSegment implements Comparable<SponsorSegment> {
     @NonNull
@@ -47,13 +44,6 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
      */
     public boolean endIsNear(long videoTime, long nearThreshold) {
         return Math.abs(end - videoTime) <= nearThreshold;
-    }
-
-    /**
-     * @return if the time parameter is within this segment
-     */
-    public boolean containsTime(long videoTime) {
-        return start <= videoTime && videoTime < end;
     }
 
     /**
@@ -108,22 +98,5 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
                 + ", start=" + start
                 + ", end=" + end
                 + '}';
-    }
-
-    public enum SegmentVote {
-        UPVOTE(sf("sb_vote_upvote"), 1, false),
-        DOWNVOTE(sf("sb_vote_downvote"), 0, true),
-        CATEGORY_CHANGE(sf("sb_vote_category"), -1, true); // apiVoteType is not used for category change
-
-        @NonNull
-        public final StringRef title;
-        public final int apiVoteType;
-        public final boolean shouldHighlight;
-
-        SegmentVote(@NonNull StringRef title, int apiVoteType, boolean shouldHighlight) {
-            this.title = title;
-            this.apiVoteType = apiVoteType;
-            this.shouldHighlight = shouldHighlight;
-        }
     }
 }

@@ -1,34 +1,148 @@
 package app.revanced.integrations.music.patches.general;
 
-import static app.revanced.integrations.music.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
+import static app.revanced.integrations.music.utils.ExtendedUtils.isSpoofingToLessThan;
+import static app.revanced.integrations.shared.utils.Utils.hideViewBy0dpUnderCondition;
 
 import android.app.AlertDialog;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
+import app.revanced.integrations.music.settings.Settings;
 
 /**
  * @noinspection ALL
  */
 @SuppressWarnings("unused")
 public class GeneralPatch {
-    @NonNull
-    private static String videoId = "";
-    private static boolean subtitlePrefetched = true;
+
+    // region [Change start page] patch
 
     public static String changeStartPage(final String browseId) {
         if (!browseId.equals("FEmusic_home"))
             return browseId;
 
-        return SettingsEnum.CHANGE_START_PAGE.getString();
+        return Settings.CHANGE_START_PAGE.get();
     }
+
+    // endregion
+
+    // region [Disable auto captions] patch
+
+    @NonNull
+    private static String videoId = "";
+    private static boolean subtitlePrefetched = true;
+
+    public static boolean disableAutoCaptions(boolean original) {
+        if (!Settings.DISABLE_AUTO_CAPTIONS.get())
+            return original;
+
+        return subtitlePrefetched;
+    }
+
+    public static void newVideoStarted(@NonNull String newlyLoadedVideoId) {
+        if (Objects.equals(newlyLoadedVideoId, videoId)) {
+            return;
+        }
+        videoId = newlyLoadedVideoId;
+        subtitlePrefetched = false;
+    }
+
+    public static void prefetchSubtitleTrack() {
+        subtitlePrefetched = true;
+    }
+
+    // endregion
+
+    // region [Disable auto captions] patch
+
+    public static boolean disableDislikeRedirection() {
+        return Settings.DISABLE_DISLIKE_REDIRECTION.get();
+    }
+
+    // endregion
+
+    // region [Enable landscape mode] patch
+
+    public static boolean enableLandScapeMode(boolean original) {
+        return Settings.ENABLE_LANDSCAPE_MODE.get() || original;
+    }
+
+    // endregion
+
+    // region [Hide layout components] patch
+
+    public static int hideCastButton(int original) {
+        return Settings.HIDE_CAST_BUTTON.get() ? View.GONE : original;
+    }
+
+    public static void hideCastButton(View view) {
+        hideViewBy0dpUnderCondition(Settings.HIDE_CAST_BUTTON.get(), view);
+    }
+
+    public static void hideCategoryBar(View view) {
+        hideViewBy0dpUnderCondition(Settings.HIDE_CATEGORY_BAR.get(), view);
+    }
+
+    public static boolean hideFloatingButton() {
+        return Settings.HIDE_FLOATING_BUTTON.get();
+    }
+
+    public static boolean hideTapToUpdateButton() {
+        return Settings.HIDE_TAP_TO_UPDATE_BUTTON.get();
+    }
+
+    public static boolean hideHistoryButton(boolean original) {
+        return !Settings.HIDE_HISTORY_BUTTON.get() && original;
+    }
+
+    public static void hideNotificationButton(View view) {
+        if (view.getParent() instanceof ViewGroup viewGroup) {
+            hideViewBy0dpUnderCondition(Settings.HIDE_NOTIFICATION_BUTTON, viewGroup);
+        }
+    }
+
+    public static boolean hideSoundSearchButton(boolean original) {
+        if (!Settings.SETTINGS_INITIALIZED.get()) {
+            return original;
+        }
+        return !Settings.HIDE_SOUND_SEARCH_BUTTON.get();
+    }
+
+    public static void hideVoiceSearchButton(ImageView view, int visibility) {
+        final int finalVisibility = Settings.HIDE_VOICE_SEARCH_BUTTON.get()
+                ? View.GONE
+                : visibility;
+
+        view.setVisibility(finalVisibility);
+    }
+
+    public static void hideTasteBuilder(View view) {
+        view.setVisibility(View.GONE);
+    }
+
+
+    // endregion
+
+    // region [Hide overlay filter] patch
+
+    public static void disableDimBehind(Window window) {
+        if (window != null) {
+            // Disable AlertDialog's background dim.
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+    }
+
+    // endregion
+
+    // region [Remove viewer discretion dialog] patch
 
     /**
      * Injection point.
@@ -47,7 +161,7 @@ public class GeneralPatch {
      * and {@link AlertDialog#getButton(int)} method can be used without issue.
      */
     public static void confirmDialog(final AlertDialog dialog) {
-        if (!SettingsEnum.REMOVE_VIEWER_DISCRETION_DIALOG.getBoolean()) {
+        if (!Settings.REMOVE_VIEWER_DISCRETION_DIALOG.get()) {
             return;
         }
 
@@ -71,70 +185,29 @@ public class GeneralPatch {
         }
     }
 
-    public static boolean disableAutoCaptions(boolean original) {
-        if (!SettingsEnum.DISABLE_AUTO_CAPTIONS.getBoolean())
-            return original;
+    // endregion
 
-        return subtitlePrefetched;
+    // region [Restore old style library shelf] patch
+
+    public static String restoreOldStyleLibraryShelf(final String browseId) {
+        final boolean oldStyleLibraryShelfEnabled =
+                Settings.RESTORE_OLD_STYLE_LIBRARY_SHELF.get() || isSpoofingToLessThan("5.38.00");
+        return oldStyleLibraryShelfEnabled && browseId.equals("FEmusic_library_landing")
+                ? "FEmusic_liked"
+                : browseId;
     }
 
-    public static void disableDimBehind(Window window) {
-        if (window != null) {
-            // Disable AlertDialog's background dim.
-            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        }
+    // endregion
+
+    // region [Spoof app version] patch
+
+    public static String getVersionOverride(String version) {
+        if (!Settings.SPOOF_APP_VERSION.get())
+            return version;
+
+        return Settings.SPOOF_APP_VERSION_TARGET.get();
     }
 
-    public static boolean enableLandScapeMode(boolean original) {
-        try {
-            return SettingsEnum.ENABLE_LANDSCAPE_MODE.getBoolean() || original;
-        } catch (Exception ignored) {
-            return original;
-        }
-    }
+    // endregion
 
-    public static String enableOldStyleLibraryShelf(final String browseId) {
-        if (SettingsEnum.ENABLE_OLD_STYLE_LIBRARY_SHELF.getBoolean() || SettingsEnum.SPOOF_APP_VERSION.getBoolean()) {
-            if (browseId.equals("FEmusic_library_landing"))
-                return "FEmusic_liked";
-        }
-
-        return browseId;
-    }
-
-    public static int hideCastButton(int original) {
-        return SettingsEnum.HIDE_CAST_BUTTON.getBoolean() ? View.GONE : original;
-    }
-
-    public static void hideCastButton(View view) {
-        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_CAST_BUTTON.getBoolean(), view);
-    }
-
-    public static void hideCategoryBar(View view) {
-        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_CATEGORY_BAR.getBoolean(), view);
-    }
-
-    public static boolean hideHistoryButton(boolean original) {
-        return !SettingsEnum.HIDE_HISTORY_BUTTON.getBoolean() && original;
-    }
-
-    public static boolean hideNewPlaylistButton() {
-        return SettingsEnum.HIDE_NEW_PLAYLIST_BUTTON.getBoolean();
-    }
-
-    public static boolean hideTapToUpdateButton() {
-        return SettingsEnum.HIDE_TAP_TO_UPDATE_BUTTON.getBoolean();
-    }
-
-    public static void newVideoStarted(@NonNull String newlyLoadedVideoId) {
-        if (Objects.equals(newlyLoadedVideoId, videoId)) {
-            return;
-        }
-        videoId = newlyLoadedVideoId;
-        subtitlePrefetched = false;
-    }
-
-    public static void prefetchSubtitleTrack() {
-        subtitlePrefetched = true;
-    }
 }

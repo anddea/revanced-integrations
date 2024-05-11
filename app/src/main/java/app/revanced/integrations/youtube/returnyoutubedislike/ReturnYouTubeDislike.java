@@ -1,7 +1,10 @@
 package app.revanced.integrations.youtube.returnyoutubedislike;
 
-import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.shared.returnyoutubedislike.ReturnYouTubeDislike.Vote;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.youtube.utils.ExtendedUtils.isSpoofingToLessThan;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -10,7 +13,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.icu.text.CompactDecimalFormat;
-import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -37,14 +39,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import app.revanced.integrations.youtube.returnyoutubedislike.requests.RYDVoteData;
-import app.revanced.integrations.youtube.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.shared.returnyoutubedislike.requests.RYDVoteData;
+import app.revanced.integrations.shared.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.PlayerType;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
-import app.revanced.integrations.youtube.utils.ThemeHelper;
-import app.revanced.integrations.youtube.patches.misc.SpoofAppVersionPatch;
+import app.revanced.integrations.youtube.utils.ThemeUtils;
 
 /**
  * Handles fetching and creation/replacing of RYD dislike text spans.
@@ -52,18 +53,6 @@ import app.revanced.integrations.youtube.patches.misc.SpoofAppVersionPatch;
  * Because Litho creates spans using multiple threads, this entire class supports multithreading as well.
  */
 public class ReturnYouTubeDislike {
-
-    public enum Vote {
-        LIKE(1),
-        DISLIKE(-1),
-        LIKE_REMOVE(0);
-
-        public final int value;
-
-        Vote(int value) {
-            this.value = value;
-        }
-    }
 
     /**
      * Maximum amount of time to block the UI from updates while waiting for network call to complete.
@@ -90,8 +79,8 @@ public class ReturnYouTubeDislike {
      */
     private static final char MIDDLE_SEPARATOR_CHARACTER = '◎'; // 'bullseye'
 
-    private static final boolean IS_SPOOFING_TO_OLD_SEPARATOR_COLOR
-            = SpoofAppVersionPatch.isSpoofingToEqualOrLessThan("18.09.39");
+    public static final boolean IS_SPOOFING_TO_OLD_SEPARATOR_COLOR =
+            isSpoofingToLessThan("18.10.00");
 
     /**
      * Cached lookup of all video ids.
@@ -125,9 +114,11 @@ public class ReturnYouTubeDislike {
      */
     public static final int leftSeparatorShapePaddingPixels;
     private static final ShapeDrawable leftSeparatorShape;
+    public static final Locale locale;
 
     static {
-        DisplayMetrics dp = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getDisplayMetrics();
+        final Resources resources = Utils.getResources();
+        DisplayMetrics dp = resources.getDisplayMetrics();
 
         leftSeparatorBounds = new Rect(0, 0,
                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.2f, dp),
@@ -140,6 +131,10 @@ public class ReturnYouTubeDislike {
 
         leftSeparatorShape = new ShapeDrawable(new RectShape());
         leftSeparatorShape.setBounds(leftSeparatorBounds);
+        // noinspection deprecation
+        locale = resources.getConfiguration().locale;
+
+        ReturnYouTubeDislikeApi.toastOnConnectionError = Settings.RYD_TOAST_ON_CONNECTION_ERROR.get();
     }
 
     private final String videoId;
@@ -187,20 +182,21 @@ public class ReturnYouTubeDislike {
      * Color of the left and middle separator, based on the color of the right separator.
      * It's unknown where YT gets the color from, and the values here are approximated by hand.
      * Ideally, this would be the actual color YT uses at runtime.
-     *
+     * <p>
      * Older versions before the 'Me' library tab use a slightly different color.
      * If spoofing was previously used and is now turned off,
      * or an old version was recently upgraded then the old colors are sometimes still used.
      */
     private static int getSeparatorColor() {
         if (IS_SPOOFING_TO_OLD_SEPARATOR_COLOR) {
-            return ThemeHelper.getDayNightTheme()
+            return ThemeUtils.isDarkTheme()
                     ? 0x29AAAAAA  // transparent dark gray
                     : 0xFFD9D9D9; // light gray
         }
-        return ThemeHelper.getDayNightTheme()
-                ? 0x33FFFFFF  // transparent dark gray
-                : 0xFFD9D9D9; // light gray
+
+        return ThemeUtils.isDarkTheme()
+                ? 0x33FFFFFF
+                : 0xFFD9D9D9;
     }
 
     public static ShapeDrawable getLeftSeparatorDrawable() {
@@ -243,15 +239,15 @@ public class ReturnYouTubeDislike {
         }
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
-        final boolean compactLayout = SettingsEnum.RYD_COMPACT_LAYOUT.getBoolean();
+        final boolean compactLayout = Settings.RYD_COMPACT_LAYOUT.get();
 
         if (!compactLayout) {
-            String leftSeparatorString = ReVancedUtils.isRightToLeftTextLayout()
+            String leftSeparatorString = Utils.isRightToLeftTextLayout()
                     ? "\u200F"  // u200F = right to left character
                     : "\u200E"; // u200E = left to right character
             final Spannable leftSeparatorSpan;
             if (isRollingNumber) {
-                leftSeparatorSpan = new SpannableString(leftSeparatorString);
+                 leftSeparatorSpan = new SpannableString(leftSeparatorString);
             } else {
                 leftSeparatorString += "  ";
                 leftSeparatorSpan = new SpannableString(leftSeparatorString);
@@ -336,7 +332,7 @@ public class ReturnYouTubeDislike {
 
     private static SpannableString newSpannableWithDislikes(@NonNull Spanned sourceStyling, @NonNull RYDVoteData voteData) {
         return newSpanUsingStylingOfAnotherSpan(sourceStyling,
-                SettingsEnum.RYD_DISLIKE_PERCENTAGE.getBoolean()
+                Settings.RYD_DISLIKE_PERCENTAGE.get()
                         ? formatDislikePercentage(voteData.getDislikePercentage())
                         : formatDislikeCount(voteData.getDislikeCount()));
     }
@@ -351,30 +347,21 @@ public class ReturnYouTubeDislike {
     }
 
     private static String formatDislikeCount(long dislikeCount) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
-                if (dislikeCountFormatter == null) {
-                    // Note: Java number formatters will use the locale specific number characters.
-                    // such as Arabic which formats "1.234" into "۱,۲۳٤"
-                    // But YouTube disregards locale specific number characters
-                    // and instead shows english number characters everywhere.
-                    Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                    LogHelper.printDebug(() -> "Locale: " + locale);
-                    dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
-                }
-                return dislikeCountFormatter.format(dislikeCount);
+        synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
+            if (dislikeCountFormatter == null) {
+                // Note: Java number formatters will use the locale specific number characters.
+                // such as Arabic which formats "1.234" into "۱,۲۳٤"
+                // But YouTube disregards locale specific number characters
+                // and instead shows english number characters everywhere.
+                dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
             }
+            return dislikeCountFormatter.format(dislikeCount);
         }
-
-        // Will never be reached, as the oldest supported YouTube app requires Android N or greater.
-        return String.valueOf(dislikeCount);
     }
 
     private static String formatDislikePercentage(float dislikePercentage) {
         synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
             if (dislikePercentageFormatter == null) {
-                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
-                LogHelper.printDebug(() -> "Locale: " + locale);
                 dislikePercentageFormatter = NumberFormat.getPercentInstance(locale);
             }
             if (dislikePercentage >= 0.01) { // at least 1%
@@ -391,15 +378,13 @@ public class ReturnYouTubeDislike {
         Objects.requireNonNull(videoId);
         synchronized (fetchCache) {
             // Remove any expired entries.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                final long now = System.currentTimeMillis();
-                fetchCache.values().removeIf(value -> {
-                    final boolean expired = value.isExpired(now);
-                    if (expired)
-                        LogHelper.printDebug(() -> "Removing expired fetch: " + value.videoId);
-                    return expired;
-                });
-            }
+            final long now = System.currentTimeMillis();
+            fetchCache.values().removeIf(value -> {
+                final boolean expired = value.isExpired(now);
+                if (expired)
+                    Logger.printDebug(() -> "Removing expired fetch: " + value.videoId);
+                return expired;
+            });
 
             ReturnYouTubeDislike fetch = fetchCache.get(videoId);
             if (fetch == null) {
@@ -411,7 +396,7 @@ public class ReturnYouTubeDislike {
     }
 
     /**
-     * Should be called if the user changes dislikes appearance settings.
+     * Should be called if the user changes settings for dislikes appearance.
      */
     public static void clearAllUICaches() {
         synchronized (fetchCache) {
@@ -424,7 +409,7 @@ public class ReturnYouTubeDislike {
     private ReturnYouTubeDislike(@NonNull String videoId) {
         this.videoId = Objects.requireNonNull(videoId);
         this.timeFetched = System.currentTimeMillis();
-        this.future = ReVancedUtils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
+        this.future = Utils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
     }
 
     private boolean isExpired(long now) {
@@ -444,9 +429,9 @@ public class ReturnYouTubeDislike {
         try {
             return future.get(maxTimeToWait, TimeUnit.MILLISECONDS);
         } catch (TimeoutException ex) {
-            LogHelper.printDebug(() -> "Waited but future was not complete after: " + maxTimeToWait + "ms");
+            Logger.printDebug(() -> "Waited but future was not complete after: " + maxTimeToWait + "ms");
         } catch (ExecutionException | InterruptedException ex) {
-            LogHelper.printException(() -> "Future failure ", ex); // will never happen
+            Logger.printException(() -> "Future failure ", ex); // will never happen
         }
         return null;
     }
@@ -460,9 +445,31 @@ public class ReturnYouTubeDislike {
 
     private synchronized void clearUICache() {
         if (replacementLikeDislikeSpan != null) {
-            LogHelper.printDebug(() -> "Clearing replacement span for: " + videoId);
+            Logger.printDebug(() -> "Clearing replacement span for: " + videoId);
         }
         replacementLikeDislikeSpan = null;
+    }
+
+    /**
+     * Must call off main thread, as this will make a network call if user is not yet registered.
+     *
+     * @return ReturnYouTubeDislike user ID. If user registration has never happened
+     * and the network call fails, this returns NULL.
+     */
+    @Nullable
+    private static String getUserId() {
+        Utils.verifyOffMainThread();
+
+        String userId = Settings.RYD_USER_ID.get();
+        if (!userId.isEmpty()) {
+            return userId;
+        }
+
+        userId = ReturnYouTubeDislikeApi.registerAsNewUser();
+        if (userId != null) {
+            Settings.RYD_USER_ID.save(userId);
+        }
+        return userId;
     }
 
     @NonNull
@@ -484,7 +491,7 @@ public class ReturnYouTubeDislike {
     public synchronized Spanned getDislikesSpanForRegularVideo(@NonNull Spanned original,
                                                                boolean isSegmentedButton,
                                                                boolean isRollingNumber) {
-        return waitForFetchAndUpdateReplacementSpan(original, isSegmentedButton, isRollingNumber,false);
+        return waitForFetchAndUpdateReplacementSpan(original, isSegmentedButton, isRollingNumber, false);
     }
 
     /**
@@ -503,7 +510,7 @@ public class ReturnYouTubeDislike {
         try {
             RYDVoteData votingData = getFetchData(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH);
             if (votingData == null) {
-                LogHelper.printDebug(() -> "Cannot add dislike to UI (RYD data not available)");
+                Logger.printDebug(() -> "Cannot add dislike to UI (RYD data not available)");
                 return original;
             }
 
@@ -521,18 +528,29 @@ public class ReturnYouTubeDislike {
                     // 2. opened a short (without closing the regular video)
                     // 3. closed the short
                     // 4. regular video is now present, but the videoId and RYD data is still for the short
-                    LogHelper.printDebug(() -> "Ignoring regular video dislike span,"
+                    Logger.printDebug(() -> "Ignoring regular video dislike span,"
                             + " as data loaded was previously used for a Short: " + videoId);
+                    return original;
+                }
+
+                // prevents reproducible bugs with the following steps:
+                // (user is using YouTube with RollingNumber applied)
+                // 1. opened a video
+                // 2. switched to fullscreen
+                // 3. click video's title to open the video description
+                // 4. dislike count may be replaced in the like count area or view count area of the video description
+                if (PlayerType.getCurrent().isFullScreenOrSlidingFullScreen()) {
+                    Logger.printDebug(() -> "Ignoring fullscreen video description panel: " + videoId);
                     return original;
                 }
 
                 if (originalDislikeSpan != null && replacementLikeDislikeSpan != null) {
                     if (spansHaveEqualTextAndColor(original, replacementLikeDislikeSpan)) {
-                        LogHelper.printDebug(() -> "Ignoring previously created dislikes span of data: " + videoId);
+                        Logger.printDebug(() -> "Ignoring previously created dislikes span of data: " + videoId);
                         return original;
                     }
                     if (spansHaveEqualTextAndColor(original, originalDislikeSpan)) {
-                        LogHelper.printDebug(() -> "Replacing span with previously created dislike span of data: " + videoId);
+                        Logger.printDebug(() -> "Replacing span with previously created dislike span of data: " + videoId);
                         return replacementLikeDislikeSpan;
                     }
                 }
@@ -540,7 +558,7 @@ public class ReturnYouTubeDislike {
                     // need to recreate using original, as original has prior outdated dislike values
                     if (originalDislikeSpan == null) {
                         // Should never happen.
-                        LogHelper.printDebug(() -> "Cannot add dislikes - original span is null. videoId: " + videoId);
+                        Logger.printDebug(() -> "Cannot add dislikes - original span is null. videoId: " + videoId);
                         return original;
                     }
                     original = originalDislikeSpan;
@@ -553,25 +571,26 @@ public class ReturnYouTubeDislike {
                 }
                 originalDislikeSpan = original;
                 replacementLikeDislikeSpan = createDislikeSpan(original, isSegmentedButton, isRollingNumber, votingData);
-                LogHelper.printDebug(() -> "Replaced: '" + originalDislikeSpan + "' with: '"
+                Logger.printDebug(() -> "Replaced: '" + originalDislikeSpan + "' with: '"
                         + replacementLikeDislikeSpan + "'" + " using video: " + videoId);
 
                 return replacementLikeDislikeSpan;
             }
         } catch (Exception e) {
-            LogHelper.printException(() -> "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
+            Logger.printException(() -> "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
         }
         return original;
     }
 
     public void sendVote(@NonNull Vote vote) {
-        ReVancedUtils.verifyOnMainThread();
+        Utils.verifyOnMainThread();
         Objects.requireNonNull(vote);
         try {
             if (isShort != PlayerType.getCurrent().isNoneOrHidden()) {
                 // Shorts was loaded with regular video present, then Shorts was closed.
                 // and then user voted on the now visible original video.
                 // Cannot send a vote, because this instance is for the wrong video.
+                Utils.showToastLong(str("revanced_ryd_failure_ryd_enabled_while_playing_video_then_user_voted"));
                 return;
             }
 
@@ -579,13 +598,13 @@ public class ReturnYouTubeDislike {
 
             voteSerialExecutor.execute(() -> {
                 try { // Must wrap in try/catch to properly log exceptions.
-                    ReturnYouTubeDislikeApi.sendVote(videoId, vote);
+                    ReturnYouTubeDislikeApi.sendVote(getUserId(), videoId, vote);
                 } catch (Exception ex) {
-                    LogHelper.printException(() -> "Failed to send vote", ex);
+                    Logger.printException(() -> "Failed to send vote", ex);
                 }
             });
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Error trying to send vote", ex);
+            Logger.printException(() -> "Error trying to send vote", ex);
         }
     }
 
@@ -597,7 +616,7 @@ public class ReturnYouTubeDislike {
     public void setUserVote(@NonNull Vote vote) {
         Objects.requireNonNull(vote);
         try {
-            LogHelper.printDebug(() -> "setUserVote: " + vote);
+            Logger.printDebug(() -> "setUserVote: " + vote);
 
             synchronized (this) {
                 userVote = vote;
@@ -609,14 +628,14 @@ public class ReturnYouTubeDislike {
                 RYDVoteData voteData = getFetchData(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH);
                 if (voteData == null) {
                     // RYD fetch failed.
-                    LogHelper.printDebug(() -> "Cannot update UI (vote data not available)");
+                    Logger.printDebug(() -> "Cannot update UI (vote data not available)");
                     return;
                 }
                 voteData.updateUsingVote(vote);
             } // Else, vote will be applied after fetch completes.
 
         } catch (Exception ex) {
-            LogHelper.printException(() -> "setUserVote failure", ex);
+            Logger.printException(() -> "setUserVote failure", ex);
         }
     }
 }
@@ -653,8 +672,8 @@ class VerticallyCenteredImageSpan extends ImageSpan {
 
     /**
      * @param useOriginalWidth Use the original layout width of the text this span is applied to,
-     * and not the bounds of the Drawable. Drawable is always displayed using it's own bounds,
-     * and this setting only affects the layout width of the entire span.
+     *                         and not the bounds of the Drawable. Drawable is always displayed using it's own bounds,
+     *                         and this setting only affects the layout width of the entire span.
      */
     public VerticallyCenteredImageSpan(Drawable drawable, boolean useOriginalWidth) {
         super(drawable);

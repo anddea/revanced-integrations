@@ -1,59 +1,65 @@
 package app.revanced.integrations.youtube.patches.video;
 
-import static app.revanced.integrations.youtube.patches.video.VideoInformation.isLiveStream;
-import static app.revanced.integrations.youtube.utils.ReVancedUtils.showToastShort;
-import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.Utils.showToastShort;
 
-import java.util.Objects;
+import androidx.annotation.NonNull;
 
-import app.revanced.integrations.youtube.settings.SettingsEnum;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.whitelist.Whitelist;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.youtube.patches.utils.PatchStatus;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.VideoInformation;
 
 @SuppressWarnings("unused")
 public class PlaybackSpeedPatch {
-    private static String currentContentCpn;
-    private static float currentPlaybackSpeed = 1.0f;
+    private static boolean isLiveStream = false;
 
-    public static void newVideoStarted(final String contentCpn) {
-        try {
-            if (contentCpn.isEmpty() || Objects.equals(currentContentCpn, contentCpn))
-                return;
+    /**
+     * Injection point.
+     */
+    public static void newVideoStarted(@NonNull String newlyLoadedChannelId, @NonNull String newlyLoadedChannelName,
+                                       @NonNull String newlyLoadedVideoId, @NonNull String newlyLoadedVideoTitle,
+                                       final long newlyLoadedVideoLength, boolean newlyLoadedLiveStreamValue) {
+        isLiveStream = newlyLoadedLiveStreamValue;
 
-            currentContentCpn = contentCpn;
-
-            if (SettingsEnum.DISABLE_DEFAULT_PLAYBACK_SPEED_LIVE.getBoolean() && isLiveStream)
-                return;
-            currentPlaybackSpeed = SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
-
-            overrideSpeed(currentPlaybackSpeed);
-        } catch (Exception ex) {
-            LogHelper.printException(() -> "Failed to setDefaultPlaybackSpeed", ex);
-        }
-    }
-
-    public static float getPlaybackSpeedInShorts(final float playbackSpeed) {
-        if (!SettingsEnum.ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS.getBoolean())
-            return playbackSpeed;
-
-        if (SettingsEnum.DISABLE_DEFAULT_PLAYBACK_SPEED_LIVE.getBoolean() && isLiveStream)
-            return playbackSpeed;
-
-        return Whitelist.isChannelSPEEDWhitelisted() ? 1.0f : SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
-    }
-
-    public static void userChangedSpeed(final float playbackSpeed) {
-        currentPlaybackSpeed = playbackSpeed;
-
-        if (!SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.getBoolean())
+        if (Settings.DISABLE_DEFAULT_PLAYBACK_SPEED_LIVE.get() && newlyLoadedLiveStreamValue)
             return;
 
-        SettingsEnum.DEFAULT_PLAYBACK_SPEED.saveValue(playbackSpeed);
-        showToastShort(str("revanced_save_playback_speed", playbackSpeed + "x"));
+        Logger.printDebug(() -> "newVideoStarted: " + newlyLoadedVideoId);
+
+        VideoInformation.overridePlaybackSpeed(Settings.DEFAULT_PLAYBACK_SPEED.get());
     }
 
-    public static void overrideSpeed(final float playbackSpeed) {
-        if (playbackSpeed != currentPlaybackSpeed)
-            currentPlaybackSpeed = playbackSpeed;
+    /**
+     * Injection point.
+     */
+    public static float getPlaybackSpeedInShorts(final float playbackSpeed) {
+        if (!VideoInformation.lastPlayerResponseIsShort())
+            return playbackSpeed;
+        if (!Settings.ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS.get())
+            return playbackSpeed;
+        if (Settings.DISABLE_DEFAULT_PLAYBACK_SPEED_LIVE.get() && isLiveStream)
+            return playbackSpeed;
+
+        Logger.printDebug(() -> "getPlaybackSpeedInShorts: " + playbackSpeed);
+
+        return Settings.DEFAULT_PLAYBACK_SPEED.get();
+    }
+
+    /**
+     * Injection point.
+     * Called when user selects a playback speed.
+     *
+     * @param playbackSpeed The playback speed the user selected
+     */
+    public static void userSelectedPlaybackSpeed(float playbackSpeed) {
+        if (!Settings.REMEMBER_PLAYBACK_SPEED_LAST_SELECTED.get())
+            return;
+
+        if (!PatchStatus.RememberPlaybackSpeed())
+            return;
+
+        Settings.DEFAULT_PLAYBACK_SPEED.save(playbackSpeed);
+        showToastShort(str("revanced_remember_playback_speed_toast", playbackSpeed + "x"));
     }
 }

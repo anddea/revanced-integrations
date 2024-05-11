@@ -1,111 +1,99 @@
 package app.revanced.integrations.youtube.patches.shorts;
 
-import static app.revanced.integrations.youtube.utils.ReVancedUtils.hideViewBy0dpUnderCondition;
-import static app.revanced.integrations.youtube.utils.ReVancedUtils.hideViewUnderCondition;
+import static app.revanced.integrations.shared.utils.Utils.hideViewUnderCondition;
 
-import android.annotation.SuppressLint;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.HorizontalScrollView;
+import android.widget.TextView;
 
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import java.lang.ref.WeakReference;
+
+import app.revanced.integrations.youtube.settings.Settings;
 
 @SuppressWarnings("unused")
 public class ShortsPatch {
-    @SuppressLint("StaticFieldLeak")
-    public static Object pivotBar;
+    public static Enum<?> repeat;
+    public static Enum<?> singlePlay;
+    public static Enum<?> endScreen;
 
-    public static boolean disableStartupShortsPlayer() {
-        return SettingsEnum.DISABLE_STARTUP_SHORTS_PLAYER.getBoolean();
+    public static Enum<?> changeShortsRepeatState(Enum<?> currentState) {
+        switch (Settings.CHANGE_SHORTS_REPEAT_STATE.get()) {
+            case 1 -> currentState = repeat;
+            case 2 -> currentState = singlePlay;
+            case 3 -> currentState = endScreen;
+        }
+
+        return currentState;
     }
 
-    public static View hideShortsPlayerNavigationBar(View view) {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean() ? null : view;
+    public static boolean disableResumingStartupShortsPlayer() {
+        return Settings.DISABLE_RESUMING_SHORTS_PLAYER.get();
     }
 
-    public static void hideShortsPlayerNavigationBar() {
-        if (!SettingsEnum.HIDE_SHORTS_PLAYER_NAVIGATION_BAR.getBoolean())
-            return;
-
-        if (!(pivotBar instanceof HorizontalScrollView horizontalScrollView))
-            return;
-
-        horizontalScrollView.setVisibility(View.GONE);
+    public static void hideShortsCommentsButton(View view) {
+        hideViewUnderCondition(Settings.HIDE_SHORTS_COMMENTS_BUTTON.get(), view);
     }
 
-    public static void hideShortsPlayerCommentsButton(View view) {
-        hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_COMMENTS_BUTTON.getBoolean(), view);
+    public static boolean hideShortsDislikeButton() {
+        return Settings.HIDE_SHORTS_DISLIKE_BUTTON.get();
     }
 
-    public static boolean hideShortsPlayerDislikeButton() {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_DISLIKE_BUTTON.getBoolean();
+    public static ViewGroup hideShortsInfoPanel(ViewGroup viewGroup) {
+        return Settings.HIDE_SHORTS_INFO_PANEL.get() ? null : viewGroup;
     }
 
-    public static ViewGroup hideShortsPlayerInfoPanel(ViewGroup viewGroup) {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_INFO_PANEL.getBoolean() ? null : viewGroup;
+    public static boolean hideShortsLikeButton() {
+        return Settings.HIDE_SHORTS_LIKE_BUTTON.get();
     }
 
-    public static boolean hideShortsPlayerLikeButton() {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_LIKE_BUTTON.getBoolean();
+    public static boolean hideShortsPaidPromotionLabel() {
+        return Settings.HIDE_SHORTS_PAID_PROMOTION_LABEL.get();
+    }
+    public static void hideShortsPaidPromotionLabel(TextView textView) {
+        hideViewUnderCondition(Settings.HIDE_SHORTS_PAID_PROMOTION_LABEL.get(), textView);
     }
 
-    public static ViewStub hideShortsPlayerPaidPromotionBanner(ViewStub viewStub) {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_PAID_PROMOTION.getBoolean() ? null : viewStub;
+    public static void hideShortsRemixButton(View view) {
+        hideViewUnderCondition(Settings.HIDE_SHORTS_REMIX_BUTTON.get(), view);
     }
 
-    public static boolean hideShortsPlayerPivotButton() {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BUTTON.getBoolean();
+    public static void hideShortsShareButton(View view) {
+        hideViewUnderCondition(Settings.HIDE_SHORTS_SHARE_BUTTON.get(), view);
     }
 
-    public static Object hideShortsPlayerPivotButton(Object object) {
-        return SettingsEnum.HIDE_SHORTS_PLAYER_PIVOT_BUTTON.getBoolean() ? null : object;
+    public static boolean hideShortsSoundButton() {
+        return Settings.HIDE_SHORTS_SOUND_BUTTON.get();
     }
 
-    public static void hideShortsPlayerRemixButton(View view) {
-        hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_REMIX_BUTTON.getBoolean(), view);
+    public static Object hideShortsSoundButton(Object object) {
+        return Settings.HIDE_SHORTS_SOUND_BUTTON.get() ? null : object;
     }
 
-    public static void hideShortsPlayerShareButton(View view) {
-        hideViewUnderCondition(SettingsEnum.HIDE_SHORTS_PLAYER_SHARE_BUTTON.getBoolean(), view);
+    public static int hideShortsSubscribeButton(int original) {
+        return Settings.HIDE_SHORTS_SUBSCRIBE_BUTTON.get() ? 0 : original;
     }
 
-    public static void hideShortsPlayerSubscriptionsButton(View view) {
-        hideViewBy0dpUnderCondition(SettingsEnum.HIDE_SHORTS_PAUSED_OVERLAY_BUTTONS.getBoolean(), view);
+    public static boolean hideShortsToolBar(boolean original) {
+        return !Settings.HIDE_SHORTS_TOOLBAR.get() && original;
     }
 
-    public static int hideShortsPlayerSubscriptionsButton(int original) {
-        return SettingsEnum.HIDE_SHORTS_PAUSED_OVERLAY_BUTTONS.getBoolean() ? 0 : original;
-    }
+    private static WeakReference<View> pivotBarViewRef = new WeakReference<>(null);
 
-    public static boolean hideShortsToolBarBanner() {
-        return SettingsEnum.HIDE_SHORTS_TOOLBAR_BANNER.getBoolean();
-    }
-
-
-    public static void hideShortsToolBarButton(String enumString, View view) {
-        for (ToolBarButton button : ToolBarButton.values()) {
-            if (enumString.equals(button.name)) {
-                hideViewUnderCondition(button.enabled, view);
-                break;
-            }
+    public static void setNavigationBar(Object pivotBar) {
+        if (pivotBar instanceof View pivotBarView) {
+            pivotBarViewRef = new WeakReference<>(pivotBarView);
         }
     }
 
-    private enum ToolBarButton {
-        SEARCH("SEARCH_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON.getBoolean()),
-        SEARCH_OLD_LAYOUT("SEARCH_FILLED", SettingsEnum.HIDE_SHORTS_TOOLBAR_SEARCH_BUTTON.getBoolean()),
-        CAMERA("SHORTS_HEADER_CAMERA_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON.getBoolean()),
-        CAMERA_OLD_LAYOUT("SHORTS_HEADER_CAMERA", SettingsEnum.HIDE_SHORTS_TOOLBAR_CAMERA_BUTTON.getBoolean()),
-        MENU("MORE_VERT_BOLD", SettingsEnum.HIDE_SHORTS_TOOLBAR_MENU_BUTTON.getBoolean()),
-        MENU_TABLET("MORE_VERT", SettingsEnum.HIDE_SHORTS_TOOLBAR_MENU_BUTTON.getBoolean());
+    public static View hideShortsNavigationBar(View view) {
+        return Settings.HIDE_SHORTS_NAVIGATION_BAR.get() ? null : view;
+    }
 
-        private final boolean enabled;
-        private final String name;
-
-        ToolBarButton(String name, boolean enabled) {
-            this.enabled = enabled;
-            this.name = name;
+    public static void hideShortsNavigationBar() {
+        final View pivotBarView = pivotBarViewRef.get();
+        if (pivotBarView != null) {
+            hideViewUnderCondition(Settings.HIDE_SHORTS_NAVIGATION_BAR.get(), pivotBarView);
         }
     }
+
 }

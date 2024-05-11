@@ -5,7 +5,7 @@ import com.reddit.domain.model.ILink;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.revanced.integrations.reddit.settings.SettingsEnum;
+import app.revanced.integrations.reddit.settings.Settings;
 
 @SuppressWarnings("unused")
 public final class GeneralAdsPatch {
@@ -14,7 +14,7 @@ public final class GeneralAdsPatch {
         final List<Object> filteredList = new ArrayList<>();
 
         for (Object item : links) {
-            if (item instanceof ILink && ((ILink) item).getPromoted()) continue;
+            if (item instanceof ILink  iLink && iLink.getPromoted()) continue;
 
             filteredList.add(item);
         }
@@ -23,17 +23,20 @@ public final class GeneralAdsPatch {
     }
 
     public static boolean hideCommentAds() {
-        return SettingsEnum.HIDE_COMMENT_ADS.getBoolean();
+        return Settings.HIDE_COMMENT_ADS.get();
     }
 
     public static List<?> hideOldPostAds(List<?> list) {
-        if (!SettingsEnum.HIDE_OLD_POST_ADS.getBoolean())
+        if (!Settings.HIDE_OLD_POST_ADS.get())
             return list;
 
         return filterChildren(list);
     }
 
-    public static boolean hideNewPostAds() {
-        return SettingsEnum.HIDE_NEW_POST_ADS.getBoolean();
+    public static void hideNewPostAds(ArrayList<Object> arrayList, Object object) {
+        if (Settings.HIDE_NEW_POST_ADS.get())
+            return;
+
+        arrayList.add(object);
     }
 }

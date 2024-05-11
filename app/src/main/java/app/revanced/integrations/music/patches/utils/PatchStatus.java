@@ -1,9 +1,5 @@
 package app.revanced.integrations.music.patches.utils;
 
+@SuppressWarnings("unused")
 public class PatchStatus {
-
-    public static boolean RememberPlaybackSpeed() {
-        // Replace this with true if the Remember playback speed patch succeeds
-        return false;
-    }
 }

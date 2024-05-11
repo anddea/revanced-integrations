@@ -182,15 +182,15 @@ class SwipeControlsHostActivity : Activity() {
      */
     private fun createScreenController() =
         if (config.enableBrightnessControl)
-            ScreenBrightnessController(this) else null
+            ScreenBrightnessController(this, config) else null
 
     /**
      * create the gesture controller based on settings
      */
     private fun createGestureController() =
         if (config.shouldEnablePressToSwipe)
-            PressToSwipeController(this)
-        else ClassicSwipeController(this)
+            PressToSwipeController(this, config)
+        else ClassicSwipeController(this, config)
 
     companion object {
         /**

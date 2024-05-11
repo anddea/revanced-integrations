@@ -1,28 +1,28 @@
 package app.revanced.integrations.music.patches.navigation;
 
-import static app.revanced.integrations.music.utils.ReVancedUtils.hideViewUnderCondition;
+import static app.revanced.integrations.shared.utils.Utils.hideViewUnderCondition;
 
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
+import app.revanced.integrations.music.settings.Settings;
 
 @SuppressWarnings("unused")
 public class NavigationPatch {
     public static Enum<?> lastPivotTab;
 
     public static int enableBlackNavigationBar() {
-        return SettingsEnum.ENABLE_BLACK_NAVIGATION_BAR.getBoolean() ? -16777216 : -14869219;
+        return Settings.ENABLE_BLACK_NAVIGATION_BAR.get() ? -16777216 : -14869219;
     }
 
     public static void hideNavigationLabel(TextView textview) {
-        hideViewUnderCondition(SettingsEnum.HIDE_NAVIGATION_LABEL.getBoolean(), textview);
+        hideViewUnderCondition(Settings.HIDE_NAVIGATION_LABEL.get(), textview);
     }
 
     public static void hideNavigationButton(@NonNull View view) {
-        if (SettingsEnum.HIDE_NAVIGATION_BAR.getBoolean() && view.getParent() != null) {
+        if (Settings.HIDE_NAVIGATION_BAR.get() && view.getParent() != null) {
             hideViewUnderCondition(true, (View) view.getParent());
             return;
         }
@@ -33,11 +33,11 @@ public class NavigationPatch {
     }
 
     private enum NavigationButton {
-        HOME("TAB_HOME", SettingsEnum.HIDE_HOME_BUTTON.getBoolean()),
-        SAMPLES("TAB_SAMPLES", SettingsEnum.HIDE_SAMPLES_BUTTON.getBoolean()),
-        EXPLORE("TAB_EXPLORE", SettingsEnum.HIDE_EXPLORE_BUTTON.getBoolean()),
-        LIBRARY("LIBRARY_MUSIC", SettingsEnum.HIDE_LIBRARY_BUTTON.getBoolean()),
-        UPGRADE("TAB_MUSIC_PREMIUM", SettingsEnum.HIDE_UPGRADE_BUTTON.getBoolean());
+        HOME("TAB_HOME", Settings.HIDE_NAVIGATION_HOME_BUTTON.get()),
+        SAMPLES("TAB_SAMPLES", Settings.HIDE_NAVIGATION_SAMPLES_BUTTON.get()),
+        EXPLORE("TAB_EXPLORE", Settings.HIDE_NAVIGATION_EXPLORE_BUTTON.get()),
+        LIBRARY("LIBRARY_MUSIC", Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get()),
+        UPGRADE("TAB_MUSIC_PREMIUM", Settings.HIDE_NAVIGATION_UPGRADE_BUTTON.get());
 
         private final boolean enabled;
         private final String name;

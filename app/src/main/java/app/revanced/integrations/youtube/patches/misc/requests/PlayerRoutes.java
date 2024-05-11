@@ -1,25 +1,17 @@
 package app.revanced.integrations.youtube.patches.misc.requests;
 
-import static app.revanced.integrations.youtube.utils.ReVancedHelper.appVersionName;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import app.revanced.integrations.youtube.requests.Requester;
-import app.revanced.integrations.youtube.requests.Route;
-import app.revanced.integrations.youtube.utils.LogHelper;
+import app.revanced.integrations.shared.requests.Requester;
+import app.revanced.integrations.shared.requests.Route;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.PackageUtils;
 
 public final class PlayerRoutes {
-    public static final Route.CompiledRoute GET_CHANNEL_INFORMATION = new Route(
-            Route.Method.POST,
-            "player" +
-                    "?fields=videoDetails.channelId," +
-                    "videoDetails.author"
-    ).compile();
-
     public static final Route.CompiledRoute GET_STORYBOARD_SPEC_RENDERER = new Route(
             Route.Method.POST,
             "player" +
@@ -48,16 +40,17 @@ public final class PlayerRoutes {
 
             JSONObject client = new JSONObject();
             client.put("clientName", "ANDROID");
-            client.put("clientVersion", appVersionName);
-            client.put("androidSdkVersion", 34);
+            client.put("clientVersion", PackageUtils.getVersionName());
+            client.put("androidSdkVersion", 33);
 
             context.put("client", client);
 
             innerTubeBody.put("context", context);
             innerTubeBody.put("videoId", "%s");
         } catch (JSONException e) {
-            LogHelper.printException(() -> "Failed to create innerTubeBody", e);
+            Logger.printException(() -> "Failed to create innerTubeBody", e);
         }
+
         ANDROID_INNER_TUBE_BODY = innerTubeBody.toString();
 
         JSONObject tvEmbedInnerTubeBody = new JSONObject();
@@ -80,8 +73,9 @@ public final class PlayerRoutes {
             tvEmbedInnerTubeBody.put("context", context);
             tvEmbedInnerTubeBody.put("videoId", "%s");
         } catch (JSONException e) {
-            LogHelper.printException(() -> "Failed to create tvEmbedInnerTubeBody", e);
+            Logger.printException(() -> "Failed to create tvEmbedInnerTubeBody", e);
         }
+
         TV_EMBED_INNER_TUBE_BODY = tvEmbedInnerTubeBody.toString();
 
         JSONObject webInnerTubeBody = new JSONObject();
@@ -99,8 +93,9 @@ public final class PlayerRoutes {
             webInnerTubeBody.put("context", context);
             webInnerTubeBody.put("videoId", "%s");
         } catch (JSONException e) {
-            LogHelper.printException(() -> "Failed to create webInnerTubeBody", e);
+            Logger.printException(() -> "Failed to create webInnerTubeBody", e);
         }
+
         WEB_INNER_TUBE_BODY = webInnerTubeBody.toString();
     }
 
@@ -115,8 +110,8 @@ public final class PlayerRoutes {
 
         connection.setRequestProperty(
                 "User-Agent", "com.google.android.youtube/" +
-                        appVersionName +
-                        " (Linux; U; Android 12; GB) gzip"
+                        PackageUtils.getVersionName() +
+                        "(Linux; U; Android 13; en_US; sdk_gphone64_x86_64 Build/UPB4.230623.005) gzip"
         );
         connection.setRequestProperty("X-Goog-Api-Format-Version", "2");
         connection.setRequestProperty("Content-Type", "application/json");

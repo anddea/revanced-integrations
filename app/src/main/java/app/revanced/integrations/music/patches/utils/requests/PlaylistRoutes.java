@@ -1,12 +1,12 @@
 package app.revanced.integrations.music.patches.utils.requests;
 
-import static app.revanced.integrations.music.requests.Route.Method.GET;
+import static app.revanced.integrations.shared.requests.Route.Method.GET;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import app.revanced.integrations.music.requests.Requester;
-import app.revanced.integrations.music.requests.Route;
+import app.revanced.integrations.shared.requests.Requester;
+import app.revanced.integrations.shared.requests.Route;
 
 class PlaylistRoutes {
     static final String PIPED_URL = "https://pipedapi.kavin.rocks/";

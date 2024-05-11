@@ -1,7 +1,9 @@
 package app.revanced.integrations.youtube.sponsorblock.ui;
 
-import static app.revanced.integrations.youtube.utils.ReVancedHelper.isFullscreenHidden;
-import static app.revanced.integrations.youtube.utils.ResourceUtils.identifier;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getDimension;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getLayoutIdentifier;
+import static app.revanced.integrations.shared.utils.Utils.getChildView;
+import static app.revanced.integrations.youtube.utils.ExtendedUtils.isFullscreenHidden;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,12 +17,14 @@ import androidx.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.patches.player.PlayerPatch;
+import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.sponsorblock.objects.SponsorSegment;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
-import app.revanced.integrations.youtube.utils.ResourceType;
 
+@SuppressWarnings("unused")
 public class SponsorBlockViewController {
     private static WeakReference<RelativeLayout> inlineSponsorOverlayRef = new WeakReference<>(null);
     private static WeakReference<ViewGroup> youtubeOverlaysLayoutRef = new WeakReference<>(null);
@@ -33,12 +37,19 @@ public class SponsorBlockViewController {
     private static SponsorSegment skipHighlight;
     @Nullable
     private static SponsorSegment skipSegment;
+    private static final int ctaBottomMargin;
+    private static final int defaultBottomMargin;
+    private static final int hiddenBottomMargin;
 
     static {
         PlayerType.getOnChange().addObserver((PlayerType type) -> {
             playerTypeChanged(type);
             return null;
         });
+
+        defaultBottomMargin = getDimension("brand_interaction_default_bottom_margin");
+        ctaBottomMargin = getDimension("brand_interaction_cta_bottom_margin") + PlayerPatch.getQuickActionsTopMargin();
+        hiddenBottomMargin = (int) Math.round((ctaBottomMargin) * 0.5);
     }
 
     public static Context getOverLaysViewGroupContext() {
@@ -54,15 +65,15 @@ public class SponsorBlockViewController {
      */
     public static void initialize(ViewGroup viewGroup) {
         try {
-            LogHelper.printDebug(() -> "initializing");
+            Logger.printDebug(() -> "initializing");
 
             // hide any old components, just in case they somehow are still hanging around
             hideAll();
 
-            Context context = ReVancedUtils.getContext();
+            Context context = Utils.getContext();
             RelativeLayout layout = new RelativeLayout(context);
-            layout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-            LayoutInflater.from(ReVancedUtils.getContext()).inflate(identifier("inline_sponsor_overlay", ResourceType.LAYOUT), layout);
+            layout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
+            LayoutInflater.from(context).inflate(getLayoutIdentifier("revanced_sb_inline_sponsor_overlay"), layout);
             inlineSponsorOverlayRef = new WeakReference<>(layout);
 
             viewGroup.addView(layout);
@@ -75,7 +86,6 @@ public class SponsorBlockViewController {
                         layout.bringToFront();
                     }
                 }
-
                 @Override
                 public void onChildViewRemoved(View parent, View child) {
                 }
@@ -83,17 +93,17 @@ public class SponsorBlockViewController {
             youtubeOverlaysLayoutRef = new WeakReference<>(viewGroup);
 
             skipHighlightButtonRef = new WeakReference<>(
-                    Objects.requireNonNull(layout.findViewById(identifier("sb_skip_highlight_button", ResourceType.ID))));
+                    Objects.requireNonNull(getChildView(layout, "revanced_sb_skip_highlight_button")));
             skipSponsorButtonRef = new WeakReference<>(
-                    Objects.requireNonNull(layout.findViewById(identifier("sb_skip_sponsor_button", ResourceType.ID))));
+                    Objects.requireNonNull(getChildView(layout, "revanced_sb_skip_sponsor_button")));
             newSegmentLayoutRef = new WeakReference<>(
-                    Objects.requireNonNull(layout.findViewById(identifier("sb_new_segment_view", ResourceType.ID))));
+                    Objects.requireNonNull(getChildView(layout, "revanced_sb_new_segment_view")));
 
             newSegmentLayoutVisible = false;
             skipHighlight = null;
             skipSegment = null;
         } catch (Exception ex) {
-            LogHelper.printException(() -> "initialize failure", ex);
+            Logger.printException(() -> "initialize failure", ex);
         }
     }
 
@@ -110,7 +120,6 @@ public class SponsorBlockViewController {
         final boolean buttonVisibility = newSegmentLayout == null || newSegmentLayout.getVisibility() != View.VISIBLE;
         updateSkipButton(skipHighlightButtonRef.get(), segment, buttonVisibility);
     }
-
     public static void showSkipSegmentButton(@NonNull SponsorSegment segment) {
         skipSegment = Objects.requireNonNull(segment);
         updateSkipButton(skipSponsorButtonRef.get(), segment, true);
@@ -120,7 +129,6 @@ public class SponsorBlockViewController {
         skipHighlight = null;
         updateSkipButton(skipHighlightButtonRef.get(), null, false);
     }
-
     public static void hideSkipSegmentButton() {
         skipSegment = null;
         updateSkipButton(skipSponsorButtonRef.get(), null, false);
@@ -140,7 +148,7 @@ public class SponsorBlockViewController {
     public static void toggleNewSegmentLayoutVisibility() {
         NewSegmentLayout newSegmentLayout = newSegmentLayoutRef.get();
         if (newSegmentLayout == null) { // should never happen
-            LogHelper.printException(() -> "toggleNewSegmentLayoutVisibility failure");
+            Logger.printException(() -> "toggleNewSegmentLayoutVisibility failure");
             return;
         }
         newSegmentLayoutVisible = (newSegmentLayout.getVisibility() != View.VISIBLE);
@@ -183,31 +191,46 @@ public class SponsorBlockViewController {
             setSkipButtonMargins(skipSponsorButton, isWatchFullScreen);
             setViewVisibility(skipSponsorButton, skipSegment != null);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Player type changed failure", ex);
+            Logger.printException(() -> "Player type changed failure", ex);
         }
     }
 
     private static void setNewSegmentLayoutMargins(@Nullable NewSegmentLayout layout, boolean fullScreen) {
         if (layout != null) {
-            setLayoutMargins(layout, fullScreen, layout.defaultBottomMargin, layout.ctaBottomMargin, layout.hiddenBottomMargin);
+            setLayoutMargins(layout, fullScreen);
         }
     }
 
     private static void setSkipButtonMargins(@Nullable SkipSponsorButton button, boolean fullScreen) {
         if (button != null) {
-            setLayoutMargins(button, fullScreen, button.defaultBottomMargin, button.ctaBottomMargin, button.hiddenBottomMargin);
+            setLayoutMargins(button, fullScreen);
         }
     }
-
-    private static void setLayoutMargins(@NonNull View view, boolean fullScreen,
-                                         int defaultBottomMargin, int ctaBottomMargin, int hiddenBottomMargin) {
+    private static void setLayoutMargins(@NonNull View view, boolean fullScreen) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
         if (params == null) {
-            LogHelper.printException(() -> "Unable to setNewSegmentLayoutMargins (params are null)");
+            Logger.printException(() -> "Unable to setNewSegmentLayoutMargins (params are null)");
             return;
         }
         params.bottomMargin = fullScreen ? (isFullscreenHidden() ? hiddenBottomMargin : ctaBottomMargin) : defaultBottomMargin;
-
         view.setLayoutParams(params);
+    }
+
+    /**
+     * Injection point.
+     */
+    public static void endOfVideoReached() {
+        try {
+            Logger.printDebug(() -> "endOfVideoReached");
+            // the buttons automatically set themselves to visible when appropriate,
+            // but if buttons are showing when the end of the video is reached then they need
+            // to be forcefully hidden
+            if (!Settings.ALWAYS_REPEAT.get()) {
+                CreateSegmentButtonController.hide();
+                VotingButtonController.hide();
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "endOfVideoReached failure", ex);
+        }
     }
 }

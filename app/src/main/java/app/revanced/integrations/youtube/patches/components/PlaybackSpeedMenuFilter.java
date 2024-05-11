@@ -2,8 +2,10 @@ package app.revanced.integrations.youtube.patches.components;
 
 import androidx.annotation.Nullable;
 
+import app.revanced.integrations.shared.patches.components.Filter;
+import app.revanced.integrations.shared.patches.components.StringFilterGroup;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.settings.Settings;
 
 /**
  * Abuse LithoFilter for {@link CustomPlaybackSpeedPatch}.
@@ -13,20 +15,17 @@ public final class PlaybackSpeedMenuFilter extends Filter {
     public static volatile boolean isPlaybackSpeedMenuVisible;
 
     public PlaybackSpeedMenuFilter() {
-        pathFilterGroupList.addAll(
+        addPathCallbacks(
                 new StringFilterGroup(
-                        SettingsEnum.ENABLE_CUSTOM_PLAYBACK_SPEED,
+                        Settings.ENABLE_CUSTOM_PLAYBACK_SPEED,
                         "playback_speed_sheet_content.eml-js"
                 )
         );
     }
 
-    /**
-     * @noinspection rawtypes
-     */
     @Override
-    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
-                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+    public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
         isPlaybackSpeedMenuVisible = true;
 
         return false;

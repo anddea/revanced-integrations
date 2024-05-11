@@ -1,6 +1,8 @@
 package app.revanced.integrations.youtube.sponsorblock;
 
-import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.youtube.utils.VideoUtils.getTimeStamp;
+import static app.revanced.integrations.youtube.utils.VideoUtils.getVideoTime;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -17,41 +19,149 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.VideoInformation;
 import app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour;
 import app.revanced.integrations.youtube.sponsorblock.objects.SegmentCategory;
 import app.revanced.integrations.youtube.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.youtube.sponsorblock.objects.SponsorSegment.SegmentVote;
 import app.revanced.integrations.youtube.sponsorblock.requests.SBRequester;
 import app.revanced.integrations.youtube.sponsorblock.ui.SponsorBlockViewController;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
 
 /**
  * Not thread safe. All fields/methods must be accessed from the main thread.
+ * @noinspection deprecation
  */
-@SuppressWarnings("deprecation")
 public class SponsorBlockUtils {
     private static final String MANUAL_EDIT_TIME_FORMAT = "HH:mm:ss.SSS";
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat manualEditTimeFormatter = new SimpleDateFormat(MANUAL_EDIT_TIME_FORMAT);
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat voteSegmentTimeFormatter = new SimpleDateFormat();
     private static final NumberFormat statsNumberFormatter = NumberFormat.getNumberInstance();
+    static {
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        manualEditTimeFormatter.setTimeZone(utc);
+    }
     private static final String LOCKED_COLOR = "#FFC83D";
+
+    private static long newSponsorSegmentDialogShownMillis;
+    private static long newSponsorSegmentStartMillis = -1;
+    private static long newSponsorSegmentEndMillis = -1;
+    private static boolean newSponsorSegmentPreviewed;
+    private static final DialogInterface.OnClickListener newSponsorSegmentDialogListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_NEGATIVE:
+                    // start
+                    newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
+                    break;
+                case DialogInterface.BUTTON_POSITIVE:
+                    // end
+                    newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
+                    break;
+            }
+            dialog.dismiss();
+        }
+    };
+    private static SegmentCategory newUserCreatedSegmentCategory;
+    private static final DialogInterface.OnClickListener segmentTypeListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+                SegmentCategory category = SegmentCategory.categoriesWithoutHighlights()[which];
+                final boolean enableButton;
+                if (category.behaviour == CategoryBehaviour.IGNORE) {
+                    Utils.showToastLong(str("revanced_sb_new_segment_disabled_category"));
+                    enableButton = false;
+                } else {
+                    newUserCreatedSegmentCategory = category;
+                    enableButton = true;
+                }
+
+                ((AlertDialog) dialog)
+                        .getButton(DialogInterface.BUTTON_POSITIVE)
+                        .setEnabled(enableButton);
+            } catch (Exception ex) {
+                Logger.printException(() -> "segmentTypeListener failure", ex);
+            }
+        }
+    };
+    private static final DialogInterface.OnClickListener segmentReadyDialogButtonListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+                SponsorBlockViewController.hideNewSegmentLayout();
+                Context context = ((AlertDialog) dialog).getContext();
+                dialog.dismiss();
+
+                SegmentCategory[] categories = SegmentCategory.categoriesWithoutHighlights();
+                CharSequence[] titles = new CharSequence[categories.length];
+                for (int i = 0, length = categories.length; i < length; i++) {
+                    titles[i] = categories[i].getTitleWithColorDot();
+                }
+
+                newUserCreatedSegmentCategory = null;
+                new AlertDialog.Builder(context)
+                        .setTitle(str("revanced_sb_new_segment_choose_category"))
+                        .setSingleChoiceItems(titles, -1, segmentTypeListener)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(android.R.string.ok, segmentCategorySelectedDialogListener)
+                        .show()
+                        .getButton(DialogInterface.BUTTON_POSITIVE)
+                        .setEnabled(false);
+            } catch (Exception ex) {
+                Logger.printException(() -> "segmentReadyDialogButtonListener failure", ex);
+            }
+        }
+    };
+    private static final DialogInterface.OnClickListener segmentCategorySelectedDialogListener = (dialog, which) -> {
+        dialog.dismiss();
+        submitNewSegment();
+    };
     private static final EditByHandSaveDialogListener editByHandSaveDialogListener = new EditByHandSaveDialogListener();
+    private static final DialogInterface.OnClickListener editByHandDialogListener = (dialog, which) -> {
+        try {
+            Context context = ((AlertDialog) dialog).getContext();
+
+            final boolean isStart = DialogInterface.BUTTON_NEGATIVE == which;
+
+            final EditText textView = new EditText(context);
+            textView.setHint(MANUAL_EDIT_TIME_FORMAT);
+            if (isStart) {
+                if (newSponsorSegmentStartMillis >= 0)
+                    textView.setText(getTimeStamp(newSponsorSegmentStartMillis, true));
+            } else {
+                if (newSponsorSegmentEndMillis >= 0)
+                    textView.setText(getTimeStamp(newSponsorSegmentEndMillis, true));
+            }
+
+            editByHandSaveDialogListener.settingStart = isStart;
+            editByHandSaveDialogListener.editText = new WeakReference<>(textView);
+            new AlertDialog.Builder(context)
+                    .setTitle(str(isStart ? "revanced_sb_new_segment_time_start" : "revanced_sb_new_segment_time_end"))
+                    .setView(textView)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setNeutralButton(str("revanced_sb_new_segment_now"), editByHandSaveDialogListener)
+                    .setPositiveButton(android.R.string.ok, editByHandSaveDialogListener)
+                    .show();
+
+            dialog.dismiss();
+        } catch (Exception ex) {
+            Logger.printException(() -> "editByHandDialogListener failure", ex);
+        }
+    };
     private static final DialogInterface.OnClickListener segmentVoteClickListener = (dialog, which) -> {
         try {
             final Context context = ((AlertDialog) dialog).getContext();
             SponsorSegment[] segments = SegmentPlaybackController.getSegments();
             if (segments == null || segments.length == 0) {
                 // should never be reached
-                LogHelper.printException(() -> "Segment is no longer available on the client");
+                Logger.printException(() -> "Segment is no longer available on the client");
                 return;
             }
             SponsorSegment segment = segments[which];
@@ -64,7 +174,7 @@ public class SponsorBlockUtils {
             for (int i = 0; i < voteOptions.length; i++) {
                 SegmentVote voteOption = voteOptions[i];
                 String title = voteOption.title.toString();
-                if (SettingsEnum.SB_USER_IS_VIP.getBoolean() && segment.isLocked && voteOption.shouldHighlight) {
+                if (Settings.SB_USER_IS_VIP.get() && segment.isLocked && voteOption.shouldHighlight) {
                     items[i] = Html.fromHtml(String.format("<font color=\"%s\">%s</font>", LOCKED_COLOR, title));
                 } else {
                     items[i] = title;
@@ -86,119 +196,9 @@ public class SponsorBlockUtils {
                     })
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(() -> "segmentVoteClickListener failure", ex);
+            Logger.printException(() -> "segmentVoteClickListener failure", ex);
         }
     };
-    private static long newSponsorSegmentDialogShownMillis;
-    private static long newSponsorSegmentStartMillis = -1;
-    private static long newSponsorSegmentEndMillis = -1;
-    private static final DialogInterface.OnClickListener newSponsorSegmentDialogListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_NEGATIVE ->
-                    // start
-                        newSponsorSegmentStartMillis = newSponsorSegmentDialogShownMillis;
-                case DialogInterface.BUTTON_POSITIVE ->
-                    // end
-                        newSponsorSegmentEndMillis = newSponsorSegmentDialogShownMillis;
-            }
-            dialog.dismiss();
-        }
-    };
-    private static final DialogInterface.OnClickListener editByHandDialogListener = (dialog, which) -> {
-        try {
-            Context context = ((AlertDialog) dialog).getContext();
-
-            final boolean isStart = DialogInterface.BUTTON_NEGATIVE == which;
-
-            final EditText textView = new EditText(context);
-            textView.setHint(MANUAL_EDIT_TIME_FORMAT);
-            if (isStart) {
-                if (newSponsorSegmentStartMillis >= 0)
-                    textView.setText(manualEditTimeFormatter.format(new Date(newSponsorSegmentStartMillis)));
-            } else {
-                if (newSponsorSegmentEndMillis >= 0)
-                    textView.setText(manualEditTimeFormatter.format(new Date(newSponsorSegmentEndMillis)));
-            }
-
-            editByHandSaveDialogListener.settingStart = isStart;
-            editByHandSaveDialogListener.editText = new WeakReference<>(textView);
-            new AlertDialog.Builder(context)
-                    .setTitle(str(isStart ? "sb_new_segment_time_start" : "sb_new_segment_time_end"))
-                    .setView(textView)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setNeutralButton(str("sb_new_segment_now"), editByHandSaveDialogListener)
-                    .setPositiveButton(android.R.string.ok, editByHandSaveDialogListener)
-                    .show();
-
-            dialog.dismiss();
-        } catch (Exception ex) {
-            LogHelper.printException(() -> "editByHandDialogListener failure", ex);
-        }
-    };
-    private static boolean newSponsorSegmentPreviewed;
-    private static SegmentCategory newUserCreatedSegmentCategory;
-    private static final DialogInterface.OnClickListener segmentTypeListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            try {
-                SegmentCategory category = SegmentCategory.categoriesWithoutHighlights()[which];
-                final boolean enableButton;
-                if (category.behaviour == CategoryBehaviour.IGNORE) {
-                    ReVancedUtils.showToastLong(str("sb_new_segment_disabled_category"));
-                    enableButton = false;
-                } else {
-                    newUserCreatedSegmentCategory = category;
-                    enableButton = true;
-                }
-
-                ((AlertDialog) dialog)
-                        .getButton(DialogInterface.BUTTON_POSITIVE)
-                        .setEnabled(enableButton);
-            } catch (Exception ex) {
-                LogHelper.printException(() -> "segmentTypeListener failure", ex);
-            }
-        }
-    };
-    private static final DialogInterface.OnClickListener segmentCategorySelectedDialogListener = (dialog, which) -> {
-        dialog.dismiss();
-        submitNewSegment();
-    };
-    private static final DialogInterface.OnClickListener segmentReadyDialogButtonListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            try {
-                SponsorBlockViewController.hideNewSegmentLayout();
-                Context context = ((AlertDialog) dialog).getContext();
-                dialog.dismiss();
-
-                SegmentCategory[] categories = SegmentCategory.categoriesWithoutHighlights();
-                CharSequence[] titles = new CharSequence[categories.length];
-                for (int i = 0, length = categories.length; i < length; i++) {
-                    titles[i] = categories[i].getTitleWithColorDot();
-                }
-
-                newUserCreatedSegmentCategory = null;
-                new AlertDialog.Builder(context)
-                        .setTitle(str("sb_new_segment_choose_category"))
-                        .setSingleChoiceItems(titles, -1, segmentTypeListener)
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .setPositiveButton(android.R.string.ok, segmentCategorySelectedDialogListener)
-                        .show()
-                        .getButton(DialogInterface.BUTTON_POSITIVE)
-                        .setEnabled(false);
-            } catch (Exception ex) {
-                LogHelper.printException(() -> "segmentReadyDialogButtonListener failure", ex);
-            }
-        }
-    };
-
-    static {
-        TimeZone utc = TimeZone.getTimeZone("UTC");
-        manualEditTimeFormatter.setTimeZone(utc);
-        voteSegmentTimeFormatter.setTimeZone(utc);
-    }
 
     private SponsorBlockUtils() {
     }
@@ -215,62 +215,62 @@ public class SponsorBlockUtils {
 
     private static void submitNewSegment() {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             final long start = newSponsorSegmentStartMillis;
             final long end = newSponsorSegmentEndMillis;
-            final String videoId = VideoInformation.getVideoId();
-            final long videoLength = VideoInformation.getVideoLength();
+            final String videoId = SegmentPlaybackController.getVideoId();
+            final long videoLength = SegmentPlaybackController.getVideoLength();
             final SegmentCategory segmentCategory = newUserCreatedSegmentCategory;
             if (start < 0 || end < 0 || start >= end || videoLength <= 0 || videoId.isEmpty() || segmentCategory == null) {
-                LogHelper.printException(() -> "invalid parameters");
+                Logger.printException(() -> "invalid parameters");
                 return;
             }
             clearUnsubmittedSegmentTimes();
-            ReVancedUtils.runOnBackgroundThread(() -> {
-                SBRequester.submitSegments(videoId, segmentCategory.key, start, end, videoLength);
+            Utils.runOnBackgroundThread(() -> {
+                SBRequester.submitSegments(videoId, segmentCategory.keyValue, start, end, videoLength);
                 SegmentPlaybackController.executeDownloadSegments(videoId);
             });
         } catch (Exception e) {
-            LogHelper.printException(() -> "Unable to submit segment", e);
+            Logger.printException(() -> "Unable to submit segment", e);
         }
     }
 
     public static void onMarkLocationClicked() {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             newSponsorSegmentDialogShownMillis = VideoInformation.getVideoTime();
 
             new AlertDialog.Builder(SponsorBlockViewController.getOverLaysViewGroupContext())
-                    .setTitle(str("sb_new_segment_title"))
-                    .setMessage(str("sb_new_segment_mark_time_as_question",
+                    .setTitle(str("revanced_sb_new_segment_title"))
+                    .setMessage(str("revanced_sb_new_segment_mark_time_as_question",
                             newSponsorSegmentDialogShownMillis / 60000,
                             newSponsorSegmentDialogShownMillis / 1000 % 60,
                             newSponsorSegmentDialogShownMillis % 1000))
                     .setNeutralButton(android.R.string.cancel, null)
-                    .setNegativeButton(str("sb_new_segment_mark_start"), newSponsorSegmentDialogListener)
-                    .setPositiveButton(str("sb_new_segment_mark_end"), newSponsorSegmentDialogListener)
+                    .setNegativeButton(str("revanced_sb_new_segment_mark_start"), newSponsorSegmentDialogListener)
+                    .setPositiveButton(str("revanced_sb_new_segment_mark_end"), newSponsorSegmentDialogListener)
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onMarkLocationClicked failure", ex);
+            Logger.printException(() -> "onMarkLocationClicked failure", ex);
         }
     }
 
     public static void onPublishClicked() {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             if (newSponsorSegmentStartMillis < 0 || newSponsorSegmentEndMillis < 0) {
-                ReVancedUtils.showToastShort(str("sb_new_segment_mark_locations_first"));
+                Utils.showToastShort(str("revanced_sb_new_segment_mark_locations_first"));
             } else if (newSponsorSegmentStartMillis >= newSponsorSegmentEndMillis) {
-                ReVancedUtils.showToastShort(str("sb_new_segment_start_is_before_end"));
+                Utils.showToastShort(str("revanced_sb_new_segment_start_is_before_end"));
             } else if (!newSponsorSegmentPreviewed && newSponsorSegmentStartMillis != 0) {
-                ReVancedUtils.showToastLong(str("sb_new_segment_preview_segment_first"));
+                Utils.showToastLong(str("revanced_sb_new_segment_preview_segment_first"));
             } else {
                 long length = (newSponsorSegmentEndMillis - newSponsorSegmentStartMillis) / 1000;
                 long start = (newSponsorSegmentStartMillis) / 1000;
                 long end = (newSponsorSegmentEndMillis) / 1000;
                 new AlertDialog.Builder(SponsorBlockViewController.getOverLaysViewGroupContext())
-                        .setTitle(str("sb_new_segment_confirm_title"))
-                        .setMessage(str("sb_new_segment_confirm_content",
+                        .setTitle(str("revanced_sb_new_segment_confirm_title"))
+                        .setMessage(str("revanced_sb_new_segment_confirm_content",
                                 start / 60, start % 60,
                                 end / 60, end % 60,
                                 length / 60, length % 60))
@@ -279,36 +279,23 @@ public class SponsorBlockUtils {
                         .show();
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onPublishClicked failure", ex);
+            Logger.printException(() -> "onPublishClicked failure", ex);
         }
     }
 
     public static void onVotingClicked(@NonNull Context context) {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             SponsorSegment[] segments = SegmentPlaybackController.getSegments();
             if (segments == null || segments.length == 0) {
                 // Button is hidden if no segments exist.
                 // But if prior video had segments, and current video does not,
                 // then the button persists until the overlay fades out (this is intentional, as abruptly hiding the button is jarring).
-                ReVancedUtils.showToastShort(str("sb_vote_no_segments"));
+                Utils.showToastShort(str("revanced_sb_vote_no_segments"));
                 return;
             }
 
             // use same time formatting as shown in the video player
-            final long videoLength = VideoInformation.getVideoLength();
-            final String formatPattern;
-            if (videoLength < (10 * 60 * 1000)) {
-                formatPattern = "m:ss.SSS"; // less than 10 minutes
-            } else if (videoLength < (60 * 60 * 1000)) {
-                formatPattern = "mm:ss.SSS"; // less than 1 hour
-            } else if (videoLength < (10 * 60 * 60 * 1000)) {
-                formatPattern = "H:mm:ss.SSS"; // less than 10 hours
-            } else {
-                formatPattern = "HH:mm:ss.SSS"; // why is this on YouTube
-            }
-            voteSegmentTimeFormatter.applyPattern(formatPattern);
-
             final int numberOfSegments = segments.length;
             CharSequence[] titles = new CharSequence[numberOfSegments];
             for (int i = 0; i < numberOfSegments; i++) {
@@ -319,9 +306,9 @@ public class SponsorBlockUtils {
                 StringBuilder htmlBuilder = new StringBuilder();
                 htmlBuilder.append(String.format("<b><font color=\"#%06X\">⬤</font> %s<br>",
                         segment.category.color, segment.category.title));
-                htmlBuilder.append(voteSegmentTimeFormatter.format(new Date(segment.start)));
+                htmlBuilder.append(getTimeStamp(segment.start, true));
                 if (segment.category != SegmentCategory.HIGHLIGHT) {
-                    htmlBuilder.append(" to ").append(voteSegmentTimeFormatter.format(new Date(segment.end)));
+                    htmlBuilder.append(" to ").append(getTimeStamp(segment.end, true));
                 }
                 htmlBuilder.append("</b>");
                 if (i + 1 != numberOfSegments) // prevents trailing new line after last segment
@@ -333,13 +320,13 @@ public class SponsorBlockUtils {
                     .setItems(titles, segmentVoteClickListener)
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onVotingClicked failure", ex);
+            Logger.printException(() -> "onVotingClicked failure", ex);
         }
     }
 
     private static void onNewCategorySelect(@NonNull SponsorSegment segment, @NonNull Context context) {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             final SegmentCategory[] values = SegmentCategory.categoriesWithoutHighlights();
             CharSequence[] titles = new CharSequence[values.length];
             for (int i = 0; i < values.length; i++) {
@@ -347,30 +334,30 @@ public class SponsorBlockUtils {
             }
 
             new AlertDialog.Builder(context)
-                    .setTitle(str("sb_new_segment_choose_category"))
+                    .setTitle(str("revanced_sb_new_segment_choose_category"))
                     .setItems(titles, (dialog, which) -> SBRequester.voteToChangeCategoryOnBackgroundThread(segment, values[which]))
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onNewCategorySelect failure", ex);
+            Logger.printException(() -> "onNewCategorySelect failure", ex);
         }
     }
 
     public static void onPreviewClicked() {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             if (newSponsorSegmentStartMillis < 0 || newSponsorSegmentEndMillis < 0) {
-                ReVancedUtils.showToastShort(str("sb_new_segment_mark_locations_first"));
+                Utils.showToastShort(str("revanced_sb_new_segment_mark_locations_first"));
             } else if (newSponsorSegmentStartMillis >= newSponsorSegmentEndMillis) {
-                ReVancedUtils.showToastShort(str("sb_new_segment_start_is_before_end"));
+                Utils.showToastShort(str("revanced_sb_new_segment_start_is_before_end"));
             } else {
                 SegmentPlaybackController.removeUnsubmittedSegments(); // If user hits preview more than once before playing.
                 SegmentPlaybackController.addUnsubmittedSegment(
                         new SponsorSegment(SegmentCategory.UNSUBMITTED, null,
                                 newSponsorSegmentStartMillis, newSponsorSegmentEndMillis, false));
-                VideoInformation.seekTo(newSponsorSegmentStartMillis - 2500);
+                VideoInformation.seekTo(newSponsorSegmentStartMillis - 2500, SegmentPlaybackController.getVideoLength());
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onPreviewClicked failure", ex);
+            Logger.printException(() -> "onPreviewClicked failure", ex);
         }
     }
 
@@ -380,27 +367,27 @@ public class SponsorBlockUtils {
             return;
         }
         segment.recordedAsSkipped = true;
-        final long totalTimeSkipped = SettingsEnum.SB_LOCAL_TIME_SAVED_MILLISECONDS.getLong() + segment.length();
-        SettingsEnum.SB_LOCAL_TIME_SAVED_MILLISECONDS.saveValue(totalTimeSkipped);
-        SettingsEnum.SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS.saveValue(SettingsEnum.SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS.getInt() + 1);
+        final long totalTimeSkipped = Settings.SB_LOCAL_TIME_SAVED_MILLISECONDS.get() + segment.length();
+        Settings.SB_LOCAL_TIME_SAVED_MILLISECONDS.save(totalTimeSkipped);
+        Settings.SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS.save(Settings.SB_LOCAL_TIME_SAVED_NUMBER_SEGMENTS.get() + 1);
 
-        if (SettingsEnum.SB_TRACK_SKIP_COUNT.getBoolean()) {
-            ReVancedUtils.runOnBackgroundThread(() -> SBRequester.sendSegmentSkippedViewedRequest(segment));
+        if (Settings.SB_TRACK_SKIP_COUNT.get()) {
+            Utils.runOnBackgroundThread(() -> SBRequester.sendSegmentSkippedViewedRequest(segment));
         }
     }
 
     public static void onEditByHandClicked() {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             new AlertDialog.Builder(SponsorBlockViewController.getOverLaysViewGroupContext())
-                    .setTitle(str("sb_new_segment_edit_by_hand_title"))
-                    .setMessage(str("sb_new_segment_edit_by_hand_content"))
+                    .setTitle(str("revanced_sb_new_segment_edit_by_hand_title"))
+                    .setMessage(str("revanced_sb_new_segment_edit_by_hand_content"))
                     .setNeutralButton(android.R.string.cancel, null)
-                    .setNegativeButton(str("sb_new_segment_mark_start"), editByHandDialogListener)
-                    .setPositiveButton(str("sb_new_segment_mark_end"), editByHandDialogListener)
+                    .setNegativeButton(str("revanced_sb_new_segment_mark_start"), editByHandDialogListener)
+                    .setPositiveButton(str("revanced_sb_new_segment_mark_end"), editByHandDialogListener)
                     .show();
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onEditByHandClicked failure", ex);
+            Logger.printException(() -> "onEditByHandClicked failure", ex);
         }
     }
 
@@ -417,14 +404,14 @@ public class SponsorBlockUtils {
         String minutesFormatted = statsNumberFormatter.format(minutes);
         if (hours > 0) {
             String hoursFormatted = statsNumberFormatter.format(hours);
-            return str("sb_stats_saved_hour_format", hoursFormatted, minutesFormatted);
+            return str("revanced_sb_stats_saved_hour_format", hoursFormatted, minutesFormatted);
         }
         final long seconds = duration.getSeconds() % 60;
         String secondsFormatted = statsNumberFormatter.format(seconds);
         if (minutes > 0) {
-            return str("sb_stats_saved_minute_format", minutesFormatted, secondsFormatted);
+            return str("revanced_sb_stats_saved_minute_format", minutesFormatted, secondsFormatted);
         }
-        return str("sb_stats_saved_second_format", secondsFormatted);
+        return str("revanced_sb_stats_saved_second_format", secondsFormatted);
     }
 
     private static class EditByHandSaveDialogListener implements DialogInterface.OnClickListener {
@@ -437,9 +424,14 @@ public class SponsorBlockUtils {
                 final EditText editText = this.editText.get();
                 if (editText == null) return;
 
+                long videoTime = VideoInformation.getVideoTime();
+                long convertedTime = videoTime >= 86400000 // 24:00:00
+                        ? getVideoTime(editText.getText().toString())
+                        : (Objects.requireNonNull(manualEditTimeFormatter.parse(editText.getText().toString())).getTime());
+
                 long time = (which == DialogInterface.BUTTON_NEUTRAL) ?
-                        VideoInformation.getVideoTime() :
-                        (Objects.requireNonNull(manualEditTimeFormatter.parse(editText.getText().toString())).getTime());
+                        videoTime :
+                        convertedTime;
 
                 if (settingStart)
                     newSponsorSegmentStartMillis = Math.max(time, 0);
@@ -451,9 +443,9 @@ public class SponsorBlockUtils {
                             DialogInterface.BUTTON_NEGATIVE :
                             DialogInterface.BUTTON_POSITIVE);
             } catch (ParseException e) {
-                ReVancedUtils.showToastLong(str("sb_new_segment_edit_by_hand_parse_error"));
+                Utils.showToastLong(str("revanced_sb_new_segment_edit_by_hand_parse_error"));
             } catch (Exception ex) {
-                LogHelper.printException(() -> "EditByHandSaveDialogListener failure", ex);
+                Logger.printException(() -> "EditByHandSaveDialogListener failure", ex);
             }
         }
     }

@@ -1,7 +1,7 @@
 package app.revanced.integrations.youtube.patches.utils;
 
-import static app.revanced.integrations.youtube.patches.seekbar.SeekBarPatch.ORIGINAL_SEEKBAR_COLOR;
-import static app.revanced.integrations.youtube.patches.seekbar.SeekBarPatch.resumedProgressBarColor;
+import static app.revanced.integrations.youtube.patches.player.PlayerPatch.ORIGINAL_SEEKBAR_COLOR;
+import static app.revanced.integrations.youtube.patches.player.PlayerPatch.resumedProgressBarColor;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -12,7 +12,7 @@ import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.settings.Settings;
 
 @SuppressWarnings("unused")
 public class ProgressBarDrawable extends Drawable {
@@ -21,7 +21,7 @@ public class ProgressBarDrawable extends Drawable {
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        if (SettingsEnum.HIDE_SEEKBAR_THUMBNAIL.getBoolean()) {
+        if (Settings.HIDE_SEEKBAR_THUMBNAIL.get()) {
             return;
         }
         paint.setColor(resumedProgressBarColor(ORIGINAL_SEEKBAR_COLOR));

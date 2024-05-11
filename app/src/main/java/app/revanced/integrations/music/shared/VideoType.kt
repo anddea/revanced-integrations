@@ -1,7 +1,7 @@
 package app.revanced.integrations.music.shared
 
-import app.revanced.integrations.music.utils.Event
-import app.revanced.integrations.music.utils.LogHelper
+import app.revanced.integrations.shared.utils.Event
+import app.revanced.integrations.shared.utils.Logger
 
 /**
  * Music video type
@@ -25,9 +25,9 @@ enum class VideoType {
         fun setFromString(enumName: String) {
             val newType = nameToVideoType[enumName]
             if (newType == null) {
-                LogHelper.printException { "Unknown VideoType encountered: $enumName" }
+                Logger.printException { "Unknown VideoType encountered: $enumName" }
             } else if (current != newType) {
-                LogHelper.printDebug { "VideoType changed to: $newType" }
+                Logger.printDebug { "VideoType changed to: $newType" }
                 current = newType
             }
         }
@@ -55,5 +55,9 @@ enum class VideoType {
 
     fun isMusicVideo(): Boolean {
         return this == MUSIC_VIDEO_TYPE_OMV
+    }
+
+    fun isPodCast(): Boolean {
+        return this == MUSIC_VIDEO_TYPE_PODCAST_EPISODE
     }
 }

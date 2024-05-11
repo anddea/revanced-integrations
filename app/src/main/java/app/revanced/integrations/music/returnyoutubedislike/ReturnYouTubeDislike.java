@@ -1,8 +1,8 @@
 package app.revanced.integrations.music.returnyoutubedislike;
 
-import static app.revanced.integrations.music.utils.StringRef.str;
+import static app.revanced.integrations.shared.returnyoutubedislike.ReturnYouTubeDislike.Vote;
+import static app.revanced.integrations.shared.utils.StringRef.str;
 
-import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -36,11 +36,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import app.revanced.integrations.music.returnyoutubedislike.requests.RYDVoteData;
-import app.revanced.integrations.music.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
-import app.revanced.integrations.music.settings.SettingsEnum;
-import app.revanced.integrations.music.utils.LogHelper;
-import app.revanced.integrations.music.utils.ReVancedUtils;
+import app.revanced.integrations.music.settings.Settings;
+import app.revanced.integrations.shared.returnyoutubedislike.requests.RYDVoteData;
+import app.revanced.integrations.shared.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
 
 /**
  * Because Litho creates spans using multiple threads, this entire class supports multithreading as well.
@@ -54,273 +54,104 @@ public class ReturnYouTubeDislike {
      * <a href="https://developer.android.com/topic/performance/vitals/anr"/>
      */
     private static final long MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH = 4000;
+
+    /**
+     * How long to retain successful RYD fetches.
+     */
+    private static final long CACHE_TIMEOUT_SUCCESS_MILLISECONDS = 7 * 60 * 1000; // 7 Minutes
+
+    /**
+     * How long to retain unsuccessful RYD fetches,
+     * and also the minimum time before retrying again.
+     */
+    private static final long CACHE_TIMEOUT_FAILURE_MILLISECONDS = 3 * 60 * 1000; // 3 Minutes
+
     /**
      * Unique placeholder character, used to detect if a segmented span already has dislikes added to it.
      * Can be any almost any non-visible character.
      */
-    private static final char MIDDLE_SEPARATOR_CHARACTER = '\u2009'; // 'narrow space' character
+    private static final char MIDDLE_SEPARATOR_CHARACTER = '◎'; // 'bullseye'
+
+    private static final int SEPARATOR_COLOR = 872415231;
+
     /**
-     * Cached lookup of RYD fetches.
+     * Cached lookup of all video ids.
      */
-    @GuardedBy("videoIdLockObject")
-    private static final Map<String, RYDCachedFetch> futureCache = new HashMap<>();
+    @GuardedBy("itself")
+    private static final Map<String, ReturnYouTubeDislike> fetchCache = new HashMap<>();
+
     /**
      * Used to send votes, one by one, in the same order the user created them.
      */
     private static final ExecutorService voteSerialExecutor = Executors.newSingleThreadExecutor();
-    /**
-     * Used to guard {@link #currentVideoId} and {@link #voteFetchFuture}.
-     */
-    private static final Object videoIdLockObject = new Object();
-    @Nullable
-    @GuardedBy("videoIdLockObject")
-    private static String currentVideoId;
-    /**
-     * Stores the results of the vote api fetch, and used as a barrier to wait until fetch completes.
-     */
-    @Nullable
-    @GuardedBy("videoIdLockObject")
-    private static Future<RYDVoteData> voteFetchFuture;
-    /**
-     * Optional current vote status of the UI.  Used to apply a user vote that was done on a previous video viewing.
-     */
-    @Nullable
-    @GuardedBy("videoIdLockObject")
-    private static Vote userVote;
-    /**
-     * Original dislike span, before modifications.
-     */
-    @Nullable
-    @GuardedBy("videoIdLockObject")
-    private static Spanned originalDislikeSpan;
-    /**
-     * Replacement like/dislike span that includes formatted dislikes.
-     * Used to prevent recreating the same span multiple times.
-     */
-    @Nullable
-    @GuardedBy("videoIdLockObject")
-    private static SpannableString replacementLikeDislikeSpan;
+
     /**
      * For formatting dislikes as number.
      */
     @GuardedBy("ReturnYouTubeDislike.class") // not thread safe
     private static CompactDecimalFormat dislikeCountFormatter;
+
     /**
      * For formatting dislikes as percentage.
      */
     @GuardedBy("ReturnYouTubeDislike.class")
     private static NumberFormat dislikePercentageFormatter;
 
-    private ReturnYouTubeDislike() {
-    } // only static methods
+    public static final Rect leftSeparatorBounds;
+    private static final Rect middleSeparatorBounds;
+
+    static {
+        DisplayMetrics dp = Objects.requireNonNull(Utils.getContext()).getResources().getDisplayMetrics();
+
+        leftSeparatorBounds = new Rect(0, 0,
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.2f, dp),
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, dp));
+        final int middleSeparatorSize =
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3.7f, dp);
+        middleSeparatorBounds = new Rect(0, 0, middleSeparatorSize, middleSeparatorSize);
+
+        ReturnYouTubeDislikeApi.toastOnConnectionError = Settings.RYD_TOAST_ON_CONNECTION_ERROR.get();
+    }
+
+    private final String videoId;
 
     /**
-     * Should be called after a user dislikes, or if the user changes settings for dislikes appearance.
+     * Stores the results of the vote api fetch, and used as a barrier to wait until fetch completes.
+     * Absolutely cannot be holding any lock during calls to {@link Future#get()}.
      */
-    public static void clearCache() {
-        synchronized (videoIdLockObject) {
-            replacementLikeDislikeSpan = null;
-        }
-    }
-
-    @Nullable
-    private static String getCurrentVideoId() {
-        synchronized (videoIdLockObject) {
-            return currentVideoId;
-        }
-    }
-
-    public static void setCurrentVideoId(@Nullable String videoId) {
-        synchronized (videoIdLockObject) {
-            final long now = System.currentTimeMillis();
-            futureCache.values().removeIf(value -> value.isExpired(now));
-            currentVideoId = videoId;
-            userVote = null;
-            voteFetchFuture = null;
-            originalDislikeSpan = null;
-            replacementLikeDislikeSpan = null;
-        }
-    }
-
-    @Nullable
-    private static Future<RYDVoteData> getVoteFetchFuture() {
-        synchronized (videoIdLockObject) {
-            return voteFetchFuture;
-        }
-    }
-
-    public static void newVideoLoaded(@NonNull String videoId) {
-        Objects.requireNonNull(videoId);
-
-        synchronized (videoIdLockObject) {
-            if (videoId.equals(currentVideoId)) {
-                return; // already loaded
-            }
-            setCurrentVideoId(videoId);
-
-            RYDCachedFetch entry = futureCache.get(videoId);
-            if (entry != null && entry.futureInProgressOrFinishedSuccessfully()) {
-                voteFetchFuture = entry.future;
-                return;
-            }
-            voteFetchFuture = ReVancedUtils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
-            futureCache.put(videoId, new RYDCachedFetch(voteFetchFuture, videoId));
-        }
-    }
-
-    public static Spanned onComponentCreated(Spanned span) {
-        try {
-            if (SettingsEnum.RYD_ENABLED.getBoolean()) {
-                return waitForFetchAndUpdateReplacementSpan(span);
-            }
-        } catch (Exception ex) {
-            LogHelper.printException(() -> "onShortsComponentCreated failure", ex);
-        }
-        return span;
-    }
-
-    // Alternatively, this could check if the span contains one of the custom created spans, but this is simple and quick.
-    private static boolean isPreviouslyCreatedSegmentedSpan(@NonNull Spanned span) {
-        return span.toString().indexOf(MIDDLE_SEPARATOR_CHARACTER) != -1;
-    }
-
-    @NonNull
-    private static Spanned waitForFetchAndUpdateReplacementSpan(@NonNull Spanned oldSpannable) {
-        try {
-            Future<RYDVoteData> fetchFuture = getVoteFetchFuture();
-            if (fetchFuture == null) {
-                return oldSpannable;
-            }
-            // Absolutely cannot be holding any lock during get().
-            RYDVoteData votingData = fetchFuture.get(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH, TimeUnit.MILLISECONDS);
-            if (votingData == null) {
-                return oldSpannable;
-            }
-
-            // Must check against existing replacements, after the fetch,
-            // otherwise concurrent threads can create the same replacement same multiple times.
-            // Also do the replacement comparison and creation in a single synchronized block.
-            synchronized (videoIdLockObject) {
-                if (originalDislikeSpan != null && replacementLikeDislikeSpan != null) {
-                    if (spansHaveEqualTextAndColor(oldSpannable, replacementLikeDislikeSpan)) {
-                        return oldSpannable;
-                    }
-                    if (spansHaveEqualTextAndColor(oldSpannable, originalDislikeSpan)) {
-                        return replacementLikeDislikeSpan;
-                    }
-                }
-                if (isPreviouslyCreatedSegmentedSpan(oldSpannable)) {
-                    // need to recreate using original, as oldSpannable has prior outdated dislike values
-                    if (originalDislikeSpan == null) {
-                        return oldSpannable;
-                    }
-                    oldSpannable = originalDislikeSpan;
-                }
-
-                // No replacement span exist, create it now.
-
-                if (userVote != null) {
-                    votingData.updateUsingVote(userVote);
-                }
-                originalDislikeSpan = oldSpannable;
-                replacementLikeDislikeSpan = createDislikeSpan(oldSpannable, votingData);
-
-                return replacementLikeDislikeSpan;
-            }
-        } catch (TimeoutException ignored) {
-        } catch (Exception e) {
-            LogHelper.printException(() -> "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
-        }
-        return oldSpannable;
-    }
-
-    public static void sendVote(@NonNull Vote vote) {
-        ReVancedUtils.verifyOnMainThread();
-        Objects.requireNonNull(vote);
-        try {
-            // Must make a local copy of videoId, since it may change between now and when the vote thread runs.
-            String videoIdToVoteFor = getCurrentVideoId();
-            if (videoIdToVoteFor == null) {
-                return;
-            }
-
-            voteSerialExecutor.execute(() -> {
-                try { // must wrap in try/catch to properly log exceptions
-                    String userId = getUserId();
-                    if (userId != null) {
-                        ReturnYouTubeDislikeApi.sendVote(videoIdToVoteFor, vote);
-                    }
-                } catch (Exception ex) {
-                    LogHelper.printException(() -> "Failed to send vote", ex);
-                }
-            });
-
-            setUserVote(vote);
-        } catch (Exception ex) {
-            LogHelper.printException(() -> "Error trying to send vote", ex);
-        }
-    }
-
-    public static void setUserVote(@NonNull Vote vote) {
-        Objects.requireNonNull(vote);
-        try {
-            // Update the downloaded vote data.
-            Future<RYDVoteData> future = getVoteFetchFuture();
-            if (future != null && future.isDone()) {
-                RYDVoteData voteData;
-                try {
-                    voteData = future.get(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH, TimeUnit.MILLISECONDS);
-                } catch (ExecutionException | InterruptedException | TimeoutException ex) {
-                    // Should never happen
-                    LogHelper.printException(() -> "Could not update vote data", ex);
-                    return;
-                }
-                if (voteData == null) {
-                    // RYD fetch failed
-                    return;
-                }
-
-                voteData.updateUsingVote(vote);
-            } // Else, vote will be applied after vote data is received
-
-            synchronized (videoIdLockObject) {
-                if (userVote != vote) {
-                    userVote = vote;
-                    clearCache(); // UI needs updating
-                }
-            }
-        } catch (Exception ex) {
-            LogHelper.printException(() -> "setUserVote failure", ex);
-        }
-    }
+    private final Future<RYDVoteData> future;
 
     /**
-     * Must call off main thread, as this will make a network call if user is not yet registered.
-     *
-     * @return ReturnYouTubeDislike user ID. If user registration has never happened
-     * and the network call fails, this returns NULL.
+     * Time this instance and the fetch future was created.
+     */
+    private final long timeFetched;
+
+    /**
+     * Optional current vote status of the UI.  Used to apply a user vote that was done on a previous video viewing.
      */
     @Nullable
-    private static String getUserId() {
-        ReVancedUtils.verifyOffMainThread();
+    @GuardedBy("this")
+    private Vote userVote;
 
-        String userId = SettingsEnum.RYD_USER_ID.getString();
-        if (!userId.isEmpty()) {
-            return userId;
-        }
+    /**
+     * Original dislike span, before modifications.
+     */
+    @Nullable
+    @GuardedBy("this")
+    private Spanned originalDislikeSpan;
 
-        userId = ReturnYouTubeDislikeApi.registerAsNewUser();
-        if (userId != null) {
-            SettingsEnum.RYD_USER_ID.saveValue(userId);
-        }
-        return userId;
-    }
+    /**
+     * Replacement like/dislike span that includes formatted dislikes.
+     * Used to prevent recreating the same span multiple times.
+     */
+    @Nullable
+    @GuardedBy("this")
+    private SpannableString replacementLikeDislikeSpan;
 
     @NonNull
-    private static SpannableString createDislikeSpan(@NonNull Spanned oldSpannable, @NonNull RYDVoteData voteData) {
-        // Note: Some locales use right to left layout (arabic, hebrew, etc),
-        // and care must be taken to retain the existing RTL encoding character on the likes string,
-        // otherwise text will incorrectly show as left to right.
+    private static SpannableString createDislikeSpan(@NonNull Spanned oldSpannable,
+                                                     @NonNull RYDVoteData voteData) {
+        // Note: Some locales use right to left layout (Arabic, Hebrew, etc).
         // If making changes to this code, change device settings to a RTL language and verify layout is correct.
         String oldLikesString = oldSpannable.toString();
 
@@ -341,21 +172,14 @@ public class ReturnYouTubeDislike {
             return newSpanUsingStylingOfAnotherSpan(oldSpannable, hiddenMessageString);
         }
 
-        SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append("\u2009\u2009");
-        final boolean compactLayout = SettingsEnum.RYD_COMPACT_LAYOUT.getBoolean();
-        final int separatorColor = 0x58AAAAAA; // light gray
-        DisplayMetrics dp = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getDisplayMetrics();
+        SpannableStringBuilder builder = new SpannableStringBuilder("\u2009\u2009");
+        final boolean compactLayout = Settings.RYD_COMPACT_LAYOUT.get();
 
         if (!compactLayout) {
-            // left separator
-            final Rect leftSeparatorBounds = new Rect(0, 0,
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.2f, dp),
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, dp));
             String leftSeparatorString = "\u200E    "; // u200E = left to right character
             Spannable leftSeparatorSpan = new SpannableString(leftSeparatorString);
             ShapeDrawable shapeDrawable = new ShapeDrawable(new RectShape());
-            shapeDrawable.getPaint().setColor(separatorColor);
+            shapeDrawable.getPaint().setColor(SEPARATOR_COLOR);
             shapeDrawable.setBounds(leftSeparatorBounds);
             leftSeparatorSpan.setSpan(new VerticallyCenteredImageSpan(shapeDrawable), 1, 2,
                     Spannable.SPAN_INCLUSIVE_EXCLUSIVE); // drawable cannot overwrite RTL or LTR character
@@ -370,20 +194,29 @@ public class ReturnYouTubeDislike {
                 ? "  " + MIDDLE_SEPARATOR_CHARACTER + "  "
                 : "  \u2009" + MIDDLE_SEPARATOR_CHARACTER + "\u2009  "; // u2009 = 'narrow space' character
         final int shapeInsertionIndex = middleSeparatorString.length() / 2;
-        final int middleSeparatorSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3.7f, dp);
-        final Rect middleSeparatorBounds = new Rect(0, 0, middleSeparatorSize, middleSeparatorSize);
         Spannable middleSeparatorSpan = new SpannableString(middleSeparatorString);
         ShapeDrawable shapeDrawable = new ShapeDrawable(new OvalShape());
-        shapeDrawable.getPaint().setColor(separatorColor);
+        shapeDrawable.getPaint().setColor(SEPARATOR_COLOR);
         shapeDrawable.setBounds(middleSeparatorBounds);
-        middleSeparatorSpan.setSpan(new VerticallyCenteredImageSpan(shapeDrawable), shapeInsertionIndex, shapeInsertionIndex + 1,
-                Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        // Use original text width if using Rolling Number,
+        // to ensure the replacement styled span has the same width as the measured String,
+        // otherwise layout can be broken (especially on devices with small system font sizes).
+        middleSeparatorSpan.setSpan(
+                new VerticallyCenteredImageSpan(shapeDrawable),
+                shapeInsertionIndex, shapeInsertionIndex + 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         builder.append(middleSeparatorSpan);
 
         // dislikes
         builder.append(newSpannableWithDislikes(oldSpannable, voteData));
 
         return new SpannableString(builder);
+    }
+
+    /**
+     * @return If the text is likely for a previously created likes/dislikes segmented span.
+     */
+    public static boolean isPreviouslyCreatedSegmentedSpan(@NonNull String text) {
+        return text.indexOf(MIDDLE_SEPARATOR_CHARACTER) >= 0;
     }
 
     /**
@@ -423,15 +256,12 @@ public class ReturnYouTubeDislike {
 
     private static SpannableString newSpannableWithDislikes(@NonNull Spanned sourceStyling, @NonNull RYDVoteData voteData) {
         return newSpanUsingStylingOfAnotherSpan(sourceStyling,
-                SettingsEnum.RYD_DISLIKE_PERCENTAGE.getBoolean()
+                Settings.RYD_DISLIKE_PERCENTAGE.get()
                         ? formatDislikePercentage(voteData.getDislikePercentage())
                         : formatDislikeCount(voteData.getDislikeCount()));
     }
 
     private static SpannableString newSpanUsingStylingOfAnotherSpan(@NonNull Spanned sourceStyle, @NonNull CharSequence newSpanText) {
-        newSpanText = ReVancedUtils.isRightToLeftTextLayout()
-                ? "\u2066" + newSpanText + "\u2069"
-                : newSpanText;
         SpannableString destination = new SpannableString(newSpanText);
         Object[] spans = sourceStyle.getSpans(0, sourceStyle.length(), Object.class);
         for (Object span : spans) {
@@ -440,10 +270,7 @@ public class ReturnYouTubeDislike {
         return destination;
     }
 
-    /**
-     * @noinspection deprecation
-     */
-    @SuppressLint("ObsoleteSdkInt")
+    /** @noinspection deprecation*/
     private static String formatDislikeCount(long dislikeCount) {
         synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
             if (dislikeCountFormatter == null) {
@@ -451,21 +278,20 @@ public class ReturnYouTubeDislike {
                 // such as Arabic which formats "1.234" into "۱,۲۳٤"
                 // But YouTube disregards locale specific number characters
                 // and instead shows english number characters everywhere.
-                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
+                Locale locale = Objects.requireNonNull(Utils.getContext()).getResources().getConfiguration().locale;
+                Logger.printDebug(() -> "Locale: " + locale);
                 dislikeCountFormatter = CompactDecimalFormat.getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT);
             }
             return dislikeCountFormatter.format(dislikeCount);
         }
     }
 
-    /**
-     * @noinspection deprecation
-     */
-    @SuppressLint("ObsoleteSdkInt")
+    /** @noinspection deprecation*/
     private static String formatDislikePercentage(float dislikePercentage) {
         synchronized (ReturnYouTubeDislike.class) { // number formatter is not thread safe, must synchronize
             if (dislikePercentageFormatter == null) {
-                Locale locale = Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getConfiguration().locale;
+                Locale locale = Objects.requireNonNull(Utils.getContext()).getResources().getConfiguration().locale;
+                Logger.printDebug(() -> "Locale: " + locale);
                 dislikePercentageFormatter = NumberFormat.getPercentInstance(locale);
             }
             if (dislikePercentage >= 0.01) { // at least 1%
@@ -477,54 +303,221 @@ public class ReturnYouTubeDislike {
         }
     }
 
-    public enum Vote {
-        LIKE(1),
-        DISLIKE(-1),
-        LIKE_REMOVE(0);
+    @NonNull
+    public static ReturnYouTubeDislike getFetchForVideoId(@Nullable String videoId) {
+        Objects.requireNonNull(videoId);
+        synchronized (fetchCache) {
+            // Remove any expired entries.
+            final long now = System.currentTimeMillis();
+            fetchCache.values().removeIf(value -> {
+                final boolean expired = value.isExpired(now);
+                if (expired)
+                    Logger.printDebug(() -> "Removing expired fetch: " + value.videoId);
+                return expired;
+            });
 
-        public final int value;
-
-        Vote(int value) {
-            this.value = value;
+            ReturnYouTubeDislike fetch = fetchCache.get(videoId);
+            if (fetch == null) {
+                fetch = new ReturnYouTubeDislike(videoId);
+                fetchCache.put(videoId, fetch);
+            }
+            return fetch;
         }
     }
 
     /**
-     * Simple wrapper to cache a Future.
+     * Should be called if the user changes dislikes appearance settings.
      */
-    private static class RYDCachedFetch {
-        /**
-         * How long to retain cached RYD fetches.
-         */
-        static final long CACHE_TIMEOUT_MILLISECONDS = 10 * 60 * 1000; // 10 Minutes
-
-        @NonNull
-        final Future<RYDVoteData> future;
-        final String videoId;
-        final long timeFetched;
-
-        RYDCachedFetch(@NonNull Future<RYDVoteData> future, @NonNull String videoId) {
-            this.future = Objects.requireNonNull(future);
-            this.videoId = Objects.requireNonNull(videoId);
-            this.timeFetched = System.currentTimeMillis();
-        }
-
-        boolean isExpired(long now) {
-            return (now - timeFetched) > CACHE_TIMEOUT_MILLISECONDS;
-        }
-
-        boolean futureInProgressOrFinishedSuccessfully() {
-            try {
-                return !future.isDone() || future.get(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH, TimeUnit.MILLISECONDS) != null;
-            } catch (ExecutionException | InterruptedException | TimeoutException ex) {
-                LogHelper.printException(() -> "failed to lookup cache", ex); // will never happen
+    public static void clearAllUICaches() {
+        synchronized (fetchCache) {
+            for (ReturnYouTubeDislike fetch : fetchCache.values()) {
+                fetch.clearUICache();
             }
-            return false;
+        }
+    }
+
+    private ReturnYouTubeDislike(@NonNull String videoId) {
+        this.videoId = Objects.requireNonNull(videoId);
+        this.timeFetched = System.currentTimeMillis();
+        this.future = Utils.submitOnBackgroundThread(() -> ReturnYouTubeDislikeApi.fetchVotes(videoId));
+    }
+
+    private boolean isExpired(long now) {
+        final long timeSinceCreation = now - timeFetched;
+        if (timeSinceCreation < CACHE_TIMEOUT_FAILURE_MILLISECONDS) {
+            return false; // Not expired, even if the API call failed.
+        }
+        if (timeSinceCreation > CACHE_TIMEOUT_SUCCESS_MILLISECONDS) {
+            return true; // Always expired.
+        }
+        // Only expired if the fetch failed (API null response).
+        return (!fetchCompleted() || getFetchData(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH) == null);
+    }
+
+    @Nullable
+    public RYDVoteData getFetchData(long maxTimeToWait) {
+        try {
+            return future.get(maxTimeToWait, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException ex) {
+            Logger.printDebug(() -> "Waited but future was not complete after: " + maxTimeToWait + "ms");
+        } catch (ExecutionException | InterruptedException ex) {
+            Logger.printException(() -> "Future failure ", ex); // will never happen
+        }
+        return null;
+    }
+
+    /**
+     * @return if the RYD fetch call has completed.
+     */
+    public boolean fetchCompleted() {
+        return future.isDone();
+    }
+
+    private synchronized void clearUICache() {
+        if (replacementLikeDislikeSpan != null) {
+            Logger.printDebug(() -> "Clearing replacement span for: " + videoId);
+        }
+        replacementLikeDislikeSpan = null;
+    }
+
+    /**
+     * Must call off main thread, as this will make a network call if user is not yet registered.
+     *
+     * @return ReturnYouTubeDislike user ID. If user registration has never happened
+     * and the network call fails, this returns NULL.
+     */
+    @Nullable
+    private static String getUserId() {
+        Utils.verifyOffMainThread();
+
+        String userId = Settings.RYD_USER_ID.get();
+        if (!userId.isEmpty()) {
+            return userId;
+        }
+
+        userId = ReturnYouTubeDislikeApi.registerAsNewUser();
+        if (userId != null) {
+            Settings.RYD_USER_ID.save(userId);
+        }
+        return userId;
+    }
+
+    @NonNull
+    public String getVideoId() {
+        return videoId;
+    }
+
+    /**
+     * @return the replacement span containing dislikes, or the original span if RYD is not available.
+     */
+    @NonNull
+    public synchronized Spanned getDislikesSpan(@NonNull Spanned original) {
+        return waitForFetchAndUpdateReplacementSpan(original);
+    }
+
+    @NonNull
+    private Spanned waitForFetchAndUpdateReplacementSpan(@NonNull Spanned original) {
+        try {
+            RYDVoteData votingData = getFetchData(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH);
+            if (votingData == null) {
+                Logger.printDebug(() -> "Cannot add dislike to UI (RYD data not available)");
+                return original;
+            }
+
+            synchronized (this) {
+                if (originalDislikeSpan != null && replacementLikeDislikeSpan != null) {
+                    if (spansHaveEqualTextAndColor(original, replacementLikeDislikeSpan)) {
+                        Logger.printDebug(() -> "Ignoring previously created dislikes span of data: " + videoId);
+                        return original;
+                    }
+                    if (spansHaveEqualTextAndColor(original, originalDislikeSpan)) {
+                        Logger.printDebug(() -> "Replacing span with previously created dislike span of data: " + videoId);
+                        return replacementLikeDislikeSpan;
+                    }
+                }
+                if (isPreviouslyCreatedSegmentedSpan(original.toString())) {
+                    // need to recreate using original, as original has prior outdated dislike values
+                    if (originalDislikeSpan == null) {
+                        // Should never happen.
+                        Logger.printDebug(() -> "Cannot add dislikes - original span is null. videoId: " + videoId);
+                        return original;
+                    }
+                    original = originalDislikeSpan;
+                }
+
+                // No replacement span exist, create it now.
+
+                if (userVote != null) {
+                    votingData.updateUsingVote(userVote);
+                }
+                originalDislikeSpan = original;
+                replacementLikeDislikeSpan = createDislikeSpan(original, votingData);
+                Logger.printDebug(() -> "Replaced: '" + originalDislikeSpan + "' with: '"
+                        + replacementLikeDislikeSpan + "'" + " using video: " + videoId);
+
+                return replacementLikeDislikeSpan;
+            }
+        } catch (Exception e) {
+            Logger.printException(() -> "waitForFetchAndUpdateReplacementSpan failure", e); // should never happen
+        }
+        return original;
+    }
+
+    public void sendVote(@NonNull Vote vote) {
+        Utils.verifyOnMainThread();
+        Objects.requireNonNull(vote);
+        try {
+            setUserVote(vote);
+
+            voteSerialExecutor.execute(() -> {
+                try { // Must wrap in try/catch to properly log exceptions.
+                    ReturnYouTubeDislikeApi.sendVote(getUserId(), videoId, vote);
+                } catch (Exception ex) {
+                    Logger.printException(() -> "Failed to send vote", ex);
+                }
+            });
+        } catch (Exception ex) {
+            Logger.printException(() -> "Error trying to send vote", ex);
+        }
+    }
+
+    /**
+     * Sets the current user vote value, and does not send the vote to the RYD API.
+     * <p>
+     * Only used to set value if thumbs up/down is already selected on video load.
+     */
+    public void setUserVote(@NonNull Vote vote) {
+        Objects.requireNonNull(vote);
+        try {
+            Logger.printDebug(() -> "setUserVote: " + vote);
+
+            synchronized (this) {
+                userVote = vote;
+                clearUICache();
+            }
+
+            if (future.isDone()) {
+                // Update the fetched vote data.
+                RYDVoteData voteData = getFetchData(MAX_MILLISECONDS_TO_BLOCK_UI_WAITING_FOR_FETCH);
+                if (voteData == null) {
+                    // RYD fetch failed.
+                    Logger.printDebug(() -> "Cannot update UI (vote data not available)");
+                    return;
+                }
+                voteData.updateUsingVote(vote);
+            } // Else, vote will be applied after fetch completes.
+
+        } catch (Exception ex) {
+            Logger.printException(() -> "setUserVote failure", ex);
         }
     }
 }
 
+/**
+ * Vertically centers a Spanned Drawable.
+ */
 class VerticallyCenteredImageSpan extends ImageSpan {
+
     public VerticallyCenteredImageSpan(Drawable drawable) {
         super(drawable);
     }
@@ -538,11 +531,12 @@ class VerticallyCenteredImageSpan extends ImageSpan {
             Paint.FontMetricsInt paintMetrics = paint.getFontMetricsInt();
             final int fontHeight = paintMetrics.descent - paintMetrics.ascent;
             final int drawHeight = bounds.bottom - bounds.top;
+            final int halfDrawHeight = drawHeight / 2;
             final int yCenter = paintMetrics.ascent + fontHeight / 2;
 
-            fontMetrics.ascent = yCenter - drawHeight / 2;
+            fontMetrics.ascent = yCenter - halfDrawHeight;
             fontMetrics.top = fontMetrics.ascent;
-            fontMetrics.bottom = yCenter + drawHeight / 2;
+            fontMetrics.bottom = yCenter + halfDrawHeight;
             fontMetrics.descent = fontMetrics.bottom;
         }
         return bounds.right;

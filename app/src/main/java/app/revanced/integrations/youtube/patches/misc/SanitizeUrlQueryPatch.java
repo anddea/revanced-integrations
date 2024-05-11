@@ -2,7 +2,7 @@ package app.revanced.integrations.youtube.patches.misc;
 
 import android.content.Intent;
 
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.settings.Settings;
 
 /**
  * @noinspection ALL
@@ -37,7 +37,7 @@ public final class SanitizeUrlQueryPatch {
      * @return URL string without query parameters if possible, otherwise the original string.
      */
     public static String stripQueryParameters(final String urlString) {
-        if (!SettingsEnum.SANITIZE_SHARING_LINKS.getBoolean())
+        if (!Settings.SANITIZE_SHARING_LINKS.get())
             return urlString;
 
         return urlString.replaceAll(NEW_TRACKING_REGEX, "").replaceAll(OLD_TRACKING_REGEX, "");

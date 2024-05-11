@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
-import app.revanced.integrations.reddit.settings.SettingsEnum;
+import app.revanced.integrations.reddit.settings.Settings;
+import app.revanced.integrations.shared.utils.Logger;
 
 @SuppressWarnings("unused")
 public class OpenLinksExternallyPatch {
@@ -17,15 +18,15 @@ public class OpenLinksExternallyPatch {
      * @param uri      The URL to be opened in the default browser.
      */
     public static boolean openLinksExternally(Activity activity, Uri uri) {
-        if (activity == null || uri == null || !SettingsEnum.OPEN_LINKS_EXTERNALLY.getBoolean())
-            return false;
-
         try {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(uri);
-            activity.startActivity(intent);
-            return true;
-        } catch (Exception ignored) {
+            if (activity != null && uri != null && Settings.OPEN_LINKS_EXTERNALLY.get()) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(uri);
+                activity.startActivity(intent);
+                return true;
+            }
+        } catch (Exception e) {
+            Logger.printException(() -> "Can not open URL: " + uri, e);
         }
         return false;
     }

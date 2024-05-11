@@ -2,8 +2,7 @@ package app.revanced.integrations.youtube.swipecontrols.controller.gesture
 
 import android.view.MotionEvent
 import app.revanced.integrations.youtube.patches.swipe.SwipeControlsPatch.isEngagementOverlayVisible
-import app.revanced.integrations.youtube.settings.SettingsEnum
-import app.revanced.integrations.youtube.shared.LockModeState
+import app.revanced.integrations.youtube.swipecontrols.SwipeControlsConfigurationProvider
 import app.revanced.integrations.youtube.swipecontrols.SwipeControlsHostActivity
 import app.revanced.integrations.youtube.swipecontrols.controller.gesture.core.BaseGestureController
 import app.revanced.integrations.youtube.swipecontrols.controller.gesture.core.SwipeDetector
@@ -16,7 +15,8 @@ import app.revanced.integrations.youtube.swipecontrols.misc.toPoint
  * @param controller reference to the main swipe controller
  */
 class PressToSwipeController(
-    private val controller: SwipeControlsHostActivity
+    private val controller: SwipeControlsHostActivity,
+    private val config: SwipeControlsConfigurationProvider,
 ) : BaseGestureController(controller) {
     /**
      * monitors if the user is currently in a swipe session.
@@ -59,7 +59,7 @@ class PressToSwipeController(
         distanceY: Double
     ): Boolean {
         // cancel if locked
-        if (!SettingsEnum.SWIPE_LOCK_MODE.boolean && LockModeState.current.isLocked())
+        if (!config.enableSwipeControlsLockMode && config.isScreenLocked)
             return false
         // cancel if not in swipe session or vertical
         if (!isInSwipeSession || currentSwipe != SwipeDetector.SwipeDirection.VERTICAL)

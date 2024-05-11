@@ -1,7 +1,7 @@
 package app.revanced.integrations.youtube.shared
 
-import app.revanced.integrations.youtube.utils.Event
-import app.revanced.integrations.youtube.utils.LogHelper
+import app.revanced.integrations.shared.utils.Event
+import app.revanced.integrations.shared.utils.Logger
 
 /**
  * LockModeState.
@@ -22,9 +22,9 @@ enum class LockModeState {
         fun setFromString(enumName: String) {
             val newType = nameToLockModeState[enumName]
             if (newType == null) {
-                LogHelper.printException { "Unknown LockModeState encountered: $enumName" }
+                Logger.printException { "Unknown LockModeState encountered: $enumName" }
             } else if (current != newType) {
-                LogHelper.printDebug { "LockModeState changed to: $newType" }
+                Logger.printDebug { "LockModeState changed to: $newType" }
                 current = newType
             }
         }

@@ -3,13 +3,13 @@ package app.revanced.integrations.youtube.swipecontrols.controller
 import android.app.Activity
 import android.util.TypedValue
 import android.view.ViewGroup
-import app.revanced.integrations.youtube.settings.SettingsEnum
+import app.revanced.integrations.shared.utils.ResourceUtils.ResourceType
+import app.revanced.integrations.shared.utils.ResourceUtils.getIdentifier
+import app.revanced.integrations.shared.utils.StringRef.str
+import app.revanced.integrations.shared.utils.Utils
+import app.revanced.integrations.youtube.settings.Settings
 import app.revanced.integrations.youtube.swipecontrols.misc.Rectangle
 import app.revanced.integrations.youtube.swipecontrols.misc.applyDimension
-import app.revanced.integrations.youtube.utils.ReVancedUtils
-import app.revanced.integrations.youtube.utils.ResourceType
-import app.revanced.integrations.youtube.utils.ResourceUtils
-import app.revanced.integrations.youtube.utils.StringRef.str
 import kotlin.math.min
 
 /**
@@ -47,7 +47,7 @@ class SwipeZonesController(
      */
     private val MAXIMUM_OVERLAY_RECT_SIZE = 50
 
-    private var overlayRectSize = SettingsEnum.SWIPE_OVERLAY_RECT.int
+    private var overlayRectSize = Settings.SWIPE_OVERLAY_RECT_SIZE.get()
         set(value) {
             field = value
             validateOverlayRectSize()
@@ -56,7 +56,6 @@ class SwipeZonesController(
     init {
         validateOverlayRectSize()
     }
-
     /**
      * 20dp, in pixels
      */
@@ -75,25 +74,26 @@ class SwipeZonesController(
     /**
      * id for R.id.player_view
      */
-    private val playerViewId = ResourceUtils.identifier("player_view", ResourceType.ID, host)
+    private val playerViewId = getIdentifier("player_view", ResourceType.ID, host)
 
     /**
      * current bounding rectangle of the player
      */
     private var playerRect: Rectangle? = null
 
-    private fun validateOverlayRectSize(): Int {
+    /**
+     * validate if provided rect size is not bigger than MAX available size
+     */
+    private fun validateOverlayRectSize() {
         if (overlayRectSize <= 0) {
             throw IllegalArgumentException("Overlay rectangle size must be greater than 0.")
         }
 
         if (overlayRectSize > MAXIMUM_OVERLAY_RECT_SIZE) {
-            ReVancedUtils.showToastLong(str("revanced_swipe_overlay_rect_warning", MAXIMUM_OVERLAY_RECT_SIZE.toString()))
-            SettingsEnum.SWIPE_OVERLAY_RECT.resetToDefault()
-            return SettingsEnum.SWIPE_OVERLAY_RECT.int // Return the default value
+            Utils.showToastLong(str("revanced_swipe_overlay_rect_size_warning", MAXIMUM_OVERLAY_RECT_SIZE.toString()))
+            Settings.SWIPE_OVERLAY_RECT_SIZE.resetToDefault()
+            overlayRectSize = Settings.SWIPE_OVERLAY_RECT_SIZE.get()
         }
-
-        return overlayRectSize
     }
 
     /**
