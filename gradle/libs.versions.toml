@@ -1,5 +1,5 @@
 [versions]
-agp = "8.0.2"        # do not update if possible
+agp = "8.0.2" # do not update if possible
 annotation = "1.7.1"
 lang3 = "3.14.0"
 # noinspection GradleDependency
@@ -9,7 +9,7 @@ newpipeextractor = "v0.24.0"
 [libraries]
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "lang3" }
-newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
+newpipeextractor = { module = "com.github.TeamNewPipe:NewPipeExtractor", version.ref = "newpipeextractor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
