@@ -127,6 +127,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     public ReVancedPreferenceFragment() {
     }
 
+    @SuppressLint("NewApi")
     public void setPreferenceFragmentToolbar(final String key) {
         PreferenceFragment fragment;
         switch (key) {
