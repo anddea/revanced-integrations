@@ -1,3 +1,17 @@
+# [0.152.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.8...v0.152.0-dev.9) (2024-05-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hide action buttons:** Some action buttons are not hidden properly ([c37f238](https://github.com/anddea/revanced-integrations/commit/c37f238d9b6baad5b202f192433d0dc773f14b9c))
+* **YouTube - Hide feed components:** `Hide mix playlists` setting hides components in channel profile ([dc151ae](https://github.com/anddea/revanced-integrations/commit/dc151ae6d9d1c886f7a746f9f17a92b786e46d13))
+* **YouTube - Spoof format stream data:** Some Uris are not hooked ([7e49ab3](https://github.com/anddea/revanced-integrations/commit/7e49ab3eef85cc0932ac66392422fff57b1fa82c))
+
+
+### Features
+
+* **YouTube Music - Player components:** Add `Hide audio video switch toggle` setting ([68238da](https://github.com/anddea/revanced-integrations/commit/68238dad79efacfe286a0e56413217e64d2e7fb1))
+
 # [0.152.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.7...v0.152.0-dev.8) (2024-05-16)
 
 
