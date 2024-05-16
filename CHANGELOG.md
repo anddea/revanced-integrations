@@ -1,3 +1,10 @@
+# [0.152.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.9...v0.152.0-dev.10) (2024-05-16)
+
+
+### Bug Fixes
+
+* **YouTube - Shorts components:** Update pattern for hide disabled comments ([c7b2fd4](https://github.com/anddea/revanced-integrations/commit/c7b2fd43bbd04622f81e40811dca791695c3c896))
+
 # [0.152.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.8...v0.152.0-dev.9) (2024-05-16)
 
 
