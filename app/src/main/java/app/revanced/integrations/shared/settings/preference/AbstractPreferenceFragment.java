@@ -181,6 +181,12 @@ public abstract class AbstractPreferenceFragment extends PreferenceFragment {
         pref.setEnabled(setting.isAvailable());
     }
 
+    /**
+     * Updates the summary of a ListPreference based on its current value.
+     *
+     * @param listPreference The ListPreference to update.
+     * @param setting        The Setting object to get the value from.
+     */
     public static void updateListPreferenceSummary(ListPreference listPreference, Setting<?> setting) {
         String objectStringValue = setting.get().toString();
         int entryIndex = listPreference.findIndexOfValue(objectStringValue);

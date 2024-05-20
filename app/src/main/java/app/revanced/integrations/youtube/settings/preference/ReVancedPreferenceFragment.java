@@ -39,10 +39,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
-import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.Setting;
@@ -208,6 +205,13 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         }
     }
 
+    // List to store all preferences
+    private List<Preference> allPreferences = new ArrayList<>();
+    // Map to store dependencies: key is the preference key, value is a list of dependent preferences
+    private Map<String, List<Preference>> dependencyMap = new HashMap<>();
+    // Set to track already added preferences to avoid duplicates
+    private Set<String> addedPreferences = new HashSet<>();
+
     @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle bundle) {
@@ -218,14 +222,21 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             mSharedPreferences = mPreferenceManager.getSharedPreferences();
             addPreferencesFromResource(getXmlIdentifier("revanced_prefs"));
 
+            // Initialize toolbars and other UI elements
             setPreferenceFragmentToolbar("revanced_preference_screen_ryd");
             setPreferenceFragmentToolbar("revanced_preference_screen_sb");
             setPreferenceScreenToolbar();
 
+            // Initialize ReVanced settings
             ReVancedSettingsPreference.initializeReVancedSettings(getActivity());
 
+            // Import/export
             setBackupRestorePreference();
 
+            // Store all preferences and their dependencies
+            storeAllPreferences(getPreferenceScreen());
+
+            // Load and set initial preferences states
             for (Setting<?> setting : Setting.allLoadedSettings()) {
                 final Preference preference = mPreferenceManager.findPreference(setting.key);
 
@@ -243,6 +254,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                 }
             }
 
+            // Register preference change listener
             mSharedPreferences.registerOnSharedPreferenceChangeListener(listener);
         } catch (Throwable th) {
             Logger.printException(() -> "Error during onCreate()", th);
@@ -253,6 +265,104 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     public void onDestroy() {
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
         super.onDestroy();
+    }
+
+    /**
+     * Recursively stores all preferences and their dependencies.
+     *
+     * @param preferenceGroup The preference group to scan.
+     */
+    private void storeAllPreferences(PreferenceGroup preferenceGroup) {
+        for (int i = 0; i < preferenceGroup.getPreferenceCount(); i++) {
+            Preference preference = preferenceGroup.getPreference(i);
+            allPreferences.add(preference);
+            Logger.printDebug(() -> "SearchFragment: Stored preference with key: " + preference.getKey());
+
+            // Store dependencies
+            if (preference.getDependency() != null) {
+                String dependencyKey = preference.getDependency();
+                dependencyMap.computeIfAbsent(dependencyKey, k -> new ArrayList<>()).add(preference);
+                Logger.printDebug(() -> "SearchFragment: Added dependency for key: " + dependencyKey + " on preference: " + preference.getKey());
+            }
+
+            if (preference instanceof PreferenceGroup) {
+                storeAllPreferences((PreferenceGroup) preference);
+            }
+        }
+    }
+
+    /**
+     * Filters preferences based on the search query.
+     *
+     * @param query The search query.
+     */
+    public void filterPreferences(String query) {
+        if (query == null || query.isEmpty()) {
+            resetPreferences();
+            return;
+        }
+
+        query = query.toLowerCase();
+        PreferenceScreen preferenceScreen = getPreferenceScreen();
+        preferenceScreen.removeAll();
+        addedPreferences.clear();
+
+        for (Preference preference : allPreferences) {
+            if (preference.getTitle().toString().toLowerCase().contains(query)) {
+                Logger.printDebug(() -> "SearchFragment: Adding preference with title: " + preference.getTitle());
+                addPreferenceWithDependencies(preferenceScreen, preference);
+            }
+        }
+    }
+
+    /**
+     * Recursively adds a preference along with its dependencies
+     * (android:dependency attibute in XML).
+     *
+     * @param preferenceGroup The preference group to add to.
+     * @param preference The preference to add.
+     */
+    private void addPreferenceWithDependencies(PreferenceGroup preferenceGroup, Preference preference) {
+        String key = preference.getKey();
+        if (key != null && !addedPreferences.contains(key)) {
+            // Add dependencies first
+            if (preference.getDependency() != null) {
+                String dependencyKey = preference.getDependency();
+                Logger.printDebug(() -> "SearchFragment: Adding preference dependency for key: " + dependencyKey);
+                Preference dependency = mPreferenceManager.findPreference(dependencyKey);
+                if (dependency != null) {
+                    addPreferenceWithDependencies(preferenceGroup, dependency);
+                } else {
+                    Logger.printDebug(() -> "SearchFragment: Dependency not found for key: " + dependencyKey);
+                    // Skip adding this preference as its dependency is not found
+                    return;
+                }
+            }
+
+            preferenceGroup.addPreference(preference);
+            addedPreferences.add(key);
+            Logger.printDebug(() -> "SearchFragment: Added preference with key: " + key);
+
+            // Add dependent preferences
+            if (dependencyMap.containsKey(key)) {
+                Logger.printDebug(() -> "SearchFragment: Adding dependent preferences for key: " + key);
+                for (Preference dependentPreference : dependencyMap.get(key)) {
+                    addPreferenceWithDependencies(preferenceGroup, dependentPreference);
+                }
+            }
+        }
+    }
+
+    /**
+     * Resets the preference screen to its original state.
+     */
+    private void resetPreferences() {
+        PreferenceScreen preferenceScreen = getPreferenceScreen();
+        preferenceScreen.removeAll();
+        for (Preference preference : allPreferences) {
+            preferenceScreen.addPreference(preference);
+        }
+        Logger.printDebug(() -> "SearchFragment: Reset preferences completed.");
     }
 
     /**
