@@ -1,3 +1,15 @@
+# [0.152.0-dev.11](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.10...v0.152.0-dev.11) (2024-05-20)
+
+
+### Features
+
+* **YouTube - Settings:** Add search bar for settings ([681cea9](https://github.com/anddea/revanced-integrations/commit/681cea9aa1d1fdf0c88c7a240d2bf92a053782e7))
+
+
+### Reverts
+
+* default landscape mode timeout ([f46db5d](https://github.com/anddea/revanced-integrations/commit/f46db5da6ac9ada68ed92b03e434a686b07d27a3))
+
 # [0.152.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.9...v0.152.0-dev.10) (2024-05-16)
 
 
