@@ -121,6 +121,8 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     public static PreferenceManager mPreferenceManager;
     private SharedPreferences mSharedPreferences;
 
+    private PreferenceScreen originalPreferenceScreen;
+
     public ReVancedPreferenceFragment() {
     }
 
@@ -256,6 +258,11 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
 
             // Register preference change listener
             mSharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+
+            originalPreferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
+            for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
+                originalPreferenceScreen.addPreference(getPreferenceScreen().getPreference(i));
+            }
         } catch (Throwable th) {
             Logger.printException(() -> "Error during onCreate()", th);
         }
@@ -359,8 +366,8 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     private void resetPreferences() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.removeAll();
-        for (Preference preference : allPreferences) {
-            preferenceScreen.addPreference(preference);
+        for (int i = 0; i < originalPreferenceScreen.getPreferenceCount(); i++) {
+            preferenceScreen.addPreference(originalPreferenceScreen.getPreference(i));
         }
         Logger.printDebug(() -> "SearchFragment: Reset preferences completed.");
     }
