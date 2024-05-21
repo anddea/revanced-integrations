@@ -15,6 +15,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toolbar;
@@ -29,6 +30,7 @@ import app.revanced.integrations.youtube.returnyoutubedislike.ReturnYouTubeDisli
 import app.revanced.integrations.youtube.settings.Settings;
 
 /** @noinspection deprecation*/
+@SuppressWarnings("deprecation")
 public class ReturnYouTubeDislikePreferenceFragment extends PreferenceFragment {
 
     /**
@@ -163,6 +165,12 @@ public class ReturnYouTubeDislikePreferenceFragment extends PreferenceFragment {
                 return false;
             });
             aboutCategory.addPreference(aboutWebsitePreference);
+
+            // remove the search bar
+            View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
+            if (searchBar != null) {
+                searchBar.setVisibility(View.GONE);
+            }
         } catch (Exception ex) {
             Logger.printException(() -> "onCreate failure", ex);
         }
@@ -177,4 +185,23 @@ public class ReturnYouTubeDislikePreferenceFragment extends PreferenceFragment {
         toolbarTextView.setText(ResourceUtils.getString("revanced_extended_settings_title"));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Hide the search bar
+        View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
+        if (searchBar != null) {
+            searchBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Show the search bar
+        View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
+        if (searchBar != null) {
+            searchBar.setVisibility(View.VISIBLE);
+        }
+    }
 }

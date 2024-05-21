@@ -25,6 +25,7 @@ import android.preference.SwitchPreference;
 import android.text.Html;
 import android.text.InputType;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import app.revanced.integrations.R;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.settings.preference.ResettableEditTextPreference;
 import app.revanced.integrations.shared.utils.Logger;
@@ -177,8 +179,34 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             addAboutCategory(context, preferenceScreen);
 
             updateUI();
+
+            // remove the search bar
+            View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
+            if (searchBar != null) {
+                searchBar.setVisibility(View.GONE);
+            }
         } catch (Exception ex) {
             Logger.printException(() -> "onCreate failure", ex);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Hide the search bar
+        View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
+        if (searchBar != null) {
+            searchBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Show the search bar
+        View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
+        if (searchBar != null) {
+            searchBar.setVisibility(View.VISIBLE);
         }
     }
 
