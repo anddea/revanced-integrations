@@ -118,9 +118,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         PreferenceFragment fragment;
         switch (key) {
             case "revanced_preference_screen_ryd" -> fragment = new ReturnYouTubeDislikePreferenceFragment();
-
             case "revanced_preference_screen_sb" -> fragment = new SponsorBlockPreferenceFragment();
-
             default -> {
                 Logger.printException(() -> "Unknown key: " + key);
                 return;
@@ -307,21 +305,97 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     /**
      * Filters preferences based on the search query.
      *
+     * This method searches within the preference's title, summary, entries, and values.
+     *
      * @param query The search query.
      */
     public void filterPreferences(String query) {
+        // If the query is null or empty, reset preferences to their default state
         if (query == null || query.isEmpty()) {
+            Logger.printDebug(() -> "SearchFragment: Query is null or empty. Resetting preferences.");
             resetPreferences();
             return;
         }
 
+        // Convert the query to lowercase for case-insensitive search
         query = query.toLowerCase();
+        // String finalQuery = query;
+        // Logger.printDebug(() -> "SearchFragment: Query after conversion to lowercase: " + finalQuery);
+
+        // Get the preference screen to modify
         PreferenceScreen preferenceScreen = getPreferenceScreen();
+        // Remove all current preferences from the screen
         preferenceScreen.removeAll();
+        // Clear the list of added preferences to start fresh
         addedPreferences.clear();
 
+        // Loop through all available preferences
         for (Preference preference : allPreferences) {
-            if (preference.getTitle().toString().toLowerCase().contains(query)) {
+            // Check if the title contains the query string
+            boolean matches = preference.getTitle().toString().toLowerCase().contains(query);
+
+            // Debugging title match
+            if (matches) {
+                Logger.printDebug(() -> "SearchFragment: Title matched: " + preference.getTitle());
+            }
+
+            // Check if the summary contains the query string
+            CharSequence summary = preference.getSummary();
+            if (!matches && summary != null && summary.toString().toLowerCase().contains(query)) {
+                matches = true;
+                Logger.printDebug(() -> "SearchFragment: Summary matched: " + summary);
+            }
+
+            // Additional check for SwitchPreference with summaryOn and summaryOff
+            if (!matches && preference instanceof SwitchPreference) {
+                SwitchPreference switchPreference = (SwitchPreference) preference;
+                CharSequence summaryOn = switchPreference.getSummaryOn();
+                CharSequence summaryOff = switchPreference.getSummaryOff();
+
+                if (summaryOn != null && summaryOn.toString().toLowerCase().contains(query)) {
+                    matches = true;
+                    Logger.printDebug(() -> "SearchFragment: SummaryOn matched: " + summaryOn);
+                }
+
+                if (summaryOff != null && summaryOff.toString().toLowerCase().contains(query)) {
+                    matches = true;
+                    Logger.printDebug(() -> "SearchFragment: SummaryOff matched: " + summaryOff);
+                }
+            }
+
+            // Check if the entries or values contain the query string (for ListPreference)
+            if (!matches && preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
+
+                // Check entries
+                CharSequence[] entries = listPreference.getEntries();
+                if (entries != null) {
+                    for (CharSequence entry : entries) {
+                        if (entry.toString().toLowerCase().contains(query)) {
+                            matches = true;
+                            Logger.printDebug(() -> "SearchFragment: Entry matched: " + entry);
+                            break;
+                        }
+                    }
+                }
+
+                // Check entry values
+                if (!matches) {
+                    CharSequence[] entryValues = listPreference.getEntryValues();
+                    if (entryValues != null) {
+                        for (CharSequence entryValue : entryValues) {
+                            if (entryValue.toString().toLowerCase().contains(query)) {
+                                matches = true;
+                                Logger.printDebug(() -> "SearchFragment: EntryValue matched: " + entryValue);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // If the preference matches the query, add it to the preference screen
+            if (matches) {
                 Logger.printDebug(() -> "SearchFragment: Adding preference with title: " + preference.getTitle());
                 addPreferenceWithDependencies(preferenceScreen, preference);
             }
