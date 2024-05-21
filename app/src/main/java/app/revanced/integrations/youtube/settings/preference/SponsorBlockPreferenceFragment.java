@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -190,6 +191,11 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
         }
     }
 
+
+    /**
+     * Hide the search bar when the fragment is resumed
+     * to prevent it from being shown on the wrong fragment.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -200,9 +206,18 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
         }
     }
 
+    /**
+     * Show the search bar when the fragment is paused, otherwise it will not be shown on the main settings fragment.
+     * Need also a check for ReVancedPreferenceFragment to prevent the search bar from appearing
+     * for a split second when switching between fragments.
+     */
     @Override
     public void onPause() {
         super.onPause();
+        Fragment currentFragment = getFragmentManager().findFragmentById(getIdIdentifier("revanced_settings_fragments"));
+        // the search bar should only be shown on the main settings fragment
+        if (!(currentFragment instanceof ReVancedPreferenceFragment)) return;
+
         // Show the search bar
         View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
         if (searchBar != null) {
