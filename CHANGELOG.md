@@ -1,3 +1,17 @@
+# [0.152.0-dev.12](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.11...v0.152.0-dev.12) (2024-05-21)
+
+
+### Bug Fixes
+
+* **YouTube - Searchbar:** Hide searchbar in RYD and Sponsorblock sections ([#13](https://github.com/anddea/revanced-integrations/issues/13)) ([ed60bea](https://github.com/anddea/revanced-integrations/commit/ed60bead5cde292e7f264a2db9ab7a1b96c52d95))
+* **YouTube - Searchbar:** Prevent searchbar appearing briefly when switching between fragments ([#14](https://github.com/anddea/revanced-integrations/issues/14)) ([584e6e3](https://github.com/anddea/revanced-integrations/commit/584e6e38f2344a511fb39b9a6c99d5dba21feca8))
+* **YouTube - Searchbar:** Restore original settings page if query is empty ([#12](https://github.com/anddea/revanced-integrations/issues/12)) ([9592bd5](https://github.com/anddea/revanced-integrations/commit/9592bd5449ff5c92f407790f0802da11bb461900))
+
+
+### Features
+
+* **YouTube - Settings:** Add ability to search in summaries and list entries ([fbe9e53](https://github.com/anddea/revanced-integrations/commit/fbe9e53aff8aeb13c9307e14b0cbce6aaf465282))
+
 # [0.152.0-dev.11](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.10...v0.152.0-dev.11) (2024-05-20)
 
 
