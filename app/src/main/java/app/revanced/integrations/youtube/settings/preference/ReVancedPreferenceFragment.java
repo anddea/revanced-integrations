@@ -1,16 +1,5 @@
 package app.revanced.integrations.youtube.settings.preference;
 
-import static app.revanced.integrations.shared.settings.preference.AbstractPreferenceFragment.showRestartDialog;
-import static app.revanced.integrations.shared.settings.preference.AbstractPreferenceFragment.updateListPreferenceSummary;
-import static app.revanced.integrations.shared.utils.ResourceUtils.getIdIdentifier;
-import static app.revanced.integrations.shared.utils.ResourceUtils.getXmlIdentifier;
-import static app.revanced.integrations.shared.utils.StringRef.str;
-import static app.revanced.integrations.shared.utils.Utils.getChildView;
-import static app.revanced.integrations.shared.utils.Utils.showToastShort;
-import static app.revanced.integrations.youtube.settings.Settings.DEFAULT_PLAYBACK_SPEED;
-import static app.revanced.integrations.youtube.settings.Settings.HIDE_PREVIEW_COMMENT;
-import static app.revanced.integrations.youtube.settings.Settings.HIDE_PREVIEW_COMMENT_TYPE;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -21,26 +10,11 @@ import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
+import android.preference.*;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toolbar;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
-
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.utils.Logger;
@@ -48,25 +22,37 @@ import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.utils.ExtendedUtils;
 import app.revanced.integrations.youtube.utils.ThemeUtils;
 
+import java.io.*;
+import java.util.*;
+
+import static app.revanced.integrations.shared.settings.preference.AbstractPreferenceFragment.showRestartDialog;
+import static app.revanced.integrations.shared.settings.preference.AbstractPreferenceFragment.updateListPreferenceSummary;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getIdIdentifier;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getXmlIdentifier;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.Utils.getChildView;
+import static app.revanced.integrations.shared.utils.Utils.showToastShort;
+import static app.revanced.integrations.youtube.settings.Settings.*;
+
 /**
  * @noinspection ALL
  */
+@SuppressWarnings("deprecation")
 public class ReVancedPreferenceFragment extends PreferenceFragment {
-    private final int READ_REQUEST_CODE = 42;
-    private final int WRITE_REQUEST_CODE = 43;
-    public static boolean settingImportInProgress = false;
+    private static final int READ_REQUEST_CODE = 42;
+    private static final int WRITE_REQUEST_CODE = 43;
+    static boolean settingImportInProgress = false;
 
     @SuppressLint("SuspiciousIndentation")
     private final SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
         try {
             Setting<?> setting = Setting.getSettingFromPath(str);
-            if (setting == null) {
-                return;
-            }
+
+            if (setting == null) return;
+
             Preference mPreference = findPreference(str);
-            if (mPreference == null) {
-                return;
-            }
+
+            if (mPreference == null) return;
 
             if (mPreference instanceof SwitchPreference switchPreference) {
                 BooleanSetting boolSetting = (BooleanSetting) setting;
@@ -118,24 +104,23 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         }
     };
 
-    public static PreferenceManager mPreferenceManager;
+    static PreferenceManager mPreferenceManager;
     private SharedPreferences mSharedPreferences;
 
     private PreferenceScreen originalPreferenceScreen;
 
     public ReVancedPreferenceFragment() {
+        // Required empty public constructor
     }
 
     @SuppressLint("NewApi")
     public void setPreferenceFragmentToolbar(final String key) {
         PreferenceFragment fragment;
         switch (key) {
-            case "revanced_preference_screen_ryd" -> {
-                fragment = new ReturnYouTubeDislikePreferenceFragment();
-            }
-            case "revanced_preference_screen_sb" -> {
-                fragment = new SponsorBlockPreferenceFragment();
-            }
+            case "revanced_preference_screen_ryd" -> fragment = new ReturnYouTubeDislikePreferenceFragment();
+
+            case "revanced_preference_screen_sb" -> fragment = new SponsorBlockPreferenceFragment();
+
             default -> {
                 Logger.printException(() -> "Unknown key: " + key);
                 return;
@@ -173,37 +158,54 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         SortedMap<String, PreferenceScreen> preferenceScreenMap = new TreeMap<>();
 
         PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
-        for (int i = 0; i < rootPreferenceScreen.getPreferenceCount(); ++i) {
-            if (rootPreferenceScreen.getPreference(i) instanceof PreferenceGroup preferenceGroup) {
-                putPreferenceScreenMap(preferenceScreenMap, preferenceGroup);
-                for (int j = 0; j < preferenceGroup.getPreferenceCount(); ++j) {
-                    if (preferenceGroup.getPreference(j) instanceof PreferenceGroup nestedPreferenceGroup) {
-                        putPreferenceScreenMap(preferenceScreenMap, nestedPreferenceGroup);
-                        for (int k = 0; k < nestedPreferenceGroup.getPreferenceCount(); ++k) {
-                            if (nestedPreferenceGroup.getPreference(k) instanceof PreferenceGroup childPreferenceGroup) {
-                                putPreferenceScreenMap(preferenceScreenMap, childPreferenceGroup);
-                            }
-                        }
-                    }
+        for (Preference preference : getAllPreferencesBy(rootPreferenceScreen)) {
+
+            if (!(preference instanceof PreferenceGroup preferenceGroup)) continue;
+
+            putPreferenceScreenMap(preferenceScreenMap, preferenceGroup);
+
+            for (Preference childPreference : getAllPreferencesBy(preferenceGroup)) {
+
+                if (!(childPreference instanceof PreferenceGroup nestedPreferenceGroup)) continue;
+
+                putPreferenceScreenMap(preferenceScreenMap, nestedPreferenceGroup);
+
+                for (Preference nestedPreference : getAllPreferencesBy(nestedPreferenceGroup)) {
+                    if (!(nestedPreference instanceof PreferenceGroup childPreferenceGroup)) continue;
+
+                    putPreferenceScreenMap(preferenceScreenMap, childPreferenceGroup);
                 }
             }
+
         }
 
         for (PreferenceScreen mPreferenceScreen : preferenceScreenMap.values()) {
-            mPreferenceScreen.setOnPreferenceClickListener(preferenceScreen -> {
-                Dialog preferenceScreenDialog = mPreferenceScreen.getDialog();
-                ViewGroup rootView = (ViewGroup) preferenceScreenDialog.findViewById(android.R.id.content).getParent();
-                Toolbar toolbar = new Toolbar(preferenceScreen.getContext());
-                toolbar.setTitle(preferenceScreen.getTitle());
-                toolbar.setNavigationIcon(ThemeUtils.getBackButtonDrawable());
-                toolbar.setNavigationOnClickListener(view -> preferenceScreenDialog.dismiss());
-                int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-                toolbar.setTitleMargin(margin, 0, margin, 0);
-                TextView toolbarTextView = getChildView(toolbar, view -> view instanceof TextView);
-                toolbarTextView.setTextColor(ThemeUtils.getTextColor());
-                rootView.addView(toolbar, 0);
-                return false;
-            });
+            mPreferenceScreen.setOnPreferenceClickListener(
+                    preferenceScreen -> {
+                        Dialog preferenceScreenDialog = mPreferenceScreen.getDialog();
+                        ViewGroup rootView = (ViewGroup) preferenceScreenDialog
+                                .findViewById(android.R.id.content)
+                                .getParent();
+
+                        Toolbar toolbar = new Toolbar(preferenceScreen.getContext());
+
+                        toolbar.setTitle(preferenceScreen.getTitle());
+                        toolbar.setNavigationIcon(ThemeUtils.getBackButtonDrawable());
+                        toolbar.setNavigationOnClickListener(view -> preferenceScreenDialog.dismiss());
+
+                        int margin = (int) TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()
+                        );
+
+                        toolbar.setTitleMargin(margin, 0, margin, 0);
+
+                        TextView toolbarTextView = getChildView(toolbar, TextView.class::isInstance);
+
+                        toolbarTextView.setTextColor(ThemeUtils.getTextColor());
+                        rootView.addView(toolbar, 0);
+                        return false;
+                    }
+            );
         }
     }
 
@@ -260,11 +262,15 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             mSharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 
             originalPreferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
-            for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
-                originalPreferenceScreen.addPreference(getPreferenceScreen().getPreference(i));
-            }
-        } catch (Throwable th) {
+            copyPreferences(getPreferenceScreen(), originalPreferenceScreen);
+        } catch (Exception th) {
             Logger.printException(() -> "Error during onCreate()", th);
+        }
+    }
+
+    private void copyPreferences(PreferenceScreen source, PreferenceScreen destination) {
+        for (Preference preference : getAllPreferencesBy(source)) {
+            destination.addPreference(preference);
         }
     }
 
@@ -292,8 +298,8 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                 Logger.printDebug(() -> "SearchFragment: Added dependency for key: " + dependencyKey + " on preference: " + preference.getKey());
             }
 
-            if (preference instanceof PreferenceGroup) {
-                storeAllPreferences((PreferenceGroup) preference);
+            if (preference instanceof PreferenceGroup preferenceGroup1) {
+                storeAllPreferences(preferenceGroup1);
             }
         }
     }
@@ -327,7 +333,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
      * (android:dependency attibute in XML).
      *
      * @param preferenceGroup The preference group to add to.
-     * @param preference The preference to add.
+     * @param preference      The preference to add.
      */
     private void addPreferenceWithDependencies(PreferenceGroup preferenceGroup, Preference preference) {
         String key = preference.getKey();
@@ -366,10 +372,17 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     private void resetPreferences() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.removeAll();
-        for (int i = 0; i < originalPreferenceScreen.getPreferenceCount(); i++) {
-            preferenceScreen.addPreference(originalPreferenceScreen.getPreference(i));
-        }
+        for (Preference preference : getAllPreferencesBy(originalPreferenceScreen))
+            preferenceScreen.addPreference(preference);
+
         Logger.printDebug(() -> "SearchFragment: Reset preferences completed.");
+    }
+
+    private List<Preference> getAllPreferencesBy(PreferenceGroup preferenceGroup) {
+        List<Preference> preferences = new ArrayList<>();
+        for (int i = 0; i < preferenceGroup.getPreferenceCount(); i++)
+            preferences.add(preferenceGroup.getPreference(i));
+        return preferences;
     }
 
     /**
