@@ -1,13 +1,11 @@
 package app.revanced.integrations.youtube.patches.misc.requests;
 
-import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.ANDROID_INNER_TUBE_BODY;
-import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.GET_STORYBOARD_SPEC_RENDERER;
-import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.TV_EMBED_INNER_TUBE_BODY;
-import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.WEB_INNER_TUBE_BODY;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import app.revanced.integrations.shared.requests.Requester;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.patches.misc.StoryboardRenderer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,20 +15,9 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import app.revanced.integrations.shared.requests.Requester;
-import app.revanced.integrations.shared.utils.Logger;
-import app.revanced.integrations.shared.utils.Utils;
-import app.revanced.integrations.youtube.patches.misc.StoryboardRenderer;
+import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.*;
 
 public class StoryboardRendererRequester {
-
-    /**
-     * For videos that have no storyboard.
-     * Usually for low resolution videos as old as YouTube itself.
-     * Does not include paid videos where the renderer fetch fails.
-     */
-    private static final StoryboardRenderer emptyStoryboard
-            = new StoryboardRenderer(null, false, null);
 
     private StoryboardRendererRequester() {
     }
@@ -88,22 +75,18 @@ public class StoryboardRendererRequester {
      * @return StoryboardRenderer or null if playabilityStatus is not OK.
      */
     @Nullable
-    private static StoryboardRenderer getStoryboardRendererUsingBody(@NonNull String innerTubeBody,
-                                                                     @NonNull String videoId) {
+    private static StoryboardRenderer getStoryboardRendererUsingBody(@NonNull String videoId, @NonNull String innerTubeBody) {
         final JSONObject playerResponse = fetchPlayerResponse(innerTubeBody);
-        if (playerResponse == null)
-            return null;
+        if (playerResponse == null) return null;
 
         final String playabilityStatus = getPlayabilityStatus(playerResponse);
 
-        if (playabilityStatus.equals("OK"))
-            return getStoryboardRendererUsingResponse(playerResponse);
+        if (playabilityStatus.equals("OK")) return getStoryboardRendererUsingResponse(videoId, playerResponse);
 
         // Get the StoryboardRenderer from Premieres Video.
         // In Android client, YouTube used weird base64-like encoding for PlayerResponse.
         // So additional fetching with WEB client is required for getting unSerialized ones.
-        if (playabilityStatus.equals("LIVE_STREAM_OFFLINE"))
-            return getTrailerStoryboardRenderer(videoId);
+        if (playabilityStatus.equals("LIVE_STREAM_OFFLINE")) return getTrailerStoryboardRenderer(videoId);
         return null;
     }
 
@@ -112,14 +95,12 @@ public class StoryboardRendererRequester {
         try {
             final JSONObject playerResponse = fetchPlayerResponse(String.format(WEB_INNER_TUBE_BODY, videoId));
 
-            if (playerResponse == null)
-                return null;
+            if (playerResponse == null) return null;
 
-            JSONObject unSerializedPlayerResponse = playerResponse.getJSONObject("playabilityStatus")
-                    .getJSONObject("errorScreen").getJSONObject("ypcTrailerRenderer").getJSONObject("unserializedPlayerResponse");
+            JSONObject unSerializedPlayerResponse = playerResponse.getJSONObject("playabilityStatus").getJSONObject("errorScreen").getJSONObject("ypcTrailerRenderer").getJSONObject("unserializedPlayerResponse");
 
             if (getPlayabilityStatus(unSerializedPlayerResponse).equals("OK"))
-                return getStoryboardRendererUsingResponse(unSerializedPlayerResponse);
+                return getStoryboardRendererUsingResponse(videoId, unSerializedPlayerResponse);
             return null;
         } catch (JSONException e) {
             Logger.printException(() -> "Failed to get unserializedPlayerResponse", e);
@@ -129,27 +110,19 @@ public class StoryboardRendererRequester {
     }
 
     @Nullable
-    private static StoryboardRenderer getStoryboardRendererUsingResponse(@NonNull JSONObject playerResponse) {
+    private static StoryboardRenderer getStoryboardRendererUsingResponse(@NonNull String videoId, @NonNull JSONObject playerResponse) {
         try {
             Logger.printDebug(() -> "Parsing storyboardRenderer from response: " + playerResponse);
             if (!playerResponse.has("storyboards")) {
                 Logger.printDebug(() -> "Using empty storyboard");
-                return emptyStoryboard;
+                return new StoryboardRenderer(videoId, null, false, null);
             }
             final JSONObject storyboards = playerResponse.getJSONObject("storyboards");
             final boolean isLiveStream = storyboards.has("playerLiveStoryboardSpecRenderer");
-            final String storyboardsRendererTag = isLiveStream
-                    ? "playerLiveStoryboardSpecRenderer"
-                    : "playerStoryboardSpecRenderer";
+            final String storyboardsRendererTag = isLiveStream ? "playerLiveStoryboardSpecRenderer" : "playerStoryboardSpecRenderer";
 
             final var rendererElement = storyboards.getJSONObject(storyboardsRendererTag);
-            StoryboardRenderer renderer = new StoryboardRenderer(
-                    rendererElement.getString("spec"),
-                    isLiveStream,
-                    rendererElement.has("recommendedLevel")
-                            ? rendererElement.getInt("recommendedLevel")
-                            : null
-            );
+            StoryboardRenderer renderer = new StoryboardRenderer(videoId, rendererElement.getString("spec"), isLiveStream, rendererElement.has("recommendedLevel") ? rendererElement.getInt("recommendedLevel") : null);
 
             Logger.printDebug(() -> "Fetched: " + renderer);
 
@@ -166,11 +139,13 @@ public class StoryboardRendererRequester {
         Objects.requireNonNull(videoId);
 
         StoryboardRenderer renderer = getStoryboardRendererUsingBody(
-                String.format(ANDROID_INNER_TUBE_BODY, videoId), videoId);
+                videoId, String.format(ANDROID_INNER_TUBE_BODY, videoId)
+        );
         if (renderer == null) {
             Logger.printDebug(() -> videoId + " not available using Android client");
             renderer = getStoryboardRendererUsingBody(
-                    String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId), videoId);
+                    videoId, String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId)
+            );
             if (renderer == null) {
                 Logger.printDebug(() -> videoId + " not available using TV embedded client");
             }

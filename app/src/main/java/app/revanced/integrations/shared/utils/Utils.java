@@ -10,6 +10,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -55,6 +57,7 @@ public class Utils {
     public static Context context;
 
     private static Resources resources;
+    private static String versionName;
 
     protected Utils() {
     } // utility class
@@ -317,6 +320,37 @@ public class Utils {
 
     public static void setEditTextDialogTheme(final AlertDialog.Builder builder) {
         setEditTextDialogTheme(builder, false);
+    }
+
+    /**
+     * @return The version name of the app, such as "YouTube".
+     */
+    public static String getAppVersionName() {
+        if (versionName == null) {
+            try {
+                final var packageName = Objects.requireNonNull(getContext()).getPackageName();
+
+                PackageManager packageManager = context.getPackageManager();
+                PackageInfo packageInfo;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    packageInfo = packageManager.getPackageInfo(
+                            packageName,
+                            PackageManager.PackageInfoFlags.of(0)
+                    );
+                } else {
+                    packageInfo = packageManager.getPackageInfo(
+                            packageName,
+                            0
+                    );
+                }
+                versionName = packageInfo.versionName;
+            } catch (Exception ex) {
+                Logger.printException(() -> "Failed to get package info", ex);
+                versionName = "Unknown";
+            }
+        }
+
+        return versionName;
     }
 
     /**
