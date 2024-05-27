@@ -1,3 +1,25 @@
+# [0.152.0-dev.13](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.12...v0.152.0-dev.13) (2024-05-27)
+
+
+### Bug Fixes
+
+* App crashes when resource not found ([6abcabc](https://github.com/anddea/revanced-integrations/commit/6abcabcd6142b264e93ff31c1740497410a08d8b))
+* **YouTube - Return YouTube Dislike:** Dislike counts showing in views ([83bf7b2](https://github.com/anddea/revanced-integrations/commit/83bf7b25cfed359a520f2d81efb9a196072706c1))
+* **YouTube - Return YouTube Dislike:** Subscribe icon is hidden ([95b34d4](https://github.com/anddea/revanced-integrations/commit/95b34d463c820fe35d83e6cff0c1ecb252bf9d83))
+* **YouTube - SponsorBlock:** Pressing Now while manually editing a segment results in an error ([9521baa](https://github.com/anddea/revanced-integrations/commit/9521baa34d2a91d964687933cd7f3741504f90fc))
+* **YouTube - Video playback:** Default video quality sometimes does not apply when video is not loaded ([86b8130](https://github.com/anddea/revanced-integrations/commit/86b8130447e9538e8f1cb72ea0409cddb0b38f5a))
+* **YouTube:** App crashes when `SponsorBlock` patch is excluded ([e657bbd](https://github.com/anddea/revanced-integrations/commit/e657bbdf7338f123ffbb24704d7eca435c95dd8f))
+
+
+### Features
+
+* **YouTube - Fullscreen components:** `Hide related videos in quick actions` setting has been merged into the `Hide related video overlay` setting ([a9b973b](https://github.com/anddea/revanced-integrations/commit/a9b973bb59bcc3daacd8174aee2cd505e20af233))
+* **YouTube - Overlay buttons:** Add `Whitelist` overlay button ([564a044](https://github.com/anddea/revanced-integrations/commit/564a0443b85807cab156c3fafea804c560c20498))
+* **YouTube - Toolbar components:** Remove `Hide trending searches` setting ([b14f20c](https://github.com/anddea/revanced-integrations/commit/b14f20cd05b89500b22adba980a3329003c4afb3))
+* **YouTube:** Add `Spoof client` patch ([010f879](https://github.com/anddea/revanced-integrations/commit/010f87917dec41caefff7d1123c527829e24f243))
+* **YouTube:** Add support versions `19.19.39` - `19.20.34` ([3c4ccc3](https://github.com/anddea/revanced-integrations/commit/3c4ccc318163b3405a38f1e464158e40d017d8e7))
+* **YouTube:** Remove `Spoof test client` patch ([782b25b](https://github.com/anddea/revanced-integrations/commit/782b25b1fbc4e1b08d3150d388cf18afd11d9d1b))
+
 # [0.152.0-dev.12](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.11...v0.152.0-dev.12) (2024-05-21)
 
 
