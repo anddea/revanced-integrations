@@ -21,9 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import java.lang.ref.WeakReference;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import app.revanced.integrations.shared.settings.BaseSettings;
 import app.revanced.integrations.shared.settings.BooleanSetting;
@@ -86,7 +83,15 @@ public class PlayerPatch {
         if (!expandDescriptionEnabled) {
             return;
         }
-        isDescriptionPanel = contentDescription != null && Objects.equals(descriptionString, contentDescription);
+        if (contentDescription == null || contentDescription.isEmpty()) {
+            isDescriptionPanel = false;
+            return;
+        }
+        if (descriptionString.isEmpty()) {
+            isDescriptionPanel = false;
+            return;
+        }
+        isDescriptionPanel = descriptionString.equals(contentDescription);
     }
 
     /**
