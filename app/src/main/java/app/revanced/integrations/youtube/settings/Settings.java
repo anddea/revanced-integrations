@@ -420,7 +420,6 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SANITIZE_SHARING_LINKS = new BooleanSetting("revanced_sanitize_sharing_links", true, true);
     public static final BooleanSetting DISABLE_QUIC_PROTOCOL = new BooleanSetting("revanced_disable_quic_protocol", FALSE, true);
     public static final BooleanSetting SPOOF_FORMAT_STREAM_DATA = new BooleanSetting("revanced_spoof_format_stream_data", FALSE, true);
-    public static final BooleanSetting SPOOF_TEST_CLIENT = new BooleanSetting("revanced_spoof_test_client", FALSE, true);
     public static final BooleanSetting SPOOF_CLIENT = new BooleanSetting("revanced_spoof_client", FALSE, true);
     public static final BooleanSetting SPOOF_CLIENT_USE_IOS = new BooleanSetting("revanced_spoof_client_use_ios", TRUE, true, parent(SPOOF_CLIENT));
 
