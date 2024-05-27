@@ -54,7 +54,7 @@ public final class QuickActionFilter extends Filter {
                         "|overflow_menu_button"
                 ),
                 new StringFilterGroup(
-                        Settings.HIDE_QUICK_ACTIONS_RELATED_VIDEO,
+                        Settings.HIDE_RELATED_VIDEO_OVERLAY,
                         "fullscreen_related_videos"
                 ),
                 bufferFilterPathRule,
