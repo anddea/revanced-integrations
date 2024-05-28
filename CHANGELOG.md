@@ -1,3 +1,16 @@
+# [0.152.0-dev.14](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.13...v0.152.0-dev.14) (2024-05-28)
+
+
+### Bug Fixes
+
+* **YouTube - SponsorBlock:** `Submit a new segment` button did not work ([395d3ce](https://github.com/anddea/revanced-integrations/commit/395d3ce4b6c5a1b94e122072e8e5748ea5aac0f9))
+
+
+### Features
+
+* **YouTube - Player components:** Add setting toggle for `Hide suggested video end screen` ([d020bc8](https://github.com/anddea/revanced-integrations/commit/d020bc8dd987683f75002095bbbc403146371d9e))
+* **YouTube Music - Player components:** Add `Enable black player background` setting ([d27d362](https://github.com/anddea/revanced-integrations/commit/d27d362423f5d3d8312ba33dd1c96804aa670ded))
+
 # [0.152.0-dev.13](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.12...v0.152.0-dev.13) (2024-05-27)
 
 
