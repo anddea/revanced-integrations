@@ -1,18 +1,16 @@
 package app.revanced.integrations.music.patches.utils;
 
-import static app.revanced.integrations.music.returnyoutubedislike.ReturnYouTubeDislike.Vote;
+import static app.revanced.integrations.shared.returnyoutubedislike.ReturnYouTubeDislike.Vote;
 
 import android.text.Spanned;
 
 import androidx.annotation.Nullable;
 
-import java.util.Objects;
-
 import app.revanced.integrations.music.returnyoutubedislike.ReturnYouTubeDislike;
-import app.revanced.integrations.music.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
-import app.revanced.integrations.music.settings.SettingsEnum;
-import app.revanced.integrations.music.utils.LogHelper;
-import app.revanced.integrations.music.utils.ReVancedUtils;
+import app.revanced.integrations.music.settings.Settings;
+import app.revanced.integrations.shared.returnyoutubedislike.requests.ReturnYouTubeDislikeApi;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
 
 /**
  * Handles all interaction of UI patch components.
@@ -21,16 +19,42 @@ import app.revanced.integrations.music.utils.ReVancedUtils;
  */
 @SuppressWarnings("unused")
 public class ReturnYouTubeDislikePatch {
+    /**
+     * RYD data for the current video on screen.
+     */
     @Nullable
-    private static String currentVideoId;
+    private static volatile ReturnYouTubeDislike currentVideoData;
+
+    public static void onRYDStatusChange(boolean rydEnabled) {
+        ReturnYouTubeDislikeApi.resetRateLimits();
+        // Must remove all values to protect against using stale data
+        // if the user enables RYD while a video is on screen.
+        clearData();
+    }
+
+    private static void clearData() {
+        currentVideoData = null;
+    }
 
     /**
      * Injection point
      * <p>
      * Called when a Shorts dislike Spannable is created
      */
-    public static Spanned onComponentCreated(Spanned like) {
-        return ReturnYouTubeDislike.onComponentCreated(like);
+    public static Spanned onSpannedCreated(Spanned original) {
+        try {
+            if (original == null) {
+                return null;
+            }
+            ReturnYouTubeDislike videoData = currentVideoData;
+            if (videoData == null) {
+                return original; // User enabled RYD while a video was on screen.
+            }
+            return videoData.getDislikesSpan(original);
+        } catch (Exception ex) {
+            Logger.printException(() -> "onSpannedCreated failure", ex);
+        }
+        return original;
     }
 
     /**
@@ -38,49 +62,56 @@ public class ReturnYouTubeDislikePatch {
      */
     public static void newVideoLoaded(@Nullable String videoId) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+            if (!Settings.RYD_ENABLED.get()) {
                 return;
             }
             if (videoId == null || videoId.isEmpty()) {
                 return;
             }
-            if (Objects.equals(currentVideoId, videoId)) {
+            if (Utils.isNetworkNotConnected()) {
+                Logger.printDebug(() -> "Network not connected, ignoring video");
                 return;
             }
-            if (ReVancedUtils.isNetworkNotConnected()) {
-                LogHelper.printDebug(() -> "Network not connected, ignoring video");
+            if (videoIdIsSame(currentVideoData, videoId)) {
                 return;
             }
-
-            currentVideoId = videoId;
-            ReturnYouTubeDislike.newVideoLoaded(videoId);
+            currentVideoData = ReturnYouTubeDislike.getFetchForVideoId(videoId);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "newVideoLoaded failure", ex);
+            Logger.printException(() -> "newVideoLoaded failure", ex);
         }
+    }
+
+    private static boolean videoIdIsSame(@Nullable ReturnYouTubeDislike fetch, @Nullable String videoId) {
+        return (fetch == null && videoId == null)
+                || (fetch != null && fetch.getVideoId().equals(videoId));
     }
 
     /**
      * Injection point.
      * <p>
      * Called when the user likes or dislikes.
-     *
-     * @param vote int that matches {@link ReturnYouTubeDislike.Vote#value}
      */
     public static void sendVote(int vote) {
         try {
-            if (!SettingsEnum.RYD_ENABLED.getBoolean()) {
+            if (!Settings.RYD_ENABLED.get()) {
                 return;
+            }
+            ReturnYouTubeDislike videoData = currentVideoData;
+            if (videoData == null) {
+                Logger.printDebug(() -> "Cannot send vote, as current video data is null");
+                return; // User enabled RYD while a regular video was minimized.
             }
 
             for (Vote v : Vote.values()) {
                 if (v.value == vote) {
-                    ReturnYouTubeDislike.sendVote(v);
+                    videoData.sendVote(v);
+
                     return;
                 }
             }
-            LogHelper.printException(() -> "Unknown vote type: " + vote);
+            Logger.printException(() -> "Unknown vote type: " + vote);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "sendVote failure", ex);
+            Logger.printException(() -> "sendVote failure", ex);
         }
     }
 }

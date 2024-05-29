@@ -1,104 +1,55 @@
 package app.revanced.integrations.youtube.patches.overlaybutton;
 
-import static app.revanced.integrations.youtube.utils.ResourceUtils.anim;
-import static app.revanced.integrations.youtube.utils.ResourceUtils.findView;
-import static app.revanced.integrations.youtube.utils.ResourceUtils.integer;
-
-import android.annotation.SuppressLint;
-import android.support.constraint.ConstraintLayout;
 import android.view.View;
-import android.view.animation.Animation;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 
-import java.lang.ref.WeakReference;
+import androidx.annotation.Nullable;
 
-import app.revanced.integrations.youtube.settings.SettingsEnum;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.VideoHelpers;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.utils.VideoUtils;
 
 @SuppressWarnings("unused")
-public class CopyVideoUrlTimestamp {
-    volatile static boolean isButtonEnabled;
-    volatile static boolean isShowing;
-    volatile static boolean isScrubbed;
-    static WeakReference<ImageView> buttonView = new WeakReference<>(null);
-    @SuppressLint("StaticFieldLeak")
-    static ConstraintLayout constraintLayout;
-    static int fadeDurationFast;
-    static int fadeDurationScheduled;
-    static Animation fadeIn;
-    static Animation fadeOut;
+public class CopyVideoUrlTimestamp extends BottomControlButton {
+    @Nullable
+    private static CopyVideoUrlTimestamp instance;
 
-    public static void initialize(Object obj) {
+    public CopyVideoUrlTimestamp(ViewGroup bottomControlsViewGroup) {
+        super(
+                bottomControlsViewGroup,
+                "copy_video_url_timestamp_button",
+                Settings.OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP,
+                view -> VideoUtils.copyUrl(true),
+                view -> {
+                    VideoUtils.copyTimeStamp();
+                    return true;
+                }
+        );
+    }
+
+    /**
+     * Injection point.
+     */
+    public static void initialize(View bottomControlsViewGroup) {
         try {
-            constraintLayout = (ConstraintLayout) obj;
-            isButtonEnabled = setValue();
-            ImageView imageView = findView(constraintLayout, "copy_video_url_timestamp_button");
-
-            imageView.setOnClickListener(view -> VideoHelpers.copyUrl(true));
-            imageView.setOnLongClickListener(view -> {
-                VideoHelpers.copyTimeStamp();
-                return true;
-            });
-            buttonView = new WeakReference<>(imageView);
-
-            fadeDurationFast = integer("fade_duration_fast");
-            fadeDurationScheduled = integer("fade_duration_scheduled");
-
-            fadeIn = anim("fade_in");
-            fadeIn.setDuration(fadeDurationFast);
-
-            fadeOut = anim("fade_out");
-            fadeOut.setDuration(fadeDurationScheduled);
-
-            isShowing = true;
-            isScrubbed = false;
-            changeVisibility(false);
-
-        } catch (Exception e) {
-            LogHelper.printException(() -> "Unable to set FrameLayout", e);
+            if (bottomControlsViewGroup instanceof ViewGroup viewGroup) {
+                instance = new CopyVideoUrlTimestamp(viewGroup);
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "initialize failure", ex);
         }
     }
 
-    public static void changeVisibility(boolean currentVisibility) {
-        ImageView imageView = buttonView.get();
-
-        if (isShowing == currentVisibility || constraintLayout == null || imageView == null)
-            return;
-
-        isShowing = currentVisibility;
-
-        if (isScrubbed && isButtonEnabled) {
-            isScrubbed = false;
-            imageView.setVisibility(View.VISIBLE);
-            return;
-        }
-
-        if (currentVisibility && isButtonEnabled) {
-            imageView.setVisibility(View.VISIBLE);
-            imageView.startAnimation(fadeIn);
-        } else if (imageView.getVisibility() == View.VISIBLE) {
-            imageView.startAnimation(fadeOut);
-            imageView.setVisibility(View.GONE);
-        }
+    /**
+     * Injection point.
+     */
+    public static void changeVisibility(boolean showing, boolean animation) {
+        if (instance != null) instance.setVisibility(showing, animation);
     }
 
-    public static void changeVisibilityNegatedImmediate(boolean isUserScrubbing) {
-        ImageView imageView = buttonView.get();
-
-        if (constraintLayout == null || imageView == null || !isUserScrubbing)
-            return;
-
-        isShowing = false;
-        isScrubbed = true;
-        imageView.setVisibility(View.GONE);
+    public static void changeVisibilityNegatedImmediate() {
+        if (instance != null) instance.setVisibilityNegatedImmediate();
     }
 
-    public static void refreshVisibility() {
-        isButtonEnabled = setValue();
-    }
 
-    private static boolean setValue() {
-        return SettingsEnum.OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP.getBoolean();
-    }
 }

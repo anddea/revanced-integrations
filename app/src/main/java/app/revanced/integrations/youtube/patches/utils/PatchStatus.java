@@ -2,8 +2,18 @@ package app.revanced.integrations.youtube.patches.utils;
 
 public class PatchStatus {
 
-    public static boolean DefaultPlaybackSpeed() {
-        // Replace this with true if the Default playback speed patch succeeds
+    public static boolean PlayerButtons() {
+        // Replace this with true if the Hide player buttons patch succeeds
+        return false;
+    }
+
+    public static boolean QuickActions() {
+        // Replace this with true if the Fullscreen components patch succeeds
+        return false;
+    }
+
+    public static boolean RememberPlaybackSpeed() {
+        // Replace this with true if the Video playback patch succeeds
         return false;
     }
 
@@ -12,8 +22,9 @@ public class PatchStatus {
         return false;
     }
 
-    public static boolean VideoSpeed() {
-        // Replace this with true if the Default Video Speed patch succeeds
+    public static boolean ToolBarComponents() {
+        // Replace this with true if the Toolbar components patch succeeds
         return false;
     }
+
 }

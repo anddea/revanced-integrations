@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 
-import app.revanced.integrations.music.requests.Requester;
-import app.revanced.integrations.music.utils.LogHelper;
-import app.revanced.integrations.music.utils.ReVancedUtils;
+import app.revanced.integrations.shared.requests.Requester;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
 
 public class PlaylistRequester {
     /**
@@ -40,7 +40,7 @@ public class PlaylistRequester {
 
     public static void fetchPlaylist(@NonNull String videoId, @NonNull String playlistId, final int playlistIndex) {
         try {
-            ReVancedUtils.verifyOffMainThread();
+            Utils.verifyOffMainThread();
             HttpURLConnection connection = getPlaylistConnectionFromRoute(GET_PLAYLIST, playlistId);
             connection.setConnectTimeout(TIMEOUT_TCP_DEFAULT_MILLISECONDS);
             connection.setReadTimeout(TIMEOUT_HTTP_DEFAULT_MILLISECONDS);
@@ -61,7 +61,7 @@ public class PlaylistRequester {
             if (songId.isEmpty()) {
                 handleConnectionError("Url is empty!");
             } else if (!songId.equals(videoId)) {
-                LogHelper.printDebug(() -> String.format("Fetched successfully\nVideoId: %s\nPlaylistId:%s\nSongId: %s", videoId, playlistId, songId));
+                Logger.printDebug(() -> String.format("Fetched successfully\nVideoId: %s\nPlaylistId:%s\nSongId: %s", videoId, playlistId, songId));
                 setSongId(songId);
             }
             connection.disconnect();
@@ -75,13 +75,13 @@ public class PlaylistRequester {
     }
 
     private static void handleConnectionError(@NonNull String errorMessage) {
-        LogHelper.printInfo(() -> errorMessage);
+        Logger.printInfo(() -> errorMessage);
         clearInformation();
     }
 
     private static void handleConnectionError(@NonNull String errorMessage, @Nullable Exception ex) {
         if (ex != null) {
-            LogHelper.printInfo(() -> errorMessage, ex);
+            Logger.printInfo(() -> errorMessage, ex);
         }
         clearInformation();
     }

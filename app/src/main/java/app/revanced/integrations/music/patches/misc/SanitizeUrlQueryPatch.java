@@ -1,6 +1,6 @@
 package app.revanced.integrations.music.patches.misc;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
+import app.revanced.integrations.music.settings.Settings;
 
 @SuppressWarnings("unused")
 public final class SanitizeUrlQueryPatch {
@@ -21,7 +21,7 @@ public final class SanitizeUrlQueryPatch {
      * @return URL string without query parameters if possible, otherwise the original string.
      */
     public static String stripQueryParameters(final String urlString) {
-        if (!SettingsEnum.SANITIZE_SHARING_LINKS.getBoolean())
+        if (!Settings.SANITIZE_SHARING_LINKS.get())
             return urlString;
 
         return urlString.replaceAll(NEW_TRACKING_REGEX, "").replaceAll(OLD_TRACKING_REGEX, "");

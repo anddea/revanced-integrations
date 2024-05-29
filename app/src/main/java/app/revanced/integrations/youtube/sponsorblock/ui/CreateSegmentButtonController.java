@@ -1,116 +1,89 @@
 package app.revanced.integrations.youtube.sponsorblock.ui;
 
-import static app.revanced.integrations.youtube.utils.ResourceUtils.anim;
-import static app.revanced.integrations.youtube.utils.ResourceUtils.identifier;
-import static app.revanced.integrations.youtube.utils.ResourceUtils.integer;
+import static app.revanced.integrations.shared.utils.Utils.getChildView;
 
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ResourceType;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.patches.overlaybutton.BottomControlButton;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.VideoInformation;
 
+@SuppressWarnings("unused")
 public class CreateSegmentButtonController {
     private static WeakReference<ImageView> buttonReference = new WeakReference<>(null);
-
-    private static Animation fadeIn;
-    private static Animation fadeOut;
-    private static boolean isShowing;
-    private static boolean isScrubbed;
+    private static boolean isVisible;
 
 
     /**
      * injection point
      */
-    public static void initialize(Object viewStub) {
+    public static void initialize(View youtubeControlsLayout) {
         try {
-            RelativeLayout controlsLayout = (RelativeLayout) viewStub;
-            ImageView imageView = Objects.requireNonNull(controlsLayout.findViewById(
-                    identifier("sb_sponsorblock_button", ResourceType.ID)));
-
+            ImageView imageView = Objects.requireNonNull(getChildView(youtubeControlsLayout,"revanced_sb_create_segment_button"));
+            imageView.setVisibility(View.GONE);
             imageView.setOnClickListener(v -> SponsorBlockViewController.toggleNewSegmentLayoutVisibility());
             buttonReference = new WeakReference<>(imageView);
-
-            // Animations
-            if (fadeIn == null) {
-                fadeIn = anim("fade_in");
-                fadeIn.setDuration(integer("fade_duration_fast"));
-                fadeOut = anim("fade_out");
-                fadeOut.setDuration(integer("fade_duration_scheduled"));
-            }
-            isShowing = true;
-            isScrubbed = false;
-            changeVisibilityImmediate(false);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Unable to set RelativeLayout", ex);
+            Logger.printException(() -> "Unable to set RelativeLayout", ex);
         }
     }
 
-    public static void changeVisibilityImmediate(boolean visible) {
-        changeVisibility(visible, true);
+    public static void changeVisibility(boolean visible, boolean animation) {
+        ImageView imageView = buttonReference.get();
+        if (imageView == null || isVisible == visible) return;
+        isVisible = visible;
+
+        if (visible) {
+            imageView.clearAnimation();
+            if (!shouldBeShown()) {
+                return;
+            }
+            if (animation) {
+                imageView.startAnimation(BottomControlButton.getButtonFadeIn());
+            }
+            imageView.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (imageView.getVisibility() == View.VISIBLE) {
+            imageView.clearAnimation();
+            if (animation) {
+                imageView.startAnimation(BottomControlButton.getButtonFadeOut());
+            }
+            imageView.setVisibility(View.GONE);
+        }
     }
 
-    /**
-     * injection point
-     */
-    public static void changeVisibilityNegatedImmediate(boolean isUserScrubbing) {
+    public static void changeVisibilityNegatedImmediate() {
         ImageView imageView = buttonReference.get();
+        if (imageView == null) return;
+        if (!shouldBeShown()) return;
 
-        if (imageView == null || !isUserScrubbing) return;
-
-        isShowing = false;
-        isScrubbed = true;
+        imageView.clearAnimation();
+        imageView.startAnimation(BottomControlButton.getButtonFadeOutImmediate());
         imageView.setVisibility(View.GONE);
     }
 
-    /**
-     * injection point
-     */
-    public static void changeVisibility(boolean visible) {
-        changeVisibility(visible, false);
-    }
-
-    public static void changeVisibility(boolean visible, boolean immediate) {
-        try {
-            if (isShowing == visible) return;
-            isShowing = visible;
-
-            ImageView iView = buttonReference.get();
-            if (iView == null) return;
-
-            if (visible) {
-                iView.clearAnimation();
-                if (!shouldBeShown()) {
-                    return;
-                }
-                if (!immediate) {
-                    iView.startAnimation(fadeIn);
-                }
-                iView.setVisibility(View.VISIBLE);
-                return;
-            }
-
-            if (iView.getVisibility() == View.VISIBLE) {
-                iView.clearAnimation();
-                if (!immediate) {
-                    iView.startAnimation(fadeOut);
-                }
-                iView.setVisibility(View.GONE);
-            }
-        } catch (Exception ex) {
-            LogHelper.printException(() -> "changeVisibility failure", ex);
-        }
-    }
-
     private static boolean shouldBeShown() {
-        return SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_CREATE_NEW_SEGMENT.getBoolean()
-                && VideoInformation.isNotAtEndOfVideo();
+        return Settings.SB_ENABLED.get() && Settings.SB_CREATE_NEW_SEGMENT.get()
+                && !VideoInformation.isAtEndOfVideo();
+    }
+
+    public static void hide() {
+        if (!isVisible) {
+            return;
+        }
+        Utils.verifyOnMainThread();
+        View v = buttonReference.get();
+        if (v == null) {
+            return;
+        }
+        v.setVisibility(View.GONE);
+        isVisible = false;
     }
 }

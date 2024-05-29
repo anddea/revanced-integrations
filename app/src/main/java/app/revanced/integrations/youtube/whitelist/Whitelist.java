@@ -1,140 +1,307 @@
 package app.revanced.integrations.youtube.whitelist;
 
-import static app.revanced.integrations.youtube.utils.ReVancedUtils.showToastShort;
-import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.Utils.showToastShort;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Base64;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
-import app.revanced.integrations.youtube.patches.video.VideoChannel;
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.ResourceUtils;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.patches.utils.PatchStatus;
+import app.revanced.integrations.youtube.shared.VideoInformation;
+import app.revanced.integrations.youtube.utils.ThemeUtils;
 
+/** @noinspection deprecation*/
 public class Whitelist {
+    private static final String ZERO_WIDTH_SPACE_CHARACTER = "\u200B";
+    private static final Map<WhitelistType, ArrayList<VideoChannel>> whitelistMap = parseWhitelist();
 
-    private static final Map<WhitelistType, ArrayList<VideoChannel>> whitelistMap = parseWhitelist(ReVancedUtils.getContext());
-    private static final Map<WhitelistType, Boolean> enabledMap = parseEnabledMap(ReVancedUtils.getContext());
+    private static final WhitelistType whitelistTypePlaybackSpeed = WhitelistType.PLAYBACK_SPEED;
+    private static final WhitelistType whitelistTypeSponsorBlock = WhitelistType.SPONSOR_BLOCK;
+    private static final String whitelistIncluded = str("revanced_whitelist_included");
+    private static final String whitelistExcluded = str("revanced_whitelist_excluded");
+    private static Drawable playbackSpeedDrawable;
+    private static Drawable sponsorBlockDrawable;
 
-    private Whitelist() {
-    }
+    static {
+        final Resources resource = Utils.getResources();
 
-    private static SharedPreferences getPreferences(@NonNull Context context, @NonNull String prefName) {
-        return context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
-    }
-
-    public static boolean isChannelSBWhitelisted() {
-        return isWhitelisted(WhitelistType.SPONSORBLOCK);
-    }
-
-    public static boolean isChannelSPEEDWhitelisted() {
-        return isWhitelisted(WhitelistType.SPEED);
-    }
-
-    private static Map<WhitelistType, ArrayList<VideoChannel>> parseWhitelist(Context context) {
-        if (context == null) {
-            return Collections.emptyMap();
+        final int playbackSpeedDrawableId = ResourceUtils.getDrawableIdentifier("yt_outline_play_arrow_half_circle_black_24");
+        if (playbackSpeedDrawableId != 0) {
+            playbackSpeedDrawable = resource.getDrawable(playbackSpeedDrawableId);
         }
+
+        final int sponsorBlockDrawableId = ResourceUtils.getDrawableIdentifier("revanced_sb_logo");
+        if (sponsorBlockDrawableId != 0) {
+            sponsorBlockDrawable = resource.getDrawable(sponsorBlockDrawableId);
+        }
+    }
+
+    public static boolean isChannelWhitelistedSponsorBlock(String channelId) {
+        return isWhitelisted(whitelistTypeSponsorBlock, channelId);
+    }
+
+    public static boolean isChannelWhitelistedPlaybackSpeed(String channelId) {
+        return isWhitelisted(whitelistTypePlaybackSpeed, channelId);
+    }
+
+    public static void showWhitelistDialog(Context context) {
+        final String channelId = VideoInformation.getChannelId();
+        final String channelName = VideoInformation.getChannelName();
+
+        if (channelId.isEmpty() || channelName.isEmpty()) {
+            Utils.showToastShort(str("revanced_whitelist_failure_generic"));
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(channelName);
+
+        StringBuilder sb = new StringBuilder("\n");
+
+        if (PatchStatus.RememberPlaybackSpeed()) {
+            appendStringBuilder(sb, whitelistTypePlaybackSpeed, channelId, false);
+            builder.setNeutralButton(ZERO_WIDTH_SPACE_CHARACTER,
+                    (dialog, id) -> whitelistListener(
+                            whitelistTypePlaybackSpeed,
+                            channelId,
+                            channelName
+                    )
+            );
+        }
+
+        if (PatchStatus.SponsorBlock()) {
+            appendStringBuilder(sb, whitelistTypeSponsorBlock, channelId, true);
+            builder.setPositiveButton(ZERO_WIDTH_SPACE_CHARACTER,
+                    (dialog, id) -> whitelistListener(
+                            whitelistTypeSponsorBlock,
+                            channelId,
+                            channelName
+                    )
+            );
+        }
+
+        builder.setMessage(sb.toString());
+
+        AlertDialog dialog = builder.show();
+
+        final ColorFilter cf = new PorterDuffColorFilter(ThemeUtils.getTextColor(), PorterDuff.Mode.SRC_ATOP);
+        Button sponsorBlockButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button playbackSpeedButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        if (sponsorBlockButton != null && sponsorBlockDrawable != null) {
+            sponsorBlockDrawable.setColorFilter(cf);
+            sponsorBlockButton.setCompoundDrawablesWithIntrinsicBounds(null, null, sponsorBlockDrawable, null);
+        }
+        if (playbackSpeedButton != null && playbackSpeedDrawable != null) {
+            playbackSpeedDrawable.setColorFilter(cf);
+            playbackSpeedButton.setCompoundDrawablesWithIntrinsicBounds(playbackSpeedDrawable, null, null, null);
+        }
+    }
+
+    private static void appendStringBuilder(StringBuilder sb, WhitelistType whitelistType,
+                                         String channelId, boolean eol) {
+        final String status = isWhitelisted(whitelistType, channelId)
+                ? whitelistIncluded
+                : whitelistExcluded;
+        sb.append(whitelistType.getFriendlyName());
+        sb.append(":\n");
+        sb.append(status);
+        sb.append("\n");
+        if (!eol) sb.append("\n");
+    }
+
+    private static void whitelistListener(WhitelistType whitelistType, String channelId, String channelName) {
+        try {
+            if (isWhitelisted(whitelistType, channelId)) {
+                removeFromWhitelist(whitelistType, channelId);
+            } else {
+                addToWhitelist(whitelistType, channelId, channelName);
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "whitelistListener failure", ex);
+        }
+    }
+
+    /** @noinspection unchecked*/
+    private static Map<WhitelistType, ArrayList<VideoChannel>> parseWhitelist() {
         WhitelistType[] whitelistTypes = WhitelistType.values();
         Map<WhitelistType, ArrayList<VideoChannel>> whitelistMap = new EnumMap<>(WhitelistType.class);
 
         for (WhitelistType whitelistType : whitelistTypes) {
-            SharedPreferences preferences = getPreferences(context, whitelistType.getPreferencesName());
+            SharedPreferences preferences = getPreferences(whitelistType.getPreferencesName());
             String serializedChannels = preferences.getString("channels", null);
             if (serializedChannels == null) {
                 whitelistMap.put(whitelistType, new ArrayList<>());
                 continue;
             }
             try {
-                ArrayList<VideoChannel> deserializedChannels = (ArrayList<VideoChannel>) ObjectSerializer.deserialize(serializedChannels);
+                Object channelsObject = deserialize(serializedChannels);
+                ArrayList<VideoChannel> deserializedChannels = (ArrayList<VideoChannel>) channelsObject;
                 whitelistMap.put(whitelistType, deserializedChannels);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Logger.printException(() -> "parseWhitelist failure", ex);
             }
         }
         return whitelistMap;
     }
 
-    private static Map<WhitelistType, Boolean> parseEnabledMap(Context context) {
-        if (context == null) {
-            return Collections.emptyMap();
-        }
-        Map<WhitelistType, Boolean> enabledMap = new EnumMap<>(WhitelistType.class);
-        for (WhitelistType whitelistType : WhitelistType.values()) {
-            enabledMap.put(whitelistType, whitelistType.getSharedPreferencesName().getBoolean(whitelistType.getPreferenceEnabledName(), false));
-        }
-        return enabledMap;
-    }
-
-    private static boolean isWhitelisted(WhitelistType whitelistType) {
-        if (VideoInformation.getChannelName().equals("")) return false;
+    private static boolean isWhitelisted(WhitelistType whitelistType, String channelId) {
         for (VideoChannel channel : getWhitelistedChannels(whitelistType)) {
-            if (channel.getAuthor().equals(VideoInformation.getChannelName())) {
+            if (channel.getChannelId().equals(channelId)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean addToWhitelist(WhitelistType whitelistType, Context context, VideoChannel channel) {
+    private static void addToWhitelist(WhitelistType whitelistType, String channelId, String channelName) {
+        final VideoChannel channel = new VideoChannel(channelName, channelId);
         ArrayList<VideoChannel> whitelisted = getWhitelistedChannels(whitelistType);
         for (VideoChannel whitelistedChannel : whitelisted) {
-            String channelId = channel.getChannelId();
-            if (whitelistedChannel.getChannelId().equals(channelId)) return true;
+            if (whitelistedChannel.getChannelId().equals(channel.getChannelId()))
+                return;
         }
         whitelisted.add(channel);
-        return updateWhitelist(whitelistType, whitelisted, context);
+        String friendlyName = whitelistType.getFriendlyName();
+        if (updateWhitelist(whitelistType, whitelisted)) {
+            showToastShort(str("revanced_whitelist_added", channelName, friendlyName));
+        } else {
+            showToastShort(str("revanced_whitelist_add_failed", channelName, friendlyName));
+        }
     }
 
-    public static void removeFromWhitelist(WhitelistType whitelistType, String channelName, Context context) {
-        ArrayList<VideoChannel> channels = getWhitelistedChannels(whitelistType);
-        Iterator<VideoChannel> iterator = channels.iterator();
+    public static void removeFromWhitelist(WhitelistType whitelistType, String channelId) {
+        ArrayList<VideoChannel> whitelisted = getWhitelistedChannels(whitelistType);
+        Iterator<VideoChannel> iterator = whitelisted.iterator();
+        String channelName = "";
         while (iterator.hasNext()) {
             VideoChannel channel = iterator.next();
-            if (channel.getAuthor().equals(channelName)) {
+            if (channel.getChannelId().equals(channelId)) {
+                channelName = channel.getChannelName();
                 iterator.remove();
                 break;
             }
         }
-        boolean success = updateWhitelist(whitelistType, channels, ReVancedUtils.getContext());
         String friendlyName = whitelistType.getFriendlyName();
-        if (success) {
-            showToastShort(context, str("revanced_whitelisting_removed", channelName, friendlyName));
+        if (updateWhitelist(whitelistType, whitelisted)) {
+            showToastShort(str("revanced_whitelist_removed", channelName, friendlyName));
         } else {
-            showToastShort(context, str("revanced_whitelisting_remove_failed", channelName, friendlyName));
+            showToastShort(str("revanced_whitelist_remove_failed", channelName, friendlyName));
         }
     }
 
-    public static boolean updateWhitelist(WhitelistType whitelistType, ArrayList<VideoChannel> channels, Context context) {
-        if (context == null) {
-            return false;
-        }
-        SharedPreferences preferences = getPreferences(context, whitelistType.getPreferencesName());
-        SharedPreferences.Editor editor = preferences.edit();
+    private static boolean updateWhitelist(WhitelistType whitelistType, ArrayList<VideoChannel> channels) {
+        SharedPreferences.Editor editor = getPreferences(whitelistType.getPreferencesName()).edit();
 
-        try {
-            editor.putString("channels", ObjectSerializer.serialize(channels));
+        final String channelName = serialize(channels);
+        if (channelName != null && !channelName.isEmpty()) {
+            editor.putString("channels", channelName);
             editor.apply();
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
-    }
-
-    public static void setEnabled(WhitelistType whitelistType, boolean enabled) {
-        enabledMap.put(whitelistType, enabled);
+        return false;
     }
 
     public static ArrayList<VideoChannel> getWhitelistedChannels(WhitelistType whitelistType) {
         return whitelistMap.get(whitelistType);
+    }
+
+    private static SharedPreferences getPreferences(@NonNull String prefName) {
+        final Context context = Utils.getContext();
+        return context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+    }
+
+    private static String serialize(Serializable obj) {
+        try {
+            if (obj != null) {
+                ByteArrayOutputStream serialObj = new ByteArrayOutputStream();
+                Deflater def = new Deflater(Deflater.BEST_COMPRESSION);
+                ObjectOutputStream objStream =
+                        new ObjectOutputStream(new DeflaterOutputStream(serialObj, def));
+                objStream.writeObject(obj);
+                objStream.close();
+                return encodeBytes(serialObj.toByteArray());
+            }
+        } catch (IOException ex) {
+            Logger.printException(() -> "Serialization error: " + ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+    private static Object deserialize(@NonNull String str) {
+        try {
+            final ByteArrayInputStream serialObj = new ByteArrayInputStream(decodeBytes(str));
+            final ObjectInputStream objStream = new ObjectInputStream(new InflaterInputStream(serialObj));
+            return objStream.readObject();
+        } catch (ClassNotFoundException | IOException ex) {
+            Logger.printException(() -> "Deserialization error: " + ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+    private static String encodeBytes(byte[] bytes) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return Base64.getEncoder().encodeToString(bytes);
+        } else {
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
+    }
+
+    private static byte[] decodeBytes(String str) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return Base64.getDecoder().decode(str.getBytes(StandardCharsets.UTF_8));
+        } else {
+            return str.getBytes(StandardCharsets.UTF_8);
+        }
+    }
+
+    public enum WhitelistType {
+        PLAYBACK_SPEED(),
+        SPONSOR_BLOCK();
+
+        private final String friendlyName;
+        private final String preferencesName;
+
+        WhitelistType() {
+            String name = name().toLowerCase();
+            this.friendlyName = str("revanced_whitelist_" + name);
+            this.preferencesName = "whitelist_" + name;
+        }
+
+        public String getFriendlyName() {
+            return friendlyName;
+        }
+
+        public String getPreferencesName() {
+            return preferencesName;
+        }
     }
 }

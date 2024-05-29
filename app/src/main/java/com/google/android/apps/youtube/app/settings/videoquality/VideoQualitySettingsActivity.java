@@ -1,87 +1,106 @@
 package com.google.android.apps.youtube.app.settings.videoquality;
 
-import static app.revanced.integrations.youtube.utils.ReVancedUtils.getChildView;
-import static app.revanced.integrations.youtube.utils.ResourceUtils.identifier;
-
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+import android.widget.SearchView;
+import android.widget.Toolbar;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 import java.util.Objects;
 
-import app.revanced.integrations.youtube.settingsmenu.ReVancedSettingsFragment;
-import app.revanced.integrations.youtube.settingsmenu.ReturnYouTubeDislikeSettingsFragment;
-import app.revanced.integrations.youtube.settingsmenu.SponsorBlockSettingsFragment;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ResourceHelper;
-import app.revanced.integrations.youtube.utils.ResourceType;
-import app.revanced.integrations.youtube.utils.ThemeHelper;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.ResourceUtils;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.settings.preference.ReVancedPreferenceFragment;
+import app.revanced.integrations.youtube.utils.ThemeUtils;
 
 /**
  * @noinspection ALL
  */
 public class VideoQualitySettingsActivity extends Activity {
 
+    private ReVancedPreferenceFragment settingsFragment;
+    private SearchView searchView;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(Utils.getLocalizedContextAndSetResources(base));
+    }
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         try {
-            setTheme(ThemeHelper.getSettingTheme());
-            setContentView(identifier("revanced_settings_with_toolbar", ResourceType.LAYOUT));
+            setTheme(ThemeUtils.getThemeId());
+            setContentView(ResourceUtils.getLayoutIdentifier("revanced_settings_with_toolbar"));
 
-            final int fragmentId = identifier("revanced_settings_fragments", ResourceType.ID);
-            final ViewGroup toolBar = Objects.requireNonNull(findViewById(identifier("revanced_toolbar", ResourceType.ID)));
-
-            setBackButton(toolBar);
-
-            PreferenceFragment fragment;
             String toolbarTitleResourceName;
             String dataString = Objects.requireNonNull(getIntent().getDataString());
             switch (dataString) {
-                case "sponsorblock_settings" -> {
-                    fragment = new SponsorBlockSettingsFragment();
-                    toolbarTitleResourceName = "revanced_sponsorblock_settings_title";
-                }
-                case "ryd_settings" -> {
-                    fragment = new ReturnYouTubeDislikeSettingsFragment();
-                    toolbarTitleResourceName = "revanced_ryd_settings_title";
-                }
-                case "extended_settings" -> {
-                    fragment = new ReVancedSettingsFragment();
+                case "revanced_extended_settings_intent" -> {
+                    settingsFragment = new ReVancedPreferenceFragment();
                     toolbarTitleResourceName = "revanced_extended_settings_title";
                 }
                 default -> {
-                    LogHelper.printException(() -> "Unknown setting: " + dataString);
+                    Logger.printException(() -> "Unknown setting: " + dataString);
                     return;
                 }
             }
 
-            setToolbarTitle(toolBar, toolbarTitleResourceName);
+            setToolbar(toolbarTitleResourceName);
+
+            final int fragmentId = ResourceUtils.getIdIdentifier("revanced_settings_fragments");
             getFragmentManager()
-                    .beginTransaction()
-                    .replace(fragmentId, fragment)
-                    .commit();
+                .beginTransaction()
+                .replace(fragmentId, settingsFragment)
+                .commit();
+
+            // Search view
+            SearchView searchView = findViewById(ResourceUtils.getIdIdentifier("search_view"));
+            searchView.setIconifiedByDefault(false);
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    filterPreferences(query);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    filterPreferences(newText);
+                    return true;
+                }
+            });
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onCreate failure", ex);
+            Logger.printException(() -> "onCreate failure", ex);
         }
+    }
+
+    private void filterPreferences(String query) {
+        if (settingsFragment != null) {
+            settingsFragment.filterPreferences(query);
+        }
+    }
+
+    private void setToolbar(String toolbarTitleResourceName) {
+        final ViewGroup toolBarParent = Objects.requireNonNull(findViewById(ResourceUtils.getIdIdentifier("revanced_toolbar_parent")));
+        Toolbar toolbar = new Toolbar(toolBarParent.getContext());
+        toolbar.setBackgroundColor(ThemeUtils.getToolbarBackgroundColor());
+        toolbar.setNavigationIcon(ThemeUtils.getBackButtonDrawable());
+        toolbar.setNavigationOnClickListener(view -> VideoQualitySettingsActivity.this.onBackPressed());
+        toolbar.setTitle(ResourceUtils.getString(toolbarTitleResourceName));
+        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+        toolbar.setTitleMargin(margin, 0, margin, 0);
+        TextView toolbarTextView = Utils.getChildView(toolbar, view -> view instanceof TextView);
+        toolbarTextView.setTextColor(ThemeUtils.getTextColor());
+        toolBarParent.addView(toolbar, 0);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    private void setBackButton(ViewGroup toolBar) {
-        ImageButton imageButton = Objects.requireNonNull(getChildView(toolBar, false, view -> view instanceof ImageButton));
-        imageButton.setOnClickListener(view -> VideoQualitySettingsActivity.this.onBackPressed());
-        imageButton.setImageDrawable(getResources().getDrawable(ResourceHelper.getArrow()));
-    }
-
-    private void setToolbarTitle(ViewGroup toolBar, String toolbarTitleResourceName) {
-        TextView toolbarTextView = Objects.requireNonNull(getChildView(toolBar, false, view -> view instanceof TextView));
-        toolbarTextView.setText(identifier(toolbarTitleResourceName, ResourceType.STRING));
     }
 }

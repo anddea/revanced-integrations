@@ -1,6 +1,6 @@
 package app.revanced.integrations.youtube.sponsorblock.requests;
 
-import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.StringRef.str;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,16 +17,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import app.revanced.integrations.youtube.requests.Requester;
-import app.revanced.integrations.youtube.requests.Route;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.shared.requests.Requester;
+import app.revanced.integrations.shared.requests.Route;
+import app.revanced.integrations.shared.sponsorblock.requests.SBRoutes;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.sponsorblock.SponsorBlockSettings;
 import app.revanced.integrations.youtube.sponsorblock.objects.SegmentCategory;
 import app.revanced.integrations.youtube.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.youtube.sponsorblock.objects.SponsorSegment.SegmentVote;
 import app.revanced.integrations.youtube.sponsorblock.objects.UserStats;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
 
 public class SBRequester {
     private static final String TIME_TEMPLATE = "%.3f";
@@ -50,17 +51,17 @@ public class SBRequester {
     }
 
     private static void handleConnectionError(@NonNull String toastMessage, @Nullable Exception ex) {
-        if (SettingsEnum.SB_TOAST_ON_CONNECTION_ERROR.getBoolean()) {
-            ReVancedUtils.showToastShort(toastMessage);
+        if (Settings.SB_TOAST_ON_CONNECTION_ERROR.get()) {
+            Utils.showToastShort(toastMessage);
         }
         if (ex != null) {
-            LogHelper.printInfo(() -> toastMessage, ex);
+            Logger.printInfo(() -> toastMessage, ex);
         }
     }
 
     @NonNull
     public static SponsorSegment[] getSegments(@NonNull String videoId) {
-        ReVancedUtils.verifyOffMainThread();
+        Utils.verifyOffMainThread();
         List<SponsorSegment> segments = new ArrayList<>();
         try {
             HttpURLConnection connection = getConnectionFromRoute(SBRoutes.GET_SEGMENTS, videoId, SegmentCategory.sponsorBlockAPIFetchCategories);
@@ -68,7 +69,7 @@ public class SBRequester {
 
             if (responseCode == HTTP_STATUS_CODE_SUCCESS) {
                 JSONArray responseArray = Requester.parseJSONArray(connection);
-                final long minSegmentDuration = (long) (SettingsEnum.SB_SEGMENT_MIN_DURATION.getFloat() * 1000);
+                final long minSegmentDuration = (long) (Settings.SB_SEGMENT_MIN_DURATION.get() * 1000);
                 for (int i = 0, length = responseArray.length(); i < length; i++) {
                     JSONObject obj = (JSONObject) responseArray.get(i);
                     JSONArray segment = obj.getJSONArray("segment");
@@ -80,26 +81,33 @@ public class SBRequester {
                     String categoryKey = obj.getString("category");
                     SegmentCategory category = SegmentCategory.byCategoryKey(categoryKey);
                     if (category == null) {
-                        LogHelper.printException(() -> "Received unknown category: " + categoryKey); // should never happen
+                        Logger.printException(() -> "Received unknown category: " + categoryKey); // should never happen
                     } else if ((end - start) >= minSegmentDuration || category == SegmentCategory.HIGHLIGHT) {
                         segments.add(new SponsorSegment(category, uuid, start, end, locked));
                     }
                 }
+                Logger.printDebug(() -> {
+                    StringBuilder builder = new StringBuilder("Downloaded segments:");
+                    for (SponsorSegment segment : segments) {
+                        builder.append('\n').append(segment);
+                    }
+                    return builder.toString();
+                });
                 runVipCheckInBackgroundIfNeeded();
             } else if (responseCode == 404) {
                 // no segments are found.  a normal response
-                LogHelper.printDebug(() -> "No segments found for video: " + videoId);
+                Logger.printDebug(() -> "No segments found for video: " + videoId);
             } else {
-                handleConnectionError(str("sb_sponsorblock_connection_failure_status", responseCode), null);
+                handleConnectionError(str("revanced_sb_sponsorblock_connection_failure_status", responseCode), null);
                 connection.disconnect(); // something went wrong, might as well disconnect
             }
         } catch (SocketTimeoutException ex) {
-            handleConnectionError(str("sb_sponsorblock_connection_failure_timeout"), ex);
+            handleConnectionError(str("revanced_sb_sponsorblock_connection_failure_timeout"), ex);
         } catch (IOException ex) {
-            handleConnectionError(str("sb_sponsorblock_connection_failure_generic"), ex);
+            handleConnectionError(str("revanced_sb_sponsorblock_connection_failure_generic"), ex);
         } catch (Exception ex) {
             // Should never happen
-            LogHelper.printException(() -> "getSegments failure", ex);
+            Logger.printException(() -> "getSegments failure", ex);
         }
 
         return segments.toArray(new SponsorSegment[0]);
@@ -107,7 +115,7 @@ public class SBRequester {
 
     public static void submitSegments(@NonNull String videoId, @NonNull String category,
                                       long startTime, long endTime, long videoLength) {
-        ReVancedUtils.verifyOffMainThread();
+        Utils.verifyOffMainThread();
         try {
             String privateUserId = SponsorBlockSettings.getSBPrivateUserID();
             String start = String.format(Locale.US, TIME_TEMPLATE, startTime / 1000f);
@@ -118,78 +126,81 @@ public class SBRequester {
             final int responseCode = connection.getResponseCode();
 
             final String messageToToast = switch (responseCode) {
-                case HTTP_STATUS_CODE_SUCCESS -> str("sb_submit_succeeded");
-                case 409 -> str("sb_submit_failed_duplicate");
+                case HTTP_STATUS_CODE_SUCCESS -> str("revanced_sb_submit_succeeded");
+                case 409 -> str("revanced_sb_submit_failed_duplicate");
                 case 403 ->
-                        str("sb_submit_failed_forbidden", Requester.parseErrorJsonAndDisconnect(connection));
-                case 429 -> str("sb_submit_failed_rate_limit");
+                        str("revanced_sb_submit_failed_forbidden", Requester.parseErrorStringAndDisconnect(connection));
+                case 429 -> str("revanced_sb_submit_failed_rate_limit");
                 case 400 ->
-                        str("sb_submit_failed_invalid", Requester.parseErrorJsonAndDisconnect(connection));
+                        str("revanced_sb_submit_failed_invalid", Requester.parseErrorStringAndDisconnect(connection));
                 default ->
-                        str("sb_submit_failed_unknown_error", responseCode, connection.getResponseMessage());
+                        str("revanced_sb_submit_failed_unknown_error", responseCode, connection.getResponseMessage());
             };
-            ReVancedUtils.showToastLong(messageToToast);
+            Utils.showToastLong(messageToToast);
         } catch (SocketTimeoutException ex) {
             // Always show, even if show connection toasts is turned off
-            ReVancedUtils.showToastLong(str("sb_submit_failed_timeout"));
+            Utils.showToastLong(str("revanced_sb_submit_failed_timeout"));
         } catch (IOException ex) {
-            ReVancedUtils.showToastLong(str("sb_submit_failed_unknown_error", 0, ex.getMessage()));
+            Utils.showToastLong(str("revanced_sb_submit_failed_unknown_error", 0, ex.getMessage()));
         } catch (Exception ex) {
-            LogHelper.printException(() -> "failed to submit segments", ex);
+            Logger.printException(() -> "failed to submit segments", ex);
         }
     }
 
     public static void sendSegmentSkippedViewedRequest(@NonNull SponsorSegment segment) {
-        ReVancedUtils.verifyOffMainThread();
+        Utils.verifyOffMainThread();
         try {
             HttpURLConnection connection = getConnectionFromRoute(SBRoutes.VIEWED_SEGMENT, segment.UUID);
             final int responseCode = connection.getResponseCode();
 
             if (responseCode == HTTP_STATUS_CODE_SUCCESS) {
-                LogHelper.printDebug(() -> "Successfully sent view count for segment: " + segment);
+                Logger.printDebug(() -> "Successfully sent view count for segment: " + segment);
             } else {
-                LogHelper.printDebug(() -> "Failed to sent view count for segment: " + segment.UUID
+                Logger.printDebug(() -> "Failed to sent view count for segment: " + segment.UUID
                         + " responseCode: " + responseCode); // debug level, no toast is shown
             }
         } catch (IOException ex) {
-            LogHelper.printInfo(() -> "Failed to send view count", ex); // do not show a toast
+            Logger.printInfo(() -> "Failed to send view count", ex); // do not show a toast
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Failed to send view count request", ex); // should never happen
+            Logger.printException(() -> "Failed to send view count request", ex); // should never happen
         }
     }
 
     public static void voteForSegmentOnBackgroundThread(@NonNull SponsorSegment segment, @NonNull SegmentVote voteOption) {
         voteOrRequestCategoryChange(segment, voteOption, null);
     }
-
     public static void voteToChangeCategoryOnBackgroundThread(@NonNull SponsorSegment segment, @NonNull SegmentCategory categoryToVoteFor) {
         voteOrRequestCategoryChange(segment, SegmentVote.CATEGORY_CHANGE, categoryToVoteFor);
     }
-
     private static void voteOrRequestCategoryChange(@NonNull SponsorSegment segment, @NonNull SegmentVote voteOption, SegmentCategory categoryToVoteFor) {
-        ReVancedUtils.runOnBackgroundThread(() -> {
+        Utils.runOnBackgroundThread(() -> {
             try {
                 String segmentUuid = segment.UUID;
                 String uuid = SponsorBlockSettings.getSBPrivateUserID();
                 HttpURLConnection connection = (voteOption == SegmentVote.CATEGORY_CHANGE)
-                        ? getConnectionFromRoute(SBRoutes.VOTE_ON_SEGMENT_CATEGORY, uuid, segmentUuid, categoryToVoteFor.key)
+                        ? getConnectionFromRoute(SBRoutes.VOTE_ON_SEGMENT_CATEGORY, uuid, segmentUuid, categoryToVoteFor.keyValue)
                         : getConnectionFromRoute(SBRoutes.VOTE_ON_SEGMENT_QUALITY, uuid, segmentUuid, String.valueOf(voteOption.apiVoteType));
                 final int responseCode = connection.getResponseCode();
 
                 switch (responseCode) {
-                    case HTTP_STATUS_CODE_SUCCESS ->
-                            LogHelper.printDebug(() -> "Vote success for segment: " + segment);
-                    case 403 -> ReVancedUtils.showToastLong(
-                            str("sb_vote_failed_forbidden", Requester.parseErrorJsonAndDisconnect(connection)));
-                    default -> ReVancedUtils.showToastLong(
-                            str("sb_vote_failed_unknown_error", responseCode, connection.getResponseMessage()));
+                    case HTTP_STATUS_CODE_SUCCESS:
+                        Logger.printDebug(() -> "Vote success for segment: " + segment);
+                        break;
+                    case 403:
+                        Utils.showToastLong(
+                                str("revanced_sb_vote_failed_forbidden", Requester.parseErrorStringAndDisconnect(connection)));
+                        break;
+                    default:
+                        Utils.showToastLong(
+                                str("revanced_sb_vote_failed_unknown_error", responseCode, connection.getResponseMessage()));
+                        break;
                 }
             } catch (SocketTimeoutException ex) {
-                ReVancedUtils.showToastShort(str("sb_vote_failed_timeout"));
+                Utils.showToastShort(str("revanced_sb_vote_failed_timeout"));
             } catch (IOException ex) {
-                ReVancedUtils.showToastShort(str("sb_vote_failed_unknown_error", 0, ex.getMessage()));
+                Utils.showToastShort(str("revanced_sb_vote_failed_unknown_error", 0, ex.getMessage()));
             } catch (Exception ex) {
-                LogHelper.printException(() -> "failed to vote for segment", ex); // should never happen
+                Logger.printException(() -> "failed to vote for segment", ex); // should never happen
             }
         });
     }
@@ -199,15 +210,15 @@ public class SBRequester {
      */
     @Nullable
     public static UserStats retrieveUserStats() {
-        ReVancedUtils.verifyOffMainThread();
+        Utils.verifyOffMainThread();
         try {
             UserStats stats = new UserStats(getJSONObject(SBRoutes.GET_USER_STATS, SponsorBlockSettings.getSBPrivateUserID()));
-            LogHelper.printDebug(() -> "user stats: " + stats);
+            Logger.printDebug(() -> "user stats: " + stats);
             return stats;
         } catch (IOException ex) {
-            LogHelper.printInfo(() -> "failed to retrieve user stats", ex); // info level, do not show a toast
+            Logger.printInfo(() -> "failed to retrieve user stats", ex); // info level, do not show a toast
         } catch (Exception ex) {
-            LogHelper.printException(() -> "failure retrieving user stats", ex); // should never happen
+            Logger.printException(() -> "failure retrieving user stats", ex); // should never happen
         }
         return null;
     }
@@ -217,7 +228,7 @@ public class SBRequester {
      */
     @Nullable
     public static String setUsername(@NonNull String username) {
-        ReVancedUtils.verifyOffMainThread();
+        Utils.verifyOffMainThread();
         try {
             HttpURLConnection connection = getConnectionFromRoute(SBRoutes.CHANGE_USERNAME, SponsorBlockSettings.getSBPrivateUserID(), username);
             final int responseCode = connection.getResponseCode();
@@ -225,10 +236,10 @@ public class SBRequester {
             if (responseCode == HTTP_STATUS_CODE_SUCCESS) {
                 return null;
             }
-            return str("sb_stats_username_change_unknown_error", responseCode, responseMessage);
+            return str("revanced_sb_stats_username_change_unknown_error", responseCode, responseMessage);
         } catch (Exception ex) { // should never happen
-            LogHelper.printInfo(() -> "failed to set username", ex); // do not toast
-            return str("sb_stats_username_change_unknown_error", 0, ex.getMessage());
+            Logger.printInfo(() -> "failed to set username", ex); // do not toast
+            return str("revanced_sb_stats_username_change_unknown_error", 0, ex.getMessage());
         }
     }
 
@@ -237,19 +248,19 @@ public class SBRequester {
             return; // User cannot be a VIP. User has never voted, created any segments, or has imported a SB user id.
         }
         long now = System.currentTimeMillis();
-        if (now < (SettingsEnum.SB_LAST_VIP_CHECK.getLong() + TimeUnit.DAYS.toMillis(3))) {
+        if (now < (Settings.SB_LAST_VIP_CHECK.get() + TimeUnit.DAYS.toMillis(3))) {
             return;
         }
-        ReVancedUtils.runOnBackgroundThread(() -> {
+        Utils.runOnBackgroundThread(() -> {
             try {
                 JSONObject json = getJSONObject(SBRoutes.IS_USER_VIP, SponsorBlockSettings.getSBPrivateUserID());
                 boolean vip = json.getBoolean("vip");
-                SettingsEnum.SB_USER_IS_VIP.saveValue(vip);
-                SettingsEnum.SB_LAST_VIP_CHECK.saveValue(now);
+                Settings.SB_USER_IS_VIP.save(vip);
+                Settings.SB_LAST_VIP_CHECK.save(now);
             } catch (IOException ex) {
-                LogHelper.printInfo(() -> "Failed to check VIP (network error)", ex); // info, so no error toast is shown
+                Logger.printInfo(() -> "Failed to check VIP (network error)", ex); // info, so no error toast is shown
             } catch (Exception ex) {
-                LogHelper.printException(() -> "Failed to check VIP", ex); // should never happen
+                Logger.printException(() -> "Failed to check VIP", ex); // should never happen
             }
         });
     }
@@ -257,7 +268,7 @@ public class SBRequester {
     // helpers
 
     private static HttpURLConnection getConnectionFromRoute(@NonNull Route route, String... params) throws IOException {
-        HttpURLConnection connection = Requester.getConnectionFromRoute(SettingsEnum.SB_API_URL.getString(), route, params);
+        HttpURLConnection connection = Requester.getConnectionFromRoute(Settings.SB_API_URL.get(), route, params);
         connection.setConnectTimeout(TIMEOUT_TCP_DEFAULT_MILLISECONDS);
         connection.setReadTimeout(TIMEOUT_HTTP_DEFAULT_MILLISECONDS);
         return connection;

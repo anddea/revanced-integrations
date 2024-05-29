@@ -4,7 +4,7 @@ import android.net.Uri;
 
 import java.util.Objects;
 
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.settings.Settings;
 
 @SuppressWarnings("unused")
 public class OpenLinksDirectlyPatch {
@@ -12,7 +12,7 @@ public class OpenLinksDirectlyPatch {
 
     public static Uri enableBypassRedirect(String uri) {
         final Uri parsed = Uri.parse(uri);
-        if (!SettingsEnum.ENABLE_OPEN_LINKS_DIRECTLY.getBoolean())
+        if (!Settings.ENABLE_OPEN_LINKS_DIRECTLY.get())
             return parsed;
 
         if (Objects.equals(parsed.getPath(), YOUTUBE_REDIRECT_PATH)) {

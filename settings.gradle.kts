@@ -13,14 +13,16 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
 buildCache {
     local {
-        isEnabled = !System.getenv().containsKey("CI")
+        isEnabled = "CI" !in System.getenv()
     }
 }
 
 include(":app")
-include(":dummy")
+include(":stub")

@@ -1,6 +1,7 @@
 package app.revanced.integrations.youtube.sponsorblock.ui;
 
-import static app.revanced.integrations.youtube.utils.ResourceUtils.identifier;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getIdentifier;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getLayoutIdentifier;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -11,20 +12,18 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.ResourceUtils;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.VideoInformation;
+import app.revanced.integrations.youtube.sponsorblock.SegmentPlaybackController;
 import app.revanced.integrations.youtube.sponsorblock.SponsorBlockUtils;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ResourceType;
 
 public final class NewSegmentLayout extends FrameLayout {
     private static final ColorStateList rippleColorStateList = new ColorStateList(
             new int[][]{new int[]{android.R.attr.state_enabled}},
             new int[]{0x33ffffff} // sets the ripple color to white
     );
-    final int defaultBottomMargin;
-    final int ctaBottomMargin;
-    final int hiddenBottomMargin;
     private final int rippleEffectId;
 
     public NewSegmentLayout(final Context context) {
@@ -43,7 +42,7 @@ public final class NewSegmentLayout extends FrameLayout {
                             final int defStyleAttr, final int defStyleRes) {
         super(context, attributeSet, defStyleAttr, defStyleRes);
 
-        LayoutInflater.from(context).inflate(identifier("new_segment", ResourceType.LAYOUT, context), this, true);
+        LayoutInflater.from(context).inflate(getLayoutIdentifier("revanced_sb_new_segment"), this, true);
 
 
         TypedValue rippleEffect = new TypedValue();
@@ -52,49 +51,45 @@ public final class NewSegmentLayout extends FrameLayout {
 
         initializeButton(
                 context,
-                "sb_new_segment_rewind",
-                () -> VideoInformation.seekToRelative(-SettingsEnum.SB_CREATE_NEW_SEGMENT_STEP.getInt()),
+                "revanced_sb_new_segment_rewind",
+                () -> VideoInformation.seekToRelative(-Settings.SB_CREATE_NEW_SEGMENT_STEP.get(), SegmentPlaybackController.getVideoLength()),
                 "Rewind button clicked"
         );
 
         initializeButton(
                 context,
-                "sb_new_segment_forward",
-                () -> VideoInformation.seekToRelative(SettingsEnum.SB_CREATE_NEW_SEGMENT_STEP.getInt()),
+                "revanced_sb_new_segment_forward",
+                () -> VideoInformation.seekToRelative(Settings.SB_CREATE_NEW_SEGMENT_STEP.get(), SegmentPlaybackController.getVideoLength()),
                 "Forward button clicked"
         );
 
         initializeButton(
                 context,
-                "sb_new_segment_adjust",
+                "revanced_sb_new_segment_adjust",
                 SponsorBlockUtils::onMarkLocationClicked,
                 "Adjust button clicked"
         );
 
         initializeButton(
                 context,
-                "sb_new_segment_compare",
+                "revanced_sb_new_segment_compare",
                 SponsorBlockUtils::onPreviewClicked,
                 "Compare button clicked"
         );
 
         initializeButton(
                 context,
-                "sb_new_segment_edit",
+                "revanced_sb_new_segment_edit",
                 SponsorBlockUtils::onEditByHandClicked,
                 "Edit button clicked"
         );
 
         initializeButton(
                 context,
-                "sb_new_segment_publish",
+                "revanced_sb_new_segment_publish",
                 SponsorBlockUtils::onPublishClicked,
                 "Publish button clicked"
         );
-
-        defaultBottomMargin = context.getResources().getDimensionPixelSize(identifier("brand_interaction_default_bottom_margin", ResourceType.DIMEN, context));
-        ctaBottomMargin = context.getResources().getDimensionPixelSize(identifier("brand_interaction_cta_bottom_margin", ResourceType.DIMEN, context));
-        hiddenBottomMargin = (int) Math.round((ctaBottomMargin) * 0.5);  // margin when the button container is hidden
     }
 
     /**
@@ -107,7 +102,7 @@ public final class NewSegmentLayout extends FrameLayout {
      */
     private void initializeButton(final Context context, final String resourceIdentifierName,
                                   final ButtonOnClickHandlerFunction handler, final String debugMessage) {
-        final ImageButton button = findViewById(identifier(resourceIdentifierName, ResourceType.ID, context));
+        final ImageButton button = findViewById(getIdentifier(resourceIdentifierName, ResourceUtils.ResourceType.ID, context));
 
         // Add ripple effect
         button.setBackgroundResource(rippleEffectId);
@@ -116,7 +111,7 @@ public final class NewSegmentLayout extends FrameLayout {
 
         button.setOnClickListener((v) -> {
             handler.apply();
-            LogHelper.printDebug(() -> debugMessage);
+            Logger.printDebug(() -> debugMessage);
         });
     }
 

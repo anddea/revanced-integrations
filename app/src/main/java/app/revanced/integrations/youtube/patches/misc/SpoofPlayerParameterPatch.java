@@ -1,8 +1,8 @@
 package app.revanced.integrations.youtube.patches.misc;
 
+import static app.revanced.integrations.shared.utils.Utils.containsAny;
+import static app.revanced.integrations.shared.utils.Utils.submitOnBackgroundThread;
 import static app.revanced.integrations.youtube.patches.misc.requests.StoryboardRendererRequester.getStoryboardRenderer;
-import static app.revanced.integrations.youtube.utils.ReVancedUtils.containsAny;
-import static app.revanced.integrations.youtube.utils.ReVancedUtils.submitOnBackgroundThread;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,24 +12,33 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.PlayerType;
-import app.revanced.integrations.youtube.utils.LogHelper;
+import app.revanced.integrations.youtube.shared.VideoInformation;
 
 /**
  * @noinspection ALL
+ *
+ * Even if user spoof any player parameters with the client name "ANDROID", if a valid DroidGuard result is not sent,
+ * user always receive a response with video id 'aQvGIIdgFDM' (the following content is not available on this app).
+ * <a href="https://github.com/LuanRT/YouTube.js/issues/623#issuecomment-2028586357">YouTube.js#623</a>
+ * Therefore, this patch is no longer valid.
+ *
+ * Currently, the only client name available on Android without DroidGuard results is "ANDROID_TESTSUITE".
+ * <a href="https://github.com/iv-org/invidious/pull/4650">invidious#4650</a>
  */
+@Deprecated
 public class SpoofPlayerParameterPatch {
-    private static final boolean spoofParameter = SettingsEnum.SPOOF_PLAYER_PARAMETER.getBoolean();
-    private static final boolean spoofParameterInFeed = SettingsEnum.SPOOF_PLAYER_PARAMETER_IN_FEED.getBoolean();
+    private static final boolean spoofParameter = Settings.SPOOF_PLAYER_PARAMETER.get();
+    private static final boolean spoofParameterInFeed = Settings.SPOOF_PLAYER_PARAMETER_IN_FEED.get();
 
     /**
      * Parameter (also used by
-     * <a href="https://github.com/yt-dlp/yt-dlp/blob/81ca451480051d7ce1a31c017e005358345a9149/yt_dlp/extractor/youtube.py#L3602">yt-dlp</a>)
+     * <a href="https://github.com/LuanRT/YouTube.js/pull/624">YouTube.js</a>)
      * to fix playback issues.
      */
-    private static final String INCOGNITO_PARAMETERS = "CgIQBg==";
+    private static final String INCOGNITO_PARAMETERS = "CgIIAQ%3D%3D";
 
     /**
      * Parameters used when playing clips.
@@ -70,10 +79,10 @@ public class SpoofPlayerParameterPatch {
                     return future.get(20000, TimeUnit.MILLISECONDS); // Any arbitrarily large timeout.
                 } // else, return null.
             } catch (TimeoutException ex) {
-                LogHelper.printDebug(() -> "Could not get renderer (get timed out)");
+                Logger.printDebug(() -> "Could not get renderer (get timed out)");
             } catch (ExecutionException | InterruptedException ex) {
                 // Should never happen.
-                LogHelper.printException(() -> "Could not get renderer", ex);
+                Logger.printException(() -> "Could not get renderer", ex);
             }
         }
         return null;
@@ -90,14 +99,10 @@ public class SpoofPlayerParameterPatch {
      */
     public static String spoofParameter(@NonNull String videoId, @Nullable String parameters, boolean isShortAndOpeningOrPlaying) {
         try {
-            LogHelper.printDebug(() -> "Original player parameter value: " + parameters);
+            Logger.printDebug(() -> "Original player parameter value: " + parameters);
 
             if (!spoofParameter) {
                 return parameters;
-            }
-
-            if (parameters == null) {
-                return INCOGNITO_PARAMETERS;
             }
 
             // Shorts do not need to be spoofed.
@@ -127,7 +132,7 @@ public class SpoofPlayerParameterPatch {
 
             fetchStoryboardRenderer(videoId);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "spoofParameter failure", ex);
+            Logger.printException(() -> "spoofParameter failure", ex);
         }
         return INCOGNITO_PARAMETERS;
     }
@@ -148,10 +153,10 @@ public class SpoofPlayerParameterPatch {
         if (spoofParameter && !useOriginalStoryboardRenderer) {
             final StoryboardRenderer renderer = getRenderer(false);
             if (renderer != null) {
-                if (returnNullIfLiveStream && renderer.isLiveStream()) {
+                if (returnNullIfLiveStream && renderer.isLiveStream) {
                     return null;
                 }
-                String spec = renderer.getSpec();
+                String spec = renderer.spec;
                 if (spec != null) {
                     return spec;
                 }
@@ -187,7 +192,7 @@ public class SpoofPlayerParameterPatch {
         if (spoofParameter && !useOriginalStoryboardRenderer) {
             final StoryboardRenderer renderer = getRenderer(false);
             if (renderer != null) {
-                Integer recommendedLevel = renderer.getRecommendedLevel();
+                Integer recommendedLevel = renderer.recommendedLevel;
                 if (recommendedLevel != null) return recommendedLevel;
             }
         }
@@ -197,7 +202,7 @@ public class SpoofPlayerParameterPatch {
 
     /**
      * Injection point.  Forces seekbar to be shown for paid videos or
-     * if {@link SettingsEnum#SPOOF_PLAYER_PARAMETER} is not enabled.
+     * if {@link Settings#SPOOF_PLAYER_PARAMETER} is not enabled.
      */
     public static boolean getSeekbarThumbnailOverrideValue() {
         if (!spoofParameter) {
@@ -210,6 +215,6 @@ public class SpoofPlayerParameterPatch {
             // Show empty thumbnails so the seek time and chapters still show up.
             return true;
         }
-        return renderer.getSpec() != null;
+        return renderer.spec != null;
     }
 }

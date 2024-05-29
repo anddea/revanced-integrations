@@ -1,31 +1,33 @@
 package app.revanced.integrations.youtube.sponsorblock.objects;
 
-import static app.revanced.integrations.youtube.utils.StringRef.sf;
+import static app.revanced.integrations.shared.utils.StringRef.sf;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
-import app.revanced.integrations.youtube.utils.StringRef;
+import app.revanced.integrations.shared.utils.StringRef;
+import app.revanced.integrations.shared.utils.Utils;
 
 public enum CategoryBehaviour {
-    SKIP_AUTOMATICALLY("skip", 2, true, sf("sb_skip_automatically")),
+    SKIP_AUTOMATICALLY("skip", 2, true, sf("revanced_sb_skip_automatically")),
     // desktop does not have skip-once behavior. Key is unique to ReVanced
-    SKIP_AUTOMATICALLY_ONCE("skip-once", 3, true, sf("sb_skip_automatically_once")),
-    MANUAL_SKIP("manual-skip", 1, false, sf("sb_skip_showbutton")),
-    SHOW_IN_SEEKBAR("seekbar-only", 0, false, sf("sb_skip_seekbaronly")),
+    SKIP_AUTOMATICALLY_ONCE("skip-once", 3, true, sf("revanced_sb_skip_automatically_once")),
+    MANUAL_SKIP("manual-skip", 1, false, sf("revanced_sb_skip_showbutton")),
+    SHOW_IN_SEEKBAR("seekbar-only", 0, false, sf("revanced_sb_skip_seekbaronly")),
     // ignored categories are not exported to json, and ignore is the default behavior when importing
-    IGNORE("ignore", -1, false, sf("sb_skip_ignore"));
+    IGNORE("ignore", -1, false, sf("revanced_sb_skip_ignore"));
 
-    private static String[] behaviorKeys;
-    private static String[] behaviorDescriptions;
-    private static String[] behaviorKeysWithoutSkipOnce;
-    private static String[] behaviorDescriptionsWithoutSkipOnce;
+    /**
+     * ReVanced specific value.
+     */
     @NonNull
-    public final String key;
-    public final int desktopKey;
+    public final String reVancedKeyValue;
+    /**
+     * Desktop specific value.
+     */
+    public final int desktopKeyValue;
     /**
      * If the segment should skip automatically
      */
@@ -33,17 +35,17 @@ public enum CategoryBehaviour {
     @NonNull
     public final StringRef description;
 
-    CategoryBehaviour(String key, int desktopKey, boolean skipAutomatically, StringRef description) {
-        this.key = Objects.requireNonNull(key);
-        this.desktopKey = desktopKey;
+    CategoryBehaviour(String reVancedKeyValue, int desktopKeyValue, boolean skipAutomatically, StringRef description) {
+        this.reVancedKeyValue = Objects.requireNonNull(reVancedKeyValue);
+        this.desktopKeyValue = desktopKeyValue;
         this.skipAutomatically = skipAutomatically;
         this.description = Objects.requireNonNull(description);
     }
 
     @Nullable
-    public static CategoryBehaviour byStringKey(@NonNull String key) {
-        for (CategoryBehaviour behaviour : values()) {
-            if (behaviour.key.equals(key)) {
+    public static CategoryBehaviour byReVancedKeyValue(@NonNull String keyValue) {
+        for (CategoryBehaviour behaviour : values()){
+            if (behaviour.reVancedKeyValue.equals(keyValue)) {
                 return behaviour;
             }
         }
@@ -51,53 +53,58 @@ public enum CategoryBehaviour {
     }
 
     @Nullable
-    public static CategoryBehaviour byDesktopKey(int desktopKey) {
+    public static CategoryBehaviour byDesktopKeyValue(int desktopKeyValue) {
         for (CategoryBehaviour behaviour : values()) {
-            if (behaviour.desktopKey == desktopKey) {
+            if (behaviour.desktopKeyValue == desktopKeyValue) {
                 return behaviour;
             }
         }
         return null;
     }
 
+    private static String[] behaviorKeyValues;
+    private static String[] behaviorDescriptions;
+
+    private static String[] behaviorKeyValuesWithoutSkipOnce;
+    private static String[] behaviorDescriptionsWithoutSkipOnce;
+
     private static void createNameAndKeyArrays() {
-        ReVancedUtils.verifyOnMainThread();
+        Utils.verifyOnMainThread();
 
         CategoryBehaviour[] behaviours = values();
         final int behaviorLength = behaviours.length;
-        behaviorKeys = new String[behaviorLength];
+        behaviorKeyValues = new String[behaviorLength];
         behaviorDescriptions = new String[behaviorLength];
-        behaviorKeysWithoutSkipOnce = new String[behaviorLength - 1];
+        behaviorKeyValuesWithoutSkipOnce = new String[behaviorLength - 1];
         behaviorDescriptionsWithoutSkipOnce = new String[behaviorLength - 1];
 
         int behaviorIndex = 0, behaviorHighlightIndex = 0;
         while (behaviorIndex < behaviorLength) {
             CategoryBehaviour behaviour = behaviours[behaviorIndex];
-            String key = behaviour.key;
+            String value = behaviour.reVancedKeyValue;
             String description = behaviour.description.toString();
-            behaviorKeys[behaviorIndex] = key;
+            behaviorKeyValues[behaviorIndex] = value;
             behaviorDescriptions[behaviorIndex] = description;
             behaviorIndex++;
             if (behaviour != SKIP_AUTOMATICALLY_ONCE) {
-                behaviorKeysWithoutSkipOnce[behaviorHighlightIndex] = key;
+                behaviorKeyValuesWithoutSkipOnce[behaviorHighlightIndex] = value;
                 behaviorDescriptionsWithoutSkipOnce[behaviorHighlightIndex] = description;
                 behaviorHighlightIndex++;
             }
         }
     }
 
-    static String[] getBehaviorKeys() {
-        if (behaviorKeys == null) {
+    static String[] getBehaviorKeyValues() {
+        if (behaviorKeyValues == null) {
             createNameAndKeyArrays();
         }
-        return behaviorKeys;
+        return behaviorKeyValues;
     }
-
-    static String[] getBehaviorKeysWithoutSkipOnce() {
-        if (behaviorKeysWithoutSkipOnce == null) {
+    static String[] getBehaviorKeyValuesWithoutSkipOnce() {
+        if (behaviorKeyValuesWithoutSkipOnce == null) {
             createNameAndKeyArrays();
         }
-        return behaviorKeysWithoutSkipOnce;
+        return behaviorKeyValuesWithoutSkipOnce;
     }
 
     static String[] getBehaviorDescriptions() {
@@ -106,7 +113,6 @@ public enum CategoryBehaviour {
         }
         return behaviorDescriptions;
     }
-
     static String[] getBehaviorDescriptionsWithoutSkipOnce() {
         if (behaviorDescriptionsWithoutSkipOnce == null) {
             createNameAndKeyArrays();

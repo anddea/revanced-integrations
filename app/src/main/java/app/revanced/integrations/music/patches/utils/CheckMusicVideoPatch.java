@@ -5,8 +5,8 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 
 import app.revanced.integrations.music.patches.utils.requests.PlaylistRequester;
-import app.revanced.integrations.music.settings.SettingsEnum;
-import app.revanced.integrations.music.utils.LogHelper;
+import app.revanced.integrations.music.settings.Settings;
+import app.revanced.integrations.shared.utils.Logger;
 
 public class CheckMusicVideoPatch {
 
@@ -31,7 +31,7 @@ public class CheckMusicVideoPatch {
     @SuppressWarnings("unused")
     public static void playbackStart(@NonNull String videoId, @NonNull String playlistId, final int playlistIndex, boolean isPlaying) {
         try {
-            if (!SettingsEnum.REPLACE_PLAYER_CAST_BUTTON.getBoolean() || isPlaying)
+            if (!Settings.REPLACE_PLAYER_CAST_BUTTON.get() || isPlaying)
                 return;
 
             if (currentVideoId.equals(videoId)) {
@@ -42,7 +42,7 @@ public class CheckMusicVideoPatch {
                 return;
             }
 
-            LogHelper.printDebug(() -> String.format("Playback Started\nVideo Id: %s\nPlaylist Id: %s\nPlaylist Index: %d", videoId, playlistId, playlistIndex));
+            Logger.printDebug(() -> String.format("Playback Started\nVideo Id: %s\nPlaylist Id: %s\nPlaylist Index: %d", videoId, playlistId, playlistIndex));
 
             currentVideoId = videoId;
             currentPlaylistId = playlistId;
@@ -50,7 +50,7 @@ public class CheckMusicVideoPatch {
 
             PlaylistRequester.fetchPlaylist(videoId, playlistId, playlistIndex);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "playbackStart failure", ex);
+            Logger.printException(() -> "playbackStart failure", ex);
         }
     }
 

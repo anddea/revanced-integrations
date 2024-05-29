@@ -1,38 +1,36 @@
 package app.revanced.integrations.youtube.patches.utils;
 
-import android.content.Context;
-import android.content.Intent;
-import android.media.AudioManager;
-import android.view.KeyEvent;
+import android.util.Log;
 
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.VideoInformation;
 
+@SuppressWarnings("unused")
 public class AlwaysRepeatPatch {
 
-    public static boolean enableAlwaysRepeat(boolean original) {
-        return !SettingsEnum.ALWAYS_REPEAT.getBoolean() && original;
+    /**
+     * Injection point.
+     * @return video is repeated.
+     */
+    public static boolean alwaysRepeat() {
+        return alwaysRepeatEnabled() && VideoInformation.overrideVideoTime(0);
     }
 
-    public static void shouldRepeatAndPause() {
-        Context context = ReVancedUtils.getContext();
-        if (context == null)
-            return;
+    public static boolean alwaysRepeatEnabled() {
+        final boolean alwaysRepeat = Settings.ALWAYS_REPEAT.get();
+        final boolean alwaysRepeatPause = Settings.ALWAYS_REPEAT_PAUSE.get();
 
-        pauseMedia(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE), context);
-        pauseMedia(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PAUSE), context);
-
-        AudioManager audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
-        if (audioManager == null)
-            return;
-
-        audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (alwaysRepeat && alwaysRepeatPause) pauseVideo();
+        return alwaysRepeat;
     }
 
-    public static void pauseMedia(KeyEvent keyEvent, Context context) {
-        Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-        intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
-        context.sendOrderedBroadcast(intent, null);
+    /**
+     * Pause the current video.
+     * Rest of the implementation added by patch.
+     */
+    private static void pauseVideo() {
+        // These instructions are ignored by patch.
+        Log.d("Extended: AlwaysRepeatPatch", "AlwaysRepeatAndPauseState: " + Settings.ALWAYS_REPEAT_PAUSE.get());
     }
+
 }

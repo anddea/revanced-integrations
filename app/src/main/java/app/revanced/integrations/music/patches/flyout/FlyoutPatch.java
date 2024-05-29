@@ -1,7 +1,9 @@
 package app.revanced.integrations.music.patches.flyout;
 
-import static app.revanced.integrations.music.utils.ResourceUtils.identifier;
-import static app.revanced.integrations.music.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getIdentifier;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.Utils.clickView;
+import static app.revanced.integrations.shared.utils.Utils.runOnMainThreadDelayed;
 
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -10,127 +12,157 @@ import android.graphics.PorterDuffColorFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
-import app.revanced.integrations.music.utils.LogHelper;
-import app.revanced.integrations.music.utils.ReVancedUtils;
-import app.revanced.integrations.music.utils.ResourceType;
-import app.revanced.integrations.music.utils.VideoHelpers;
+import java.lang.ref.WeakReference;
+
+import app.revanced.integrations.music.settings.Settings;
+import app.revanced.integrations.music.shared.VideoType;
+import app.revanced.integrations.music.utils.VideoUtils;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.ResourceUtils.ResourceType;
 
 @SuppressWarnings("unused")
 public class FlyoutPatch {
 
-    private static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#ffffffff"), PorterDuff.Mode.SRC_ATOP);
-
     public static int enableCompactDialog(int original) {
-        if (!SettingsEnum.ENABLE_COMPACT_DIALOG.getBoolean())
+        if (!Settings.ENABLE_COMPACT_DIALOG.get())
             return original;
 
         return Math.max(original, 600);
     }
 
-    public static boolean hideFlyoutPanels(@Nullable Enum<?> flyoutPanelEnum) {
-        if (flyoutPanelEnum == null)
+    public static boolean enableTrimSilence(boolean original) {
+        if (!Settings.ENABLE_TRIM_SILENCE.get())
+            return original;
+
+        return VideoType.getCurrent().isPodCast() || original;
+    }
+
+    public static boolean enableTrimSilenceSwitch(boolean original) {
+        if (!Settings.ENABLE_TRIM_SILENCE.get())
+            return original;
+
+        return VideoType.getCurrent().isPodCast() && original;
+    }
+
+    public static boolean hideComponents(@Nullable Enum<?> flyoutMenuEnum) {
+        if (flyoutMenuEnum == null)
             return false;
 
-        final String flyoutPanelName = flyoutPanelEnum.name();
+        final String flyoutMenuName = flyoutMenuEnum.name();
 
-        LogHelper.printDebug(() -> flyoutPanelName);
+        Logger.printDebug(() -> "flyoutMenu: " + flyoutMenuName);
 
         for (FlyoutPanelComponent component : FlyoutPanelComponent.values())
-            if (component.name.equals(flyoutPanelName) && component.enabled)
+            if (component.name.equals(flyoutMenuName) && component.enabled)
                 return true;
 
         return false;
     }
 
-    /**
-     * This method is called before the original method
-     * So even if we define TextView and ImageView, TextView and ImageView are redefined in the original method
-     * To prevent this, define the TextView and ImageView in a new thread
-     *
-     * @param flyoutPanelEnum Enum in menu
-     * @param textView        TextView in menu
-     * @param imageView       ImageView in menu
-     */
-    public static void replaceDismissQueue(@Nullable Enum<?> flyoutPanelEnum, @NonNull TextView textView, @NonNull ImageView imageView) {
-        if (flyoutPanelEnum == null || !SettingsEnum.REPLACE_FLYOUT_PANEL_DISMISS_QUEUE.getBoolean())
+    public static void hideLikeDislikeContainer(View view) {
+        if (!Settings.HIDE_FLYOUT_MENU_LIKE_DISLIKE.get())
             return;
 
-        final String flyoutPanelName = flyoutPanelEnum.name();
-
-        if (!flyoutPanelName.equals("DISMISS_QUEUE"))
-            return;
-
-        ViewGroup clickAbleArea = (ViewGroup) textView.getParent();
-
-        ReVancedUtils.runOnMainThreadDelayed(() -> {
-            textView.setText(str("revanced_flyout_panel_watch_on_youtube"));
-            imageView.setImageResource(identifier("yt_outline_youtube_logo_icon_vd_theme_24", ResourceType.DRAWABLE, clickAbleArea.getContext()));
-            clickAbleArea.setOnClickListener(viewGroup -> VideoHelpers.openInYouTube(viewGroup.getContext()));
-            }, 0L
-        );
-    }
-
-    public static void hideImageView(boolean hidden, @NonNull ImageView imageView) {
-        if (hidden) {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
-            imageView.setLayoutParams(layoutParams);
+        if (view.getParent() instanceof ViewGroup viewGroup) {
+            viewGroup.removeView(view);
         }
     }
 
-    public static void setFlyoutButtonContainer(@NonNull View view) {
-        if (!(view instanceof ViewGroup viewGroup))
+    private static volatile boolean lastMenuWasDismissQueue = false;
+
+    private static WeakReference<View> touchOutSideViewRef = new WeakReference<>(null);
+
+    public static void setTouchOutSideView(View touchOutSideView) {
+        touchOutSideViewRef = new WeakReference<>(touchOutSideView);
+    }
+
+    public static void replaceComponents(@Nullable Enum<?> flyoutPanelEnum, @NonNull TextView textView, @NonNull ImageView imageView) {
+        if (flyoutPanelEnum == null)
             return;
 
-        final ViewGroup flyoutButtonContainers = (ViewGroup) viewGroup.getChildAt(0);
-        final ImageView playbackSpeedButton = (ImageView) flyoutButtonContainers.getChildAt(0);
-        final ImageView dislikeButton = (ImageView) flyoutButtonContainers.getChildAt(1);
-        final ImageView likeButton = (ImageView) flyoutButtonContainers.getChildAt(2);
+        final String enumString = flyoutPanelEnum.name();
+        final boolean isDismissQue = enumString.equals("DISMISS_QUEUE");
+        final boolean isReport = enumString.equals("FLAG");
 
-        playbackSpeedButton.setOnClickListener(imageView -> VideoHelpers.playbackSpeedDialogListener(imageView.getContext()));
-        playbackSpeedButton.setColorFilter(cf);
+        if (isDismissQue) {
+            replaceDismissQueue(textView, imageView);
+        } else if (isReport) {
+            replaceReport(textView, imageView, lastMenuWasDismissQueue);
+        }
+        lastMenuWasDismissQueue = isDismissQue;
+    }
 
-        final boolean hideLikeDislikeButton = SettingsEnum.HIDE_FLYOUT_PANEL_LIKE_DISLIKE.getBoolean();
-        final boolean hidePlaybackSpeedButton = !SettingsEnum.ENABLE_FLYOUT_PANEL_PLAYBACK_SPEED.getBoolean();
+    private static void replaceDismissQueue(@NonNull TextView textView, @NonNull ImageView imageView) {
+        if (!Settings.REPLACE_FLYOUT_MENU_DISMISS_QUEUE.get())
+            return;
 
-        hideImageView(hideLikeDislikeButton, dislikeButton);
-        hideImageView(hideLikeDislikeButton, likeButton);
-        hideImageView(hidePlaybackSpeedButton, playbackSpeedButton);
+        if (!(textView.getParent() instanceof ViewGroup clickAbleArea))
+            return;
+
+        runOnMainThreadDelayed(() -> {
+                    textView.setText(str("revanced_replace_flyout_menu_dismiss_queue_watch_on_youtube_label"));
+                    imageView.setImageResource(getIdentifier("yt_outline_youtube_logo_icon_vd_theme_24", ResourceType.DRAWABLE, clickAbleArea.getContext()));
+                    clickAbleArea.setOnClickListener(viewGroup -> VideoUtils.openInYouTube());
+                }, 0L
+        );
+    }
+
+    private static final ColorFilter cf = new PorterDuffColorFilter(Color.parseColor("#ffffffff"), PorterDuff.Mode.SRC_ATOP);
+
+    private static void replaceReport(@NonNull TextView textView, @NonNull ImageView imageView, boolean wasDismissQueue) {
+        if (!Settings.REPLACE_FLYOUT_MENU_REPORT.get())
+            return;
+
+        if (Settings.REPLACE_FLYOUT_MENU_REPORT_ONLY_PLAYER.get() && !wasDismissQueue)
+            return;
+
+        if (!(textView.getParent() instanceof ViewGroup clickAbleArea))
+            return;
+
+        runOnMainThreadDelayed(() -> {
+                    textView.setText(str("playback_rate_title"));
+                    imageView.setImageResource(getIdentifier("yt_outline_play_arrow_half_circle_black_24", ResourceType.DRAWABLE, clickAbleArea.getContext()));
+                    imageView.setColorFilter(cf);
+                    clickAbleArea.setOnClickListener(view -> {
+                        clickView(touchOutSideViewRef.get());
+                        VideoUtils.showPlaybackSpeedFlyoutMenu();
+                    });
+                }, 0L
+        );
     }
 
     private enum FlyoutPanelComponent {
-        SAVE_EPISODE_FOR_LATER("BOOKMARK_BORDER", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_EPISODE_FOR_LATER.getBoolean()),
-        SHUFFLE_PLAY("SHUFFLE", SettingsEnum.HIDE_FLYOUT_PANEL_SHUFFLE_PLAY.getBoolean()),
-        RADIO("MIX", SettingsEnum.HIDE_FLYOUT_PANEL_START_RADIO.getBoolean()),
-        SUBSCRIBE("SUBSCRIBE", SettingsEnum.HIDE_FLYOUT_PANEL_SUBSCRIBE.getBoolean()),
-        EDIT_PLAYLIST("EDIT", SettingsEnum.HIDE_FLYOUT_PANEL_EDIT_PLAYLIST.getBoolean()),
-        DELETE_PLAYLIST("DELETE", SettingsEnum.HIDE_FLYOUT_PANEL_DELETE_PLAYLIST.getBoolean()),
-        PLAY_NEXT("QUEUE_PLAY_NEXT", SettingsEnum.HIDE_FLYOUT_PANEL_PLAY_NEXT.getBoolean()),
-        ADD_TO_QUEUE("QUEUE_MUSIC", SettingsEnum.HIDE_FLYOUT_PANEL_ADD_TO_QUEUE.getBoolean()),
-        SAVE_TO_LIBRARY("LIBRARY_ADD", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_TO_LIBRARY.getBoolean()),
-        REMOVE_FROM_LIBRARY("LIBRARY_REMOVE", SettingsEnum.HIDE_FLYOUT_PANEL_REMOVE_FROM_LIBRARY.getBoolean()),
-        REMOVE_FROM_PLAYLIST("REMOVE_FROM_PLAYLIST", SettingsEnum.HIDE_FLYOUT_PANEL_REMOVE_FROM_PLAYLIST.getBoolean()),
-        DOWNLOAD("OFFLINE_DOWNLOAD", SettingsEnum.HIDE_FLYOUT_PANEL_DOWNLOAD.getBoolean()),
-        SAVE_TO_PLAYLIST("ADD_TO_PLAYLIST", SettingsEnum.HIDE_FLYOUT_PANEL_SAVE_TO_PLAYLIST.getBoolean()),
-        GO_TO_EPISODE("INFO", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_EPISODE.getBoolean()),
-        GO_TO_PODCAST("BROADCAST", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_PODCAST.getBoolean()),
-        GO_TO_ALBUM("ALBUM", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_ALBUM.getBoolean()),
-        GO_TO_ARTIST("ARTIST", SettingsEnum.HIDE_FLYOUT_PANEL_GO_TO_ARTIST.getBoolean()),
-        VIEW_SONG_CREDIT("PEOPLE_GROUP", SettingsEnum.HIDE_FLYOUT_PANEL_VIEW_SONG_CREDIT.getBoolean()),
-        SHARE("SHARE", SettingsEnum.HIDE_FLYOUT_PANEL_SHARE.getBoolean()),
-        DISMISS_QUEUE("DISMISS_QUEUE", SettingsEnum.HIDE_FLYOUT_PANEL_DISMISS_QUEUE.getBoolean()),
-        HELP("HELP_OUTLINE", SettingsEnum.HIDE_FLYOUT_PANEL_HELP.getBoolean()),
-        REPORT("FLAG", SettingsEnum.HIDE_FLYOUT_PANEL_REPORT.getBoolean()),
-        QUALITY("SETTINGS_MATERIAL", SettingsEnum.HIDE_FLYOUT_PANEL_QUALITY.getBoolean()),
-        CAPTIONS("CAPTIONS", SettingsEnum.HIDE_FLYOUT_PANEL_CAPTIONS.getBoolean()),
-        STATS_FOR_NERDS("PLANNER_REVIEW", SettingsEnum.HIDE_FLYOUT_PANEL_STATS_FOR_NERDS.getBoolean()),
-        SLEEP_TIMER("MOON_Z", SettingsEnum.HIDE_FLYOUT_PANEL_SLEEP_TIMER.getBoolean());
+        SAVE_EPISODE_FOR_LATER("BOOKMARK_BORDER", Settings.HIDE_FLYOUT_MENU_SAVE_EPISODE_FOR_LATER.get()),
+        SHUFFLE_PLAY("SHUFFLE", Settings.HIDE_FLYOUT_MENU_SHUFFLE_PLAY.get()),
+        RADIO("MIX", Settings.HIDE_FLYOUT_MENU_START_RADIO.get()),
+        SUBSCRIBE("SUBSCRIBE", Settings.HIDE_FLYOUT_MENU_SUBSCRIBE.get()),
+        EDIT_PLAYLIST("EDIT", Settings.HIDE_FLYOUT_MENU_EDIT_PLAYLIST.get()),
+        DELETE_PLAYLIST("DELETE", Settings.HIDE_FLYOUT_MENU_DELETE_PLAYLIST.get()),
+        PLAY_NEXT("QUEUE_PLAY_NEXT", Settings.HIDE_FLYOUT_MENU_PLAY_NEXT.get()),
+        ADD_TO_QUEUE("QUEUE_MUSIC", Settings.HIDE_FLYOUT_MENU_ADD_TO_QUEUE.get()),
+        SAVE_TO_LIBRARY("LIBRARY_ADD", Settings.HIDE_FLYOUT_MENU_SAVE_TO_LIBRARY.get()),
+        REMOVE_FROM_LIBRARY("LIBRARY_REMOVE", Settings.HIDE_FLYOUT_MENU_REMOVE_FROM_LIBRARY.get()),
+        REMOVE_FROM_PLAYLIST("REMOVE_FROM_PLAYLIST", Settings.HIDE_FLYOUT_MENU_REMOVE_FROM_PLAYLIST.get()),
+        DOWNLOAD("OFFLINE_DOWNLOAD", Settings.HIDE_FLYOUT_MENU_DOWNLOAD.get()),
+        SAVE_TO_PLAYLIST("ADD_TO_PLAYLIST", Settings.HIDE_FLYOUT_MENU_SAVE_TO_PLAYLIST.get()),
+        GO_TO_EPISODE("INFO", Settings.HIDE_FLYOUT_MENU_GO_TO_EPISODE.get()),
+        GO_TO_PODCAST("BROADCAST", Settings.HIDE_FLYOUT_MENU_GO_TO_PODCAST.get()),
+        GO_TO_ALBUM("ALBUM", Settings.HIDE_FLYOUT_MENU_GO_TO_ALBUM.get()),
+        GO_TO_ARTIST("ARTIST", Settings.HIDE_FLYOUT_MENU_GO_TO_ARTIST.get()),
+        VIEW_SONG_CREDIT("PEOPLE_GROUP", Settings.HIDE_FLYOUT_MENU_VIEW_SONG_CREDIT.get()),
+        SHARE("SHARE", Settings.HIDE_FLYOUT_MENU_SHARE.get()),
+        DISMISS_QUEUE("DISMISS_QUEUE", Settings.HIDE_FLYOUT_MENU_DISMISS_QUEUE.get()),
+        HELP("HELP_OUTLINE", Settings.HIDE_FLYOUT_MENU_HELP.get()),
+        REPORT("FLAG", Settings.HIDE_FLYOUT_MENU_REPORT.get()),
+        QUALITY("SETTINGS_MATERIAL", Settings.HIDE_FLYOUT_MENU_QUALITY.get()),
+        CAPTIONS("CAPTIONS", Settings.HIDE_FLYOUT_MENU_CAPTIONS.get()),
+        STATS_FOR_NERDS("PLANNER_REVIEW", Settings.HIDE_FLYOUT_MENU_STATS_FOR_NERDS.get()),
+        SLEEP_TIMER("MOON_Z", Settings.HIDE_FLYOUT_MENU_SLEEP_TIMER.get());
 
         private final boolean enabled;
         private final String name;

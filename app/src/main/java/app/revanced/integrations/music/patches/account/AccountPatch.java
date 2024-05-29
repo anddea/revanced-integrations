@@ -3,43 +3,42 @@ package app.revanced.integrations.music.patches.account;
 import android.view.View;
 import android.widget.TextView;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
+import app.revanced.integrations.music.settings.Settings;
 
 @SuppressWarnings("unused")
 public class AccountPatch {
 
     public static void hideAccountMenu(CharSequence charSequence, View view) {
-        if (!SettingsEnum.HIDE_ACCOUNT_MENU.getBoolean())
+        if (!Settings.HIDE_ACCOUNT_MENU.get())
             return;
 
         if (charSequence == null) {
-            if (SettingsEnum.HIDE_ACCOUNT_MENU_EMPTY_COMPONENT.getBoolean())
+            if (Settings.HIDE_ACCOUNT_MENU_EMPTY_COMPONENT.get())
                 view.setVisibility(View.GONE);
 
             return;
         }
 
-        final String[] blockList = SettingsEnum.HIDE_ACCOUNT_MENU_FILTER_STRINGS.getString().split("\\n");
+        final String[] blockList = Settings.HIDE_ACCOUNT_MENU_FILTER_STRINGS.get().split("\\n");
 
         for (String filter : blockList) {
-            if (charSequence.toString().equals(filter) && !filter.isEmpty())
+            if (!filter.isEmpty() && charSequence.toString().equals(filter))
                 view.setVisibility(View.GONE);
         }
     }
 
     public static boolean hideHandle(boolean original) {
-        return SettingsEnum.HIDE_HANDLE.getBoolean() || original;
+        return Settings.HIDE_HANDLE.get() || original;
     }
 
     public static void hideHandle(TextView textView, int visibility) {
-        if (SettingsEnum.HIDE_HANDLE.getBoolean()) {
-            textView.setVisibility(View.GONE);
-        } else {
-            textView.setVisibility(visibility);
-        }
+        final int finalVisibility = Settings.HIDE_HANDLE.get()
+                ? View.GONE
+                : visibility;
+        textView.setVisibility(finalVisibility);
     }
 
     public static int hideTermsContainer() {
-        return SettingsEnum.HIDE_TERMS_CONTAINER.getBoolean() ? View.GONE : View.VISIBLE;
+        return Settings.HIDE_TERMS_CONTAINER.get() ? View.GONE : View.VISIBLE;
     }
 }

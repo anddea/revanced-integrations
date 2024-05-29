@@ -1,7 +1,7 @@
 package app.revanced.integrations.youtube.shared
 
-import app.revanced.integrations.youtube.utils.Event
-import app.revanced.integrations.youtube.utils.LogHelper
+import app.revanced.integrations.shared.utils.Event
+import app.revanced.integrations.shared.utils.Logger
 
 /**
  * WatchWhile player type
@@ -53,9 +53,9 @@ enum class PlayerType {
         fun setFromString(enumName: String) {
             val newType = nameToPlayerType[enumName]
             if (newType == null) {
-                LogHelper.printException { "Unknown PlayerType encountered: $enumName" }
+                Logger.printException { "Unknown PlayerType encountered: $enumName" }
             } else if (current != newType) {
-                LogHelper.printDebug { "PlayerType changed to: $newType" }
+                Logger.printDebug { "PlayerType changed to: $newType" }
                 current = newType
             }
         }
@@ -127,8 +127,24 @@ enum class PlayerType {
         return isNoneHiddenOrSlidingMinimized() || this == WATCH_WHILE_MINIMIZED
     }
 
-    fun isMaximizedOrFullscreen(): Boolean {
-        return this == WATCH_WHILE_MAXIMIZED || this == WATCH_WHILE_FULLSCREEN
+    /**
+     * Check if the current player type is
+     * [WATCH_WHILE_MAXIMIZED], [WATCH_WHILE_FULLSCREEN], [WATCH_WHILE_SLIDING_MINIMIZED_MAXIMIZED].
+     *
+     * Useful to check if a regular video is being played.
+     */
+    fun isMaximizedOrFullscreenOrSliding(): Boolean {
+        return this == WATCH_WHILE_MAXIMIZED || this == WATCH_WHILE_FULLSCREEN || this == WATCH_WHILE_SLIDING_MINIMIZED_MAXIMIZED
+    }
+
+    /**
+     * Check if the current player type is
+     * [WATCH_WHILE_FULLSCREEN], [WATCH_WHILE_SLIDING_MAXIMIZED_FULLSCREEN].
+     *
+     * Useful to check if a video is fullscreen.
+     */
+    fun isFullScreenOrSlidingFullScreen(): Boolean {
+        return this == WATCH_WHILE_FULLSCREEN || this == WATCH_WHILE_SLIDING_MAXIMIZED_FULLSCREEN
     }
 
 }

@@ -1,34 +1,28 @@
 package app.revanced.integrations.music.patches.video;
 
-import static app.revanced.integrations.music.utils.ReVancedUtils.showToastShort;
-import static app.revanced.integrations.music.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.Utils.showToastShort;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
+import app.revanced.integrations.music.settings.Settings;
+import app.revanced.integrations.shared.utils.Logger;
 
 @SuppressWarnings("unused")
 public class PlaybackSpeedPatch {
-    private static float selectedSpeed = 1.0f;
 
-    public static float getPlaybackSpeed() {
+    public static float getPlaybackSpeed(final float playbackSpeed) {
         try {
-            return SettingsEnum.DEFAULT_PLAYBACK_SPEED.getFloat();
-        } catch (Exception ignored) {
+            return Settings.DEFAULT_PLAYBACK_SPEED.get();
+        } catch (Exception ex) {
+            Logger.printException(() -> "Failed to getPlaybackSpeed", ex);
         }
-        return selectedSpeed;
+        return playbackSpeed;
     }
 
-    public static void overrideSpeed(final float speedValue) {
-        if (speedValue != selectedSpeed)
-            selectedSpeed = speedValue;
-    }
-
-    public static void userChangedSpeed(final float speed) {
-        selectedSpeed = speed;
-
-        if (!SettingsEnum.ENABLE_SAVE_PLAYBACK_SPEED.getBoolean())
+    public static void userSelectedPlaybackSpeed(final float playbackSpeed) {
+        if (!Settings.REMEMBER_PLAYBACK_SPEED_LAST_SELECTED.get())
             return;
 
-        SettingsEnum.DEFAULT_PLAYBACK_SPEED.saveValue(speed);
-        showToastShort(str("revanced_save_playback_speed", speed + "x"));
+        Settings.DEFAULT_PLAYBACK_SPEED.save(playbackSpeed);
+        showToastShort(str("revanced_remember_playback_speed_toast", playbackSpeed + "x"));
     }
 }

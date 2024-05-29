@@ -4,8 +4,9 @@ import androidx.annotation.NonNull;
 
 import java.util.UUID;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
+import app.revanced.integrations.music.settings.Settings;
 import app.revanced.integrations.music.sponsorblock.objects.SegmentCategory;
+import app.revanced.integrations.shared.settings.Setting;
 
 public class SponsorBlockSettings {
     private static boolean initialized;
@@ -14,7 +15,7 @@ public class SponsorBlockSettings {
      * @return if the user has ever voted, created a segment, or imported existing SB settings.
      */
     public static boolean userHasSBPrivateId() {
-        return !SettingsEnum.SB_PRIVATE_USER_ID.getString().isEmpty();
+        return !Settings.SB_PRIVATE_USER_ID.get().isEmpty();
     }
 
     /**
@@ -22,13 +23,13 @@ public class SponsorBlockSettings {
      */
     @NonNull
     public static String getSBPrivateUserID() {
-        String uuid = SettingsEnum.SB_PRIVATE_USER_ID.getString();
+        String uuid = Settings.SB_PRIVATE_USER_ID.get();
         if (uuid.isEmpty()) {
             uuid = (UUID.randomUUID().toString() +
                     UUID.randomUUID().toString() +
                     UUID.randomUUID().toString())
                     .replace("-", "");
-            SettingsEnum.SB_PRIVATE_USER_ID.saveValue(uuid);
+            Settings.SB_PRIVATE_USER_ID.save(uuid);
         }
         return uuid;
     }
@@ -39,6 +40,13 @@ public class SponsorBlockSettings {
         }
         initialized = true;
 
-        SegmentCategory.loadFromPreferences();
+        SegmentCategory.updateEnabledCategories();
+    }
+
+    /**
+     * Updates internal data based on {@link Setting} values.
+     */
+    public static void updateFromImportedSettings() {
+        SegmentCategory.loadAllCategoriesFromSettings();
     }
 }

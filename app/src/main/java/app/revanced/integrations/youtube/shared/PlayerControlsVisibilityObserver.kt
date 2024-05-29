@@ -3,8 +3,8 @@ package app.revanced.integrations.youtube.shared
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import app.revanced.integrations.youtube.utils.ResourceType
-import app.revanced.integrations.youtube.utils.ResourceUtils.identifier
+import app.revanced.integrations.shared.utils.ResourceUtils.ResourceType
+import app.revanced.integrations.shared.utils.ResourceUtils.getIdentifier
 import java.lang.ref.WeakReference
 
 /**
@@ -17,16 +17,16 @@ class PlayerControlsVisibilityObserverImpl(
 ) : PlayerControlsVisibilityObserver {
 
     /**
-     * id of the direct parent of controls_layout, R.id.youtube_controls_overlay
+     * id of the direct parent of controls_layout, R.id.controls_button_group_layout
      */
     private val controlsLayoutParentId =
-        identifier("controls_button_group_layout", ResourceType.ID, activity)
+        getIdentifier("controls_button_group_layout", ResourceType.ID, activity)
 
     /**
-     * id of R.id.controls_layout
+     * id of R.id.player_control_play_pause_replay_button_touch_area
      */
     private val controlsLayoutId =
-        identifier("player_control_play_pause_replay_button_touch_area", ResourceType.ID, activity)
+        getIdentifier("player_control_play_pause_replay_button_touch_area", ResourceType.ID, activity)
 
     /**
      * reference to the controls layout view

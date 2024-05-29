@@ -2,7 +2,6 @@ package app.revanced.integrations.youtube.swipecontrols.controller.gesture.core
 
 import android.content.Context
 import android.util.TypedValue
-import app.revanced.integrations.youtube.settings.SettingsEnum
 import app.revanced.integrations.youtube.swipecontrols.controller.AudioVolumeController
 import app.revanced.integrations.youtube.swipecontrols.controller.ScreenBrightnessController
 import app.revanced.integrations.youtube.swipecontrols.misc.ScrollDistanceHelper
@@ -70,7 +69,6 @@ class VolumeAndBrightnessScrollerImpl(
     //endregion
 
     //region brightness
-    // TODO: needs a cleanup
     private val brightnessScroller =
         ScrollDistanceHelper(
             brightnessDistance.applyDimension(
@@ -79,22 +77,19 @@ class VolumeAndBrightnessScrollerImpl(
             )
         ) { _, _, direction ->
             screenController?.run {
-                if (!SettingsEnum.ENABLE_SWIPE_AUTO_BRIGHTNESS.boolean) {
-                    if (screenBrightness >= 0 || direction > 0) {
-                        restore()
-                        screenBrightness += direction
-                        save()
+                val shouldAdjustBrightness =
+                    if (config.shouldEnableLowestValueAutoBrightness) {
+                        screenBrightness > 0 || direction > 0
                     } else {
-                        restoreDefaultBrightness()
+                        screenBrightness >= 0 || direction >= 0
                     }
+
+                if (shouldAdjustBrightness) {
+                    restore()
+                    screenBrightness += direction
+                    save()
                 } else {
-                    if (screenBrightness > 0 || direction > 0) {
-                        restore()
-                        screenBrightness += direction
-                        save()
-                    } else {
-                        restoreDefaultBrightness()
-                    }
+                    restoreDefaultBrightness()
                 }
 
                 overlayController.onBrightnessChanged(screenBrightness)

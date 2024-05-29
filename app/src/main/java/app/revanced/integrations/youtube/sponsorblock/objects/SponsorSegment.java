@@ -1,16 +1,38 @@
 package app.revanced.integrations.youtube.sponsorblock.objects;
 
-import static app.revanced.integrations.youtube.utils.StringRef.sf;
+import static app.revanced.integrations.shared.utils.StringRef.sf;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.utils.StringRef;
+import app.revanced.integrations.shared.utils.StringRef;
+import app.revanced.integrations.youtube.sponsorblock.SegmentPlaybackController;
 
 public class SponsorSegment implements Comparable<SponsorSegment> {
+    public enum SegmentVote {
+        UPVOTE(sf("revanced_sb_vote_upvote"), 1,false),
+        DOWNVOTE(sf("revanced_sb_vote_downvote"), 0, true),
+        CATEGORY_CHANGE(sf("revanced_sb_vote_category"), -1, true); // apiVoteType is not used for category change
+
+        public static final SegmentVote[] voteTypesWithoutCategoryChange = {
+                UPVOTE,
+                DOWNVOTE,
+        };
+
+        @NonNull
+        public final StringRef title;
+        public final int apiVoteType;
+        public final boolean shouldHighlight;
+
+        SegmentVote(@NonNull StringRef title, int apiVoteType, boolean shouldHighlight) {
+            this.title = title;
+            this.apiVoteType = apiVoteType;
+            this.shouldHighlight = shouldHighlight;
+        }
+    }
+
     @NonNull
     public final SegmentCategory category;
     /**
@@ -79,7 +101,7 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
      */
     @NonNull
     public String getSkipButtonText() {
-        return category.getSkipButtonText(start, VideoInformation.getVideoLength()).toString();
+        return category.getSkipButtonText(start, SegmentPlaybackController.getVideoLength()).toString();
     }
 
     /**
@@ -87,7 +109,7 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
      */
     @NonNull
     public String getSkippedToastText() {
-        return category.getSkippedToastText(start, VideoInformation.getVideoLength()).toString();
+        return category.getSkippedToastText(start, SegmentPlaybackController.getVideoLength()).toString();
     }
 
     @Override
@@ -120,27 +142,5 @@ public class SponsorSegment implements Comparable<SponsorSegment> {
                 + ", start=" + start
                 + ", end=" + end
                 + '}';
-    }
-
-    public enum SegmentVote {
-        UPVOTE(sf("sb_vote_upvote"), 1, false),
-        DOWNVOTE(sf("sb_vote_downvote"), 0, true),
-        CATEGORY_CHANGE(sf("sb_vote_category"), -1, true); // apiVoteType is not used for category change
-
-        public static final SegmentVote[] voteTypesWithoutCategoryChange = {
-                UPVOTE,
-                DOWNVOTE,
-        };
-
-        @NonNull
-        public final StringRef title;
-        public final int apiVoteType;
-        public final boolean shouldHighlight;
-
-        SegmentVote(@NonNull StringRef title, int apiVoteType, boolean shouldHighlight) {
-            this.title = title;
-            this.apiVoteType = apiVoteType;
-            this.shouldHighlight = shouldHighlight;
-        }
     }
 }

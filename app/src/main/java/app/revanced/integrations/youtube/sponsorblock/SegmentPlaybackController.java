@@ -1,6 +1,7 @@
 package app.revanced.integrations.youtube.sponsorblock;
 
-import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.youtube.utils.VideoUtils.getFormattedTimeStamp;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
@@ -18,18 +19,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.PlayerType;
+import app.revanced.integrations.youtube.shared.VideoInformation;
 import app.revanced.integrations.youtube.shared.VideoState;
 import app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour;
 import app.revanced.integrations.youtube.sponsorblock.objects.SegmentCategory;
 import app.revanced.integrations.youtube.sponsorblock.objects.SponsorSegment;
 import app.revanced.integrations.youtube.sponsorblock.requests.SBRequester;
 import app.revanced.integrations.youtube.sponsorblock.ui.SponsorBlockViewController;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
-import app.revanced.integrations.youtube.utils.VideoHelpers;
 import app.revanced.integrations.youtube.whitelist.Whitelist;
 
 /**
@@ -41,7 +41,7 @@ import app.revanced.integrations.youtube.whitelist.Whitelist;
 public class SegmentPlaybackController {
     /**
      * Length of time to show a skip button for a highlight segment,
-     * or a regular segment if {@link SettingsEnum#SB_AUTO_HIDE_SKIP_BUTTON} is enabled.
+     * or a regular segment if {@link Settings#SB_AUTO_HIDE_SKIP_BUTTON} is enabled.
      * <p>
      * Effectively this value is rounded up to the next second.
      */
@@ -55,14 +55,16 @@ public class SegmentPlaybackController {
     private static final int HIGHLIGHT_SEGMENT_DRAW_BAR_WIDTH = 7;
     /**
      * Used to prevent re-showing a previously hidden skip button when exiting an embedded segment.
-     * Only used when {@link SettingsEnum#SB_AUTO_HIDE_SKIP_BUTTON} is enabled.
+     * Only used when {@link Settings#SB_AUTO_HIDE_SKIP_BUTTON} is enabled.
      * <p>
      * A collection of segments that have automatically hidden the skip button for, and all segments in this list
      * contain the current video time.  Segment are removed when playback exits the segment.
      */
     private static final List<SponsorSegment> hiddenSkipSegmentsForCurrentVideoTime = new ArrayList<>();
-    @Nullable
-    private static String currentVideoId;
+    @NonNull
+    private static String videoId = "";
+    private static long videoLength = 0;
+
     @Nullable
     private static SponsorSegment[] segments;
     /**
@@ -95,7 +97,7 @@ public class SegmentPlaybackController {
     /**
      * System time (in milliseconds) of when to hide the skip button of {@link #segmentCurrentlyPlaying}.
      * Value is zero if playback is not inside a segment ({@link #segmentCurrentlyPlaying} is null),
-     * or if {@link SettingsEnum#SB_AUTO_HIDE_SKIP_BUTTON} is not enabled.
+     * or if {@link Settings#SB_AUTO_HIDE_SKIP_BUTTON} is not enabled.
      */
     private static long skipSegmentButtonEndTime;
 
@@ -167,8 +169,9 @@ public class SegmentPlaybackController {
     /**
      * Clears all downloaded data.
      */
-    private static void clearData() {
-        currentVideoId = null;
+    public static void clearData() {
+        videoId = "";
+        videoLength = 0;
         segments = null;
         highlightSegment = null;
         highlightSegmentInitialShowEndTime = 0;
@@ -186,72 +189,95 @@ public class SegmentPlaybackController {
      * Injection point.
      * Initializes SponsorBlock when the video player starts playing a new video.
      */
-    public static void initialize(Object ignoredPlayerController) {
+    public static void initialize() {
         try {
-            ReVancedUtils.verifyOnMainThread();
+            Utils.verifyOnMainThread();
             SponsorBlockSettings.initialize();
             clearData();
             SponsorBlockViewController.hideAll();
             SponsorBlockUtils.clearUnsubmittedSegmentTimes();
-            LogHelper.printDebug(() -> "Initialized SponsorBlock");
+            Logger.printDebug(() -> "Initialized SponsorBlock");
         } catch (Exception ex) {
-            LogHelper.printException(() -> "Failed to initialize SponsorBlock", ex);
+            Logger.printException(() -> "Failed to initialize SponsorBlock", ex);
         }
     }
 
     /**
      * Injection point.
      */
-    public static void setCurrentVideoId(@Nullable String videoId) {
+    public static void newVideoStarted(@NonNull String newlyLoadedChannelId, @NonNull String newlyLoadedChannelName,
+                                       @NonNull String newlyLoadedVideoId, @NonNull String newlyLoadedVideoTitle,
+                                       final long newlyLoadedVideoLength, boolean newlyLoadedLiveStreamValue) {
         try {
-            if (!SettingsEnum.SB_ENABLED.getBoolean()) {
+            if (!Settings.SB_ENABLED.get()) {
                 return;
             }
-            if (ReVancedUtils.isNetworkNotConnected()) {
-                LogHelper.printDebug(() -> "Network not connected, ignoring video");
+            if (Utils.isNetworkNotConnected()) {
+                Logger.printDebug(() -> "Network not connected, ignoring video");
                 return;
             }
-            if (videoId == null || videoId.isEmpty()) {
-                return;
-            }
-            if (Objects.equals(currentVideoId, videoId)) {
+            if (Objects.equals(videoId, newlyLoadedVideoId)) {
                 return;
             }
             clearData();
             if (PlayerType.getCurrent().isNoneOrHidden()) {
-                LogHelper.printDebug(() -> "ignoring Short");
+                Logger.printDebug(() -> "ignoring Short");
                 return;
             }
 
-            currentVideoId = videoId;
-            LogHelper.printDebug(() -> "setCurrentVideoId: " + videoId);
+            videoId = newlyLoadedVideoId;
+            videoLength = newlyLoadedVideoLength;
+            Logger.printDebug(() -> "newVideoStarted: " + newlyLoadedVideoId);
 
-            ReVancedUtils.runOnBackgroundThread(() -> {
+            if (Whitelist.isChannelWhitelistedSponsorBlock(newlyLoadedChannelId)) {
+                return;
+            }
+
+            Utils.runOnBackgroundThread(() -> {
                 try {
-                    executeDownloadSegments(videoId);
+                    executeDownloadSegments(newlyLoadedVideoId);
                 } catch (Exception e) {
-                    LogHelper.printException(() -> "Failed to download segments", e);
+                    Logger.printException(() -> "Failed to download segments", e);
                 }
             });
         } catch (Exception ex) {
-            LogHelper.printException(() -> "setCurrentVideoId failure", ex);
+            Logger.printException(() -> "setCurrentVideoId failure", ex);
         }
+    }
+
+    /**
+     * Id of the last video opened.  Includes Shorts.
+     *
+     * @return The id of the video, or an empty string if no videos have been opened yet.
+     */
+    @NonNull
+    public static String getVideoId() {
+        return videoId;
+    }
+
+    /**
+     * Length of the current video playing.  Includes Shorts.
+     *
+     * @return The length of the video in milliseconds.
+     * If the video is not yet loaded, or if the video is playing in the background with no video visible,
+     * then this returns zero.
+     */
+    public static long getVideoLength() {
+        return videoLength;
     }
 
     /**
      * Must be called off main thread
      */
-    static void executeDownloadSegments(@NonNull String videoId) {
-        if (Whitelist.isChannelSBWhitelisted())
-            return;
-        Objects.requireNonNull(videoId);
+    static void executeDownloadSegments(@NonNull String newlyLoadedVideoId) {
+        Objects.requireNonNull(newlyLoadedVideoId);
         try {
-            SponsorSegment[] segments = SBRequester.getSegments(videoId);
+            SponsorSegment[] segments = SBRequester.getSegments(newlyLoadedVideoId);
 
-            ReVancedUtils.runOnMainThread(() -> {
-                if (!videoId.equals(currentVideoId)) {
+            Utils.runOnMainThread(() -> {
+                if (!newlyLoadedVideoId.equals(videoId)) {
                     // user changed videos before get segments network call could complete
-                    LogHelper.printDebug(() -> "Ignoring segments for prior video: " + videoId);
+                    Logger.printDebug(() -> "Ignoring segments for prior video: " + newlyLoadedVideoId);
                     return;
                 }
                 setSegments(segments);
@@ -266,7 +292,7 @@ public class SegmentPlaybackController {
                             return;
                         }
                         highlightSegmentInitialShowEndTime = System.currentTimeMillis() + Math.min(
-                                (long) (timeUntilHighlight / VideoHelpers.getCurrentSpeed()),
+                                (long) (timeUntilHighlight / VideoInformation.getPlaybackSpeed()),
                                 DURATION_TO_SHOW_SKIP_BUTTON);
                     }
                 }
@@ -275,27 +301,27 @@ public class SegmentPlaybackController {
                 setVideoTime(videoTime);
             });
         } catch (Exception ex) {
-            LogHelper.printException(() -> "executeDownloadSegments failure", ex);
+            Logger.printException(() -> "executeDownloadSegments failure", ex);
         }
     }
 
     /**
      * Injection point.
-     * Updates SponsorBlock every 1000ms.
+     * Updates SponsorBlock every 100ms.
      * When changing videos, this is first called with value 0 and then the video is changed.
      */
     public static void setVideoTime(long millis) {
         try {
-            if (!SettingsEnum.SB_ENABLED.getBoolean()
+            if (!Settings.SB_ENABLED.get()
                     || PlayerType.getCurrent().isNoneOrHidden() // Shorts playback.
                     || segments == null || segments.length == 0) {
                 return;
             }
-            LogHelper.printDebug(() -> "setVideoTime: " + millis);
+            Logger.printDebug(() -> "setVideoTime: " + getFormattedTimeStamp(millis));
 
             updateHiddenSegments(millis);
 
-            final float playbackSpeed = VideoHelpers.getCurrentSpeed();
+            final float playbackSpeed = VideoInformation.getPlaybackSpeed();
             // Amount of time to look ahead for the next segment,
             // and the threshold to determine if a scheduled show/hide is at the correct video time when it's run.
             //
@@ -304,7 +330,7 @@ public class SegmentPlaybackController {
             //
             // To debug the stale skip logic, set this to a very large value (5000 or more)
             // then try manually seeking just before playback reaches a segment skip.
-            final long speedAdjustedTimeThreshold = (long) (playbackSpeed * 1200);
+            final long speedAdjustedTimeThreshold = (long) (playbackSpeed * 1000);
             final long startTimerLookAheadThreshold = millis + speedAdjustedTimeThreshold;
 
             SponsorSegment foundSegmentCurrentlyPlaying = null;
@@ -337,7 +363,7 @@ public class SegmentPlaybackController {
                                 || !segment.endIsNear(millis, minMillisOfSegmentRemainingThreshold)) {
                             foundSegmentCurrentlyPlaying = segment;
                         } else {
-                            LogHelper.printDebug(() -> "Ignoring segment that ends very soon: " + segment);
+                            Logger.printDebug(() -> "Ignoring segment that ends very soon: " + segment);
                         }
                     }
                     // Keep iterating and looking. There may be an upcoming autoskip,
@@ -369,7 +395,7 @@ public class SegmentPlaybackController {
                             || !foundSegmentCurrentlyPlaying.endIsNear(segment.start, minTimeBetweenStartEndOfSegments)) {
                         foundUpcomingSegment = segment;
                     } else {
-                        LogHelper.printDebug(() -> "Not scheduling segment (start time is near end of current segment): " + segment);
+                        Logger.printDebug(() -> "Not scheduling segment (start time is near end of current segment): " + segment);
                     }
                 }
             }
@@ -388,7 +414,7 @@ public class SegmentPlaybackController {
                 setSegmentCurrentlyPlaying(foundSegmentCurrentlyPlaying);
             } else if (foundSegmentCurrentlyPlaying != null
                     && skipSegmentButtonEndTime != 0 && skipSegmentButtonEndTime <= System.currentTimeMillis()) {
-                LogHelper.printDebug(() -> "Auto hiding skip button for segment: " + segmentCurrentlyPlaying);
+                Logger.printDebug(() -> "Auto hiding skip button for segment: " + segmentCurrentlyPlaying);
                 skipSegmentButtonEndTime = 0;
                 hiddenSkipSegmentsForCurrentVideoTime.add(foundSegmentCurrentlyPlaying);
                 SponsorBlockViewController.hideSkipSegmentButton();
@@ -402,31 +428,31 @@ public class SegmentPlaybackController {
 
             if (scheduledHideSegment != segmentToHide) {
                 if (segmentToHide == null) {
-                    LogHelper.printDebug(() -> "Clearing scheduled hide: " + scheduledHideSegment);
+                    Logger.printDebug(() -> "Clearing scheduled hide: " + scheduledHideSegment);
                     scheduledHideSegment = null;
                 } else {
                     scheduledHideSegment = segmentToHide;
-                    LogHelper.printDebug(() -> "Scheduling hide segment: " + segmentToHide + " playbackSpeed: " + playbackSpeed);
+                    Logger.printDebug(() -> "Scheduling hide segment: " + segmentToHide + " playbackSpeed: " + playbackSpeed);
                     final long delayUntilHide = (long) ((segmentToHide.end - millis) / playbackSpeed);
-                    ReVancedUtils.runOnMainThreadDelayed(() -> {
+                    Utils.runOnMainThreadDelayed(() -> {
                         if (scheduledHideSegment != segmentToHide) {
-                            LogHelper.printDebug(() -> "Ignoring old scheduled hide segment: " + segmentToHide);
+                            Logger.printDebug(() -> "Ignoring old scheduled hide segment: " + segmentToHide);
                             return;
                         }
                         scheduledHideSegment = null;
                         if (VideoState.getCurrent() != VideoState.PLAYING) {
-                            LogHelper.printDebug(() -> "Ignoring scheduled hide segment as video is paused: " + segmentToHide);
+                            Logger.printDebug(() -> "Ignoring scheduled hide segment as video is paused: " + segmentToHide);
                             return;
                         }
 
                         final long videoTime = VideoInformation.getVideoTime();
                         if (!segmentToHide.endIsNear(videoTime, speedAdjustedTimeThreshold)) {
                             // current video time is not what's expected.  User paused playback
-                            LogHelper.printDebug(() -> "Ignoring outdated scheduled hide: " + segmentToHide
+                            Logger.printDebug(() -> "Ignoring outdated scheduled hide: " + segmentToHide
                                     + " videoInformation time: " + videoTime);
                             return;
                         }
-                        LogHelper.printDebug(() -> "Running scheduled hide segment: " + segmentToHide);
+                        Logger.printDebug(() -> "Running scheduled hide segment: " + segmentToHide);
                         // Need more than just hide the skip button, as this may have been an embedded segment
                         // Instead call back into setVideoTime to check everything again.
                         // Should not use VideoInformation time as it is less accurate,
@@ -439,44 +465,44 @@ public class SegmentPlaybackController {
 
             if (scheduledUpcomingSegment != foundUpcomingSegment) {
                 if (foundUpcomingSegment == null) {
-                    LogHelper.printDebug(() -> "Clearing scheduled segment: " + scheduledUpcomingSegment);
+                    Logger.printDebug(() -> "Clearing scheduled segment: " + scheduledUpcomingSegment);
                     scheduledUpcomingSegment = null;
                 } else {
                     scheduledUpcomingSegment = foundUpcomingSegment;
                     final SponsorSegment segmentToSkip = foundUpcomingSegment;
 
-                    LogHelper.printDebug(() -> "Scheduling segment: " + segmentToSkip + " playbackSpeed: " + playbackSpeed);
+                    Logger.printDebug(() -> "Scheduling segment: " + segmentToSkip + " playbackSpeed: " + playbackSpeed);
                     final long delayUntilSkip = (long) ((segmentToSkip.start - millis) / playbackSpeed);
-                    ReVancedUtils.runOnMainThreadDelayed(() -> {
+                    Utils.runOnMainThreadDelayed(() -> {
                         if (scheduledUpcomingSegment != segmentToSkip) {
-                            LogHelper.printDebug(() -> "Ignoring old scheduled segment: " + segmentToSkip);
+                            Logger.printDebug(() -> "Ignoring old scheduled segment: " + segmentToSkip);
                             return;
                         }
                         scheduledUpcomingSegment = null;
                         if (VideoState.getCurrent() != VideoState.PLAYING) {
-                            LogHelper.printDebug(() -> "Ignoring scheduled hide segment as video is paused: " + segmentToSkip);
+                            Logger.printDebug(() -> "Ignoring scheduled hide segment as video is paused: " + segmentToSkip);
                             return;
                         }
 
                         final long videoTime = VideoInformation.getVideoTime();
                         if (!segmentToSkip.startIsNear(videoTime, speedAdjustedTimeThreshold)) {
                             // current video time is not what's expected.  User paused playback
-                            LogHelper.printDebug(() -> "Ignoring outdated scheduled segment: " + segmentToSkip
+                            Logger.printDebug(() -> "Ignoring outdated scheduled segment: " + segmentToSkip
                                     + " videoInformation time: " + videoTime);
                             return;
                         }
                         if (segmentToSkip.shouldAutoSkip()) {
-                            LogHelper.printDebug(() -> "Running scheduled skip segment: " + segmentToSkip);
+                            Logger.printDebug(() -> "Running scheduled skip segment: " + segmentToSkip);
                             skipSegment(segmentToSkip, false);
                         } else {
-                            LogHelper.printDebug(() -> "Running scheduled show segment: " + segmentToSkip);
+                            Logger.printDebug(() -> "Running scheduled show segment: " + segmentToSkip);
                             setSegmentCurrentlyPlaying(segmentToSkip);
                         }
                     }, delayUntilSkip);
                 }
             }
         } catch (Exception e) {
-            LogHelper.printException(() -> "setVideoTime failure", e);
+            Logger.printException(() -> "setVideoTime failure", e);
         }
     }
 
@@ -488,7 +514,7 @@ public class SegmentPlaybackController {
         while (i.hasNext()) {
             SponsorSegment hiddenSegment = i.next();
             if (!hiddenSegment.containsTime(currentVideoTime)) {
-                LogHelper.printDebug(() -> "Resetting hide skip button: " + hiddenSegment);
+                Logger.printDebug(() -> "Resetting hide skip button: " + hiddenSegment);
                 i.remove();
             }
         }
@@ -497,7 +523,7 @@ public class SegmentPlaybackController {
     private static void setSegmentCurrentlyPlaying(@Nullable SponsorSegment segment) {
         if (segment == null) {
             if (segmentCurrentlyPlaying != null)
-                LogHelper.printDebug(() -> "Hiding segment: " + segmentCurrentlyPlaying);
+                Logger.printDebug(() -> "Hiding segment: " + segmentCurrentlyPlaying);
             segmentCurrentlyPlaying = null;
             skipSegmentButtonEndTime = 0;
             SponsorBlockViewController.hideSkipSegmentButton();
@@ -505,16 +531,16 @@ public class SegmentPlaybackController {
         }
         segmentCurrentlyPlaying = segment;
         skipSegmentButtonEndTime = 0;
-        if (SettingsEnum.SB_AUTO_HIDE_SKIP_BUTTON.getBoolean()) {
+        if (Settings.SB_AUTO_HIDE_SKIP_BUTTON.get()) {
             if (hiddenSkipSegmentsForCurrentVideoTime.contains(segment)) {
                 // Playback exited a nested segment and the outer segment skip button was previously hidden.
-                LogHelper.printDebug(() -> "Ignoring previously auto-hidden segment: " + segment);
+                Logger.printDebug(() -> "Ignoring previously auto-hidden segment: " + segment);
                 SponsorBlockViewController.hideSkipSegmentButton();
                 return;
             }
             skipSegmentButtonEndTime = System.currentTimeMillis() + DURATION_TO_SHOW_SKIP_BUTTON;
         }
-        LogHelper.printDebug(() -> "Showing segment: " + segment);
+        Logger.printDebug(() -> "Showing segment: " + segment);
         SponsorBlockViewController.showSkipSegmentButton(segment);
     }
 
@@ -529,14 +555,14 @@ public class SegmentPlaybackController {
                 // (especially if the video does not end on a whole second boundary).
                 // This causes additional segment skip attempts, even though it cannot seek any closer to the desired time.
                 // Check for and ignore repeated skip attempts of the same segment over a small time period.
-                final long minTimeBetweenSkippingSameSegment = Math.max(500, (long) (500 / VideoHelpers.getCurrentSpeed()));
+                final long minTimeBetweenSkippingSameSegment = Math.max(500, (long) (500 / VideoInformation.getPlaybackSpeed()));
                 if (now - lastSegmentSkippedTime < minTimeBetweenSkippingSameSegment) {
-                    LogHelper.printDebug(() -> "Ignoring skip segment request (already skipped as close as possible): " + segmentToSkip);
+                    Logger.printDebug(() -> "Ignoring skip segment request (already skipped as close as possible): " + segmentToSkip);
                     return;
                 }
             }
 
-            LogHelper.printDebug(() -> "Skipping segment: " + segmentToSkip);
+            Logger.printDebug(() -> "Skipping segment: " + segmentToSkip);
             lastSegmentSkipped = segmentToSkip;
             lastSegmentSkippedTime = now;
             setSegmentCurrentlyPlaying(null);
@@ -547,17 +573,17 @@ public class SegmentPlaybackController {
             }
 
             // If the seek is successful, then the seek causes a recursive call back into this class.
-            final boolean seekSuccessful = VideoInformation.seekTo(segmentToSkip.end);
+            final boolean seekSuccessful = VideoInformation.seekTo(segmentToSkip.end, getVideoLength());
             if (!seekSuccessful) {
                 // can happen when switching videos and is normal
-                LogHelper.printDebug(() -> "Could not skip segment (seek unsuccessful): " + segmentToSkip);
+                Logger.printDebug(() -> "Could not skip segment (seek unsuccessful): " + segmentToSkip);
                 return;
             }
 
             final boolean videoIsPaused = VideoState.getCurrent() == VideoState.PAUSED;
             if (!userManuallySkipped) {
                 // check for any smaller embedded segments, and count those as autoskipped
-                final boolean showSkipToast = SettingsEnum.SB_TOAST_ON_SKIP.getBoolean();
+                final boolean showSkipToast = Settings.SB_TOAST_ON_SKIP.get();
                 for (final SponsorSegment otherSegment : Objects.requireNonNull(segments)) {
                     if (segmentToSkip.end < otherSegment.start) {
                         break; // no other segments can be contained
@@ -582,12 +608,12 @@ public class SegmentPlaybackController {
                 SponsorBlockUtils.sendViewRequestAsync(segmentToSkip);
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "skipSegment failure", ex);
+            Logger.printException(() -> "skipSegment failure", ex);
         }
     }
 
     private static void showSkippedSegmentToast(@NonNull SponsorSegment segment) {
-        ReVancedUtils.verifyOnMainThread();
+        Utils.verifyOnMainThread();
         toastNumberOfSegmentsSkipped++;
         if (toastNumberOfSegmentsSkipped > 1) {
             return; // toast already scheduled
@@ -595,17 +621,17 @@ public class SegmentPlaybackController {
         toastSegmentSkipped = segment;
 
         final long delayToToastMilliseconds = 250; // also the maximum time between skips to be considered skipping multiple segments
-        ReVancedUtils.runOnMainThreadDelayed(() -> {
+        Utils.runOnMainThreadDelayed(() -> {
             try {
                 if (toastSegmentSkipped == null) { // video was changed just after skipping segment
-                    LogHelper.printDebug(() -> "Ignoring old scheduled show toast");
+                    Logger.printDebug(() -> "Ignoring old scheduled show toast");
                     return;
                 }
-                ReVancedUtils.showToastShort(toastNumberOfSegmentsSkipped == 1
+                Utils.showToastShort(toastNumberOfSegmentsSkipped == 1
                         ? toastSegmentSkipped.getSkippedToastText()
-                        : str("sb_skipped_multiple_segments"));
+                        : str("revanced_sb_skipped_multiple_segments"));
             } catch (Exception ex) {
-                LogHelper.printException(() -> "showSkippedSegmentToast failure", ex);
+                Logger.printException(() -> "showSkippedSegmentToast failure", ex);
             } finally {
                 toastNumberOfSegmentsSkipped = 0;
                 toastSegmentSkipped = null;
@@ -619,14 +645,14 @@ public class SegmentPlaybackController {
     public static void onSkipSegmentClicked(@NonNull SponsorSegment segment) {
         try {
             if (segment != highlightSegment && segment != segmentCurrentlyPlaying) {
-                LogHelper.printException(() -> "error: segment not available to skip"); // should never happen
+                Logger.printException(() -> "error: segment not available to skip"); // should never happen
                 SponsorBlockViewController.hideSkipSegmentButton();
                 SponsorBlockViewController.hideSkipHighlightButton();
                 return;
             }
             skipSegment(segment, true);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "onSkipSegmentClicked failure", ex);
+            Logger.printException(() -> "onSkipSegmentClicked failure", ex);
         }
     }
 
@@ -641,7 +667,7 @@ public class SegmentPlaybackController {
             setSponsorBarAbsoluteLeft(rect);
             setSponsorBarAbsoluteRight(rect);
         } catch (Exception ex) {
-            LogHelper.printException(() -> "setSponsorBarRect failure", ex);
+            Logger.printException(() -> "setSponsorBarRect failure", ex);
         }
     }
 
@@ -673,13 +699,13 @@ public class SegmentPlaybackController {
      */
     public static String appendTimeWithoutSegments(String totalTime) {
         try {
-            if (SettingsEnum.SB_ENABLED.getBoolean() && SettingsEnum.SB_VIDEO_LENGTH_WITHOUT_SEGMENTS.getBoolean()
+            if (Settings.SB_ENABLED.get() && Settings.SB_VIDEO_LENGTH_WITHOUT_SEGMENTS.get()
                     && !TextUtils.isEmpty(totalTime) && !TextUtils.isEmpty(timeWithoutSegments)) {
                 // Force LTR layout, to match the same LTR video time/length layout YouTube uses for all languages
                 return "\u202D" + totalTime + timeWithoutSegments; // u202D = left to right override
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "appendTimeWithoutSegments failure", ex);
+            Logger.printException(() -> "appendTimeWithoutSegments failure", ex);
         }
 
         return totalTime;
@@ -687,15 +713,14 @@ public class SegmentPlaybackController {
 
     @SuppressLint("DefaultLocale")
     private static void calculateTimeWithoutSegments() {
-        final long currentVideoLength = VideoInformation.getVideoLength();
-        if (!SettingsEnum.SB_VIDEO_LENGTH_WITHOUT_SEGMENTS.getBoolean() || currentVideoLength <= 0
+        if (!Settings.SB_VIDEO_LENGTH_WITHOUT_SEGMENTS.get() || videoLength <= 0
                 || segments == null || segments.length == 0) {
             timeWithoutSegments = null;
             return;
         }
 
         boolean foundNonhighlightSegments = false;
-        long timeWithoutSegmentsValue = currentVideoLength;
+        long timeWithoutSegmentsValue = videoLength;
 
         for (int i = 0, length = segments.length; i < length; i++) {
             SponsorSegment segment = segments[i];
@@ -734,7 +759,7 @@ public class SegmentPlaybackController {
         if (highlightSegmentTimeBarScreenWidth == -1) {
             highlightSegmentTimeBarScreenWidth = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, HIGHLIGHT_SEGMENT_DRAW_BAR_WIDTH,
-                    Objects.requireNonNull(ReVancedUtils.getContext()).getResources().getDisplayMetrics());
+                    Objects.requireNonNull(Utils.getContext()).getResources().getDisplayMetrics());
         }
         return highlightSegmentTimeBarScreenWidth;
     }
@@ -745,7 +770,6 @@ public class SegmentPlaybackController {
     public static void drawSponsorTimeBars(final Canvas canvas, final float posY) {
         try {
             if (segments == null) return;
-            final long videoLength = VideoInformation.getVideoLength();
             if (videoLength <= 0) return;
 
             final int thicknessDiv2 = sponsorBarThickness / 2; // rounds down
@@ -765,7 +789,7 @@ public class SegmentPlaybackController {
                 canvas.drawRect(left, top, right, bottom, segment.category.paint);
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "drawSponsorTimeBars failure", ex);
+            Logger.printException(() -> "drawSponsorTimeBars failure", ex);
         }
     }
 

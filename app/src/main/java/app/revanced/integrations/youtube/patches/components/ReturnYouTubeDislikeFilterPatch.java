@@ -8,26 +8,37 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import app.revanced.integrations.shared.patches.components.ByteArrayFilterGroup;
+import app.revanced.integrations.shared.patches.components.ByteArrayFilterGroupList;
+import app.revanced.integrations.shared.patches.components.Filter;
+import app.revanced.integrations.shared.patches.components.FilterGroup;
+import app.revanced.integrations.shared.patches.components.StringFilterGroup;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.TrieSearch;
 import app.revanced.integrations.youtube.patches.utils.ReturnYouTubeDislikePatch;
-import app.revanced.integrations.youtube.patches.video.VideoInformation;
-import app.revanced.integrations.youtube.settings.SettingsEnum;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.TrieSearch;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.VideoInformation;
 
 /**
+ * @noinspection ALL
+ *
  * Searches for video id's in the proto buffer of Shorts dislike.
- * <p>
+ *
  * Because multiple litho dislike spans are created in the background
  * (and also anytime litho refreshes the components, which is somewhat arbitrary),
  * that makes the value of {@link VideoInformation#getVideoId()} and {@link VideoInformation#getPlayerResponseVideoId()}
  * unreliable to determine which video id a Shorts litho span belongs to.
- * <p>
+ *
  * But the correct video id does appear in the protobuffer just before a Shorts litho span is created.
- * <p>
+ *
  * Once a way to asynchronously update litho text is found, this strategy will no longer be needed.
+ *
+ * TODO: RVX can now fetch the correct video ID from Shorts, this filters is no longer needed.
+ *       Keep this filters until refactoring is done for the RYD patch.
  */
-@SuppressWarnings("unused")
 public final class ReturnYouTubeDislikeFilterPatch extends Filter {
+
+    private static final String VIDEO_ACTION_BAR_PATH = "video_action_bar.eml";
 
     /**
      * Last unique video id's loaded.  Value is ignored and Map is treated as a Set.
@@ -48,17 +59,48 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
     };
     private final ByteArrayFilterGroupList videoIdFilterGroup = new ByteArrayFilterGroupList();
 
+    /**
+     * In some videos, the like and dislike containers glow out. (Maybe A/B tests)
+     * https://github.com/ReVanced/revanced-patches/issues/2508
+     *
+     * When RYD is enabled, glowing effects appear in incorrect positions.
+     * This issue isn't easy to fix, so simply hide the glowing effects.
+     */
+    private final StringFilterGroup glowingEffects;
+
     public ReturnYouTubeDislikeFilterPatch() {
-        pathFilterGroupList.addAll(
-                new StringFilterGroup(SettingsEnum.RYD_SHORTS, "|shorts_dislike_button.eml|")
-        );
+        final StringFilterGroup dislikeButton = new StringFilterGroup(Settings.RYD_SHORTS, "|shorts_dislike_button.eml|");
+        glowingEffects = new StringFilterGroup(Settings.RYD_ENABLED, "|animated_button_border.eml|");
+        addPathCallbacks(dislikeButton, glowingEffects);
         // After the dislikes icon name is some binary data and then the video id for that specific short.
         videoIdFilterGroup.addAll(
                 // Video was previously disliked before video was opened.
-                new ByteArrayAsStringFilterGroup(null, "ic_right_dislike_on_shadowed"),
+                new ByteArrayFilterGroup(null, "ic_right_dislike_on_shadowed"),
                 // Video was not already disliked.
-                new ByteArrayAsStringFilterGroup(null, "ic_right_dislike_off_shadowed")
+                new ByteArrayFilterGroup(null, "ic_right_dislike_off_shadowed")
         );
+    }
+
+    private volatile static String shortsVideoId = "";
+
+    public static String getShortsVideoId() {
+        return shortsVideoId;
+    }
+
+    /**
+     * Injection point.
+     */
+    public static void newShortsVideoStarted(@NonNull String newlyLoadedChannelId, @NonNull String newlyLoadedChannelName,
+                                             @NonNull String newlyLoadedVideoId, @NonNull String newlyLoadedVideoTitle,
+                                             final long newlyLoadedVideoLength, boolean newlyLoadedLiveStreamValue) {
+        if (!Settings.RYD_SHORTS.get()) {
+            return;
+        }
+        if (shortsVideoId.equals(newlyLoadedVideoId)) {
+            return;
+        }
+        Logger.printDebug(() -> "newShortsVideoStarted: " + newlyLoadedVideoId);
+        shortsVideoId = newlyLoadedVideoId;
     }
 
     /**
@@ -66,16 +108,16 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
      */
     public static void newPlayerResponseVideoId(String videoId, boolean isShortAndOpeningOrPlaying) {
         try {
-            if (!isShortAndOpeningOrPlaying || !SettingsEnum.RYD_SHORTS.getBoolean()) {
+            if (!isShortAndOpeningOrPlaying || !Settings.RYD_SHORTS.get()) {
                 return;
             }
             synchronized (lastVideoIds) {
                 if (lastVideoIds.put(videoId, Boolean.TRUE) == null) {
-                    LogHelper.printDebug(() -> "New Short video id: " + videoId);
+                    Logger.printDebug(() -> "New Short video id: " + videoId);
                 }
             }
         } catch (Exception ex) {
-            LogHelper.printException(() -> "newPlayerResponseVideoId failure", ex);
+            Logger.printException(() -> "newPlayerResponseVideoId failure", ex);
         }
     }
 
@@ -99,12 +141,15 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
         return false;
     }
 
-    /**
-     * @noinspection rawtypes
-     */
     @Override
-    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
-                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
+    public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                       StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
+        if (matchedGroup == glowingEffects) {
+            if (!path.startsWith(VIDEO_ACTION_BAR_PATH)) {
+                return false;
+            }
+            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+        }
         FilterGroup.FilterGroupResult result = videoIdFilterGroup.check(protobufBufferArray);
         if (result.isFiltered()) {
             String matchedVideoId = findVideoId(protobufBufferArray);

@@ -1,9 +1,9 @@
 package app.revanced.integrations.youtube.patches.components;
 
-import static app.revanced.integrations.youtube.utils.ByteTrieSearch.convertStringsToBytes;
-import static app.revanced.integrations.youtube.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.ByteTrieSearch.convertStringsToBytes;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 
-import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,13 +11,13 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import app.revanced.integrations.youtube.settings.SettingsEnum;
-import app.revanced.integrations.youtube.shared.NavigationBar;
-import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
-import app.revanced.integrations.youtube.shared.PlayerType;
-import app.revanced.integrations.youtube.utils.ByteTrieSearch;
-import app.revanced.integrations.youtube.utils.LogHelper;
-import app.revanced.integrations.youtube.utils.ReVancedUtils;
+import app.revanced.integrations.shared.patches.components.Filter;
+import app.revanced.integrations.shared.patches.components.StringFilterGroup;
+import app.revanced.integrations.shared.utils.ByteTrieSearch;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.RootView;
 
 /**
  * <pre>
@@ -34,9 +34,11 @@ import app.revanced.integrations.youtube.utils.ReVancedUtils;
  *   appear outside the filtered components so they are not caught.
  * - Keywords are case sensitive, but some casing variation is manually added.
  *   (ie: "mr beast" automatically filters "Mr Beast" and "MR BEAST").
+ * - Keywords present in the layout or video data cannot be used as filters, otherwise all videos
+ *   will always be hidden.  This patch checks for some words of these words.
  */
 @SuppressWarnings("unused")
-final class KeywordContentFilter extends Filter {
+public final class KeywordContentFilter extends Filter {
 
     /**
      * Minimum keyword/phrase length to prevent excessively broad content filtering.
@@ -44,7 +46,7 @@ final class KeywordContentFilter extends Filter {
     private static final int MINIMUM_KEYWORD_LENGTH = 3;
 
     /**
-     * Strings found in the buffer for every video.
+     * Strings found in the buffer for every videos.
      * Full strings should be specified, as they are compared using {@link String#contains(CharSequence)}.
      * <p>
      * This list does not include every common buffer string, and this can be added/changed as needed.
@@ -75,10 +77,10 @@ final class KeywordContentFilter extends Filter {
     };
 
     /**
-     * Substrings that are always first in the path.
+     * Substrings that are always first in the identifier.
      */
-    final StringFilterGroup startsWithFilter = new StringFilterGroup(
-            SettingsEnum.HIDE_KEYWORD_CONTENT,
+    private final StringFilterGroup startsWithFilter = new StringFilterGroup(
+            null, // Multiple settings are used and must be individually checked if active.
             "home_video_with_context.eml",
             "search_video_with_context.eml",
             "video_with_context.eml", // Subscription tab videos.
@@ -90,51 +92,49 @@ final class KeywordContentFilter extends Filter {
     );
 
     /**
-      Substrings that are never at the start of the path.
-    */
-    // Keywords are parsed on first call to isFiltered()
-    // part of 'shorts_shelf_carousel.eml' and usually shown to tablet layout.
-    final StringFilterGroup containsFilter = new StringFilterGroup(
-            SettingsEnum.HIDE_KEYWORD_CONTENT,
+     * Substrings that are never at the start of the path.
+     */
+    private final StringFilterGroup containsFilter = new StringFilterGroup(
+            null,
             "modern_type_shelf_header_content.eml",
-            "shorts_lockup_cell.eml" // Part of 'shorts_shelf_carousel.eml'
+            "shorts_lockup_cell.eml", // Part of 'shorts_shelf_carousel.eml'
+            "video_card.eml" // Shorts that appear in a horizontal shelf.
     );
 
-    final StringFilterGroup commentFilter = new StringFilterGroup(
-            SettingsEnum.HIDE_KEYWORD_CONTENT_COMMENT,
-            "comment.eml"
-    );
+    private final StringFilterGroup commentsFilter;
 
     /**
-     * The last value of {@link SettingsEnum#HIDE_KEYWORD_CONTENT_PHRASES}
+     * The last value of {@link Settings#HIDE_KEYWORD_CONTENT_PHRASES}
      * parsed and loaded into {@link #bufferSearch}.
-     * <p>
-     * Field is intentionally compared using reference equality (and not the .equals() method).
-     * <p>
-     * Used to allow changing the keywords without restarting the app.
+     * Allows changing the keywords without restarting the app.
      */
     private volatile String lastKeywordPhrasesParsed;
 
-    @GuardedBy("this")
     private volatile ByteTrieSearch bufferSearch;
+
+    private static void logNavigationState(String state) {
+        // Enable locally to debug filtering. Default off to reduce log spam.
+        final boolean LOG_NAVIGATION_STATE = false;
+        // noinspection ConstantValue
+        if (LOG_NAVIGATION_STATE) {
+            Logger.printDebug(() -> "Navigation state: " + state);
+        }
+    }
 
     private static boolean hideKeywordSettingIsActive() {
         // Must check player type first, as search bar can be active behind the player.
-        if (PlayerType.getCurrent().isMaximizedOrFullscreen()) {
+        if (RootView.isPlayerActive()) {
             // For now, consider the under video results the same as the home feed.
-            // Player active
-            return SettingsEnum.HIDE_KEYWORD_CONTENT_HOME.getBoolean();
+            return Settings.HIDE_KEYWORD_CONTENT_HOME.get();
         }
-
         // Must check second, as search can be from any tab.
-        if (NavigationBar.isSearchBarActive()) {
-            // Search
-            return SettingsEnum.HIDE_KEYWORD_CONTENT_SEARCH.getBoolean();
+        if (RootView.isSearchBarActive()) {
+            return Settings.HIDE_KEYWORD_CONTENT_SEARCH.get();
         }
 
         // Avoid checking navigation button status if all other settings are off.
-        final boolean hideHome = SettingsEnum.HIDE_KEYWORD_CONTENT_HOME.getBoolean();
-        final boolean hideSubscriptions = SettingsEnum.HIDE_SUBSCRIPTIONS_BUTTON.getBoolean();
+        final boolean hideHome = Settings.HIDE_KEYWORD_CONTENT_HOME.get();
+        final boolean hideSubscriptions = Settings.HIDE_KEYWORD_CONTENT_SUBSCRIPTIONS.get();
         if (!hideHome && !hideSubscriptions) {
             return false;
         }
@@ -147,11 +147,9 @@ final class KeywordContentFilter extends Filter {
         if (selectedNavButton == NavigationButton.HOME) {
             return hideHome;
         }
-
         if (selectedNavButton == NavigationButton.SUBSCRIPTIONS) {
             return hideSubscriptions;
         }
-
         // User is in the Library or Notifications tab.
         return false;
     }
@@ -164,7 +162,7 @@ final class KeywordContentFilter extends Filter {
             return sentence;
         }
         final int firstCodePoint = sentence.codePointAt(0);
-        // In some non-English languages title case is different from upper case.
+        // In some non English languages title case is different than uppercase.
         return new StringBuilder()
                 .appendCodePoint(Character.toTitleCase(firstCodePoint))
                 .append(sentence, Character.charCount(firstCodePoint), sentence.length())
@@ -178,6 +176,7 @@ final class KeywordContentFilter extends Filter {
         if (sentence.isEmpty()) {
             return sentence;
         }
+
         final int delimiter = ' ';
         // Use code points and not characters to handle unicode surrogates.
         int[] codePoints = sentence.codePoints().toArray();
@@ -195,21 +194,22 @@ final class KeywordContentFilter extends Filter {
     }
 
     /**
-     * @return If the phrase will hide all videos. Not an exhaustive check.
+     * @return If the phrase will will hide all videos. Not an exhaustive check.
      */
     private static boolean phrasesWillHideAllVideos(@NonNull String[] phrases) {
         for (String commonString : STRINGS_IN_EVERY_BUFFER) {
-            if (ReVancedUtils.containsAny(commonString, phrases)) {
+            if (Utils.containsAny(commonString, phrases)) {
                 return true;
             }
         }
         return false;
     }
 
-    private synchronized void parseKeywords() { // Must be synchronized since Litho is multithreaded.
-        String rawKeywords = SettingsEnum.HIDE_KEYWORD_CONTENT_PHRASES.getString();
-        if (rawKeywords.equals(lastKeywordPhrasesParsed)) {
-            LogHelper.printDebug(() -> "Using previously initialized search");
+    private synchronized void parseKeywords() { // Must be synchronized since Litho is multi-threaded.
+        String rawKeywords = Settings.HIDE_KEYWORD_CONTENT_PHRASES.get();
+        //noinspection StringEquality
+        if (rawKeywords == lastKeywordPhrasesParsed) {
+            Logger.printDebug(() -> "Using previously initialized search");
             return; // Another thread won the race, and search is already initialized.
         }
 
@@ -226,20 +226,20 @@ final class KeywordContentFilter extends Filter {
 
                 if (phrase.length() < MINIMUM_KEYWORD_LENGTH) {
                     // Do not reset the setting. Keep the invalid keywords so the user can fix the mistake.
-                    ReVancedUtils.showToastLong(str("revanced_hide_keyword_toast_invalid_length", MINIMUM_KEYWORD_LENGTH, phrase));
+                    Utils.showToastLong(str("revanced_hide_keyword_toast_invalid_keyword", phrase, MINIMUM_KEYWORD_LENGTH));
                     continue;
                 }
 
                 // Add common casing that might appear.
                 //
-                // This could be simplified by adding case-insensitive search to the prefix search,
-                // which is very simple to add to StringTrieSearch for Unicode and ByteTrieSearch for ASCII.
+                // This could be simplified by adding case insensitive search to the prefix search,
+                // which is very simple to add to StringTreSearch for Unicode and ByteTrieSearch for ASCII.
                 //
                 // But to support Unicode with ByteTrieSearch would require major changes because
                 // UTF-8 characters can be different byte lengths, which does
                 // not allow comparing two different byte arrays using simple plain array indexes.
                 //
-                // Instead, add all common case variations of the words.
+                // Instead add all common case variations of the words.
                 String[] phraseVariations = {
                         phrase,
                         phrase.toLowerCase(),
@@ -248,7 +248,7 @@ final class KeywordContentFilter extends Filter {
                         phrase.toUpperCase()
                 };
                 if (phrasesWillHideAllVideos(phraseVariations)) {
-                    ReVancedUtils.showToastLong(str("revanced_hide_keyword_toast_invalid_common", phrase));
+                    Utils.showToastLong(str("revanced_hide_keyword_toast_invalid_common", phrase));
                     continue;
                 }
 
@@ -256,7 +256,7 @@ final class KeywordContentFilter extends Filter {
             }
 
             search.addPatterns(convertStringsToBytes(keywords.toArray(new String[0])));
-            LogHelper.printDebug(() -> "Search using: (" + search.getEstimatedMemorySize() + " KB) keywords: " + keywords);
+            Logger.printDebug(() -> "Search using: (" + search.getEstimatedMemorySize() + " KB) keywords: " + keywords);
         }
 
         bufferSearch = search;
@@ -264,19 +264,27 @@ final class KeywordContentFilter extends Filter {
     }
 
     public KeywordContentFilter() {
-        pathFilterGroupList.addAll(startsWithFilter, containsFilter, commentFilter);
+        commentsFilter = new StringFilterGroup(
+                Settings.HIDE_KEYWORD_CONTENT_COMMENTS,
+                "comment_thread.eml"
+        );
+
+        // Keywords are parsed on first call to isFiltered()
+        addPathCallbacks(startsWithFilter, containsFilter, commentsFilter);
     }
 
     @Override
-    boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
-                       FilterGroupList matchedList, FilterGroup matchedGroup, int matchedIndex) {
-        if (matchedIndex != 0 && matchedGroup == startsWithFilter) {
+    public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
+                              StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
+        if (contentIndex != 0 && matchedGroup == startsWithFilter) {
             return false;
         }
 
-        if (!hideKeywordSettingIsActive()) return false;
+        if (matchedGroup != commentsFilter && !hideKeywordSettingIsActive()) return false;
 
-        if (!SettingsEnum.HIDE_KEYWORD_CONTENT_PHRASES.getString().equals(lastKeywordPhrasesParsed)) {
+        // Field is intentionally compared using reference equality.
+        //noinspection StringEquality
+        if (Settings.HIDE_KEYWORD_CONTENT_PHRASES.get() != lastKeywordPhrasesParsed) {
             // User changed the keywords.
             parseKeywords();
         }
@@ -285,6 +293,7 @@ final class KeywordContentFilter extends Filter {
             return false;
         }
 
-        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedList, matchedGroup, matchedIndex);
+        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
     }
+
 }

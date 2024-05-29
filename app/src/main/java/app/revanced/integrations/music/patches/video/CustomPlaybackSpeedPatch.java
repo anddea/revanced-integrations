@@ -1,56 +1,60 @@
 package app.revanced.integrations.music.patches.video;
 
-import static app.revanced.integrations.music.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+
+import androidx.annotation.NonNull;
 
 import java.util.Arrays;
 
-import app.revanced.integrations.music.settings.SettingsEnum;
-import app.revanced.integrations.music.utils.LogHelper;
-import app.revanced.integrations.music.utils.ReVancedUtils;
+import app.revanced.integrations.music.settings.Settings;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.Utils;
 
 @SuppressWarnings("unused")
 public class CustomPlaybackSpeedPatch {
     /**
      * Maximum playback speed, exclusive value.  Custom speeds must be less than this value.
      */
-    private static final float MAXIMUM_PLAYBACK_SPEED = 3;
+    private static final float MAXIMUM_PLAYBACK_SPEED = 5;
 
     /**
      * Custom playback speeds.
      */
     private static float[] customPlaybackSpeeds;
 
-    private static String[] customSpeedEntries;
-    private static String[] customSpeedEntryValues;
-
     static {
         loadCustomSpeeds();
     }
 
+    /**
+     * Injection point.
+     */
     public static float[] getArray(float[] original) {
-        return customPlaybackSpeeds;
+        return userChangedCustomPlaybackSpeed() ? customPlaybackSpeeds : original;
     }
 
+    /**
+     * Injection point.
+     */
     public static int getLength(int original) {
-        return customPlaybackSpeeds.length;
+        return userChangedCustomPlaybackSpeed() ? customPlaybackSpeeds.length : original;
     }
 
+    /**
+     * Injection point.
+     */
     public static int getSize(int original) {
-        return 0;
+        return userChangedCustomPlaybackSpeed() ? 0 : original;
     }
 
-    private static void resetCustomSpeeds(boolean shouldWarning) {
-        if (shouldWarning) {
-            ReVancedUtils.showToastShort(getWarningMessage());
-        }
-
-        ReVancedUtils.showToastShort(str("revanced_custom_playback_speeds_invalid"));
-        SettingsEnum.CUSTOM_PLAYBACK_SPEEDS.resetToDefault();
+    private static void resetCustomSpeeds(@NonNull String toastMessage) {
+        Utils.showToastLong(toastMessage);
+        Settings.CUSTOM_PLAYBACK_SPEEDS.resetToDefault();
     }
 
     public static void loadCustomSpeeds() {
         try {
-            String[] speedStrings = SettingsEnum.CUSTOM_PLAYBACK_SPEEDS.getString().split("\\s+");
+            String[] speedStrings = Settings.CUSTOM_PLAYBACK_SPEEDS.get().split("\\s+");
             Arrays.sort(speedStrings);
             if (speedStrings.length == 0) {
                 throw new IllegalArgumentException();
@@ -62,32 +66,21 @@ public class CustomPlaybackSpeedPatch {
                     throw new IllegalArgumentException();
                 }
                 if (speed > MAXIMUM_PLAYBACK_SPEED) {
-                    resetCustomSpeeds(true);
+                    resetCustomSpeeds(str("revanced_custom_playback_speeds_invalid", MAXIMUM_PLAYBACK_SPEED + ""));
                     loadCustomSpeeds();
                     return;
                 }
                 customPlaybackSpeeds[i] = speed;
             }
-
-            if (customSpeedEntries != null) return;
-
-            customSpeedEntries = new String[customPlaybackSpeeds.length];
-            customSpeedEntryValues = new String[customPlaybackSpeeds.length];
-
-            int i = 0;
-            for (float speed : customPlaybackSpeeds) {
-                String speedString = String.valueOf(speed);
-                customSpeedEntries[i] = speed != 1.0f
-                        ? speedString + "x"
-                        : str("revanced_playback_speed_normal");
-                customSpeedEntryValues[i] = speedString;
-                i++;
-            }
         } catch (Exception ex) {
-            LogHelper.printInfo(() -> "parse error", ex);
-            resetCustomSpeeds(false);
+            Logger.printInfo(() -> "parse error", ex);
+            resetCustomSpeeds(str("revanced_custom_playback_speeds_parse_exception"));
             loadCustomSpeeds();
         }
+    }
+
+    private static boolean userChangedCustomPlaybackSpeed() {
+        return !Settings.CUSTOM_PLAYBACK_SPEEDS.isSetToDefault() && customPlaybackSpeeds != null;
     }
 
     private static boolean arrayContains(float[] array, float value) {
@@ -95,18 +88,6 @@ public class CustomPlaybackSpeedPatch {
             if (arrayValue == value) return true;
         }
         return false;
-    }
-
-    public static String[] getListEntries() {
-        return customSpeedEntries;
-    }
-
-    public static String[] getListEntryValues() {
-        return customSpeedEntryValues;
-    }
-
-    public static String getWarningMessage() {
-        return str("revanced_custom_playback_speeds_warning", MAXIMUM_PLAYBACK_SPEED + "");
     }
 
 }
