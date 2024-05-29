@@ -1,3 +1,71 @@
+# [0.152.0](https://github.com/anddea/revanced-integrations/compare/v0.151.0...v0.152.0) (2024-05-29)
+
+
+### Bug Fixes
+
+* App crashes when resource not found ([6abcabc](https://github.com/anddea/revanced-integrations/commit/6abcabcd6142b264e93ff31c1740497410a08d8b))
+* **YouTube - Append timestamp information:** Ensure correct RTL layout ([027b948](https://github.com/anddea/revanced-integrations/commit/027b9484a82e59b9b375dac6aa612be99d6e25cb))
+* **YouTube - Default video quality:** Revert back ([d6da339](https://github.com/anddea/revanced-integrations/commit/d6da33920cab54c7efc893d31b9e2defcc07cc73))
+* **YouTube - Hide action buttons:** Some action buttons are not hidden properly ([c37f238](https://github.com/anddea/revanced-integrations/commit/c37f238d9b6baad5b202f192433d0dc773f14b9c))
+* **YouTube - Hide feed components:** `Hide mix playlists` setting hides components in channel profile ([dc151ae](https://github.com/anddea/revanced-integrations/commit/dc151ae6d9d1c886f7a746f9f17a92b786e46d13))
+* **YouTube - Hide keyword content:** Filter Shorts found in horizontal shelves ([25465e2](https://github.com/anddea/revanced-integrations/commit/25465e24038ed563b88b473c382bc86a210ddf42))
+* **YouTube - Hide Shorts components:** Channel headers were hidden if Shorts is disabled ([5451719](https://github.com/anddea/revanced-integrations/commit/54517192a9fd3855544bf79d5ee5c125219cc26d))
+* **YouTube - Hide Shorts components:** Exclude `Hide sound metadata label` and `Hide video link label` from `Hide info panel` ([a510788](https://github.com/anddea/revanced-integrations/commit/a510788f68e146acbe05f4e804bb56e9206f99e7))
+* **YouTube - Hide Shorts components:** Hide Shorts in search result horizontal shelves ([2be49fc](https://github.com/anddea/revanced-integrations/commit/2be49fca45157e0dd4e91c13be52c6dad6ea5b42))
+* **YouTube - Return YouTube Dislike:** Disabling `Show dislikes in Shorts` disabled dislikes everywhere ([#11](https://github.com/anddea/revanced-integrations/issues/11)) ([1b317db](https://github.com/anddea/revanced-integrations/commit/1b317db4aaf5db3bfe43999b28442d4d70b4c08e))
+* **YouTube - Return YouTube Dislike:** Dislike counts showing in views ([83bf7b2](https://github.com/anddea/revanced-integrations/commit/83bf7b25cfed359a520f2d81efb9a196072706c1))
+* **YouTube - Return YouTube Dislike:** Fix some issues ([281dbe3](https://github.com/anddea/revanced-integrations/commit/281dbe3e54ba4663a6c20756a8cf52b1d027bd27))
+* **YouTube - Return YouTube Dislike:** Subscribe icon is hidden ([95b34d4](https://github.com/anddea/revanced-integrations/commit/95b34d463c820fe35d83e6cff0c1ecb252bf9d83))
+* **YouTube - Searchbar:** Hide searchbar in RYD and Sponsorblock sections ([#13](https://github.com/anddea/revanced-integrations/issues/13)) ([ed60bea](https://github.com/anddea/revanced-integrations/commit/ed60bead5cde292e7f264a2db9ab7a1b96c52d95))
+* **YouTube - Searchbar:** Prevent searchbar appearing briefly when switching between fragments ([#14](https://github.com/anddea/revanced-integrations/issues/14)) ([584e6e3](https://github.com/anddea/revanced-integrations/commit/584e6e38f2344a511fb39b9a6c99d5dba21feca8))
+* **YouTube - Searchbar:** Restore original settings page if query is empty ([#12](https://github.com/anddea/revanced-integrations/issues/12)) ([9592bd5](https://github.com/anddea/revanced-integrations/commit/9592bd5449ff5c92f407790f0802da11bb461900))
+* **YouTube - Shorts components:** Update pattern for hide disabled comments ([c7b2fd4](https://github.com/anddea/revanced-integrations/commit/c7b2fd43bbd04622f81e40811dca791695c3c896))
+* **YouTube - SponsorBlock:** `Submit a new segment` button did not work ([395d3ce](https://github.com/anddea/revanced-integrations/commit/395d3ce4b6c5a1b94e122072e8e5748ea5aac0f9))
+* **YouTube - SponsorBlock:** Pressing Now while manually editing a segment results in an error ([9521baa](https://github.com/anddea/revanced-integrations/commit/9521baa34d2a91d964687933cd7f3741504f90fc))
+* **YouTube - Spoof format stream data:** Some Uris are not hooked ([7e49ab3](https://github.com/anddea/revanced-integrations/commit/7e49ab3eef85cc0932ac66392422fff57b1fa82c))
+* **YouTube - Video playback:** Default video quality sometimes does not apply when video is not loaded ([86b8130](https://github.com/anddea/revanced-integrations/commit/86b8130447e9538e8f1cb72ea0409cddb0b38f5a))
+* **YouTube Music/Hide ads:** `Hide fullscreen ads` setting also closes non-ad dialogs https://github.com/inotia00/ReVanced_Extended/issues/1971 ([7dd292d](https://github.com/anddea/revanced-integrations/commit/7dd292d5a1e48965d07f720cc6bff15c3b926d1e))
+* **YouTube/Description components:** crash occurs when the title of the engagement panel is null https://github.com/inotia00/ReVanced_Extended/issues/2008 ([e4ba2d0](https://github.com/anddea/revanced-integrations/commit/e4ba2d0e4e5526e0a8604ede55af9ee5242e65cd))
+* **YouTube/Hide layout components:** add method to hide settings with whitelist https://github.com/inotia00/ReVanced_Extended/issues/1964 ([10e5d1a](https://github.com/anddea/revanced-integrations/commit/10e5d1a09972227d1bbae33fe7b03d8e19a9bee8))
+* **YouTube/Return YouTube Dislike:** dislike count sometimes not shown in Shorts https://github.com/inotia00/ReVanced_Extended/issues/1565 ([f869a37](https://github.com/anddea/revanced-integrations/commit/f869a37b2d06ddf45bf1e9bb4507abfc2f818b38))
+* **YouTube/Return YouTube Dislike:** wrong video id is used in shorts https://github.com/inotia00/ReVanced_Extended/issues/1987 ([3868c2b](https://github.com/anddea/revanced-integrations/commit/3868c2b9be5e4d80085ad135fe22bf4f38b6b60d))
+* **YouTube/Settings:** settings values of excluded patches have changed due to incorrect settings alignment ([d706d1b](https://github.com/anddea/revanced-integrations/commit/d706d1bafd9b96cb240e82e0c56fd442980920db))
+* **YouTube/SponsorBlock:** pressing the fine adjustment buttons skips to the end of the video while creating a new SponsorBlock segment https://github.com/inotia00/ReVanced_Extended/issues/1980 ([f683045](https://github.com/anddea/revanced-integrations/commit/f6830452921f8f38a8045a499ad15735c4858d85))
+* **YouTube/Spoof format stream data:** check audio tags first ([75e84a2](https://github.com/anddea/revanced-integrations/commit/75e84a28cda70b24b9ee5227e2b4b862063c241a))
+* **YouTube/Spoof format stream data:** incorrect url is used ([2f86f6b](https://github.com/anddea/revanced-integrations/commit/2f86f6b9413f8970ea0cec859f222428352796a7))
+* **YouTube/Video playback:** default video quality applies even when video is playing https://github.com/inotia00/ReVanced_Extended/issues/1959 ([5cc2c04](https://github.com/anddea/revanced-integrations/commit/5cc2c042b7b47132641dc64da56e08b8c76e4851))
+* **YouTube:** App crashes when `SponsorBlock` patch is excluded ([e657bbd](https://github.com/anddea/revanced-integrations/commit/e657bbdf7338f123ffbb24704d7eca435c95dd8f))
+* **YT Music - Hide terms container:** Patch doesn't require restart to apply the changes ([e987b6d](https://github.com/anddea/revanced-integrations/commit/e987b6d7465dd2e821238beec1d998b8b6c742a5))
+
+
+### Features
+
+* Refactor and match ReVanced and inotia ([30ad38a](https://github.com/anddea/revanced-integrations/commit/30ad38a6d6cac331ede9b515576208dc855853a2))
+* **YouTube - Fullscreen components:** `Hide related videos in quick actions` setting has been merged into the `Hide related video overlay` setting ([a9b973b](https://github.com/anddea/revanced-integrations/commit/a9b973bb59bcc3daacd8174aee2cd505e20af233))
+* **YouTube - Hide layout components:** Add `Hide videos based on duration` ([b6bd93a](https://github.com/anddea/revanced-integrations/commit/b6bd93a1e9bf8473dadc78a867558f82ceac26e7))
+* **YouTube - Hide layout components:** Add an option to hide videos with views greater than specified value ([14d4756](https://github.com/anddea/revanced-integrations/commit/14d475637680a913a8b706cc92785b2abb857d4f))
+* **YouTube - Hide shorts components:** Add separate option to hide in player ([67cfeb8](https://github.com/anddea/revanced-integrations/commit/67cfeb88c0c125523524cf96a17b2da6a1f031da))
+* **YouTube - Hide shorts components:** Hide comments button if disabled or with label "0" ([44f3c2f](https://github.com/anddea/revanced-integrations/commit/44f3c2f0349a8ea294471c9bc8dc88f963159d2c))
+* **YouTube - Overlay buttons:** Add `Whitelist` overlay button ([564a044](https://github.com/anddea/revanced-integrations/commit/564a0443b85807cab156c3fafea804c560c20498))
+* **YouTube - Player components:** Add setting toggle for `Hide suggested video end screen` ([d020bc8](https://github.com/anddea/revanced-integrations/commit/d020bc8dd987683f75002095bbbc403146371d9e))
+* **YouTube - Settings:** Add ability to search in summaries and list entries ([fbe9e53](https://github.com/anddea/revanced-integrations/commit/fbe9e53aff8aeb13c9307e14b0cbce6aaf465282))
+* **YouTube - Settings:** Add search bar for settings ([681cea9](https://github.com/anddea/revanced-integrations/commit/681cea9aa1d1fdf0c88c7a240d2bf92a053782e7))
+* **YouTube - Toolbar components:** Remove `Hide trending searches` setting ([b14f20c](https://github.com/anddea/revanced-integrations/commit/b14f20cd05b89500b22adba980a3329003c4afb3))
+* **YouTube Music - Player components:** Add `Enable black player background` setting ([d27d362](https://github.com/anddea/revanced-integrations/commit/d27d362423f5d3d8312ba33dd1c96804aa670ded))
+* **YouTube Music - Player components:** Add `Hide audio video switch toggle` setting ([68238da](https://github.com/anddea/revanced-integrations/commit/68238dad79efacfe286a0e56413217e64d2e7fb1))
+* **YouTube/Spoof format stream data:** check endpoint url is non-null ([a25d7d7](https://github.com/anddea/revanced-integrations/commit/a25d7d7dfebb3f0e4cccd253528334ba5f207641))
+* **YouTube/Spoof format stream data:** improve hook method, fetch to `ANDROID_TESTSUITE` client ([ef50cf5](https://github.com/anddea/revanced-integrations/commit/ef50cf55416b7052fe27467950cc18921d5de218))
+* **YouTube:** Add `Hide videos by duration` and `Hide videos by views count` greater than specified value ([#37](https://github.com/anddea/revanced-integrations/issues/37)) ([d15028c](https://github.com/anddea/revanced-integrations/commit/d15028cdabf11093f8628938f3ffc22fa7ef809e))
+* **YouTube:** Add `Spoof client` patch ([010f879](https://github.com/anddea/revanced-integrations/commit/010f87917dec41caefff7d1123c527829e24f243))
+* **YouTube:** Add support versions `19.19.39` - `19.20.34` ([3c4ccc3](https://github.com/anddea/revanced-integrations/commit/3c4ccc318163b3405a38f1e464158e40d017d8e7))
+* **YouTube:** Hide live chat replay in fullscreen ([e8184a1](https://github.com/anddea/revanced-integrations/commit/e8184a1a1b200d8c759abd588ed664dbf0db9b54))
+* **YouTube:** Remove `Spoof test client` patch ([782b25b](https://github.com/anddea/revanced-integrations/commit/782b25b1fbc4e1b08d3150d388cf18afd11d9d1b))
+
+
+### Reverts
+
+* default landscape mode timeout ([f46db5d](https://github.com/anddea/revanced-integrations/commit/f46db5da6ac9ada68ed92b03e434a686b07d27a3))
+
 # [0.152.0-dev.14](https://github.com/anddea/revanced-integrations/compare/v0.152.0-dev.13...v0.152.0-dev.14) (2024-05-28)
 
 
