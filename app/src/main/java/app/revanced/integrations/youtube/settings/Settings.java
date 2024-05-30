@@ -421,6 +421,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting DISABLE_QUIC_PROTOCOL = new BooleanSetting("revanced_disable_quic_protocol", FALSE, true);
     public static final BooleanSetting SPOOF_FORMAT_STREAM_DATA = new BooleanSetting("revanced_spoof_format_stream_data", FALSE, true);
     public static final BooleanSetting SPOOF_CLIENT = new BooleanSetting("revanced_spoof_client", FALSE, true);
+    public static final BooleanSetting SPOOF_CLIENT_STATS_FOR_NERDS = new BooleanSetting("revanced_spoof_client_stats_for_nerds", TRUE, parent(SPOOF_CLIENT));
     public static final EnumSetting<ClientType> SPOOF_CLIENT_GENERAL = new EnumSetting<>("revanced_spoof_client_general",
             ClientType.IOS);
     public static final EnumSetting<ClientType> SPOOF_CLIENT_LIVESTREAM = new EnumSetting<>("revanced_spoof_client_livestream",
