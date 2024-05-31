@@ -1,3 +1,16 @@
+# [0.153.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.152.0...v0.153.0-dev.1) (2024-05-31)
+
+
+### Bug Fixes
+
+* **YouTube - Spoof client:** Player gestures not working when spoofing with `Android VR` client ([067f0ec](https://github.com/anddea/revanced-integrations/commit/067f0ec416c77d98673d736a9b26e0370f0fee62))
+
+
+### Features
+
+* **YouTube - Spoof client:** Add `Show in Stats for nerds` settings ([6c5ff0c](https://github.com/anddea/revanced-integrations/commit/6c5ff0c1b6176b2c15ca64b42693b518eb004225))
+* **YouTube - Spoof client:** Selectively spoof client for general video / livestreams / Shorts / fallback (unplayable video) ([c8e31ec](https://github.com/anddea/revanced-integrations/commit/c8e31ec07069d649aeab9da3c4900bb063270e2c))
+
 # [0.152.0](https://github.com/anddea/revanced-integrations/compare/v0.151.0...v0.152.0) (2024-05-29)
 
 
