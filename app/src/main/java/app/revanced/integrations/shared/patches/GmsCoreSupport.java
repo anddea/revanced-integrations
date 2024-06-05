@@ -1,5 +1,6 @@
 package app.revanced.integrations.shared.patches;
 
+import static app.revanced.integrations.shared.settings.BaseSettings.GMS_SHOW_DIALOG;
 import static app.revanced.integrations.shared.utils.StringRef.str;
 
 import android.annotation.SuppressLint;
@@ -18,6 +19,7 @@ import android.provider.Settings;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.Utils;
 
@@ -52,18 +54,27 @@ public class GmsCoreSupport {
 
     private static void showBatteryOptimizationDialog(Activity context,
                                                       String dialogMessageRef,
+                                                      BooleanSetting setting,
                                                       String positiveButtonStringRef,
-                                                      DialogInterface.OnClickListener onPositiveClickListener) {
+                                                      DialogInterface.OnClickListener onPositiveClickListener,
+                                                      boolean showNegativeButton) {
         // Use a delay to allow the activity to finish initializing.
         // Otherwise, if device is in dark mode the dialog is shown with wrong color scheme.
-        Utils.runOnMainThreadDelayed(() -> new AlertDialog.Builder(context)
-                .setIconAttribute(android.R.attr.alertDialogIcon)
-                .setTitle(str("gms_core_dialog_title"))
-                .setMessage(str(dialogMessageRef))
-                .setPositiveButton(str(positiveButtonStringRef), onPositiveClickListener)
-                // Allow using back button to skip the action, just in case the check can never be satisfied.
-                .setCancelable(true)
-                .show(), 100);
+        Utils.runOnMainThreadDelayed(() -> {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
+                    .setIconAttribute(android.R.attr.alertDialogIcon)
+                    .setTitle(str("gms_core_dialog_title"))
+                    .setMessage(str(dialogMessageRef))
+                    .setPositiveButton(str(positiveButtonStringRef), onPositiveClickListener)
+                    // Allow using back button to skip the action, just in case the check can never be satisfied.
+                    .setCancelable(true);
+
+            if (showNegativeButton) {
+                dialogBuilder.setNegativeButton(str("gms_core_dialog_dismiss_text"), (dialog, which) -> setting.save(false));
+            }
+
+            dialogBuilder.show();
+        }, 100);
     }
 
     /**
@@ -92,8 +103,10 @@ public class GmsCoreSupport {
 
                     showBatteryOptimizationDialog(mActivity,
                             "gms_core_dialog_not_whitelisted_not_allowed_in_background_message",
+                            null,
                             "gms_core_dialog_open_website_text",
-                            (dialog, id) -> open(mActivity, DONT_KILL_MY_APP_LINK));
+                            (dialog, id) -> open(mActivity, DONT_KILL_MY_APP_LINK),
+                            false);  // Do not show the negative button
                     return;
                 }
             }
@@ -101,10 +114,14 @@ public class GmsCoreSupport {
             // Check if GmsCore is whitelisted from battery optimizations.
             if (batteryOptimizationsEnabled(mActivity)) {
                 Logger.printInfo(() -> "GmsCore is not whitelisted from battery optimizations");
-                showBatteryOptimizationDialog(mActivity,
-                        "gms_core_dialog_not_whitelisted_using_battery_optimizations_message",
-                        "gms_core_dialog_continue_text",
-                        (dialog, id) -> openGmsCoreDisableBatteryOptimizationsIntent(mActivity));
+                if (GMS_SHOW_DIALOG.get()) {
+                    showBatteryOptimizationDialog(mActivity,
+                            "gms_core_dialog_not_whitelisted_using_battery_optimizations_message",
+                            GMS_SHOW_DIALOG,
+                            "gms_core_dialog_continue_text",
+                            (dialog, id) -> openGmsCoreDisableBatteryOptimizationsIntent(mActivity),
+                            true);  // Show the negative button
+                }
             }
         } catch (Exception ex) {
             Logger.printException(() -> "checkGmsCore failure", ex);
