@@ -1,3 +1,10 @@
+# [0.153.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.1...v0.153.0-dev.2) (2024-06-05)
+
+
+### Features
+
+* **GmsCore support:** Add `Don't show again` option for battery optimization dialog ([ecb5836](https://github.com/anddea/revanced-integrations/commit/ecb5836ce209a60cde36c02ada06b237c243971d))
+
 # [0.153.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.152.0...v0.153.0-dev.1) (2024-05-31)
 
 
