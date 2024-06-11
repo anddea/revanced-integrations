@@ -1,19 +1,17 @@
 package app.revanced.integrations.youtube.settings.preference;
 
 import static android.text.Html.fromHtml;
-import static app.revanced.integrations.shared.utils.ResourceUtils.getIdIdentifier;
+import static com.google.android.apps.youtube.app.settings.videoquality.VideoQualitySettingsActivity.setSearchViewVisibility;
+import static com.google.android.apps.youtube.app.settings.videoquality.VideoQualitySettingsActivity.setToolbarText;
+import static app.revanced.integrations.shared.utils.ResourceUtils.getDrawableIdentifier;
 import static app.revanced.integrations.shared.utils.ResourceUtils.getLayoutIdentifier;
 import static app.revanced.integrations.shared.utils.StringRef.str;
-import static app.revanced.integrations.shared.utils.Utils.getChildView;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -26,22 +24,14 @@ import android.preference.SwitchPreference;
 import android.text.Html;
 import android.text.InputType;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Objects;
-
-import app.revanced.integrations.R;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.settings.preference.ResettableEditTextPreference;
 import app.revanced.integrations.shared.utils.Logger;
-import app.revanced.integrations.shared.utils.ResourceUtils;
 import app.revanced.integrations.shared.utils.Utils;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.sponsorblock.SegmentPlaybackController;
@@ -138,6 +128,12 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
         }
     }
 
+    private void setPreferenceIcon(Preference preference, String str) {
+        final int iconResourceId = getDrawableIdentifier(str);
+        if (iconResourceId == 0) return;
+        preference.setIcon(iconResourceId);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +156,6 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
                 return true;
             });
 
-            addCreateSegmentCategory(context, preferenceScreen);
             addAppearanceCategory(context, preferenceScreen);
 
             segmentCategory = new PreferenceCategory(context);
@@ -168,6 +163,8 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             segmentCategory.setLayoutResource(preferencesCategoryLayout);
             preferenceScreen.addPreference(segmentCategory);
             updateSegmentCategories();
+
+            addCreateSegmentCategory(context, preferenceScreen);
 
             addGeneralCategory(context, preferenceScreen);
 
@@ -180,58 +177,20 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             addAboutCategory(context, preferenceScreen);
 
             updateUI();
-
-            // remove the search bar
-            View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
-            if (searchBar != null) {
-                searchBar.setVisibility(View.GONE);
-            }
         } catch (Exception ex) {
             Logger.printException(() -> "onCreate failure", ex);
-        }
-    }
-
-
-    /**
-     * Hide the search bar when the fragment is resumed
-     * to prevent it from being shown on the wrong fragment.
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Hide the search bar
-        View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
-        if (searchBar != null) {
-            searchBar.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Show the search bar when the fragment is paused, otherwise it will not be shown on the main settings fragment.
-     * Need also a check for ReVancedPreferenceFragment to prevent the search bar from appearing
-     * for a split second when switching between fragments.
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-        Fragment currentFragment = getFragmentManager().findFragmentById(getIdIdentifier("revanced_settings_fragments"));
-        // the search bar should only be shown on the main settings fragment
-        if (!(currentFragment instanceof ReVancedPreferenceFragment)) return;
-
-        // Show the search bar
-        View searchBar = getActivity().findViewById(getIdIdentifier("search_view"));
-        if (searchBar != null) {
-            searchBar.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        final ViewGroup toolBarParent = Objects.requireNonNull(getActivity().findViewById(getIdIdentifier("revanced_toolbar_parent")));
-        Toolbar toolbar = (Toolbar) toolBarParent.getChildAt(0);
-        TextView toolbarTextView = Objects.requireNonNull(getChildView(toolbar, view -> view instanceof TextView));
-        toolbarTextView.setText(ResourceUtils.getString("revanced_extended_settings_title"));
+
+        // Restore toolbar text
+        setToolbarText();
+
+        // Show the search bar
+        setSearchViewVisibility(true);
     }
 
     private void addAppearanceCategory(Context context, PreferenceScreen screen) {
@@ -299,12 +258,6 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
         addNewSegment.setTitle(str("revanced_sb_enable_create_segment"));
         addNewSegment.setSummaryOn(str("revanced_sb_enable_create_segment_sum_on"));
         addNewSegment.setSummaryOff(str("revanced_sb_enable_create_segment_sum_off"));
-        @SuppressLint("DiscouragedApi") int iconResourceId = context.getResources().getIdentifier("sb_enable_create_segment_icon", "drawable", context.getPackageName());
-        if (iconResourceId != 0) {
-            @SuppressLint("UseCompatLoadingForDrawables") Drawable iconDrawable = context.getResources().getDrawable(iconResourceId, context.getTheme());
-            addNewSegment.setIcon(iconDrawable);
-        }
-        category.addPreference(addNewSegment);
         addNewSegment.setOnPreferenceChangeListener((preference1, o) -> {
             Boolean newValue = (Boolean) o;
             if (newValue && !Settings.SB_SEEN_GUIDELINES.get()) {
@@ -321,6 +274,8 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             updateUI();
             return true;
         });
+        setPreferenceIcon(addNewSegment, "sb_enable_create_segment_icon");
+        category.addPreference(addNewSegment);
 
         newSegmentStep = new ResettableEditTextPreference(context);
         newSegmentStep.setTitle(str("revanced_sb_general_adjusting"));
@@ -336,6 +291,7 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             Settings.SB_CREATE_NEW_SEGMENT_STEP.save(newAdjustmentValue);
             return true;
         });
+        setPreferenceIcon(newSegmentStep, "empty_icon");
         category.addPreference(newSegmentStep);
 
         Preference guidelinePreferences = new Preference(context);
@@ -345,30 +301,20 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             openGuidelines();
             return true;
         });
+        setPreferenceIcon(guidelinePreferences, "empty_icon");
         category.addPreference(guidelinePreferences);
-
-        @SuppressLint("DiscouragedApi") int emptyResourceId = context.getResources().getIdentifier("empty_icon", "drawable", context.getPackageName());
-        if (emptyResourceId != 0) {
-            Drawable iconDrawable = context.getResources().getDrawable(emptyResourceId);
-            newSegmentStep.setIcon(iconDrawable);
-            guidelinePreferences.setIcon(iconDrawable);
-        }
 
         votingEnabled = new SwitchPreference(context);
         votingEnabled.setTitle(str("revanced_sb_enable_voting"));
         votingEnabled.setSummaryOn(str("revanced_sb_enable_voting_sum_on"));
         votingEnabled.setSummaryOff(str("revanced_sb_enable_voting_sum_off"));
-        @SuppressLint("DiscouragedApi") int votingResourceId = context.getResources().getIdentifier("sb_enable_voting_icon", "drawable", context.getPackageName());
-        if (votingResourceId != 0) {
-            @SuppressLint("UseCompatLoadingForDrawables") Drawable iconDrawable = context.getResources().getDrawable(votingResourceId, context.getTheme());
-            votingEnabled.setIcon(iconDrawable);
-        }
-        category.addPreference(votingEnabled);
         votingEnabled.setOnPreferenceChangeListener((preference1, newValue) -> {
             Settings.SB_VOTING_BUTTON.save((Boolean) newValue);
             updateUI();
             return true;
         });
+        setPreferenceIcon(votingEnabled, "sb_enable_voting_icon");
+        category.addPreference(votingEnabled);
     }
 
     @TargetApi(26)
