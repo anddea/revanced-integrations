@@ -1,3 +1,24 @@
+# [0.153.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.2...v0.153.0-dev.3) (2024-06-11)
+
+
+### Bug Fixes
+
+* **YouTube - Return YouTube Dislike:** No longer hides glow animation ([a80a157](https://github.com/anddea/revanced-integrations/commit/a80a15756c94c339b5b55736055e4a786ccf8092))
+* **YouTube/Hide feed components:** `Hide Visit store button` setting does not work ([a09a33d](https://github.com/anddea/revanced-integrations/commit/a09a33dac2a717d1c8c78bb2ee87fc892d639fe3))
+* **YouTube/Spoof client:** first video is always spoofed as a client of Shorts, Clips ([14c22a5](https://github.com/anddea/revanced-integrations/commit/14c22a50d21d728a54570a31ac889e6e6c1a45a9))
+* **YouTube/Spoof client:** restore playback speed menu when spoofing to an iOS, Android TV, Android Testsuite client ([fcc7510](https://github.com/anddea/revanced-integrations/commit/fcc75101f963cd2f4815c4cba09f6fb21ea76e76))
+
+
+### Features
+
+* **Hide ads:** add `Close fullscreen ads` settings ([2707232](https://github.com/anddea/revanced-integrations/commit/2707232104b98f7c4471b063354c7bda3af5494d))
+* **PlayerRoutes:** update hardcoded client version ([605fdcd](https://github.com/anddea/revanced-integrations/commit/605fdcd8ed82f72b795efdd883c356dfc781740c))
+* **YouTube Music:** change default value ([cd072a3](https://github.com/anddea/revanced-integrations/commit/cd072a31f2bb8ce0b63d00a1fc9f74e05012a1f1))
+* **YouTube Music:** Remove `Replace Cast button` patch ([f887f24](https://github.com/anddea/revanced-integrations/commit/f887f24c029c04f5d7eea9e8486003228b42695d))
+* **YouTube/Hide feed components:** separate the `Hide low views video` settings from `Hide recommended videos` settings ([730c58c](https://github.com/anddea/revanced-integrations/commit/730c58ccae8edbba08acf406f5f6ef43beffd5dc))
+* **YouTube/Shorts components:** add `Hide Super Thanks button` settings ([6addcae](https://github.com/anddea/revanced-integrations/commit/6addcae7a36c0774365cdffcdae1266ffd234c85))
+* **YouTube:** add `Enable OPUS codec` patch ([31578d0](https://github.com/anddea/revanced-integrations/commit/31578d01210a70cc46aeaf6347ac16cd62b47f77))
+
 # [0.153.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.1...v0.153.0-dev.2) (2024-06-05)
 
 
