@@ -1,3 +1,10 @@
+# [0.153.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.4...v0.153.0-dev.5) (2024-06-14)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** Some keywords broke interface ([c90673c](https://github.com/anddea/revanced-integrations/commit/c90673c37ee6989e09a656740844aaf0fe857e85))
+
 # [0.153.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.3...v0.153.0-dev.4) (2024-06-14)
 
 
