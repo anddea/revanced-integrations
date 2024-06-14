@@ -1,3 +1,22 @@
+# [0.153.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.3...v0.153.0-dev.4) (2024-06-14)
+
+
+### Bug Fixes
+
+* **Hide ads:** app crashes in the old client ([bf3cdc9](https://github.com/anddea/revanced-integrations/commit/bf3cdc962b8e043f8597d87870bdf2f69ce5e3b7))
+* **YouTube/Hide ads:** toasts are shown multiple times ([f89390f](https://github.com/anddea/revanced-integrations/commit/f89390feacec3dd613c7e44f910e05cd87e584dc))
+* **YouTube/Hide feed components:** `Hide Visit store button` setting does not work ([f844ff8](https://github.com/anddea/revanced-integrations/commit/f844ff8597c785a30d10daae00fe899dd11df17e))
+* **YouTube/Hide feed components:** community posts are not hidden ([64b8814](https://github.com/anddea/revanced-integrations/commit/64b88146efd11f5430e5ee91ac6f563cd820a250))
+* **YouTube/Return YouTube Channel Name:** Correctly handle exception ([4eeebf4](https://github.com/anddea/revanced-integrations/commit/4eeebf45c65dc7939020a453df6171fa4af67cd2))
+* **YouTube:** rename `Enable minimized playback` patch to `Remove background playback restrictions` ([b3e0c9f](https://github.com/anddea/revanced-integrations/commit/b3e0c9f54a26e09381aa6f161db1f312cd3e1e41))
+
+
+### Features
+
+* **YouTube/Hide action buttons:** add `Disable Like and Dislike button glow` setting ([ffb9a08](https://github.com/anddea/revanced-integrations/commit/ffb9a08c182cf68bc4c15cf4a4517372ad9a5179))
+* **YouTube/Settings:** unify toast key format ([a3ce453](https://github.com/anddea/revanced-integrations/commit/a3ce453f778ef18eb4e449548c402ce0da808f36))
+* **YouTube:** add `Miniplayer` patch (Replaces `Enable tablet mini player` patch) ([465a638](https://github.com/anddea/revanced-integrations/commit/465a6380690d89b28e1cc7c69c716cce5af6b4aa))
+
 # [0.153.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.2...v0.153.0-dev.3) (2024-06-11)
 
 
