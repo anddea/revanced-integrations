@@ -76,7 +76,7 @@ public final class KeywordContentFilter extends Filter {
             "https://ad.doubleclick.net/ddm/activity/",
 
             // Cannot find this phrase anywhere,
-            // but breaks filtering if "VICE" (media company) keyword provided
+            // but breaks filtering if "VICE" keyword provided
             // "DEVICE_ADVERTISER_ID_FOR_CONVERSION_TRACKING"
 
             // Litho components frequently found in the buffer that belong to the path filter items.
