@@ -116,9 +116,6 @@ public final class ShortsButtonFilter extends Filter {
         //
         // Action buttons
         //
-        //
-        // Action buttons
-        //
         shortsCommentDisabled =
                 new ByteArrayFilterGroup(
                         Settings.HIDE_SHORTS_COMMENTS_DISABLED_BUTTON,
@@ -160,7 +157,7 @@ public final class ShortsButtonFilter extends Filter {
                 new ByteArrayFilterGroup(
                         Settings.HIDE_SHORTS_TAGGED_PRODUCTS,
                         // Product buttons show pictures of the products, and does not have any unique icons to identify.
-                        // Instead use a unique identifier found in the buffer.
+                        // Instead, use a unique identifier found in the buffer.
                         "PAproduct_listZ"
                 ),
                 new ByteArrayFilterGroup(
@@ -200,10 +197,10 @@ public final class ShortsButtonFilter extends Filter {
             if (videoActionButtonGroupList.check(protobufBufferArray).isFiltered()) {
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
             }
+
+            String protobufString = new String(protobufBufferArray);
             if (shortsCommentDisabled.check(protobufBufferArray).isFiltered()) {
-                if (REEL_COMMENTS_DISABLED_PATTERN.matcher(new String(protobufBufferArray)).find()) {
-                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
-                }
+                return !REEL_COMMENTS_DISABLED_PATTERN.matcher(protobufString).find();
             }
             return false;
         }
