@@ -74,10 +74,7 @@ public final class KeywordContentFilter extends Filter {
             "c2.mtk.sw.vp9.decoder",
             // User analytics.
             "https://ad.doubleclick.net/ddm/activity/",
-
-            // Cannot find this phrase anywhere,
-            // but breaks filtering if "VICE" keyword provided
-            // "DEVICE_ADVERTISER_ID_FOR_CONVERSION_TRACKING"
+            "DEVICE_ADVERTISER_ID_FOR_CONVERSION_TRACKING",
 
             // Litho components frequently found in the buffer that belong to the path filter items.
             "metadata.eml",
