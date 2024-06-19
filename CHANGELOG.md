@@ -1,3 +1,10 @@
+# [0.153.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.6...v0.153.0-dev.7) (2024-06-19)
+
+
+### Bug Fixes
+
+* **YouTube - Shorts components:** More robust pattern for disabled comment button ([386ba9b](https://github.com/anddea/revanced-integrations/commit/386ba9bdf00067b301786c6dfc304a7a7cdaf91a))
+
 # [0.153.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.5...v0.153.0-dev.6) (2024-06-17)
 
 
