@@ -14,11 +14,12 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public final class ShortsButtonFilter extends Filter {
-    // Pattern: reel_comment_button … number of comments … 4 (random number),
-    // previous pattern: reel_comment_button … number of comments,
+    // Pattern:             reel_comment_button … number of comments + space + word (comments) … 4 (random number),
+    // previous patterns:   reel_comment_button … number of comments … 4 (random number)
+    //                      reel_comment_button … number of comments,
     // probably unstable.
-    // If comment button does not have number of comments, then there is "disabled" or "0" label.
-    private static final Pattern REEL_COMMENTS_DISABLED_PATTERN = Pattern.compile("reel_comment_button.+\\d+.+4");
+    // If comment button does not have number of comments, then it is disabled or with label "0".
+    private static final Pattern REEL_COMMENTS_DISABLED_PATTERN = Pattern.compile("reel_comment_button.*\\d+\\s+\\w*.*4");
     private final static String REEL_CHANNEL_BAR_PATH = "reel_channel_bar.eml";
     private final static String REEL_LIVE_HEADER_PATH = "immersive_live_header.eml";
     /**
