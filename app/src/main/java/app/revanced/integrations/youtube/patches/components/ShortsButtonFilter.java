@@ -35,7 +35,7 @@ public final class ShortsButtonFilter extends Filter {
     private final ByteArrayFilterGroup shortsCommentDisabled;
 
     private final StringFilterGroup suggestedAction;
-    private final ByteArrayFilterGroupList suggestedActionsGroupList =  new ByteArrayFilterGroupList();
+    private final ByteArrayFilterGroupList suggestedActionsGroupList = new ByteArrayFilterGroupList();
 
     private final StringFilterGroup actionBar;
     private final ByteArrayFilterGroupList videoActionButtonGroupList = new ByteArrayFilterGroupList();
