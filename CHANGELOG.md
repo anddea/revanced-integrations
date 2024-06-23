@@ -1,3 +1,28 @@
+# [0.153.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.8...v0.153.0-dev.9) (2024-06-23)
+
+
+### Bug Fixes
+
+* **GmsCore support:** Spoof package name ([90cd8fd](https://github.com/anddea/revanced-integrations/commit/90cd8fd1fc7c136ef061a0b8b7ececea94ed9853))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting does not work (A/B tests) ([8bac6f9](https://github.com/anddea/revanced-integrations/commit/8bac6f9287f23eef1a53675d53b0daa7ee0d78e0))
+* **YouTube - Hide feed components:** `Hide expandable chip under videos` setting does not work (A/B tests) ([f33e4b6](https://github.com/anddea/revanced-integrations/commit/f33e4b6ac56fd77e3014c1e18abf4fbe01a82d55))
+* **YouTube - Hide feed components:** `Keyword filter`, `Hide low views video`, `Hide recommended videos by views` setting does not work (A/B tests) ([acaebc0](https://github.com/anddea/revanced-integrations/commit/acaebc0ab6dc4c6261c38d0a724203025ecd05ac))
+* **YouTube - Miniplayer:** `Hide expand and close buttons` setting is not disabled in `Modern 1` on YouTube 19.20.35+ ([a8ad2aa](https://github.com/anddea/revanced-integrations/commit/a8ad2aa062b8e4c607b721641b06da40a4160569))
+* **YouTube - Player components:** `Hide Open mix playlist button` and `Hide Open playlist button` did not work ([f69091c](https://github.com/anddea/revanced-integrations/commit/f69091ce939a9f7f3cc490614b93432204cddb4f))
+* **YouTube - Spoof client:** Seekbar thumbnail not shown in `Android Testsuite` client ([0960b91](https://github.com/anddea/revanced-integrations/commit/0960b916c20a6c07e39ac18974cbaf90a4b7fefb))
+* **YouTube - Toolbar components:** Add support for Cairo icon ([319dc19](https://github.com/anddea/revanced-integrations/commit/319dc19131f0b6bd865897eb3fda01692f112222))
+* **YouTube Music:** The app crashes on older clients ([2a781c4](https://github.com/anddea/revanced-integrations/commit/2a781c4adc10aec649a2d019c56904f6be374fe6))
+
+
+### Features
+
+* **Reddit:** Add `Hide recommended communities shelf` patch ([a09af41](https://github.com/anddea/revanced-integrations/commit/a09af417edeaf191ef7b9bc16ba00e15c34b59c0))
+* **YouTube - Description components:** Separate the `Hide Key concepts section` setting from the `Hide Chapters section` setting ([edbf474](https://github.com/anddea/revanced-integrations/commit/edbf47462002dbeb186844be84d9f7bdaad03653))
+* **YouTube - Miniplayer:** Add `Enable drag and drop` setting (YouTube 19.23.40+) ([5d43c29](https://github.com/anddea/revanced-integrations/commit/5d43c29d31b02464127dbfd23832d4e7bea427fd))
+* **YouTube - Navigation bar components:** Add `Enable translucent navigation bar` setting ([75ba63b](https://github.com/anddea/revanced-integrations/commit/75ba63ba89ac8250f9662eda1d451b19e769d597))
+* **YouTube - Seekbar components:** Add `Enable Cairo seekbar` setting (YouTube 19.23.40+) ([2e79b43](https://github.com/anddea/revanced-integrations/commit/2e79b435b91bafcf520fd1538ab56d09cd908507))
+* **YouTube Music:** Add `Enable Cairo splash animation` patch (YouTube Music 7.06.53+) ([255e1fc](https://github.com/anddea/revanced-integrations/commit/255e1fc64f5d923ef9ab11153817e1be28bf2e0a))
+
 # [0.153.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.7...v0.153.0-dev.8) (2024-06-20)
 
 
