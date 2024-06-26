@@ -1,7 +1,5 @@
 package app.revanced.integrations.shared.utils;
 
-import static app.revanced.integrations.shared.utils.ResourceUtils.getIdIdentifier;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +20,7 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -46,7 +45,9 @@ import java.util.concurrent.TimeUnit;
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import kotlin.text.Regex;
 
-/** @noinspection deprecation*/
+/**
+ * @noinspection deprecation
+ */
 public class Utils {
 
     private static WeakReference<Activity> activityRef = new WeakReference<>(null);
@@ -61,8 +62,7 @@ public class Utils {
 
     public static void clickView(View view) {
         if (view == null) return;
-        view.setSoundEffectsEnabled(false);
-        view.performClick();
+        view.callOnClick();
     }
 
     /**
@@ -91,10 +91,30 @@ public class Utils {
         hideViewUnderCondition(condition.get(), view);
     }
 
-    public static void hideViewUnderCondition(boolean enabled, View view) {
-        if (!enabled) return;
+    /**
+     * Hide a view by setting its visibility to GONE.
+     *
+     * @param condition The setting to check for hiding the view.
+     * @param view      The view to hide.
+     */
+    public static void hideViewUnderCondition(boolean condition, View view) {
+        if (!condition) return;
+        if (view == null) return;
 
         view.setVisibility(View.GONE);
+    }
+
+    @SuppressWarnings("unused")
+    public static void hideViewByRemovingFromParentUnderCondition(BooleanSetting condition, View view) {
+        hideViewByRemovingFromParentUnderCondition(condition.get(), view);
+    }
+
+    public static void hideViewByRemovingFromParentUnderCondition(boolean condition, View view) {
+        if (!condition) return;
+        if (!(view.getParent() instanceof ViewGroup viewGroup))
+            return;
+
+        viewGroup.removeView(view);
     }
 
     /**
@@ -150,11 +170,11 @@ public class Utils {
      * @noinspection unchecked
      */
     public static <R extends View> R getChildView(@NonNull View view, @NonNull String str) {
-        view = view.findViewById(getIdIdentifier(str));
+        view = view.findViewById(ResourceUtils.getIdIdentifier(str));
         if (view != null) {
             return (R) view;
         } else {
-            throw new IllegalArgumentException("View with name" + str +" not found");
+            throw new IllegalArgumentException("View with name" + str + " not found");
         }
     }
 
@@ -196,6 +216,25 @@ public class Utils {
         return null;
     }
 
+    @Nullable
+    public static ViewParent getParentView(@NonNull View view, int nthParent) {
+        ViewParent parent = view.getParent();
+
+        int currentDepth = 0;
+        while (++currentDepth < nthParent && parent != null) {
+            parent = parent.getParent();
+        }
+
+        if (currentDepth == nthParent) {
+            return parent;
+        }
+
+        final int currentDepthLog = currentDepth;
+        Logger.printDebug(() -> "Could not find parent view of depth: " + nthParent
+                + " and instead found at: " + currentDepthLog + " view: " + view);
+        return null;
+    }
+
     public static void restartApp(@NonNull Context mContext) {
         String packageName = mContext.getPackageName();
         Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(packageName);
@@ -218,7 +257,7 @@ public class Utils {
 
     public static Context getContext() {
         if (context == null) {
-            Logger.initializationException(Utils.class, "Context is null, returning null!",  null);
+            Logger.initializationException(Utils.class, "Context is null, returning null!", null);
         }
         return context;
     }
@@ -238,8 +277,8 @@ public class Utils {
      * If Locale changes, resources should also change and be saved locally.
      * Otherwise, {@link ResourceUtils#getString(String)} will be updated to the incorrect language.
      *
-     * @param mContext  Context to check locale.
-     * @return          Context with locale applied.
+     * @param mContext Context to check locale.
+     * @return Context with locale applied.
      */
     public static Context getLocalizedContextAndSetResources(Context mContext) {
         Activity mActivity = activityRef.get();
@@ -313,6 +352,12 @@ public class Utils {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 && toastMessage != null) {
             showToastShort(toastMessage);
         }
+    }
+
+    public static void setPreferenceIcon(Preference preference, String str) {
+        final int iconResourceId = ResourceUtils.getDrawableIdentifier(str);
+        if (iconResourceId == 0) return;
+        preference.setIcon(iconResourceId);
     }
 
     public static void setEditTextDialogTheme(final AlertDialog.Builder builder) {
@@ -494,9 +539,12 @@ public class Utils {
 
     /**
      * Hide a view by setting its layout params to 0x0
+     *
      * @param view The view to hide.
      */
     public static void hideViewByLayoutParams(View view) {
+        if (view == null) return;
+
         if (view instanceof LinearLayout) {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
             view.setLayoutParams(layoutParams);
@@ -513,7 +561,10 @@ public class Utils {
             ViewGroup.LayoutParams layoutParams5 = new ViewGroup.LayoutParams(0, 0);
             view.setLayoutParams(layoutParams5);
         } else {
-            Logger.printDebug(() -> "Hidden view with id " + view.getId());
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            params.width = 0;
+            params.height = 0;
+            view.setLayoutParams(params);
         }
     }
 
@@ -593,16 +644,13 @@ public class Utils {
 
             final String sortValue;
             switch (preferenceSort) {
-                case BY_TITLE:
-                    sortValue = removePunctuationConvertToLowercase(preference.getTitle());
-                    break;
-                case BY_KEY:
-                    sortValue = preference.getKey();
-                    break;
-                case UNSORTED:
+                case BY_TITLE ->
+                        sortValue = removePunctuationConvertToLowercase(preference.getTitle());
+                case BY_KEY -> sortValue = preference.getKey();
+                case UNSORTED -> {
                     continue; // Keep original sorting.
-                default:
-                    throw new IllegalStateException();
+                }
+                default -> throw new IllegalStateException();
             }
 
             preferences.put(sortValue, preference);

@@ -3,6 +3,7 @@ package app.revanced.integrations.youtube.settings.preference;
 import static app.revanced.integrations.youtube.utils.ExtendedUtils.isSpoofingToLessThan;
 
 import android.app.Activity;
+import android.os.Build;
 import android.preference.Preference;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,7 @@ import app.revanced.integrations.youtube.utils.ExtendedUtils;
  * @noinspection ALL
  */
 public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
-    
+
     private static void enableDisablePreferences() {
         for (Setting<?> setting : Setting.allLoadedSettings()) {
             final Preference preference = mPreferenceManager.findPreference(setting.key);
@@ -188,6 +189,10 @@ public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
                 Settings.REPLACE_TOOLBAR_CREATE_BUTTON,
                 Settings.REPLACE_TOOLBAR_CREATE_BUTTON_TYPE
         );
+        enableDisablePreferences(
+                Build.VERSION.SDK_INT < 31,
+                Settings.ENABLE_TRANSLUCENT_NAVIGATION_BAR
+        );
     }
 
     /**
@@ -202,9 +207,9 @@ public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
 
     private static void WhitelistPreferenceLinks() {
         final boolean enabled = PatchStatus.RememberPlaybackSpeed() || PatchStatus.SponsorBlock();
-        final String [] whitelistKey = { Settings.OVERLAY_BUTTON_WHITELIST.key, "revanced_whitelist_settings" };
+        final String[] whitelistKey = {Settings.OVERLAY_BUTTON_WHITELIST.key, "revanced_whitelist_settings"};
 
-        for (String key: whitelistKey) {
+        for (String key : whitelistKey) {
             final Preference preference = mPreferenceManager.findPreference(key);
             if (preference != null) {
                 preference.setEnabled(enabled);

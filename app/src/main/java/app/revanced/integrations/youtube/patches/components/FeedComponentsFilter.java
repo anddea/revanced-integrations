@@ -14,16 +14,10 @@ import app.revanced.integrations.youtube.shared.RootView;
 
 @SuppressWarnings("unused")
 public final class FeedComponentsFilter extends Filter {
-    private static final String BROWSE_STORE_BUTTON_PATH = "|ContainerType|button.eml|";
     private static final String CONVERSATION_CONTEXT_FEED_IDENTIFIER =
             "horizontalCollectionSwipeProtector=null";
     private static final String CONVERSATION_CONTEXT_SUBSCRIPTIONS_IDENTIFIER =
             "heightConstraint=null";
-    private static final ByteArrayFilterGroup browseStoreButton =
-            new ByteArrayFilterGroup(
-                    null,
-                    "header_store_button"
-            );
     private static final ByteArrayFilterGroup mixPlaylists =
             new ByteArrayFilterGroup(
                     Settings.HIDE_MIX_PLAYLISTS,
@@ -38,8 +32,9 @@ public final class FeedComponentsFilter extends Filter {
     private static final StringTrieSearch mixPlaylistsContextExceptions = new StringTrieSearch();
 
     public final StringFilterGroup carouselShelf;
-    private final StringFilterGroup channelProfileButtonRule;
+    private final StringFilterGroup channelProfile;
     private final StringFilterGroup communityPosts;
+    private final ByteArrayFilterGroup visitStoreButton;
 
     private static final StringTrieSearch communityPostsFeedGroupSearch = new StringTrieSearch();
     private final StringFilterGroupList communityPostsFeedGroup = new StringFilterGroupList();
@@ -60,6 +55,7 @@ public final class FeedComponentsFilter extends Filter {
         carouselShelf = new StringFilterGroup(
                 Settings.HIDE_CAROUSEL_SHELF,
                 "horizontal_shelf.eml",
+                "horizontal_shelf_inline.eml",
                 "horizontal_tile_shelf.eml",
                 "horizontal_video_shelf.eml"
         );
@@ -67,6 +63,13 @@ public final class FeedComponentsFilter extends Filter {
         final StringFilterGroup chipsShelf = new StringFilterGroup(
                 Settings.HIDE_CHIPS_SHELF,
                 "chips_shelf"
+        );
+
+        communityPosts = new StringFilterGroup(
+                null,
+                "post_base_wrapper",
+                "image_post_root",
+                "text_post_root"
         );
 
         final StringFilterGroup feedSearchBar = new StringFilterGroup(
@@ -77,6 +80,7 @@ public final class FeedComponentsFilter extends Filter {
         addIdentifierCallbacks(
                 carouselShelf,
                 chipsShelf,
+                communityPosts,
                 feedSearchBar
         );
 
@@ -87,9 +91,15 @@ public final class FeedComponentsFilter extends Filter {
                 "official_card"
         );
 
-        channelProfileButtonRule = new StringFilterGroup(
+        channelProfile = new StringFilterGroup(
                 Settings.HIDE_BROWSE_STORE_BUTTON,
-                "|channel_profile_"
+                "channel_profile.eml",
+                "page_header.eml" // new layout
+        );
+
+        visitStoreButton = new ByteArrayFilterGroup(
+                null,
+                "header_store_button"
         );
 
         final StringFilterGroup channelMemberShelf = new StringFilterGroup(
@@ -99,18 +109,14 @@ public final class FeedComponentsFilter extends Filter {
 
         final StringFilterGroup channelProfileLinks = new StringFilterGroup(
                 Settings.HIDE_CHANNEL_PROFILE_LINKS,
-                "channel_header_links"
-        );
-
-        communityPosts = new StringFilterGroup(
-                null,
-                "post_base_wrapper",
-                "image_post_root"
+                "channel_header_links",
+                "attribution.eml" // new layout
         );
 
         final StringFilterGroup expandableChip = new StringFilterGroup(
                 Settings.HIDE_EXPANDABLE_CHIP,
-                "inline_expansion"
+                "inline_expansion",
+                "inline_expander"
         );
 
         final StringFilterGroup feedSurvey = new StringFilterGroup(
@@ -154,7 +160,7 @@ public final class FeedComponentsFilter extends Filter {
         );
 
         final StringFilterGroup subscriptionsChannelBar = new StringFilterGroup(
-                Settings.HIDE_SUBSCRIPTIONS_CHANNEL_SECTION,
+                Settings.HIDE_SUBSCRIPTIONS_CAROUSEL,
                 "subscriptions_channel_bar"
         );
 
@@ -166,10 +172,9 @@ public final class FeedComponentsFilter extends Filter {
 
         addPathCallbacks(
                 albumCard,
-                channelProfileButtonRule,
+                channelProfile,
                 channelMemberShelf,
                 channelProfileLinks,
-                communityPosts,
                 expandableChip,
                 feedSurvey,
                 forYouShelf,
@@ -227,14 +232,14 @@ public final class FeedComponentsFilter extends Filter {
 
     @Override
     public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
-                       StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
+                              StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
         if (matchedGroup == carouselShelf) {
             if (hideShelves()) {
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
             }
             return false;
-        } else if (matchedGroup == channelProfileButtonRule) {
-            if (browseStoreButton.check(protobufBufferArray).isFiltered()) {
+        } else if (matchedGroup == channelProfile) {
+            if (contentIndex == 0 && visitStoreButton.check(protobufBufferArray).isFiltered()) {
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
             }
             return false;

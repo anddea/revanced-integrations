@@ -68,7 +68,7 @@ public class ReturnYouTubeChannelNamePatch {
     public static CharSequence onCharSequenceLoaded(@NonNull Object conversionContext,
                                                     @NonNull CharSequence charSequence) {
         try {
-            if (!Settings.RETURN_SHORTS_CHANNEL_NAME.get())
+            if (!Settings.REPLACE_CHANNEL_HANDLE.get())
                 return charSequence;
 
             final String conversionContextString = conversionContext.toString();
@@ -132,12 +132,13 @@ public class ReturnYouTubeChannelNamePatch {
 
     @NonNull
     private synchronized static String fetchChannelName(String handle, String channelId) {
-        try {
-            String url = String.format(YT_FEED_API_URL, channelId);
-            StringBuilder sBuffer = new StringBuilder();
-            Logger.printDebug(() -> "Fetch Handle: " + handle + ", Channel Id: " + channelId);
+        String url = String.format(YT_FEED_API_URL, channelId);
+        StringBuilder sBuffer = new StringBuilder();
+        Logger.printDebug(() -> "Fetch Handle: " + handle + ", Channel Id: " + channelId);
 
-            boolean isConnected = Utils.submitOnBackgroundThread(() -> {
+        boolean isConnected;
+        try {
+            isConnected = Utils.submitOnBackgroundThread(() -> {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 connection.setConnectTimeout(1000);
                 connection.setReadTimeout(1000);
@@ -160,15 +161,13 @@ public class ReturnYouTubeChannelNamePatch {
                 Logger.printDebug(() -> "Unexpected response code: " + responseCode + " for url: " + url);
                 return false;
             }).get();
-            if (isConnected) {
-                return sBuffer.toString();
-            } else {
-                return "";
-            }
         } catch (ExecutionException | InterruptedException e) {
             Logger.printException(() -> "fetchChannelName failed", e);
+            isConnected = false;
         }
-        return "";
+        if (!isConnected) return "";
+
+        return sBuffer.toString();
     }
 
 }

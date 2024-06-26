@@ -1,8 +1,8 @@
 package app.revanced.integrations.youtube.patches.player;
 
-import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.shared.utils.Utils.hideViewBy0dpUnderCondition;
 import static app.revanced.integrations.shared.utils.Utils.hideViewUnderCondition;
+import static app.revanced.integrations.youtube.utils.ExtendedUtils.validateValue;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -24,7 +24,6 @@ import java.lang.ref.WeakReference;
 
 import app.revanced.integrations.shared.settings.BaseSettings;
 import app.revanced.integrations.shared.settings.BooleanSetting;
-import app.revanced.integrations.shared.settings.FloatSetting;
 import app.revanced.integrations.shared.settings.IntegerSetting;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.ResourceUtils;
@@ -39,6 +38,35 @@ import app.revanced.integrations.youtube.utils.VideoUtils;
 public class PlayerPatch {
     private static final IntegerSetting quickActionsMarginTopSetting = Settings.QUICK_ACTIONS_TOP_MARGIN;
 
+    private static final int PLAYER_OVERLAY_OPACITY_LEVEL;
+    private static final int QUICK_ACTIONS_MARGIN_TOP;
+    private static final float SPEED_OVERLAY_VALUE;
+
+    static {
+        final int opacity = validateValue(
+                Settings.CUSTOM_PLAYER_OVERLAY_OPACITY,
+                0,
+                100,
+                "revanced_custom_player_overlay_opacity_invalid_toast"
+        );
+        PLAYER_OVERLAY_OPACITY_LEVEL = (opacity * 255) / 100;
+
+        SPEED_OVERLAY_VALUE = validateValue(
+                Settings.SPEED_OVERLAY_VALUE,
+                0.0f,
+                8.0f,
+                "revanced_speed_overlay_value_invalid_toast"
+        );
+
+        final int topMargin = validateValue(
+                Settings.QUICK_ACTIONS_TOP_MARGIN,
+                0,
+                32,
+                "revanced_quick_actions_top_margin_invalid_toast"
+        );
+
+        QUICK_ACTIONS_MARGIN_TOP = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) topMargin, Utils.getResources().getDisplayMetrics());
+    }
 
     // region [Ambient mode control] patch
 
@@ -169,9 +197,9 @@ public class PlayerPatch {
     /**
      * This method is invoked only when the view type of descriptionView is {@link TextView}. (A/B tests)
      *
-     * @param textView  descriptionView.
-     * @param original  Whether to apply {@link TextView#setTextIsSelectable}.
-     *                  Patch replaces the {@link TextView#setTextIsSelectable} method invoke.
+     * @param textView descriptionView.
+     * @param original Whether to apply {@link TextView#setTextIsSelectable}.
+     *                 Patch replaces the {@link TextView#setTextIsSelectable} method invoke.
      */
     public static void disableVideoDescriptionInteraction(TextView textView, boolean original) {
         if (textView != null) {
@@ -399,17 +427,8 @@ public class PlayerPatch {
 
     // region [Player components] patch
 
-    public static void changePlayerOpacity(ImageView imageView) {
-        final IntegerSetting customPlayerOverlayOpacity = Settings.CUSTOM_PLAYER_OVERLAY_OPACITY;
-        int opacity = customPlayerOverlayOpacity.get();
-
-        if (opacity < 0 || opacity > 100) {
-            Utils.showToastShort(str("revanced_custom_player_overlay_opacity_warning"));
-            customPlayerOverlayOpacity.resetToDefault();
-            opacity = customPlayerOverlayOpacity.defaultValue;
-        }
-
-        imageView.setImageAlpha((opacity * 255) / 100);
+    public static void changeOpacity(ImageView imageView) {
+        imageView.setImageAlpha(PLAYER_OVERLAY_OPACITY_LEVEL);
     }
 
     public static boolean disableAutoPlayerPopupPanels() {
@@ -429,17 +448,7 @@ public class PlayerPatch {
     }
 
     public static float speedOverlayValue(float original) {
-        final FloatSetting speedOverlayValue = Settings.SPEED_OVERLAY_VALUE;
-        float playbackSpeed = speedOverlayValue.get();
-
-        if (playbackSpeed > 0.0f && playbackSpeed <= 8.0f) {
-            return playbackSpeed;
-        }
-
-        Utils.showToastShort(str("revanced_speed_overlay_value_warning"));
-        speedOverlayValue.resetToDefault();
-
-        return original;
+        return SPEED_OVERLAY_VALUE;
     }
 
     public static boolean hideChannelWatermark(boolean original) {
@@ -493,18 +502,24 @@ public class PlayerPatch {
 
     // region [Hide player flyout menu] patch
 
-    public static void hideFooterCaptions(View view) {
+    public static void hidePlayerFlyoutMenuCaptionsFooter(View view) {
         Utils.hideViewUnderCondition(
                 Settings.HIDE_PLAYER_FLYOUT_MENU_CAPTIONS_FOOTER.get(),
                 view
         );
     }
 
-    public static void hideFooterQuality(View view) {
+    public static void hidePlayerFlyoutMenuQualityFooter(View view) {
         Utils.hideViewUnderCondition(
                 Settings.HIDE_PLAYER_FLYOUT_MENU_QUALITY_FOOTER.get(),
                 view
         );
+    }
+
+    public static View hidePlayerFlyoutMenuQualityHeader(View view) {
+        return Settings.HIDE_PLAYER_FLYOUT_MENU_QUALITY_HEADER.get()
+                ? new View(view.getContext()) // empty view
+                : view;
     }
 
     /**
@@ -632,17 +647,17 @@ public class PlayerPatch {
         return !Settings.RESTORE_OLD_SEEKBAR_THUMBNAILS.get();
     }
 
+    public static boolean enableCairoSeekbar() {
+        return Settings.ENABLE_CAIRO_SEEKBAR.get();
+    }
+
     // endregion
 
     public static int getQuickActionsTopMargin() {
         if (!PatchStatus.QuickActions()) {
             return 0;
         }
-        int topMargin = quickActionsMarginTopSetting.get();
-        if (topMargin < 0 || topMargin > 32) {
-            return 0;
-        }
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) topMargin, Utils.getResources().getDisplayMetrics());
+        return QUICK_ACTIONS_MARGIN_TOP;
     }
 
 }

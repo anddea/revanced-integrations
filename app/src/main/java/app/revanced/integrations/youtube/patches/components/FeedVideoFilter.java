@@ -16,10 +16,13 @@ public final class FeedVideoFilter extends Filter {
             null,
             "endorsement_header_footer" // videos with gray descriptions
     );
-    private final ByteArrayFilterGroup homeFeedRecommendations = new ByteArrayFilterGroup(
-            null,
-            "g-highZ",  // videos with less than 1000 views
+    private final ByteArrayFilterGroup videosForMembershipOnly = new ByteArrayFilterGroup(
+            Settings.HIDE_RECOMMENDED_VIDEO,
             "high-ptsZ" // videos for membership only
+    );
+    private final ByteArrayFilterGroup videosWithLowView = new ByteArrayFilterGroup(
+            Settings.HIDE_LOW_VIEWS_VIDEO,
+            "g-highZ"  // videos with less than 1000 views
     );
     // In search results, vertical video with shorts labels mostly include videos with gray descriptions.
     // Filters without check process.
@@ -30,8 +33,9 @@ public final class FeedVideoFilter extends Filter {
 
     public FeedVideoFilter() {
         homeFeedVideoFilter = new StringFilterGroup(
-                Settings.HIDE_RECOMMENDED_VIDEO,
-                "home_video_with_context.eml"
+                null,
+                "home_video_with_context.eml",
+                "video_lockup_with_attachment.eml"
         );
         feedVideo = new StringFilterGroup(
                 Settings.HIDE_RECOMMENDED_VIDEO,
@@ -62,7 +66,10 @@ public final class FeedVideoFilter extends Filter {
                 return false;
             }
             if (matchedGroup == homeFeedVideoFilter) {
-                if (contentIndex != 0 || !homeFeedRecommendations.check(protobufBufferArray).isFiltered()) {
+                if (contentIndex != 0) {
+                    return false;
+                }
+                if (!videosForMembershipOnly.check(protobufBufferArray).isFiltered() && !videosWithLowView.check(protobufBufferArray).isFiltered()) {
                     return false;
                 }
             }

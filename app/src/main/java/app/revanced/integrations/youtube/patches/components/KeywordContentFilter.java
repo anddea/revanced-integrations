@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import app.revanced.integrations.shared.patches.components.Filter;
 import app.revanced.integrations.shared.patches.components.StringFilterGroup;
@@ -41,12 +42,17 @@ import app.revanced.integrations.youtube.shared.RootView;
 public final class KeywordContentFilter extends Filter {
 
     /**
+     * Engagement toolbar pattern to whitelist from comment filtering.
+     */
+    private static final Pattern ENGAGEMENT_TOOLBAR_PATTERN = Pattern.compile("comment_thread.+engagement_toolbar");
+
+    /**
      * Minimum keyword/phrase length to prevent excessively broad content filtering.
      */
     private static final int MINIMUM_KEYWORD_LENGTH = 3;
 
     /**
-     * Strings found in the buffer for every videos.
+     * Strings found in the buffer for every video.
      * Full strings should be specified, as they are compared using {@link String#contains(CharSequence)}.
      * <p>
      * This list does not include every common buffer string, and this can be added/changed as needed.
@@ -69,6 +75,7 @@ public final class KeywordContentFilter extends Filter {
             // User analytics.
             "https://ad.doubleclick.net/ddm/activity/",
             "DEVICE_ADVERTISER_ID_FOR_CONVERSION_TRACKING",
+
             // Litho components frequently found in the buffer that belong to the path filter items.
             "metadata.eml",
             "thumbnail.eml",
@@ -85,6 +92,7 @@ public final class KeywordContentFilter extends Filter {
             "search_video_with_context.eml",
             "video_with_context.eml", // Subscription tab videos.
             "related_video_with_context.eml",
+            "video_lockup_with_attachment.eml", // A/B tests.
             "compact_video.eml",
             "inline_shorts",
             "shorts_video_cell",
@@ -93,6 +101,8 @@ public final class KeywordContentFilter extends Filter {
 
     /**
      * Substrings that are never at the start of the path.
+     *
+     * @noinspection FieldCanBeLocal
      */
     private final StringFilterGroup containsFilter = new StringFilterGroup(
             null,
@@ -162,7 +172,7 @@ public final class KeywordContentFilter extends Filter {
             return sentence;
         }
         final int firstCodePoint = sentence.codePointAt(0);
-        // In some non English languages title case is different than uppercase.
+        // In some non-English languages title case is different from uppercase.
         return new StringBuilder()
                 .appendCodePoint(Character.toTitleCase(firstCodePoint))
                 .append(sentence, Character.charCount(firstCodePoint), sentence.length())
@@ -194,7 +204,7 @@ public final class KeywordContentFilter extends Filter {
     }
 
     /**
-     * @return If the phrase will will hide all videos. Not an exhaustive check.
+     * @return If the phrase will hide all videos. Not an exhaustive check.
      */
     private static boolean phrasesWillHideAllVideos(@NonNull String[] phrases) {
         for (String commonString : STRINGS_IN_EVERY_BUFFER) {
@@ -205,7 +215,7 @@ public final class KeywordContentFilter extends Filter {
         return false;
     }
 
-    private synchronized void parseKeywords() { // Must be synchronized since Litho is multi-threaded.
+    private synchronized void parseKeywords() { // Must be synchronized since Litho is multithreaded.
         String rawKeywords = Settings.HIDE_KEYWORD_CONTENT_PHRASES.get();
         //noinspection StringEquality
         if (rawKeywords == lastKeywordPhrasesParsed) {
@@ -232,14 +242,14 @@ public final class KeywordContentFilter extends Filter {
 
                 // Add common casing that might appear.
                 //
-                // This could be simplified by adding case insensitive search to the prefix search,
+                // This could be simplified by adding case-insensitive search to the prefix search,
                 // which is very simple to add to StringTreSearch for Unicode and ByteTrieSearch for ASCII.
                 //
                 // But to support Unicode with ByteTrieSearch would require major changes because
                 // UTF-8 characters can be different byte lengths, which does
                 // not allow comparing two different byte arrays using simple plain array indexes.
                 //
-                // Instead add all common case variations of the words.
+                // Instead, add all common case variations of the words.
                 String[] phraseVariations = {
                         phrase,
                         phrase.toLowerCase(),
@@ -281,6 +291,9 @@ public final class KeywordContentFilter extends Filter {
         }
 
         if (matchedGroup != commentsFilter && !hideKeywordSettingIsActive()) return false;
+
+        // Do not filter if comments path includes an engagement toolbar (like, dislike...)
+        if (matchedGroup == commentsFilter && ENGAGEMENT_TOOLBAR_PATTERN.matcher(path).find()) return false;
 
         // Field is intentionally compared using reference equality.
         //noinspection StringEquality

@@ -1,9 +1,6 @@
 package app.revanced.integrations.youtube.patches.misc.requests;
 
-import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.ANDROID_INNER_TUBE_BODY;
 import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.GET_STORYBOARD_SPEC_RENDERER;
-import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.TV_EMBED_INNER_TUBE_BODY;
-import static app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.WEB_INNER_TUBE_BODY;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +18,7 @@ import app.revanced.integrations.shared.requests.Requester;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.Utils;
 import app.revanced.integrations.youtube.patches.misc.StoryboardRenderer;
+import app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.ClientType;
 
 public class StoryboardRendererRequester {
 
@@ -32,7 +30,8 @@ public class StoryboardRendererRequester {
     }
 
     @Nullable
-    private static JSONObject fetchPlayerResponse(@NonNull String requestBody) {
+    private static JSONObject fetchPlayerResponse(@NonNull String requestBody,
+                                                  @NonNull String userAgent) {
         final long startTime = System.currentTimeMillis();
         try {
             Utils.verifyOffMainThread();
@@ -40,7 +39,7 @@ public class StoryboardRendererRequester {
 
             final byte[] innerTubeBody = requestBody.getBytes(StandardCharsets.UTF_8);
 
-            HttpURLConnection connection = PlayerRoutes.getPlayerResponseConnectionFromRoute(GET_STORYBOARD_SPEC_RENDERER);
+            HttpURLConnection connection = PlayerRoutes.getPlayerResponseConnectionFromRoute(GET_STORYBOARD_SPEC_RENDERER, userAgent);
             connection.getOutputStream().write(innerTubeBody, 0, innerTubeBody.length);
 
             final int responseCode = connection.getResponseCode();
@@ -81,8 +80,9 @@ public class StoryboardRendererRequester {
      */
     @Nullable
     private static StoryboardRenderer getStoryboardRendererUsingBody(@NonNull String videoId,
-                                                                     @NonNull String innerTubeBody) {
-        final JSONObject playerResponse = fetchPlayerResponse(innerTubeBody);
+                                                                     @NonNull String innerTubeBody,
+                                                                     @NonNull String userAgent) {
+        final JSONObject playerResponse = fetchPlayerResponse(innerTubeBody, userAgent);
         if (playerResponse == null)
             return null;
 
@@ -101,7 +101,8 @@ public class StoryboardRendererRequester {
     @Nullable
     private static StoryboardRenderer getTrailerStoryboardRenderer(@NonNull String videoId) {
         try {
-            final JSONObject playerResponse = fetchPlayerResponse(String.format(WEB_INNER_TUBE_BODY, videoId));
+            final ClientType requestClient = ClientType.WEB;
+            final JSONObject playerResponse = fetchPlayerResponse(String.format(requestClient.innerTubeBody, videoId), requestClient.userAgent);
 
             if (playerResponse == null)
                 return null;
@@ -157,18 +158,24 @@ public class StoryboardRendererRequester {
     public static StoryboardRenderer getStoryboardRenderer(@NonNull String videoId) {
         Objects.requireNonNull(videoId);
 
+        // Fetch with Android.
+        ClientType clientType = ClientType.ANDROID;
         StoryboardRenderer renderer = getStoryboardRendererUsingBody(
                 videoId,
-                String.format(ANDROID_INNER_TUBE_BODY, videoId)
+                String.format(clientType.innerTubeBody, videoId),
+                clientType.userAgent
         );
         if (renderer == null) {
             Logger.printDebug(() -> videoId + " not available using Android client");
+
+            clientType = ClientType.TVHTML5_SIMPLY_EMBEDDED_PLAYER;
             renderer = getStoryboardRendererUsingBody(
                     videoId,
-                    String.format(TV_EMBED_INNER_TUBE_BODY, videoId, videoId)
+                    String.format(clientType.innerTubeBody, videoId, videoId),
+                    clientType.userAgent
             );
             if (renderer == null) {
-                Logger.printDebug(() -> videoId + " not available using TV embedded client");
+                Logger.printDebug(() -> videoId + " not available using TV html5 embedded client");
             }
         }
 

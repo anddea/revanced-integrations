@@ -42,8 +42,8 @@ public class CustomPlaybackSpeedPatch {
     private static long lastTimeOldPlaybackMenuInvoked;
 
     static {
-        defaultSpeedEntries = new String[] {getString("quality_auto"), "0.25x", "0.5x", "0.75x", getString("revanced_playback_speed_normal"), "1.25x", "1.5x", "1.75x", "2.0x"};
-        defaultSpeedEntryValues = new String[] {"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
+        defaultSpeedEntries = new String[]{getString("quality_auto"), "0.25x", "0.5x", "0.75x", getString("revanced_playback_speed_normal"), "1.25x", "1.5x", "1.75x", "2.0x"};
+        defaultSpeedEntryValues = new String[]{"-2.0", "0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"};
 
         loadSpeeds();
     }
@@ -171,20 +171,30 @@ public class CustomPlaybackSpeedPatch {
         recyclerView.getViewTreeObserver().addOnDrawListener(() -> {
             try {
                 // Check if the current view is the playback speed menu.
-                if (!PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible || recyclerView.getChildCount() == 0)
+                if (!PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible || recyclerView.getChildCount() == 0) {
                     return;
+                }
+
+                if (!(recyclerView.getChildAt(0) instanceof ViewGroup playbackSpeedParentView)) {
+                    return;
+                }
 
                 // For some reason, the custom playback speed flyout panel is activated when the user opens the share panel. (A/B tests)
                 // Check the child count of playback speed flyout panel to prevent this issue.
                 // Child count of playback speed flyout panel is always 8.
-                final ViewGroup PlaybackSpeedParentView = (ViewGroup) recyclerView.getChildAt(0);
-                if (PlaybackSpeedParentView == null || PlaybackSpeedParentView.getChildCount() != 8)
+                if (playbackSpeedParentView.getChildCount() != 8) {
                     return;
+                }
 
                 PlaybackSpeedMenuFilter.isPlaybackSpeedMenuVisible = false;
 
-                ViewGroup parentView3rd = (ViewGroup) recyclerView.getParent().getParent().getParent();
-                ViewGroup parentView4th = (ViewGroup) parentView3rd.getParent();
+                if (!(Utils.getParentView(recyclerView, 3) instanceof ViewGroup parentView3rd)) {
+                    return;
+                }
+
+                if (!(parentView3rd.getParent() instanceof ViewGroup parentView4th)) {
+                    return;
+                }
 
                 // Dismiss View [R.id.touch_outside] is the 1st ChildView of the 4th ParentView.
                 // This only shows in phone layout
@@ -193,11 +203,6 @@ public class CustomPlaybackSpeedPatch {
                 // In tablet layout, there is no Dismiss View, instead we just hide all two parent views.
                 parentView3rd.setVisibility(View.GONE);
                 parentView4th.setVisibility(View.GONE);
-
-                // It works without issues for both tablet and phone layouts,
-                // So no code is needed to check whether the current device is a tablet or phone.
-                // If YouTube makes changes on the server side in the future,
-                // So we need to check the tablet layout and phone layout, use [ExtendedUtils.isTablet()].
 
                 // Show custom playback speed menu.
                 showCustomPlaybackSpeedMenu(recyclerView.getContext());

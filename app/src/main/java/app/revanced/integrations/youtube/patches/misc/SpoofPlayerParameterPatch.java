@@ -19,12 +19,12 @@ import app.revanced.integrations.youtube.shared.VideoInformation;
 
 /**
  * @noinspection ALL
- *
+ * <p>
  * Even if user spoof any player parameters with the client name "ANDROID", if a valid DroidGuard result is not sent,
  * user always receive a response with video id 'aQvGIIdgFDM' (the following content is not available on this app).
  * <a href="https://github.com/LuanRT/YouTube.js/issues/623#issuecomment-2028586357">YouTube.js#623</a>
  * Therefore, this patch is no longer valid.
- *
+ * <p>
  * Currently, the only client name available on Android without DroidGuard results is "ANDROID_TESTSUITE".
  * <a href="https://github.com/iv-org/invidious/pull/4650">invidious#4650</a>
  */
@@ -188,7 +188,7 @@ public class SpoofPlayerParameterPatch {
     /**
      * Injection point.
      */
-    public static int getRecommendedLevel(int originalLevel) {
+    public static int getStoryboardRecommendedLevel(int originalLevel) {
         if (spoofParameter && !useOriginalStoryboardRenderer) {
             final StoryboardRenderer renderer = getRenderer(false);
             if (renderer != null) {

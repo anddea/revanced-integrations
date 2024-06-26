@@ -15,7 +15,7 @@ import app.revanced.integrations.shared.utils.Logger;
  * If an Enum value is removed or changed, any saved or imported data using the
  * non-existent value will be reverted to the default value
  * (the event is logged, but no user error is displayed).
- *
+ * <p>
  * All saved JSON text is converted to lowercase to keep the output less obnoxious.
  */
 @SuppressWarnings("unused")
@@ -23,20 +23,37 @@ public class EnumSetting<T extends Enum<?>> extends Setting<T> {
     public EnumSetting(String key, T defaultValue) {
         super(key, defaultValue);
     }
+
     public EnumSetting(String key, T defaultValue, boolean rebootApp) {
         super(key, defaultValue, rebootApp);
     }
+
     public EnumSetting(String key, T defaultValue, boolean rebootApp, boolean includeWithImportExport) {
         super(key, defaultValue, rebootApp, includeWithImportExport);
     }
+
+    public EnumSetting(String key, T defaultValue, String userDialogMessage) {
+        super(key, defaultValue, userDialogMessage);
+    }
+
     public EnumSetting(String key, T defaultValue, Availability availability) {
         super(key, defaultValue, availability);
     }
+
+    public EnumSetting(String key, T defaultValue, boolean rebootApp, String userDialogMessage) {
+        super(key, defaultValue, rebootApp, userDialogMessage);
+    }
+
     public EnumSetting(String key, T defaultValue, boolean rebootApp, Availability availability) {
         super(key, defaultValue, rebootApp, availability);
     }
-    public EnumSetting(@NonNull String key, @NonNull T defaultValue, boolean rebootApp, boolean includeWithImportExport, @Nullable Availability availability) {
-        super(key, defaultValue, rebootApp, includeWithImportExport, availability);
+
+    public EnumSetting(String key, T defaultValue, boolean rebootApp, String userDialogMessage, Availability availability) {
+        super(key, defaultValue, rebootApp, userDialogMessage, availability);
+    }
+
+    public EnumSetting(@NonNull String key, @NonNull T defaultValue, boolean rebootApp, boolean includeWithImportExport, @Nullable String userDialogMessage, @Nullable Availability availability) {
+        super(key, defaultValue, rebootApp, includeWithImportExport, userDialogMessage, availability);
     }
 
     @Override
@@ -51,7 +68,7 @@ public class EnumSetting<T extends Enum<?>> extends Setting<T> {
             return getEnumFromString(enumName);
         } catch (IllegalArgumentException ex) {
             // Info level to allow removing enum values in the future without showing any user errors.
-            Logger.printInfo(() -> "Using default, and ignoring unknown enum value: "  + enumName, ex);
+            Logger.printInfo(() -> "Using default, and ignoring unknown enum value: " + enumName, ex);
             return defaultValue;
         }
     }
@@ -90,5 +107,19 @@ public class EnumSetting<T extends Enum<?>> extends Setting<T> {
     @Override
     public T get() {
         return value;
+    }
+
+    /**
+     * Availability based on if this setting is currently set to any of the provided types.
+     */
+    @SafeVarargs
+    public final Setting.Availability availability(@NonNull T... types) {
+        return () -> {
+            T currentEnumType = get();
+            for (T enumType : types) {
+                if (currentEnumType == enumType) return true;
+            }
+            return false;
+        };
     }
 }

@@ -78,7 +78,7 @@ public class GeneralPatch {
         } else if (startPage.startsWith("www.youtube.com")) {
             intent.setData(Uri.parse(startPage));
         } else {
-            Utils.showToastShort(str("revanced_change_start_page_warning"));
+            Utils.showToastShort(str("revanced_change_start_page_invalid_toast"));
             Settings.CHANGE_START_PAGE.resetToDefault();
             return;
         }
@@ -122,8 +122,8 @@ public class GeneralPatch {
     /**
      * Returns an array of stream format models containing the default audio tracks.
      *
-     * @param localizedFormatStreamModelArray   stream format model array consisting of audio tracks in the system's language.
-     * @return                                  stream format model array consisting of original audio tracks.
+     * @param localizedFormatStreamModelArray stream format model array consisting of audio tracks in the system's language.
+     * @return stream format model array consisting of original audio tracks.
      */
     public static ArrayList<Object> getFormatStreamModelArray(final ArrayList<Object> localizedFormatStreamModelArray) {
         if (!Settings.DISABLE_AUTO_AUDIO_TRACKS.get()) {
@@ -189,54 +189,6 @@ public class GeneralPatch {
 
     public static boolean enableGradientLoadingScreen() {
         return Settings.ENABLE_GRADIENT_LOADING_SCREEN.get();
-    }
-
-    // endregion
-
-    // region [Enable tablet mini player] patch
-
-    private static boolean tabletMiniPlayerEnabled = Settings.ENABLE_TABLET_MINI_PLAYER.get();
-    private static boolean modernMiniPlayerEnabled = tabletMiniPlayerEnabled && Settings.ENABLE_MODERN_MINI_PLAYER.get();
-
-    public static boolean enableTabletMiniPlayer(boolean original) {
-        return tabletMiniPlayerEnabled || original;
-    }
-
-    /**
-     * In ModernMiniPlayer, the drawables of the close button and expand button are reversed.
-     * OnClickListener appears to be applied normally, so this appears to be a bug in YouTube.
-     * To solve this, swap the drawables of the close and expand buttons.
-     */
-    private static final int closeButtonDrawableId =
-            ResourceUtils.getDrawableIdentifier("yt_outline_x_white_24");
-    private static final int expandButtonDrawableId =
-            ResourceUtils.getDrawableIdentifier("yt_outline_picture_in_picture_white_24");
-
-    public static boolean enableModernMiniPlayer(boolean original) {
-        return modernMiniPlayerEnabled || original;
-    }
-
-    public static int enableModernMiniPlayer(int original) {
-        return modernMiniPlayerEnabled ? 1 : original;
-    }
-
-    public static int replaceCloseButtonDrawableId(int original) {
-        return modernMiniPlayerEnabled ? expandButtonDrawableId : original;
-    }
-
-    public static int replaceExpandButtonDrawableId(int original) {
-        return modernMiniPlayerEnabled ? closeButtonDrawableId : original;
-    }
-
-    public static void hideRewindAndForwardButton(View view) {
-        if (!Settings.HIDE_MINI_PLAYER_REWIND_FORWARD_BUTTON.get())
-            return;
-
-        view.setVisibility(View.GONE);
-
-        if (view.getParent() instanceof ViewGroup viewGroup) {
-            viewGroup.removeView(view);
-        }
     }
 
     // endregion
@@ -355,6 +307,10 @@ public class GeneralPatch {
 
     public static boolean enableNarrowNavigationButton(boolean original) {
         return Settings.ENABLE_NARROW_NAVIGATION_BUTTONS.get() || original;
+    }
+
+    public static boolean enableTranslucentNavigationBar() {
+        return Settings.ENABLE_TRANSLUCENT_NAVIGATION_BAR.get();
     }
 
     public static boolean switchCreateWithNotificationButton(boolean original) {
@@ -508,8 +464,8 @@ public class GeneralPatch {
 
     /**
      * Limitation: Premium header will not be applied for YouTube Premium users if the user uses the 'Wide search bar with header' option.
-     *             This is because it forces the deprecated search bar to be loaded.
-     *             As a solution to this limitation, 'Change YouTube header' patch is required.
+     * This is because it forces the deprecated search bar to be loaded.
+     * As a solution to this limitation, 'Change YouTube header' patch is required.
      */
     public static boolean enableWideSearchBarWithHeader(boolean original) {
         if (!wideSearchbarEnabled)
@@ -552,7 +508,7 @@ public class GeneralPatch {
             // The search icon in the deprecated search bar is clickable, but onClickListener is not assigned.
             // Assign onClickListener and disable the effect when clicked.
             if (searchIconView != null && searchBoxView != null) {
-                searchIconView.setOnClickListener(view1 -> searchBoxView.performClick());
+                searchIconView.setOnClickListener(view1 -> searchBoxView.callOnClick());
                 searchIconView.getBackground().setAlpha(0);
             }
         } else {
@@ -674,7 +630,7 @@ public class GeneralPatch {
     /**
      * The theme of {@link Shell_SettingsActivity} is dark theme.
      * Since this theme is hardcoded, we should manually specify the theme for the activity.
-     *
+     * <p>
      * Since {@link Shell_SettingsActivity} only invokes {@link SettingsActivity}, finish activity after specifying a theme.
      *
      * @param base {@link Shell_SettingsActivity}
@@ -699,7 +655,8 @@ public class GeneralPatch {
     private static boolean isNotificationButton(String enumString) {
         return StringUtils.equalsAny(
                 enumString,
-                "TAB_ACTIVITY" // Notification button
+                "TAB_ACTIVITY", // Notification button
+                "TAB_ACTIVITY_CAIRO" // Notification button (new layout)
         );
     }
 
