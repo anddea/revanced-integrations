@@ -1,3 +1,10 @@
+# [0.153.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.9...v0.153.0-dev.10) (2024-06-26)
+
+
+### Features
+
+* **YouTube - Searchbar:** Restyle ([#17](https://github.com/anddea/revanced-integrations/issues/17)) ([cc5e023](https://github.com/anddea/revanced-integrations/commit/cc5e023a7b1f70b07ca0e6a9f30b6945ec78066e))
+
 # [0.153.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.8...v0.153.0-dev.9) (2024-06-23)
 
 
