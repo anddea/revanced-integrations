@@ -1,3 +1,57 @@
+# [0.153.0](https://github.com/anddea/revanced-integrations/compare/v0.152.0...v0.153.0) (2024-06-26)
+
+
+### Bug Fixes
+
+* **GmsCore support:** Spoof package name ([90cd8fd](https://github.com/anddea/revanced-integrations/commit/90cd8fd1fc7c136ef061a0b8b7ececea94ed9853))
+* **Hide ads:** app crashes in the old client ([bf3cdc9](https://github.com/anddea/revanced-integrations/commit/bf3cdc962b8e043f8597d87870bdf2f69ce5e3b7))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting does not work (A/B tests) ([8bac6f9](https://github.com/anddea/revanced-integrations/commit/8bac6f9287f23eef1a53675d53b0daa7ee0d78e0))
+* **YouTube - Hide feed components:** `Hide expandable chip under videos` setting does not work (A/B tests) ([f33e4b6](https://github.com/anddea/revanced-integrations/commit/f33e4b6ac56fd77e3014c1e18abf4fbe01a82d55))
+* **YouTube - Hide feed components:** `Keyword filter`, `Hide low views video`, `Hide recommended videos by views` setting does not work (A/B tests) ([acaebc0](https://github.com/anddea/revanced-integrations/commit/acaebc0ab6dc4c6261c38d0a724203025ecd05ac))
+* **YouTube - Hide feed components:** Some keywords broke interface ([c90673c](https://github.com/anddea/revanced-integrations/commit/c90673c37ee6989e09a656740844aaf0fe857e85))
+* **YouTube - Miniplayer:** `Hide expand and close buttons` setting is not disabled in `Modern 1` on YouTube 19.20.35+ ([a8ad2aa](https://github.com/anddea/revanced-integrations/commit/a8ad2aa062b8e4c607b721641b06da40a4160569))
+* **YouTube - Player components:** `Hide Open mix playlist button` and `Hide Open playlist button` did not work ([f69091c](https://github.com/anddea/revanced-integrations/commit/f69091ce939a9f7f3cc490614b93432204cddb4f))
+* **YouTube - Return YouTube Dislike:** No longer hides glow animation ([a80a157](https://github.com/anddea/revanced-integrations/commit/a80a15756c94c339b5b55736055e4a786ccf8092))
+* **YouTube - Shorts components:** Better filtering for disabled comment button ([5cd6c0c](https://github.com/anddea/revanced-integrations/commit/5cd6c0c61c2db00e46da04dfb8c1d41ca2ece93a))
+* **YouTube - Shorts components:** Improve pattern for disabled comments button ([a74fd78](https://github.com/anddea/revanced-integrations/commit/a74fd78853649ae6b5527affb1358acad2641229))
+* **YouTube - Shorts components:** More robust pattern for disabled comment button ([386ba9b](https://github.com/anddea/revanced-integrations/commit/386ba9bdf00067b301786c6dfc304a7a7cdaf91a))
+* **YouTube - Spoof client:** Player gestures not working when spoofing with `Android VR` client ([067f0ec](https://github.com/anddea/revanced-integrations/commit/067f0ec416c77d98673d736a9b26e0370f0fee62))
+* **YouTube - Spoof client:** Seekbar thumbnail not shown in `Android Testsuite` client ([0960b91](https://github.com/anddea/revanced-integrations/commit/0960b916c20a6c07e39ac18974cbaf90a4b7fefb))
+* **YouTube - Toolbar components:** Add support for Cairo icon ([319dc19](https://github.com/anddea/revanced-integrations/commit/319dc19131f0b6bd865897eb3fda01692f112222))
+* **YouTube Music:** The app crashes on older clients ([2a781c4](https://github.com/anddea/revanced-integrations/commit/2a781c4adc10aec649a2d019c56904f6be374fe6))
+* **YouTube/Hide ads:** toasts are shown multiple times ([f89390f](https://github.com/anddea/revanced-integrations/commit/f89390feacec3dd613c7e44f910e05cd87e584dc))
+* **YouTube/Hide feed components:** `Hide Visit store button` setting does not work ([f844ff8](https://github.com/anddea/revanced-integrations/commit/f844ff8597c785a30d10daae00fe899dd11df17e))
+* **YouTube/Hide feed components:** `Hide Visit store button` setting does not work ([a09a33d](https://github.com/anddea/revanced-integrations/commit/a09a33dac2a717d1c8c78bb2ee87fc892d639fe3))
+* **YouTube/Hide feed components:** community posts are not hidden ([64b8814](https://github.com/anddea/revanced-integrations/commit/64b88146efd11f5430e5ee91ac6f563cd820a250))
+* **YouTube/Return YouTube Channel Name:** Correctly handle exception ([4eeebf4](https://github.com/anddea/revanced-integrations/commit/4eeebf45c65dc7939020a453df6171fa4af67cd2))
+* **YouTube/Spoof client:** first video is always spoofed as a client of Shorts, Clips ([14c22a5](https://github.com/anddea/revanced-integrations/commit/14c22a50d21d728a54570a31ac889e6e6c1a45a9))
+* **YouTube/Spoof client:** restore playback speed menu when spoofing to an iOS, Android TV, Android Testsuite client ([fcc7510](https://github.com/anddea/revanced-integrations/commit/fcc75101f963cd2f4815c4cba09f6fb21ea76e76))
+* **YouTube:** rename `Enable minimized playback` patch to `Remove background playback restrictions` ([b3e0c9f](https://github.com/anddea/revanced-integrations/commit/b3e0c9f54a26e09381aa6f161db1f312cd3e1e41))
+
+
+### Features
+
+* **GmsCore support:** Add `Don't show again` option for battery optimization dialog ([ecb5836](https://github.com/anddea/revanced-integrations/commit/ecb5836ce209a60cde36c02ada06b237c243971d))
+* **Hide ads:** add `Close fullscreen ads` settings ([2707232](https://github.com/anddea/revanced-integrations/commit/2707232104b98f7c4471b063354c7bda3af5494d))
+* **PlayerRoutes:** update hardcoded client version ([605fdcd](https://github.com/anddea/revanced-integrations/commit/605fdcd8ed82f72b795efdd883c356dfc781740c))
+* **Reddit:** Add `Hide recommended communities shelf` patch ([a09af41](https://github.com/anddea/revanced-integrations/commit/a09af417edeaf191ef7b9bc16ba00e15c34b59c0))
+* **YouTube - Description components:** Separate the `Hide Key concepts section` setting from the `Hide Chapters section` setting ([edbf474](https://github.com/anddea/revanced-integrations/commit/edbf47462002dbeb186844be84d9f7bdaad03653))
+* **YouTube - Miniplayer:** Add `Enable drag and drop` setting (YouTube 19.23.40+) ([5d43c29](https://github.com/anddea/revanced-integrations/commit/5d43c29d31b02464127dbfd23832d4e7bea427fd))
+* **YouTube - Navigation bar components:** Add `Enable translucent navigation bar` setting ([75ba63b](https://github.com/anddea/revanced-integrations/commit/75ba63ba89ac8250f9662eda1d451b19e769d597))
+* **YouTube - Searchbar:** Restyle ([#17](https://github.com/anddea/revanced-integrations/issues/17)) ([cc5e023](https://github.com/anddea/revanced-integrations/commit/cc5e023a7b1f70b07ca0e6a9f30b6945ec78066e))
+* **YouTube - Seekbar components:** Add `Enable Cairo seekbar` setting (YouTube 19.23.40+) ([2e79b43](https://github.com/anddea/revanced-integrations/commit/2e79b435b91bafcf520fd1538ab56d09cd908507))
+* **YouTube - Spoof client:** Add `Show in Stats for nerds` settings ([6c5ff0c](https://github.com/anddea/revanced-integrations/commit/6c5ff0c1b6176b2c15ca64b42693b518eb004225))
+* **YouTube - Spoof client:** Selectively spoof client for general video / livestreams / Shorts / fallback (unplayable video) ([c8e31ec](https://github.com/anddea/revanced-integrations/commit/c8e31ec07069d649aeab9da3c4900bb063270e2c))
+* **YouTube Music:** Add `Enable Cairo splash animation` patch (YouTube Music 7.06.53+) ([255e1fc](https://github.com/anddea/revanced-integrations/commit/255e1fc64f5d923ef9ab11153817e1be28bf2e0a))
+* **YouTube Music:** change default value ([cd072a3](https://github.com/anddea/revanced-integrations/commit/cd072a31f2bb8ce0b63d00a1fc9f74e05012a1f1))
+* **YouTube Music:** Remove `Replace Cast button` patch ([f887f24](https://github.com/anddea/revanced-integrations/commit/f887f24c029c04f5d7eea9e8486003228b42695d))
+* **YouTube/Hide action buttons:** add `Disable Like and Dislike button glow` setting ([ffb9a08](https://github.com/anddea/revanced-integrations/commit/ffb9a08c182cf68bc4c15cf4a4517372ad9a5179))
+* **YouTube/Hide feed components:** separate the `Hide low views video` settings from `Hide recommended videos` settings ([730c58c](https://github.com/anddea/revanced-integrations/commit/730c58ccae8edbba08acf406f5f6ef43beffd5dc))
+* **YouTube/Settings:** unify toast key format ([a3ce453](https://github.com/anddea/revanced-integrations/commit/a3ce453f778ef18eb4e449548c402ce0da808f36))
+* **YouTube/Shorts components:** add `Hide Super Thanks button` settings ([6addcae](https://github.com/anddea/revanced-integrations/commit/6addcae7a36c0774365cdffcdae1266ffd234c85))
+* **YouTube:** add `Enable OPUS codec` patch ([31578d0](https://github.com/anddea/revanced-integrations/commit/31578d01210a70cc46aeaf6347ac16cd62b47f77))
+* **YouTube:** add `Miniplayer` patch (Replaces `Enable tablet mini player` patch) ([465a638](https://github.com/anddea/revanced-integrations/commit/465a6380690d89b28e1cc7c69c716cce5af6b4aa))
+
 # [0.153.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.153.0-dev.9...v0.153.0-dev.10) (2024-06-26)
 
 
