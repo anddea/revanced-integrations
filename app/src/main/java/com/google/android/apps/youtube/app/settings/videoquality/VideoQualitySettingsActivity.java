@@ -22,6 +22,8 @@ import app.revanced.integrations.youtube.utils.ThemeUtils;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
+import static app.revanced.integrations.shared.utils.StringRef.str;
+
 @SuppressWarnings("deprecation")
 public class VideoQualitySettingsActivity extends Activity {
 
@@ -76,9 +78,24 @@ public class VideoQualitySettingsActivity extends Activity {
                     .commit();
 
             // Set search view
+
             SearchView searchView = findViewById(ResourceUtils.getIdIdentifier("search_view"));
 
+            // region compose search hint
+
+            String revancedSettingsName = str("revanced_extended_settings_title");
+            String searchHint = str("revanced_extended_settings_search_title");
+
+            // if the translation is missing the %s, then it
+            // will use the default search hint for that language
+            String finalSearchHint = String.format(searchHint, revancedSettingsName);
+
+            searchView.setQueryHint(finalSearchHint);
+
+            // endregion
+
             // region SearchView dimensions
+
             // Get the current layout parameters of the SearchView
             ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) searchView.getLayoutParams();
 
@@ -118,14 +135,29 @@ public class VideoQualitySettingsActivity extends Activity {
             shape.setCornerRadius(30 * getResources().getDisplayMetrics().density);
             searchView.setBackground(shape);
 
-            /*
-             * in order to match the original app's search bar, we'd need to change the searchbar cursor color
-             * to white (#FFFFFF) if ThemeUtils.isDarkTheme(), and black (#000000) if not.
+            /* TODO:
+                in order to match the original app's search bar, we'd need to change the searchbar cursor color
+                to white (#FFFFFF) if ThemeUtils.isDarkTheme(), and black (#000000) if not.
+                Currently it's always blue.
              */
 
             // endregion
 
-            searchView.setPadding(20, 15, 20, 15);
+            int leftPaddingDp = 5;
+            int topPaddingDp = 5;
+            int rightPaddingDp = 5;
+            int bottomPaddingDp = 5;
+
+            int leftPaddingPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, leftPaddingDp, getResources().getDisplayMetrics());
+            int topPaddingPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, topPaddingDp, getResources().getDisplayMetrics());
+            int rightPaddingPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, rightPaddingDp, getResources().getDisplayMetrics());
+            int bottomPaddingPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, bottomPaddingDp, getResources().getDisplayMetrics());
+
+            searchView.setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, bottomPaddingPx);
 
             searchView.setOnQueryTextListener(onQueryTextListener);
             searchViewRef = new WeakReference<>(searchView);
