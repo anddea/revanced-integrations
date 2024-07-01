@@ -1,6 +1,7 @@
 package app.revanced.integrations.youtube.patches.player;
 
 import static app.revanced.integrations.shared.utils.Utils.hideViewBy0dpUnderCondition;
+import static app.revanced.integrations.shared.utils.Utils.hideViewByRemovingFromParentUnderCondition;
 import static app.revanced.integrations.shared.utils.Utils.hideViewUnderCondition;
 import static app.revanced.integrations.youtube.utils.ExtendedUtils.validateValue;
 
@@ -145,7 +146,7 @@ public class PlayerPatch {
                 if (contentView.getId() != contentId) {
                     return;
                 }
-                // This method is invoked whenever the Engagement panel is opened. (Description, Chapters, Comments, etc)
+                // This method is invoked whenever the Engagement panel is opened. (Description, Chapters, Comments, etc.)
                 // Check the title of the Engagement panel to prevent unnecessary clicking.
                 if (!isDescriptionPanel) {
                     return;
@@ -459,6 +460,10 @@ public class PlayerPatch {
         hideViewBy0dpUnderCondition(Settings.HIDE_CROWDFUNDING_BOX.get(), view);
     }
 
+    public static void hideDoubleTapOverlayFilter(View view) {
+        hideViewByRemovingFromParentUnderCondition(Settings.HIDE_DOUBLE_TAP_OVERLAY_FILTER, view);
+    }
+
     public static void hideEndScreenCards(View view) {
         if (Settings.HIDE_END_SCREEN_CARDS.get()) {
             view.setVisibility(View.GONE);
@@ -554,7 +559,7 @@ public class PlayerPatch {
         // Encapsulate the entire appendString with bidi control characters
         appendString = "\u2066" + appendString + "\u2069";
 
-        // Format the original string with the appended time stamp information
+        // Format the original string with the appended timestamp information
         return String.format(
                 "%s\u2009•\u2009%s", // Add the separator and the appended information
                 original, appendString
