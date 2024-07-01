@@ -1,3 +1,26 @@
+# [0.154.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.153.0...v0.154.0-dev.1) (2024-07-01)
+
+
+### Bug Fixes
+
+* **Reddit - Remove subreddit dialog:** Patch sometimes fails to close subreddit dialog ([7bcceb3](https://github.com/anddea/revanced-integrations/commit/7bcceb33e026c328a4babb09ffece8406445b3e9))
+* **Shorts components:** `Hide sound button` doesn't work (A/B tests) ([af0f2e3](https://github.com/anddea/revanced-integrations/commit/af0f2e30b0e966fbb13860da33bb03ab7171c3c1))
+* **YouTube - Hide ads:** Patch closes fullscreen ads too quickly, so fullscreen ads are shown repeatedly ([475739c](https://github.com/anddea/revanced-integrations/commit/475739ce04b4f5585a0421f8a3798c638afcc3cf))
+* **YouTube - Hide feed components:** Detect if a keyword filter hides all videos ([960f35c](https://github.com/anddea/revanced-integrations/commit/960f35c525660f41ec5218a8fb325b91dadc2d18))
+* **YouTube - Hide feed components:** Video filters do not work properly on accounts with A/B testing applied ([67dcfe7](https://github.com/anddea/revanced-integrations/commit/67dcfe71fc7d4b2c06d66e635c72a99eb8fa0304))
+* **YouTube - Settings:** Toolbar added twice to RVX settings ([b050be9](https://github.com/anddea/revanced-integrations/commit/b050be95468ce35151492b904ab49b7ef5f5122e))
+
+
+### Features
+
+* **YouTube - Searchbar:** Add RVXSettingsMenuName in the searchbar hint ([b1a1dd9](https://github.com/anddea/revanced-integrations/commit/b1a1dd90ead7e2325993f2314270e5ca9c1c93ba))
+* **YouTube - Settings:** Show AlertDialog when changing some settings value (matches ReVanced) ([3b7f255](https://github.com/anddea/revanced-integrations/commit/3b7f255f3f197269c588b4de768646d2cfc22ea5))
+* **YouTube - Shorts components:** Add `Double-tap animation` settings ([2e4c173](https://github.com/anddea/revanced-integrations/commit/2e4c173c8d8bd66aa0f1d73b3fa4940dcd18e04a))
+* **YouTube - Toolbar components:** Add `Hide image search button` settings ([543d269](https://github.com/anddea/revanced-integrations/commit/543d269e16f6e8ee0016015087cf9a0467278fdc))
+* **YouTube Music:** Integrate `Hide double tap overlay filter` patch into the `Player components` patch ([7628ed1](https://github.com/anddea/revanced-integrations/commit/7628ed153d06ff3e593eea1ee3e6056d048efe3d))
+* **YouTube:** DeArrow alternative domain ([#20](https://github.com/anddea/revanced-integrations/issues/20)) ([dbf5b0a](https://github.com/anddea/revanced-integrations/commit/dbf5b0a02d2c85e035944ac754d7ba37928ecb32))
+* **YouTube:** Integrate `Hide double tap overlay filter` patch into the `Player components` patch ([ccc20d8](https://github.com/anddea/revanced-integrations/commit/ccc20d8032abd7be243f57c84a5ae61a1f7b4589))
+
 # [0.153.0](https://github.com/anddea/revanced-integrations/compare/v0.152.0...v0.153.0) (2024-06-26)
 
 
