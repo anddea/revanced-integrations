@@ -1,12 +1,10 @@
 package app.revanced.integrations.youtube.patches.components;
 
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import app.revanced.integrations.shared.patches.components.Filter;
-import app.revanced.integrations.shared.patches.components.StringFilterGroup;
-import app.revanced.integrations.shared.utils.*;
-import app.revanced.integrations.youtube.settings.Settings;
-import app.revanced.integrations.youtube.shared.RootView;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -14,8 +12,15 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static app.revanced.integrations.shared.utils.StringRef.str;
-import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
+import app.revanced.integrations.shared.patches.components.Filter;
+import app.revanced.integrations.shared.patches.components.StringFilterGroup;
+import app.revanced.integrations.shared.utils.ByteTrieSearch;
+import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.StringTrieSearch;
+import app.revanced.integrations.shared.utils.TrieSearch;
+import app.revanced.integrations.shared.utils.Utils;
+import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.RootView;
 
 /**
  * <pre>

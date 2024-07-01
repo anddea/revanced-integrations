@@ -2,7 +2,6 @@ package app.revanced.integrations.youtube.patches.alternativethumbnails;
 
 import static app.revanced.integrations.shared.utils.StringRef.str;
 
-
 import static app.revanced.integrations.youtube.settings.Settings.ALT_THUMBNAIL_ALTERNATIVE_DOMAIN_NAME;
 import static app.revanced.integrations.youtube.settings.Settings.ALT_THUMBNAIL_ALTERNATIVE_DOMAIN_ENABLE;
 import static app.revanced.integrations.youtube.settings.Settings.ALT_THUMBNAIL_HOME;

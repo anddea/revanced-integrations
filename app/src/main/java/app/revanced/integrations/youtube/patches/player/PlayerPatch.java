@@ -146,7 +146,7 @@ public class PlayerPatch {
                 if (contentView.getId() != contentId) {
                     return;
                 }
-                // This method is invoked whenever the Engagement panel is opened. (Description, Chapters, Comments, etc)
+                // This method is invoked whenever the Engagement panel is opened. (Description, Chapters, Comments, etc.)
                 // Check the title of the Engagement panel to prevent unnecessary clicking.
                 if (!isDescriptionPanel) {
                     return;
@@ -559,7 +559,7 @@ public class PlayerPatch {
         // Encapsulate the entire appendString with bidi control characters
         appendString = "\u2066" + appendString + "\u2069";
 
-        // Format the original string with the appended time stamp information
+        // Format the original string with the appended timestamp information
         return String.format(
                 "%s\u2009•\u2009%s", // Add the separator and the appended information
                 original, appendString
