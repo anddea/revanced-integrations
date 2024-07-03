@@ -7,10 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import app.revanced.integrations.shared.patches.components.Filter;
 import app.revanced.integrations.shared.patches.components.StringFilterGroup;
@@ -150,6 +150,7 @@ public final class KeywordContentFilter extends Filter {
     private volatile String lastKeywordPhrasesParsed;
 
     private volatile ByteTrieSearch bufferSearch;
+    private volatile List<Pattern> regexPatterns;
 
     private static void logNavigationState(String state) {
         // Enable locally to debug filtering. Default off to reduce log spam.
@@ -221,6 +222,9 @@ public final class KeywordContentFilter extends Filter {
 
         ByteTrieSearch search = new ByteTrieSearch();
         String[] split = rawKeywords.split("\n");
+
+        List<Pattern> patterns = new ArrayList<>();
+
         if (split.length != 0) {
             // Linked Set so log statement are more organized and easier to read.
             Set<String> keywords = new LinkedHashSet<>(10 * split.length);
@@ -256,6 +260,8 @@ public final class KeywordContentFilter extends Filter {
             }
 
             for (String keyword : keywords) {
+                String regex = "(?:^|\\s)(" + Pattern.quote(keyword) + ")(?:$|\\s)";
+                patterns.add(Pattern.compile(regex));
                 // Use a callback to get the keyword that matched.
                 // TrieSearch could have this built in, but that's slightly more complicated since
                 // the strings are stored as a byte array and embedded in the search tree.
@@ -273,6 +279,7 @@ public final class KeywordContentFilter extends Filter {
         }
 
         bufferSearch = search;
+        regexPatterns = patterns;
         timeToResumeFiltering = 0;
         filteredVideosPercentage = 0;
         lastKeywordPhrasesParsed = rawKeywords; // Must set last.
@@ -378,10 +385,21 @@ public final class KeywordContentFilter extends Filter {
             return false;
         }
 
-        MutableReference<String> matchRef = new MutableReference<>();
-        if (bufferSearch.matches(protobufBufferArray, matchRef)) {
-            updateStats(true, matchRef.value);
-            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+        if (Settings.HIDE_KEYWORD_CONTENT_FULL_WORD.get()) {
+            String content = new String(protobufBufferArray, StandardCharsets.UTF_8);
+            for (Pattern pattern : regexPatterns) {
+                Matcher matcher = pattern.matcher(content);
+                if (matcher.find()) {
+                    updateStats(true, matcher.group(1));
+                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+                }
+            }
+        } else {
+            MutableReference<String> matchRef = new MutableReference<>();
+            if (bufferSearch.matches(protobufBufferArray, matchRef)) {
+                updateStats(true, matchRef.value);
+                return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+            }
         }
 
         updateStats(false, null);
