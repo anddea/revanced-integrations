@@ -44,11 +44,6 @@ import app.revanced.integrations.youtube.shared.RootView;
 public final class KeywordContentFilter extends Filter {
 
     /**
-     * Minimum keyword/phrase length to prevent excessively broad content filtering.
-     */
-    private static final int MINIMUM_KEYWORD_LENGTH = 3;
-
-    /**
      * Strings found in the buffer for every video.
      * Full strings should be specified, as they are compared using {@link String#contains(CharSequence)}.
      * <p>
@@ -234,12 +229,6 @@ public final class KeywordContentFilter extends Filter {
                 // Remove any trailing white space the user may have accidentally included.
                 phrase = phrase.stripTrailing();
                 if (phrase.isBlank()) continue;
-
-                if (phrase.length() < MINIMUM_KEYWORD_LENGTH) {
-                    // Do not reset the setting. Keep the invalid keywords so the user can fix the mistake.
-                    Utils.showToastLong(str("revanced_hide_keyword_toast_invalid_keyword", phrase, MINIMUM_KEYWORD_LENGTH));
-                    continue;
-                }
 
                 // Add common casing that might appear.
                 //
