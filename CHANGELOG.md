@@ -1,3 +1,15 @@
+# [0.154.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.1...v0.154.0-dev.2) (2024-07-03)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** Remove `MINIMUM_KEYWORD_LENGTH` ([4e4c104](https://github.com/anddea/revanced-integrations/commit/4e4c1044be3a43c27366d7f24c35e9c2fab3ad3d))
+
+
+### Features
+
+* **YouTube - Hide feed components:** Add `Match full word` option for keyword filtering ([8323c0f](https://github.com/anddea/revanced-integrations/commit/8323c0fc2628b02ef58e6b52e9c59f299d37330f))
+
 # [0.154.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.153.0...v0.154.0-dev.1) (2024-07-01)
 
 
