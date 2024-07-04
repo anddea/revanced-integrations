@@ -1,3 +1,10 @@
+# [0.154.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.2...v0.154.0-dev.3) (2024-07-04)
+
+
+### Features
+
+* **YouTube:** Add content descriptions to improve accessibility ([538e262](https://github.com/anddea/revanced-integrations/commit/538e2626c655f885d961077768114e81cdcfc2ec))
+
 # [0.154.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.1...v0.154.0-dev.2) (2024-07-03)
 
 
