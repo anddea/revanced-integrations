@@ -18,14 +18,13 @@ public class MuteVolume extends BottomControlButton {
                 Settings.OVERLAY_BUTTON_MUTE_VOLUME,
                 view -> {
                     VideoUtils.toggleMuteVolume();
-                    if (instance != null) {
-                        Logger.printInfo(() -> "isAudioMuted: " + isAudioMuted());
-                        // TODO: why is this is not changing the icon?
-                        instance.changeSelected(isAudioMuted());
-                    }
+                    if (instance != null)
+                        instance.changeActivated(!isAudioMuted());
                 },
                 null
         );
+        // Set the initial state of the button
+        this.changeActivated(!isAudioMuted());
     }
 
     public static void initialize(View ViewGroup) {
@@ -48,5 +47,17 @@ public class MuteVolume extends BottomControlButton {
         MuteVolume muteVolume = instance;
         if (muteVolume != null)
             muteVolume.setVisibilityNegatedImmediate();
+    }
+
+    // not used
+    public static void notifyVolumeChange() {
+        // TODO: not sure if this is implementable
+        //  ideally we would want to change the button state when the volume is changed by the user
+        //  by calling this method on VolumeKeysController.handleVolumeKeyEvent(). However, that method
+        //  is not run if the volume is changed by the user in the YouTube app. A possible solution
+        //  would be to use a global listener to detect volume changes, but I'm not sure if that's possible.
+        Logger.printInfo(() -> "Volume changed");
+        if (instance != null)
+            instance.changeActivated(!isAudioMuted());
     }
 }
