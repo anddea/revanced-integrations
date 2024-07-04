@@ -1,16 +1,20 @@
 package app.revanced.integrations.youtube.patches.overlaybutton;
 
+import android.content.IntentFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.utils.VideoUtils;
+import app.revanced.integrations.youtube.utils.VolumeChangeReceiver;
 
+import static app.revanced.integrations.shared.utils.Utils.getContext;
 import static app.revanced.integrations.youtube.utils.VideoUtils.isAudioMuted;
 
 @SuppressWarnings("unused")
 public class MuteVolume extends BottomControlButton {
     private static MuteVolume instance;
+    static VolumeChangeReceiver volumeChangeReceiver = new VolumeChangeReceiver();
 
     public MuteVolume(ViewGroup bottomControlsViewGroup) {
         super(bottomControlsViewGroup,
@@ -25,6 +29,10 @@ public class MuteVolume extends BottomControlButton {
         );
         // Set the initial state of the button
         this.changeActivated(!isAudioMuted());
+
+        // Register the volume change receiver to update the button state when the volume is changed
+        IntentFilter filter = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
+        getContext().registerReceiver(volumeChangeReceiver, filter);
     }
 
     public static void initialize(View ViewGroup) {
@@ -59,5 +67,10 @@ public class MuteVolume extends BottomControlButton {
         Logger.printInfo(() -> "Volume changed");
         if (instance != null)
             instance.changeActivated(!isAudioMuted());
+    }
+
+    public static void destroy() {
+        Logger.printInfo(() -> "Destroying MuteVolume");
+        getContext().unregisterReceiver(volumeChangeReceiver);
     }
 }
