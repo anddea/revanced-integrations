@@ -260,7 +260,7 @@ public final class KeywordContentFilter extends Filter {
             }
 
             for (String keyword : keywords) {
-                String regex = "(?:^|\\s)(" + Pattern.quote(keyword) + ")(?:$|\\s)";
+                String regex = "\\b(" + Pattern.quote(keyword) + ")\\b";
                 patterns.add(Pattern.compile(regex));
                 // Use a callback to get the keyword that matched.
                 // TrieSearch could have this built in, but that's slightly more complicated since
