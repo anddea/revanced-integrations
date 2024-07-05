@@ -1,3 +1,15 @@
+# [0.154.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.3...v0.154.0-dev.4) (2024-07-05)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** Update pattern for `Match full word` keyword filter ([8c1cb35](https://github.com/anddea/revanced-integrations/commit/8c1cb35c0819a9d57466eecc83a4917ef3c4b0af))
+
+
+### Features
+
+* **YouTube - Overlay buttons:** Add `Mute Video` button ([#22](https://github.com/anddea/revanced-integrations/issues/22)) ([4a9f4a6](https://github.com/anddea/revanced-integrations/commit/4a9f4a603c7eda695dc5d2708c89b0ff71e5b460))
+
 # [0.154.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.2...v0.154.0-dev.3) (2024-07-04)
 
 
