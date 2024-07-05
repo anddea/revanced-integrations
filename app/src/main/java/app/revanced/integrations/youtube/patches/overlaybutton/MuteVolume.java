@@ -18,7 +18,7 @@ public class MuteVolume extends BottomControlButton {
 
     public MuteVolume(ViewGroup bottomControlsViewGroup) {
         super(bottomControlsViewGroup,
-                "revanced_overlay_button_mute_volume",
+                "mute_volume_button",
                 Settings.OVERLAY_BUTTON_MUTE_VOLUME,
                 view -> {
                     VideoUtils.toggleMuteVolume();
