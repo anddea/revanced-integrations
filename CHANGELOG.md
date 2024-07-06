@@ -1,3 +1,20 @@
+# [0.154.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.4...v0.154.0-dev.5) (2024-07-06)
+
+
+### Bug Fixes
+
+* **YouTube - Hide ads:** New ads are not blocked ([2383172](https://github.com/anddea/revanced-integrations/commit/23831723fd0bce8b23906b553d7d71e34bea562c))
+
+
+### Features
+
+* **YouTube - Alternative thumbnails:** Add alternative domain ([c9f47c2](https://github.com/anddea/revanced-integrations/commit/c9f47c22636b2951a2c22e1e9319b598764574ec))
+* **YouTube - Client spoof:** Downgrade hardcoded client version ([bb5e7a6](https://github.com/anddea/revanced-integrations/commit/bb5e7a60de31fdd8624287276fab201f04861513))
+* **YouTube - Miniplayer:** Add `Enable double-tap action` setting ([766925d](https://github.com/anddea/revanced-integrations/commit/766925dde8eb6089ef932f968a73820eef7211ad))
+* **YouTube - Shorts components:** Add `Enable timestamps`, `Timestamp long press action`, `Meta panel bottom margin` settings ([be36036](https://github.com/anddea/revanced-integrations/commit/be360364b5ecd4166b9d100e4088ff22839edbd6))
+* **YouTube:** Add support version `19.25.39`, drop support version `19.23.40` ([dd95309](https://github.com/anddea/revanced-integrations/commit/dd95309bef8a7972513cc583e8c39bb4254091bf))
+* **YouTube:** Merge RVX v1.11.1 ([#23](https://github.com/anddea/revanced-integrations/issues/23)) ([bcc5c29](https://github.com/anddea/revanced-integrations/commit/bcc5c29189191fe5759b01891899945d36fd1f95))
+
 # [0.154.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.3...v0.154.0-dev.4) (2024-07-05)
 
 
