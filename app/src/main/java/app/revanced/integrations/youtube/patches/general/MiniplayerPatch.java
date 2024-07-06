@@ -4,7 +4,6 @@ import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.MODERN_2;
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.MODERN_3;
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.ORIGINAL;
-import static app.revanced.integrations.youtube.patches.utils.PatchStatus.MiniplayerType1920;
 import static app.revanced.integrations.youtube.utils.ExtendedUtils.validateValue;
 
 import android.view.View;
@@ -68,11 +67,19 @@ public final class MiniplayerPatch {
 
     private static final MiniplayerType CURRENT_TYPE = Settings.MINIPLAYER_TYPE.get();
 
+    private static final boolean DOUBLE_TAP_ACTION_ENABLED =
+            (CURRENT_TYPE == MODERN_1 || CURRENT_TYPE == MODERN_2 || CURRENT_TYPE == MODERN_3) && Settings.MINIPLAYER_DOUBLE_TAP_ACTION.get();
+
     private static final boolean DRAG_AND_DROP_ENABLED =
             CURRENT_TYPE == MODERN_1 && Settings.MINIPLAYER_DRAG_AND_DROP.get();
 
+    private static final boolean HIDE_EXPAND_CLOSE_AVAILABLE =
+            (CURRENT_TYPE == MODERN_1 || CURRENT_TYPE == MODERN_3) &&
+                    !DOUBLE_TAP_ACTION_ENABLED &&
+                    !DRAG_AND_DROP_ENABLED;
+
     private static final boolean HIDE_EXPAND_CLOSE_ENABLED =
-            ((!MiniplayerType1920() && CURRENT_TYPE == MODERN_1) || CURRENT_TYPE == MODERN_3) && Settings.MINIPLAYER_HIDE_EXPAND_CLOSE.get();
+            HIDE_EXPAND_CLOSE_AVAILABLE && Settings.MINIPLAYER_HIDE_EXPAND_CLOSE.get();
 
     private static final boolean HIDE_SUBTEXT_ENABLED =
             (CURRENT_TYPE == MODERN_1 || CURRENT_TYPE == MODERN_3) && Settings.MINIPLAYER_HIDE_SUBTEXT.get();
@@ -134,6 +141,13 @@ public final class MiniplayerPatch {
     /**
      * Injection point.
      */
+    public static boolean enableMiniplayerDoubleTapAction() {
+        return DOUBLE_TAP_ACTION_ENABLED;
+    }
+
+    /**
+     * Injection point.
+     */
     public static boolean enableMiniplayerDragAndDrop() {
         return DRAG_AND_DROP_ENABLED;
     }
@@ -155,10 +169,11 @@ public final class MiniplayerPatch {
     /**
      * Injection point.
      */
-    public static void hideMiniplayerSubTexts(View view) {
+    public static boolean hideMiniplayerSubTexts(View view) {
         // Different subviews are passed in, but only TextView and layouts are of interest here.
         final boolean hideView = HIDE_SUBTEXT_ENABLED && (view instanceof TextView || view instanceof LinearLayout);
         Utils.hideViewByRemovingFromParentUnderCondition(hideView, view);
+        return hideView || view == null;
     }
 
     /**

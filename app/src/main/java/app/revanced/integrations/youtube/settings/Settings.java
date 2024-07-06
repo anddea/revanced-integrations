@@ -8,8 +8,8 @@ import static app.revanced.integrations.shared.settings.Setting.parentsAny;
 import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType;
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.MODERN_1;
+import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.MODERN_2;
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.MODERN_3;
-import static app.revanced.integrations.youtube.patches.utils.PatchStatus.MiniplayerType1920;
 import static app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour.MANUAL_SKIP;
 import static app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY;
 import static app.revanced.integrations.youtube.sponsorblock.objects.CategoryBehaviour.SKIP_AUTOMATICALLY_ONCE;
@@ -27,8 +27,8 @@ import app.revanced.integrations.shared.settings.LongSetting;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.settings.StringSetting;
 import app.revanced.integrations.shared.settings.preference.SharedPrefCategory;
-import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.DeArrowAvailability;
 import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.DeArrowAlternativeDomainAvailability;
+import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.DeArrowAvailability;
 import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.StillImagesAvailability;
 import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.ThumbnailOption;
 import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.ThumbnailStillTime;
@@ -60,8 +60,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting ALT_THUMBNAIL_DEARROW_CONNECTION_TOAST = new BooleanSetting("revanced_alt_thumbnail_dearrow_connection_toast", FALSE, new DeArrowAvailability());
     public static final EnumSetting<ThumbnailStillTime> ALT_THUMBNAIL_STILLS_TIME = new EnumSetting<>("revanced_alt_thumbnail_stills_time", ThumbnailStillTime.MIDDLE, new StillImagesAvailability());
     public static final BooleanSetting ALT_THUMBNAIL_STILLS_FAST = new BooleanSetting("revanced_alt_thumbnail_stills_fast", FALSE, new StillImagesAvailability());
-    public static final StringSetting ALT_THUMBNAIL_ALTERNATIVE_DOMAIN_NAME = new StringSetting("revanced_alt_thumbnail_alternative_domain_name", "yt4.ggpht.com", new DeArrowAlternativeDomainAvailability());
-    public static final BooleanSetting ALT_THUMBNAIL_ALTERNATIVE_DOMAIN_ENABLE = new BooleanSetting("revanced_alt_thumbnail_alternative_domain_enable", FALSE);
+    public static final BooleanSetting ALT_THUMBNAIL_USE_ALTERNATIVE_DOMAIN = new BooleanSetting("revanced_alt_thumbnail_use_alternative_domain", FALSE);
+    public static final StringSetting ALT_THUMBNAIL_ALTERNATIVE_DOMAIN = new StringSetting("revanced_alt_thumbnail_alternative_domain", "yt4.ggpht.com", new DeArrowAlternativeDomainAvailability());
 
 
     // PreferenceScreen: Feed
@@ -155,12 +155,9 @@ public class Settings extends BaseSettings {
 
     // PreferenceScreen: General - Miniplayer
     public static final EnumSetting<MiniplayerType> MINIPLAYER_TYPE = new EnumSetting<>("revanced_miniplayer_type", MiniplayerType.ORIGINAL, true);
+    public static final BooleanSetting MINIPLAYER_DOUBLE_TAP_ACTION = new BooleanSetting("revanced_miniplayer_enable_double_tap_action", FALSE, true, MINIPLAYER_TYPE.availability(MODERN_1, MODERN_2, MODERN_3));
     public static final BooleanSetting MINIPLAYER_DRAG_AND_DROP = new BooleanSetting("revanced_miniplayer_enable_drag_and_drop", FALSE, true, MINIPLAYER_TYPE.availability(MODERN_1));
-    public static final BooleanSetting MINIPLAYER_HIDE_EXPAND_CLOSE = new BooleanSetting("revanced_miniplayer_hide_expand_close", FALSE, true,
-            MiniplayerType1920()
-                    ? MINIPLAYER_TYPE.availability(MODERN_3)
-                    : MINIPLAYER_TYPE.availability(MODERN_1, MODERN_3)
-    );
+    public static final BooleanSetting MINIPLAYER_HIDE_EXPAND_CLOSE = new BooleanSetting("revanced_miniplayer_hide_expand_close", FALSE, true);
     public static final BooleanSetting MINIPLAYER_HIDE_SUBTEXT = new BooleanSetting("revanced_miniplayer_hide_subtext", FALSE, true, MINIPLAYER_TYPE.availability(MODERN_1, MODERN_3));
     public static final BooleanSetting MINIPLAYER_HIDE_REWIND_FORWARD = new BooleanSetting("revanced_miniplayer_hide_rewind_forward", FALSE, true, MINIPLAYER_TYPE.availability(MODERN_1));
     public static final IntegerSetting MINIPLAYER_OPACITY = new IntegerSetting("revanced_miniplayer_opacity", 100, true, MINIPLAYER_TYPE.availability(MODERN_1));
@@ -398,6 +395,9 @@ public class Settings extends BaseSettings {
 
 
     // Experimental Flags
+    public static final BooleanSetting ENABLE_TIME_STAMP = new BooleanSetting("revanced_enable_shorts_time_stamp", FALSE, true);
+    public static final BooleanSetting TIME_STAMP_CHANGE_REPEAT_STATE = new BooleanSetting("revanced_shorts_time_stamp_change_repeat_state", TRUE, true, parent(ENABLE_TIME_STAMP));
+    public static final IntegerSetting META_PANEL_BOTTOM_MARGIN = new IntegerSetting("revanced_shorts_meta_panel_bottom_margin", 32, true, parent(ENABLE_TIME_STAMP));
     public static final BooleanSetting HIDE_SHORTS_TOOLBAR = new BooleanSetting("revanced_hide_shorts_toolbar", FALSE, true);
     public static final BooleanSetting HIDE_SHORTS_NAVIGATION_BAR = new BooleanSetting("revanced_hide_shorts_navigation_bar", FALSE, true);
     public static final BooleanSetting REPLACE_CHANNEL_HANDLE = new BooleanSetting("revanced_replace_channel_handle", FALSE);
