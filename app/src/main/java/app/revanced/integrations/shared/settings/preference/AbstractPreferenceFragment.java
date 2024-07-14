@@ -282,7 +282,6 @@ public abstract class AbstractPreferenceFragment extends PreferenceFragment {
     @Override
     public void onDestroy() {
         getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
-        MuteVolume.destroy();
         super.onDestroy();
     }
 }
