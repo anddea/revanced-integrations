@@ -122,10 +122,6 @@ public abstract class BottomControlButton {
         primaryInteractionSetting.save(selected);
     }
 
-    public void changeActivated(boolean activated) {
-        buttonRef.get().setActivated(activated);
-    }
-
     public void changeColorFilter() {
         ImageView imageView = buttonRef.get();
         if (imageView == null) return;
