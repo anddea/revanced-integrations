@@ -1,3 +1,19 @@
+# [0.154.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.5...v0.154.0-dev.6) (2024-07-14)
+
+
+### Bug Fixes
+
+* **YouTube - SponsorBlock:** Skip segments when casting ([6d2d33d](https://github.com/anddea/revanced-integrations/commit/6d2d33d816f7bd33499ea4a5828341cc75c7145d))
+* **YouTube - Spoof client:** Delay when the video starts ([d43d139](https://github.com/anddea/revanced-integrations/commit/d43d1399cfe6a6a44faf293d320ce671bbf5e6b2))
+* **YouTube - Video playback:** Default video quality does not apply ([4c080ec](https://github.com/anddea/revanced-integrations/commit/4c080ecb1e7cf906e6789e5c99907170939606e0))
+
+
+### Features
+
+* Merge RVX v1.11.2-dev.1 ([50ebf3a](https://github.com/anddea/revanced-integrations/commit/50ebf3a124e1d60a5c371689a2ba2ff8a16ab1db))
+* **YouTube - Shorts components:** Add `Hide paused header` setting ([80b8058](https://github.com/anddea/revanced-integrations/commit/80b8058aedaf1135850a032095873f1f04e69f98))
+* **YouTube Music - Thumbnails:** Add `Alternative domain` patch ([15ae875](https://github.com/anddea/revanced-integrations/commit/15ae8755a6458529781bee38b9361a238d718b5f))
+
 # [0.154.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.4...v0.154.0-dev.5) (2024-07-06)
 
 
