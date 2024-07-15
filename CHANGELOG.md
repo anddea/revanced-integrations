@@ -1,3 +1,10 @@
+# [0.154.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.6...v0.154.0-dev.7) (2024-07-15)
+
+
+### Bug Fixes
+
+* **YouTube - VIsual preferences icons:** Revert ([848dee5](https://github.com/anddea/revanced-integrations/commit/848dee578e3755434831bbc53e73979fc83032a0))
+
 # [0.154.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.5...v0.154.0-dev.6) (2024-07-14)
 
 
