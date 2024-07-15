@@ -64,4 +64,5 @@ public class SpeedDialog extends BottomControlButton {
         if (instance != null) instance.setVisibilityNegatedImmediate();
     }
 
+
 }

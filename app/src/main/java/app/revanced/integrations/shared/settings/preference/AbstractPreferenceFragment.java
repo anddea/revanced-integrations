@@ -25,7 +25,6 @@ import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.Utils;
-import app.revanced.integrations.youtube.patches.overlaybutton.MuteVolume;
 
 @SuppressWarnings({"unused", "deprecation"})
 public abstract class AbstractPreferenceFragment extends PreferenceFragment {
@@ -213,12 +212,6 @@ public abstract class AbstractPreferenceFragment extends PreferenceFragment {
         pref.setEnabled(setting.isAvailable());
     }
 
-    /**
-     * Updates the summary of a ListPreference based on its current value.
-     *
-     * @param listPreference The ListPreference to update.
-     * @param setting        The Setting object to get the value from.
-     */
     public static void updateListPreferenceSummary(ListPreference listPreference, Setting<?> setting) {
         String objectStringValue = setting.get().toString();
         int entryIndex = listPreference.findIndexOfValue(objectStringValue);
