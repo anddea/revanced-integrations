@@ -1,3 +1,27 @@
+# [0.154.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.7...v0.154.0-dev.8) (2024-07-18)
+
+
+### Bug Fixes
+
+* **YouTube - Client spoof:** StoryboardRenderer always gets 404 response on `Android` client ([6fdcb8f](https://github.com/anddea/revanced-integrations/commit/6fdcb8fa67e6d5c4aa54be96fde31b33dd0ad507))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting sometimes hides the Watch history in the You tab ([97ea082](https://github.com/anddea/revanced-integrations/commit/97ea082994644341d2ea3953200277e8e9c0d9e1))
+* **YouTube - Hide feed components:** Do not hide flyout menu ([1310d7b](https://github.com/anddea/revanced-integrations/commit/1310d7b5c3713c0dd57cc76c7cc9b4f0f32460ea))
+* **YouTube:** Add a restart delay on first install ([3a3ae56](https://github.com/anddea/revanced-integrations/commit/3a3ae5616d99e04d1f457325b4dc33e8e0247313))
+
+
+### Features
+
+* Merge the `Custom package name` patch into the `GmsCore support` patch and add patch options `GmsCoreVendorGroupId`, `CheckGmsCore`, `PackageNameYouTube`, `PackageNameYouTubeMusic` ([5465751](https://github.com/anddea/revanced-integrations/commit/5465751913168b3ed1e51d47cde088fa25de62d7))
+* **Reddit - Hide navigation buttons:** Reflects changes in the latest revanced-patches-arsclib ([7a5481c](https://github.com/anddea/revanced-integrations/commit/7a5481c280d4cef4cc107e855744d7dc11c47344))
+* **YouTube - Player components:** `Hide player popup panels` setting now hides the products panel ([9f689f3](https://github.com/anddea/revanced-integrations/commit/9f689f32f32727ce7e897932734207cc59d566d7))
+* **YouTube - Swipe controls:** Add `Enable save and restore brightness` setting (Match to ReVanced) ([1400597](https://github.com/anddea/revanced-integrations/commit/140059749d83603daf8e4c5a83dbe793e0e0217c))
+* **YouTube:** Separate the `Bypass image region restrictions` patch from the `Alternative thumbnails` patch (Reflecting changes in ReVanced) ([c4c4b65](https://github.com/anddea/revanced-integrations/commit/c4c4b65d3afc0efb28bc65d2c99cbbd5ba6e9861))
+
+
+### Reverts
+
+* **YouTube - Hide feed components:** `Hide expandable chip under videos` setting does not work (as support version has been rolled back to YouTube 19.16.39) ([7c52971](https://github.com/anddea/revanced-integrations/commit/7c5297187fc52700ba525d6c281d4d9ecd2c1b00))
+
 # [0.154.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.6...v0.154.0-dev.7) (2024-07-15)
 
 
