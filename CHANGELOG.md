@@ -1,3 +1,10 @@
+# [0.154.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.8...v0.154.0-dev.9) (2024-07-22)
+
+
+### Features
+
+* **YouTube - Bypass image region restrictions:** Bring back setting to change alternative domain ([df5d392](https://github.com/anddea/revanced-integrations/commit/df5d3921cdb529540d3e41fc4e102da3cd6f1150))
+
 # [0.154.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.7...v0.154.0-dev.8) (2024-07-18)
 
 
