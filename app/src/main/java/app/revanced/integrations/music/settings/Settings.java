@@ -130,6 +130,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_AUDIO_VIDEO_SWITCH_TOGGLE = new BooleanSetting("revanced_hide_audio_video_switch_toggle", FALSE, true);
     public static final BooleanSetting HIDE_COMMENT_CHANNEL_GUIDELINES = new BooleanSetting("revanced_hide_comment_channel_guidelines", TRUE);
     public static final BooleanSetting HIDE_COMMENT_TIMESTAMP_AND_EMOJI_BUTTONS = new BooleanSetting("revanced_hide_comment_timestamp_and_emoji_buttons", FALSE);
+    public static final BooleanSetting HIDE_DOUBLE_TAP_OVERLAY_FILTER = new BooleanSetting("revanced_hide_double_tap_overlay_filter", FALSE, true);
     public static final BooleanSetting HIDE_FULLSCREEN_SHARE_BUTTON = new BooleanSetting("revanced_hide_fullscreen_share_button", FALSE, true);
     public static final BooleanSetting REMEMBER_REPEAT_SATE = new BooleanSetting("revanced_remember_repeat_state", TRUE);
     public static final BooleanSetting REMEMBER_SHUFFLE_SATE = new BooleanSetting("revanced_remember_shuffle_state", TRUE);
@@ -200,6 +201,7 @@ public class Settings extends BaseSettings {
      * Array of settings using intent
      */
     private static final String[] intentSettingArray = new String[]{
+            BYPASS_IMAGE_REGION_RESTRICTIONS_DOMAIN.key,
             CHANGE_START_PAGE.key,
             CUSTOM_FILTER_STRINGS.key,
             CUSTOM_PLAYBACK_SPEEDS.key,

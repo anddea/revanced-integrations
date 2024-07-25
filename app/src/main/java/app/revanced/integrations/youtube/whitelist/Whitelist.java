@@ -121,10 +121,12 @@ public class Whitelist {
         if (sponsorBlockButton != null && sponsorBlockDrawable != null) {
             sponsorBlockDrawable.setColorFilter(cf);
             sponsorBlockButton.setCompoundDrawablesWithIntrinsicBounds(null, null, sponsorBlockDrawable, null);
+            sponsorBlockButton.setContentDescription(str("revanced_whitelist_sponsor_block"));
         }
         if (playbackSpeedButton != null && playbackSpeedDrawable != null) {
             playbackSpeedDrawable.setColorFilter(cf);
             playbackSpeedButton.setCompoundDrawablesWithIntrinsicBounds(playbackSpeedDrawable, null, null, null);
+            playbackSpeedButton.setContentDescription(str("revanced_whitelist_playback_speed"));
         }
     }
 

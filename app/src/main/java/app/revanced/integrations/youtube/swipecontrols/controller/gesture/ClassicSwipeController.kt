@@ -92,7 +92,7 @@ class ClassicSwipeController(
         from: MotionEvent,
         to: MotionEvent,
         distanceX: Double,
-        distanceY: Double
+        distanceY: Double,
     ): Boolean {
         // cancel if locked
         if (!config.enableSwipeControlsLockMode && config.isScreenLocked)

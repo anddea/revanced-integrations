@@ -212,12 +212,6 @@ public abstract class AbstractPreferenceFragment extends PreferenceFragment {
         pref.setEnabled(setting.isAvailable());
     }
 
-    /**
-     * Updates the summary of a ListPreference based on its current value.
-     *
-     * @param listPreference The ListPreference to update.
-     * @param setting        The Setting object to get the value from.
-     */
     public static void updateListPreferenceSummary(ListPreference listPreference, Setting<?> setting) {
         String objectStringValue = setting.get().toString();
         int entryIndex = listPreference.findIndexOfValue(objectStringValue);
@@ -236,12 +230,16 @@ public abstract class AbstractPreferenceFragment extends PreferenceFragment {
     }
 
     public static void showRestartDialog(@NonNull final Context context, String message) {
+        showRestartDialog(context, message, 0);
+    }
+
+    public static void showRestartDialog(@NonNull final Context context, String message, long delay) {
         Utils.verifyOnMainThread();
 
         new AlertDialog.Builder(context)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, id)
-                        -> Utils.restartApp(context))
+                        -> Utils.runOnMainThreadDelayed(() -> Utils.restartApp(context), delay))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }

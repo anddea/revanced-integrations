@@ -1,31 +1,31 @@
 package app.revanced.integrations.youtube.utils;
 
-import static app.revanced.integrations.shared.utils.StringRef.str;
-import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.userSelectedPlaybackSpeed;
-import static app.revanced.integrations.youtube.settings.preference.ExternalDownloaderPreference.checkPackageIsEnabled;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import android.media.AudioManager;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import app.revanced.integrations.shared.settings.BooleanSetting;
+import app.revanced.integrations.shared.settings.IntegerSetting;
 import app.revanced.integrations.shared.settings.StringSetting;
 import app.revanced.integrations.shared.utils.IntentUtils;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.VideoInformation;
+import app.revanced.integrations.youtube.swipecontrols.controller.AudioVolumeController;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static app.revanced.integrations.shared.utils.ResourceUtils.getStringArray;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.userSelectedPlaybackSpeed;
+import static app.revanced.integrations.youtube.settings.preference.ExternalDownloaderPreference.checkPackageIsEnabled;
 
 @SuppressWarnings("unused")
 public class VideoUtils extends IntentUtils {
@@ -34,6 +34,28 @@ public class VideoUtils extends IntentUtils {
     private static final StringSetting externalDownloaderPackageName =
             Settings.EXTERNAL_DOWNLOADER_PACKAGE_NAME;
     private static final AtomicBoolean isExternalDownloaderLaunched = new AtomicBoolean(false);
+    public static AudioVolumeController audioVolumeController = new AudioVolumeController(getContext(), AudioManager.STREAM_MUSIC);
+    private static Integer previousVolumeLevel = 0;
+
+
+    public static void toggleMuteVolume() {
+        int currentVolume = audioVolumeController.getVolume();
+        if (currentVolume > 0) {
+            // Mute the volume
+            audioVolumeController.setVolume(0);
+            // save the current volume level to restore later
+            previousVolumeLevel = currentVolume;
+        } else {
+            // Unmute the volume - restore the previous volume level
+            audioVolumeController.setVolume(
+                    previousVolumeLevel > 0 ? previousVolumeLevel : audioVolumeController.getMaxVolume()
+            );
+        }
+    }
+
+    public static boolean isAudioMuted() {
+        return audioVolumeController.getVolume() == 0;
+    }
 
     public static void copyUrl(boolean withTimestamp) {
         StringBuilder builder = new StringBuilder("https://youtu.be/");
@@ -53,20 +75,6 @@ public class VideoUtils extends IntentUtils {
     public static void copyTimeStamp() {
         final String timeStamp = getTimeStamp(VideoInformation.getVideoTime());
         setClipboard(timeStamp, str("revanced_share_copy_timestamp_success", timeStamp));
-    }
-
-    /**
-     * Create playlist from all channel videos from oldest to newest,
-     * starting from the video where button is clicked.
-     */
-    public static void playlistFromChannelVideosListener(@NonNull Context context, boolean activated) {
-        String baseUri = "vnd.youtube://" + VideoInformation.getVideoId() + "?start=" + VideoInformation.getVideoTime() / 1000;
-        if (activated) {
-            baseUri += "&list=UL" + VideoInformation.getVideoId();
-        }
-
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUri));
-        context.startActivity(intent);
     }
 
     /**
@@ -122,6 +130,20 @@ public class VideoUtils extends IntentUtils {
         }
     }
 
+    /**
+     * Create playlist from all channel videos from oldest to newest,
+     * starting from the video where button is clicked.
+     */
+    public static void playlistFromChannelVideosListener(boolean activated) {
+        final String videoId = VideoInformation.getVideoId();
+        String baseUri = "vnd.youtube://" + videoId + "?start=" + VideoInformation.getVideoTime() / 1000;
+        if (activated) {
+            baseUri += "&list=UL" + videoId;
+        }
+
+        launchView(baseUri, getContext().getPackageName());
+    }
+
     public static void showPlaybackSpeedDialog(@NonNull Context context) {
         final String[] playbackSpeedEntries = CustomPlaybackSpeedPatch.getTrimmedListEntries();
         final String[] playbackSpeedEntryValues = CustomPlaybackSpeedPatch.getTrimmedListEntryValues();
@@ -136,6 +158,31 @@ public class VideoUtils extends IntentUtils {
                     userSelectedPlaybackSpeed(selectedPlaybackSpeed);
                     mDialog.dismiss();
                 })
+                .show();
+    }
+
+    private static int mClickedDialogEntryIndex;
+
+    public static void showShortsRepeatDialog(@NonNull Context context) {
+        final IntegerSetting setting = Settings.CHANGE_SHORTS_REPEAT_STATE;
+        final String settingsKey = setting.key;
+
+        final String entryKey = settingsKey + "_entries";
+        final String entryValueKey = settingsKey + "_entry_values";
+        final String[] mEntries = getStringArray(entryKey);
+        final String[] mEntryValues = getStringArray(entryValueKey);
+
+        final int findIndex = Arrays.binarySearch(mEntryValues, String.valueOf(setting.get()));
+        mClickedDialogEntryIndex = findIndex >= 0 ? findIndex : setting.defaultValue;
+
+        new AlertDialog.Builder(context)
+                .setTitle(str(settingsKey + "_title"))
+                .setSingleChoiceItems(mEntries, mClickedDialogEntryIndex, (dialog, id) -> {
+                    mClickedDialogEntryIndex = id;
+                    setting.save(id);
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 

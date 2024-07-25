@@ -1,21 +1,23 @@
 package app.revanced.integrations.youtube.patches.components;
 
-import static app.revanced.integrations.shared.utils.ByteTrieSearch.convertStringsToBytes;
 import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import app.revanced.integrations.shared.patches.components.Filter;
 import app.revanced.integrations.shared.patches.components.StringFilterGroup;
 import app.revanced.integrations.shared.utils.ByteTrieSearch;
 import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.StringTrieSearch;
+import app.revanced.integrations.shared.utils.TrieSearch;
 import app.revanced.integrations.shared.utils.Utils;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.RootView;
@@ -42,16 +44,6 @@ import app.revanced.integrations.youtube.shared.RootView;
 public final class KeywordContentFilter extends Filter {
 
     /**
-     * Engagement toolbar pattern to whitelist from comment filtering.
-     */
-    private static final Pattern ENGAGEMENT_TOOLBAR_PATTERN = Pattern.compile("comment_thread.+engagement_toolbar");
-
-    /**
-     * Minimum keyword/phrase length to prevent excessively broad content filtering.
-     */
-    private static final int MINIMUM_KEYWORD_LENGTH = 3;
-
-    /**
      * Strings found in the buffer for every video.
      * Full strings should be specified, as they are compared using {@link String#contains(CharSequence)}.
      * <p>
@@ -60,27 +52,42 @@ public final class KeywordContentFilter extends Filter {
      */
     private static final String[] STRINGS_IN_EVERY_BUFFER = {
             // Video playback data.
-            "https://i.ytimg.com/vi/", // Thumbnail url.
-            "sddefault.jpg", // More video sizes exist, but for most devices only these 2 are used.
-            "hqdefault.webp",
             "googlevideo.com/initplayback?source=youtube", // Video url.
             "ANDROID", // Video url parameter.
+            "https://i.ytimg.com/vi/", // Thumbnail url.
+            "mqdefault.jpg",
+            "hqdefault.jpg",
+            "sddefault.jpg",
+            "hq720.jpg",
+            "webp",
+            "_custom_", // Custom thumbnail set by video creator.
             // Video decoders.
             "OMX.ffmpeg.vp9.decoder",
             "OMX.Intel.sw_vd.vp9",
-            "OMX.sprd.av1.decoder",
             "OMX.MTK.VIDEO.DECODER.SW.VP9",
+            "OMX.google.vp9.decoder",
+            "OMX.google.av1.decoder",
+            "OMX.sprd.av1.decoder",
             "c2.android.av1.decoder",
+            "c2.android.av1-dav1d.decoder",
+            "c2.android.vp9.decoder",
             "c2.mtk.sw.vp9.decoder",
-            // User analytics.
-            "https://ad.doubleclick.net/ddm/activity/",
-            "DEVICE_ADVERTISER_ID_FOR_CONVERSION_TRACKING",
-
-            // Litho components frequently found in the buffer that belong to the path filter items.
+            // Analytics.
+            "searchR",
+            "browse-feed",
+            "FEwhat_to_watch",
+            "FEsubscriptions",
+            "search_vwc_description_transition_key",
+            "g-high-recZ",
+            // Text and litho components found in the buffer that belong to path filters.
             "metadata.eml",
             "thumbnail.eml",
             "avatar.eml",
             "overflow_button.eml",
+            "shorts-lockup-image",
+            "shorts-lockup.overlay-metadata.secondary-text",
+            "YouTubeSans-SemiBold",
+            "sans-serif"
     };
 
     /**
@@ -101,9 +108,8 @@ public final class KeywordContentFilter extends Filter {
 
     /**
      * Substrings that are never at the start of the path.
-     *
-     * @noinspection FieldCanBeLocal
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private final StringFilterGroup containsFilter = new StringFilterGroup(
             null,
             "modern_type_shelf_header_content.eml",
@@ -111,7 +117,55 @@ public final class KeywordContentFilter extends Filter {
             "video_card.eml" // Shorts that appear in a horizontal shelf.
     );
 
+    /**
+     * Path components to not filter.  Cannot filter the buffer when these are present,
+     * otherwise text in UI controls can be filtered as a keyword (such as using "Playlist" as a keyword).
+     * <p>
+     * This is also a small performance improvement since
+     * the buffer of the parent component was already searched and passed.
+     */
+    private final StringTrieSearch exceptions = new StringTrieSearch(
+            "metadata.eml",
+            "thumbnail.eml",
+            "avatar.eml",
+            "overflow_button.eml"
+    );
+
+    /**
+     * Threshold for {@link #filteredVideosPercentage}
+     * that indicates all or nearly all videos have been filtered.
+     * This should be close to 100% to reduce false positives.
+     */
+    private static final float ALL_VIDEOS_FILTERED_THRESHOLD = 0.95f;
+
+    private static final float ALL_VIDEOS_FILTERED_SAMPLE_SIZE = 50;
+
+    private static final long ALL_VIDEOS_FILTERED_BACKOFF_MILLISECONDS = 60 * 1000; // 60 seconds
+
+    /**
+     * Rolling average of how many videos were filtered by a keyword.
+     * Used to detect if a keyword passes the initial check against {@link #STRINGS_IN_EVERY_BUFFER}
+     * but a keyword is still hiding all videos.
+     * <p>
+     * This check can still fail if some extra UI elements pass the keywords,
+     * such as the video chapter preview or any other elements.
+     * <p>
+     * To test this, add a filter that appears in all videos (such as 'ovd='),
+     * and open the subscription feed. In practice this does not always identify problems
+     * in the home feed and search, because the home feed has a finite amount of content and
+     * search results have a lot of extra video junk that is not hidden and interferes with the detection.
+     */
+    private volatile float filteredVideosPercentage;
+
+    /**
+     * If filtering is temporarily turned off, the time to resume filtering.
+     * Field is zero if no timeout is in effect.
+     */
+    private volatile long timeToResumeFiltering;
+
     private final StringFilterGroup commentsFilter;
+
+    private final StringTrieSearch commentsFilterExceptions = new StringTrieSearch();
 
     /**
      * The last value of {@link Settings#HIDE_KEYWORD_CONTENT_PHRASES}
@@ -121,6 +175,7 @@ public final class KeywordContentFilter extends Filter {
     private volatile String lastKeywordPhrasesParsed;
 
     private volatile ByteTrieSearch bufferSearch;
+    private volatile List<Pattern> regexPatterns;
 
     private static void logNavigationState(String state) {
         // Enable locally to debug filtering. Default off to reduce log spam.
@@ -129,39 +184,6 @@ public final class KeywordContentFilter extends Filter {
         if (LOG_NAVIGATION_STATE) {
             Logger.printDebug(() -> "Navigation state: " + state);
         }
-    }
-
-    private static boolean hideKeywordSettingIsActive() {
-        // Must check player type first, as search bar can be active behind the player.
-        if (RootView.isPlayerActive()) {
-            // For now, consider the under video results the same as the home feed.
-            return Settings.HIDE_KEYWORD_CONTENT_HOME.get();
-        }
-        // Must check second, as search can be from any tab.
-        if (RootView.isSearchBarActive()) {
-            return Settings.HIDE_KEYWORD_CONTENT_SEARCH.get();
-        }
-
-        // Avoid checking navigation button status if all other settings are off.
-        final boolean hideHome = Settings.HIDE_KEYWORD_CONTENT_HOME.get();
-        final boolean hideSubscriptions = Settings.HIDE_KEYWORD_CONTENT_SUBSCRIPTIONS.get();
-        if (!hideHome && !hideSubscriptions) {
-            return false;
-        }
-
-        NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
-        if (selectedNavButton == null) {
-            return hideHome; // Unknown tab, treat the same as home.
-        }
-
-        if (selectedNavButton == NavigationButton.HOME) {
-            return hideHome;
-        }
-        if (selectedNavButton == NavigationButton.SUBSCRIPTIONS) {
-            return hideSubscriptions;
-        }
-        // User is in the Library or Notifications tab.
-        return false;
     }
 
     /**
@@ -225,6 +247,9 @@ public final class KeywordContentFilter extends Filter {
 
         ByteTrieSearch search = new ByteTrieSearch();
         String[] split = rawKeywords.split("\n");
+
+        List<Pattern> patterns = new ArrayList<>();
+
         if (split.length != 0) {
             // Linked Set so log statement are more organized and easier to read.
             Set<String> keywords = new LinkedHashSet<>(10 * split.length);
@@ -233,12 +258,6 @@ public final class KeywordContentFilter extends Filter {
                 // Remove any trailing white space the user may have accidentally included.
                 phrase = phrase.stripTrailing();
                 if (phrase.isBlank()) continue;
-
-                if (phrase.length() < MINIMUM_KEYWORD_LENGTH) {
-                    // Do not reset the setting. Keep the invalid keywords so the user can fix the mistake.
-                    Utils.showToastLong(str("revanced_hide_keyword_toast_invalid_keyword", phrase, MINIMUM_KEYWORD_LENGTH));
-                    continue;
-                }
 
                 // Add common casing that might appear.
                 //
@@ -265,15 +284,35 @@ public final class KeywordContentFilter extends Filter {
                 keywords.addAll(Arrays.asList(phraseVariations));
             }
 
-            search.addPatterns(convertStringsToBytes(keywords.toArray(new String[0])));
+            for (String keyword : keywords) {
+                String regex = "\\b(" + Pattern.quote(keyword) + ")\\b";
+                patterns.add(Pattern.compile(regex));
+                // Use a callback to get the keyword that matched.
+                // TrieSearch could have this built in, but that's slightly more complicated since
+                // the strings are stored as a byte array and embedded in the search tree.
+                TrieSearch.TriePatternMatchedCallback<byte[]> callback =
+                        (textSearched, matchedStartIndex, matchedLength, callbackParameter) -> {
+                            // noinspection unchecked
+                            ((MutableReference<String>) callbackParameter).value = keyword;
+                            return true;
+                        };
+                byte[] stringBytes = keyword.getBytes(StandardCharsets.UTF_8);
+                search.addPattern(stringBytes, callback);
+            }
+
             Logger.printDebug(() -> "Search using: (" + search.getEstimatedMemorySize() + " KB) keywords: " + keywords);
         }
 
         bufferSearch = search;
+        regexPatterns = patterns;
+        timeToResumeFiltering = 0;
+        filteredVideosPercentage = 0;
         lastKeywordPhrasesParsed = rawKeywords; // Must set last.
     }
 
     public KeywordContentFilter() {
+        commentsFilterExceptions.addPatterns("engagement_toolbar");
+
         commentsFilter = new StringFilterGroup(
                 Settings.HIDE_KEYWORD_CONTENT_COMMENTS,
                 "comment_thread.eml"
@@ -283,6 +322,71 @@ public final class KeywordContentFilter extends Filter {
         addPathCallbacks(startsWithFilter, containsFilter, commentsFilter);
     }
 
+    private boolean hideKeywordSettingIsActive() {
+        if (timeToResumeFiltering != 0) {
+            if (System.currentTimeMillis() < timeToResumeFiltering) {
+                return false;
+            }
+
+            timeToResumeFiltering = 0;
+            filteredVideosPercentage = 0;
+            Logger.printDebug(() -> "Resuming keyword filtering");
+        }
+
+        final boolean hideHome = Settings.HIDE_KEYWORD_CONTENT_HOME.get();
+        final boolean hideSearch = Settings.HIDE_KEYWORD_CONTENT_SEARCH.get();
+        final boolean hideSubscriptions = Settings.HIDE_KEYWORD_CONTENT_SUBSCRIPTIONS.get();
+
+        // Must check player type first, as search bar can be active behind the player.
+        if (RootView.isPlayerActive()) {
+            // For now, consider the under video results the same as the home feed.
+            return hideHome;
+        }
+
+        // Must check second, as search can be from any tab.
+        if (RootView.isSearchBarActive()) {
+            return hideSearch;
+        }
+
+        // Avoid checking navigation button status if all other settings are off.
+        if (!hideHome && !hideSubscriptions) {
+            return false;
+        }
+
+        NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
+        if (selectedNavButton == null) {
+            return hideHome; // Unknown tab, treat the same as home.
+        }
+        if (selectedNavButton == NavigationButton.HOME) {
+            return hideHome;
+        }
+        if (selectedNavButton == NavigationButton.SUBSCRIPTIONS) {
+            return hideSubscriptions;
+        }
+        // User is in the Library or Notifications tab.
+        return false;
+    }
+
+    private void updateStats(boolean videoWasHidden, @Nullable String keyword) {
+        float updatedAverage = filteredVideosPercentage
+                * ((ALL_VIDEOS_FILTERED_SAMPLE_SIZE - 1) / ALL_VIDEOS_FILTERED_SAMPLE_SIZE);
+        if (videoWasHidden) {
+            updatedAverage += 1 / ALL_VIDEOS_FILTERED_SAMPLE_SIZE;
+        }
+
+        if (updatedAverage <= ALL_VIDEOS_FILTERED_THRESHOLD) {
+            filteredVideosPercentage = updatedAverage;
+            return;
+        }
+
+        // A keyword is hiding everything.
+        // Inform the user, and temporarily turn off filtering.
+        timeToResumeFiltering = System.currentTimeMillis() + ALL_VIDEOS_FILTERED_BACKOFF_MILLISECONDS;
+
+        Logger.printDebug(() -> "Temporarily turning off filtering due to excessively broad filter: " + keyword);
+        Utils.showToastLong(str("revanced_hide_keyword_toast_invalid_broad", keyword));
+    }
+
     @Override
     public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                               StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
@@ -290,10 +394,10 @@ public final class KeywordContentFilter extends Filter {
             return false;
         }
 
-        if (matchedGroup != commentsFilter && !hideKeywordSettingIsActive()) return false;
-
         // Do not filter if comments path includes an engagement toolbar (like, dislike...)
-        if (matchedGroup == commentsFilter && ENGAGEMENT_TOOLBAR_PATTERN.matcher(path).find()) return false;
+        if (matchedGroup == commentsFilter && commentsFilterExceptions.matches(path)) {
+            return false;
+        }
 
         // Field is intentionally compared using reference equality.
         //noinspection StringEquality
@@ -302,11 +406,39 @@ public final class KeywordContentFilter extends Filter {
             parseKeywords();
         }
 
-        if (!bufferSearch.matches(protobufBufferArray)) {
+        if (matchedGroup != commentsFilter && !hideKeywordSettingIsActive()) {
             return false;
         }
 
-        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
-    }
+        if (exceptions.matches(path)) {
+            return false; // Do not update statistics.
+        }
 
+        if (Settings.HIDE_KEYWORD_CONTENT_FULL_WORD.get()) {
+            String content = new String(protobufBufferArray, StandardCharsets.UTF_8);
+            for (Pattern pattern : regexPatterns) {
+                Matcher matcher = pattern.matcher(content);
+                if (matcher.find()) {
+                    updateStats(true, matcher.group(1));
+                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+                }
+            }
+        } else {
+            MutableReference<String> matchRef = new MutableReference<>();
+            if (bufferSearch.matches(protobufBufferArray, matchRef)) {
+                updateStats(true, matchRef.value);
+                return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+            }
+        }
+
+        updateStats(false, null);
+        return false;
+    }
+}
+
+/**
+ * Simple non-atomic wrapper since {@link AtomicReference#setPlain(Object)} is not available with Android 8.0.
+ */
+final class MutableReference<T> {
+    T value;
 }

@@ -1,3 +1,128 @@
+# [0.154.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.8...v0.154.0-dev.9) (2024-07-22)
+
+
+### Features
+
+* **YouTube - Bypass image region restrictions:** Bring back setting to change alternative domain ([df5d392](https://github.com/anddea/revanced-integrations/commit/df5d3921cdb529540d3e41fc4e102da3cd6f1150))
+
+# [0.154.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.7...v0.154.0-dev.8) (2024-07-18)
+
+
+### Bug Fixes
+
+* **YouTube - Client spoof:** StoryboardRenderer always gets 404 response on `Android` client ([6fdcb8f](https://github.com/anddea/revanced-integrations/commit/6fdcb8fa67e6d5c4aa54be96fde31b33dd0ad507))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting sometimes hides the Watch history in the You tab ([97ea082](https://github.com/anddea/revanced-integrations/commit/97ea082994644341d2ea3953200277e8e9c0d9e1))
+* **YouTube - Hide feed components:** Do not hide flyout menu ([1310d7b](https://github.com/anddea/revanced-integrations/commit/1310d7b5c3713c0dd57cc76c7cc9b4f0f32460ea))
+* **YouTube:** Add a restart delay on first install ([3a3ae56](https://github.com/anddea/revanced-integrations/commit/3a3ae5616d99e04d1f457325b4dc33e8e0247313))
+
+
+### Features
+
+* Merge the `Custom package name` patch into the `GmsCore support` patch and add patch options `GmsCoreVendorGroupId`, `CheckGmsCore`, `PackageNameYouTube`, `PackageNameYouTubeMusic` ([5465751](https://github.com/anddea/revanced-integrations/commit/5465751913168b3ed1e51d47cde088fa25de62d7))
+* **Reddit - Hide navigation buttons:** Reflects changes in the latest revanced-patches-arsclib ([7a5481c](https://github.com/anddea/revanced-integrations/commit/7a5481c280d4cef4cc107e855744d7dc11c47344))
+* **YouTube - Player components:** `Hide player popup panels` setting now hides the products panel ([9f689f3](https://github.com/anddea/revanced-integrations/commit/9f689f32f32727ce7e897932734207cc59d566d7))
+* **YouTube - Swipe controls:** Add `Enable save and restore brightness` setting (Match to ReVanced) ([1400597](https://github.com/anddea/revanced-integrations/commit/140059749d83603daf8e4c5a83dbe793e0e0217c))
+* **YouTube:** Separate the `Bypass image region restrictions` patch from the `Alternative thumbnails` patch (Reflecting changes in ReVanced) ([c4c4b65](https://github.com/anddea/revanced-integrations/commit/c4c4b65d3afc0efb28bc65d2c99cbbd5ba6e9861))
+
+
+### Reverts
+
+* **YouTube - Hide feed components:** `Hide expandable chip under videos` setting does not work (as support version has been rolled back to YouTube 19.16.39) ([7c52971](https://github.com/anddea/revanced-integrations/commit/7c5297187fc52700ba525d6c281d4d9ecd2c1b00))
+
+# [0.154.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.6...v0.154.0-dev.7) (2024-07-15)
+
+
+### Bug Fixes
+
+* **YouTube - VIsual preferences icons:** Revert ([848dee5](https://github.com/anddea/revanced-integrations/commit/848dee578e3755434831bbc53e73979fc83032a0))
+
+# [0.154.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.5...v0.154.0-dev.6) (2024-07-14)
+
+
+### Bug Fixes
+
+* **YouTube - SponsorBlock:** Skip segments when casting ([6d2d33d](https://github.com/anddea/revanced-integrations/commit/6d2d33d816f7bd33499ea4a5828341cc75c7145d))
+* **YouTube - Spoof client:** Delay when the video starts ([d43d139](https://github.com/anddea/revanced-integrations/commit/d43d1399cfe6a6a44faf293d320ce671bbf5e6b2))
+* **YouTube - Video playback:** Default video quality does not apply ([4c080ec](https://github.com/anddea/revanced-integrations/commit/4c080ecb1e7cf906e6789e5c99907170939606e0))
+
+
+### Features
+
+* Merge RVX v1.11.2-dev.1 ([50ebf3a](https://github.com/anddea/revanced-integrations/commit/50ebf3a124e1d60a5c371689a2ba2ff8a16ab1db))
+* **YouTube - Shorts components:** Add `Hide paused header` setting ([80b8058](https://github.com/anddea/revanced-integrations/commit/80b8058aedaf1135850a032095873f1f04e69f98))
+* **YouTube Music - Thumbnails:** Add `Alternative domain` patch ([15ae875](https://github.com/anddea/revanced-integrations/commit/15ae8755a6458529781bee38b9361a238d718b5f))
+
+# [0.154.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.4...v0.154.0-dev.5) (2024-07-06)
+
+
+### Bug Fixes
+
+* **YouTube - Hide ads:** New ads are not blocked ([2383172](https://github.com/anddea/revanced-integrations/commit/23831723fd0bce8b23906b553d7d71e34bea562c))
+
+
+### Features
+
+* **YouTube - Alternative thumbnails:** Add alternative domain ([c9f47c2](https://github.com/anddea/revanced-integrations/commit/c9f47c22636b2951a2c22e1e9319b598764574ec))
+* **YouTube - Client spoof:** Downgrade hardcoded client version ([bb5e7a6](https://github.com/anddea/revanced-integrations/commit/bb5e7a60de31fdd8624287276fab201f04861513))
+* **YouTube - Miniplayer:** Add `Enable double-tap action` setting ([766925d](https://github.com/anddea/revanced-integrations/commit/766925dde8eb6089ef932f968a73820eef7211ad))
+* **YouTube - Shorts components:** Add `Enable timestamps`, `Timestamp long press action`, `Meta panel bottom margin` settings ([be36036](https://github.com/anddea/revanced-integrations/commit/be360364b5ecd4166b9d100e4088ff22839edbd6))
+* **YouTube:** Add support version `19.25.39`, drop support version `19.23.40` ([dd95309](https://github.com/anddea/revanced-integrations/commit/dd95309bef8a7972513cc583e8c39bb4254091bf))
+* **YouTube:** Merge RVX v1.11.1 ([#23](https://github.com/anddea/revanced-integrations/issues/23)) ([bcc5c29](https://github.com/anddea/revanced-integrations/commit/bcc5c29189191fe5759b01891899945d36fd1f95))
+
+# [0.154.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.3...v0.154.0-dev.4) (2024-07-05)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** Update pattern for `Match full word` keyword filter ([8c1cb35](https://github.com/anddea/revanced-integrations/commit/8c1cb35c0819a9d57466eecc83a4917ef3c4b0af))
+
+
+### Features
+
+* **YouTube - Overlay buttons:** Add `Mute Video` button ([#22](https://github.com/anddea/revanced-integrations/issues/22)) ([4a9f4a6](https://github.com/anddea/revanced-integrations/commit/4a9f4a603c7eda695dc5d2708c89b0ff71e5b460))
+
+# [0.154.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.2...v0.154.0-dev.3) (2024-07-04)
+
+
+### Features
+
+* **YouTube:** Add content descriptions to improve accessibility ([538e262](https://github.com/anddea/revanced-integrations/commit/538e2626c655f885d961077768114e81cdcfc2ec))
+
+# [0.154.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.154.0-dev.1...v0.154.0-dev.2) (2024-07-03)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** Remove `MINIMUM_KEYWORD_LENGTH` ([4e4c104](https://github.com/anddea/revanced-integrations/commit/4e4c1044be3a43c27366d7f24c35e9c2fab3ad3d))
+
+
+### Features
+
+* **YouTube - Hide feed components:** Add `Match full word` option for keyword filtering ([8323c0f](https://github.com/anddea/revanced-integrations/commit/8323c0fc2628b02ef58e6b52e9c59f299d37330f))
+
+# [0.154.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.153.0...v0.154.0-dev.1) (2024-07-01)
+
+
+### Bug Fixes
+
+* **Reddit - Remove subreddit dialog:** Patch sometimes fails to close subreddit dialog ([7bcceb3](https://github.com/anddea/revanced-integrations/commit/7bcceb33e026c328a4babb09ffece8406445b3e9))
+* **Shorts components:** `Hide sound button` doesn't work (A/B tests) ([af0f2e3](https://github.com/anddea/revanced-integrations/commit/af0f2e30b0e966fbb13860da33bb03ab7171c3c1))
+* **YouTube - Hide ads:** Patch closes fullscreen ads too quickly, so fullscreen ads are shown repeatedly ([475739c](https://github.com/anddea/revanced-integrations/commit/475739ce04b4f5585a0421f8a3798c638afcc3cf))
+* **YouTube - Hide feed components:** Detect if a keyword filter hides all videos ([960f35c](https://github.com/anddea/revanced-integrations/commit/960f35c525660f41ec5218a8fb325b91dadc2d18))
+* **YouTube - Hide feed components:** Video filters do not work properly on accounts with A/B testing applied ([67dcfe7](https://github.com/anddea/revanced-integrations/commit/67dcfe71fc7d4b2c06d66e635c72a99eb8fa0304))
+* **YouTube - Settings:** Toolbar added twice to RVX settings ([b050be9](https://github.com/anddea/revanced-integrations/commit/b050be95468ce35151492b904ab49b7ef5f5122e))
+
+
+### Features
+
+* **YouTube - Searchbar:** Add RVXSettingsMenuName in the searchbar hint ([b1a1dd9](https://github.com/anddea/revanced-integrations/commit/b1a1dd90ead7e2325993f2314270e5ca9c1c93ba))
+* **YouTube - Settings:** Show AlertDialog when changing some settings value (matches ReVanced) ([3b7f255](https://github.com/anddea/revanced-integrations/commit/3b7f255f3f197269c588b4de768646d2cfc22ea5))
+* **YouTube - Shorts components:** Add `Double-tap animation` settings ([2e4c173](https://github.com/anddea/revanced-integrations/commit/2e4c173c8d8bd66aa0f1d73b3fa4940dcd18e04a))
+* **YouTube - Toolbar components:** Add `Hide image search button` settings ([543d269](https://github.com/anddea/revanced-integrations/commit/543d269e16f6e8ee0016015087cf9a0467278fdc))
+* **YouTube Music:** Integrate `Hide double tap overlay filter` patch into the `Player components` patch ([7628ed1](https://github.com/anddea/revanced-integrations/commit/7628ed153d06ff3e593eea1ee3e6056d048efe3d))
+* **YouTube:** DeArrow alternative domain ([#20](https://github.com/anddea/revanced-integrations/issues/20)) ([dbf5b0a](https://github.com/anddea/revanced-integrations/commit/dbf5b0a02d2c85e035944ac754d7ba37928ecb32))
+* **YouTube:** Integrate `Hide double tap overlay filter` patch into the `Player components` patch ([ccc20d8](https://github.com/anddea/revanced-integrations/commit/ccc20d8032abd7be243f57c84a5ae61a1f7b4589))
+
 # [0.153.0](https://github.com/anddea/revanced-integrations/compare/v0.152.0...v0.153.0) (2024-06-26)
 
 

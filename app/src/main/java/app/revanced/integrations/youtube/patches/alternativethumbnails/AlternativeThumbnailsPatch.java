@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.utils.Logger;
@@ -126,6 +127,14 @@ public final class AlternativeThumbnailsPatch {
      * How long to temporarily turn off DeArrow if it fails for any reason.
      */
     private static final long DEARROW_FAILURE_API_BACKOFF_MILLISECONDS = 5 * 60 * 1000; // 5 Minutes.
+
+    /**
+     * Regex to match youtube static thumbnails domain.
+     * Used to find and replace blocked domain with a working ones
+     */
+    private static final String YOUTUBE_STATIC_THUMBNAILS_DOMAIN_REGEX = "(yt[3-4]|lh[3-6]|play-lh)\\.(ggpht|googleusercontent)\\.com";
+
+    private static final Pattern YOUTUBE_STATIC_THUMBNAILS_DOMAIN_PATTERN = Pattern.compile(YOUTUBE_STATIC_THUMBNAILS_DOMAIN_REGEX);
 
     /**
      * If non zero, then the system time of when DeArrow API calls can resume.

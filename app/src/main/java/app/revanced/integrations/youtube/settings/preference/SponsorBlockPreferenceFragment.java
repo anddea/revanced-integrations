@@ -149,6 +149,7 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
                 return true;
             });
 
+            addCreateSegmentCategory(context, preferenceScreen);
             addAppearanceCategory(context, preferenceScreen);
 
             segmentCategory = new PreferenceCategory(context);
@@ -156,8 +157,6 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             segmentCategory.setLayoutResource(preferencesCategoryLayout);
             preferenceScreen.addPreference(segmentCategory);
             updateSegmentCategories();
-
-            addCreateSegmentCategory(context, preferenceScreen);
 
             addGeneralCategory(context, preferenceScreen);
 
@@ -267,7 +266,7 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             updateUI();
             return true;
         });
-        Utils.setPreferenceIcon(addNewSegment, "sb_enable_create_segment_icon");
+        Utils.setPreferenceIcon(addNewSegment, "sb_enable_create_segment");
         category.addPreference(addNewSegment);
 
         newSegmentStep = new ResettableEditTextPreference(context);
@@ -306,7 +305,7 @@ public class SponsorBlockPreferenceFragment extends PreferenceFragment {
             updateUI();
             return true;
         });
-        Utils.setPreferenceIcon(votingEnabled, "sb_enable_voting_icon");
+        Utils.setPreferenceIcon(votingEnabled, "sb_enable_voting");
         category.addPreference(votingEnabled);
     }
 
