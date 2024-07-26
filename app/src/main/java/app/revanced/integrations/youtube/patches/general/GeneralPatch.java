@@ -5,6 +5,7 @@ import static app.revanced.integrations.shared.utils.Utils.getChildView;
 import static app.revanced.integrations.shared.utils.Utils.hideViewByLayoutParams;
 import static app.revanced.integrations.shared.utils.Utils.hideViewGroupByMarginLayoutParams;
 import static app.revanced.integrations.shared.utils.Utils.hideViewUnderCondition;
+import static app.revanced.integrations.youtube.patches.utils.PatchStatus.ImageSearchButton;
 import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 
 import android.app.Activity;
@@ -537,7 +538,7 @@ public class GeneralPatch {
      * <p>
      * In this case, {@link Utils#hideViewByLayoutParams(View)} should be used.
      */
-    private static final boolean showImageSearchButtonAndHideVoiceSearchButton = !hideImageSearchButton && hideVoiceSearchButton;
+    private static final boolean showImageSearchButtonAndHideVoiceSearchButton = !hideImageSearchButton && hideVoiceSearchButton && ImageSearchButton();
 
     public static boolean hideImageSearchButton(boolean original) {
         return !hideImageSearchButton && original;
