@@ -1,5 +1,6 @@
 package app.revanced.integrations.youtube.patches.misc;
 
+import android.graphics.Color;
 import android.view.View;
 import app.revanced.integrations.shared.utils.Logger;
 
@@ -26,5 +27,6 @@ public class DownloadPlaylistButton {
                         "before: " + (offlineArrowView == null ? "null" : offlineArrowView.toString())
         );
         offlineArrowView.setVisibility(View.VISIBLE);
+        offlineArrowView.setEnabled(true);
     }
 }
