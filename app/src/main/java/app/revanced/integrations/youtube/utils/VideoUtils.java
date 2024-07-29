@@ -94,7 +94,7 @@ public class VideoUtils extends IntentUtils {
             if (videoId == null || videoId.isEmpty()) {
                 return false;
             }
-            launchExternalDownloader(videoId);
+            launchExternalDownloader(videoId, false);
 
             return true;
         } catch (Exception ex) {
@@ -104,10 +104,10 @@ public class VideoUtils extends IntentUtils {
     }
 
     public static void launchExternalDownloader() {
-        launchExternalDownloader(VideoInformation.getVideoId());
+        launchExternalDownloader(VideoInformation.getVideoId(), false);
     }
 
-    public static void launchExternalDownloader(@NonNull String videoId) {
+    public static void launchExternalDownloader(@NonNull String resourceId, boolean isPlaylist) {
         try {
             String downloaderPackageName = externalDownloaderPackageName.get().trim();
 
@@ -121,7 +121,14 @@ public class VideoUtils extends IntentUtils {
             }
 
             isExternalDownloaderLaunched.compareAndSet(false, true);
-            final String content = String.format("https://youtu.be/%s", videoId);
+
+            final String content;
+
+            if (isPlaylist)
+                content = String.format("https://www.youtube.com/playlist?list=%s", resourceId);
+            else
+                content = String.format("https://youtu.be/%s", resourceId);
+
             launchExternalDownloader(content, downloaderPackageName);
         } catch (Exception ex) {
             Logger.printException(() -> "launchExternalDownloader failure", ex);
