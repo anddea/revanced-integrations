@@ -6,12 +6,9 @@ import static app.revanced.integrations.youtube.utils.VideoUtils.getFormattedTim
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.Utils;
@@ -26,16 +23,10 @@ public final class VideoInformation {
     private static final float DEFAULT_YOUTUBE_PLAYBACK_SPEED = 1.0f;
     private static final int DEFAULT_YOUTUBE_VIDEO_QUALITY = -2;
     private static final String DEFAULT_YOUTUBE_VIDEO_QUALITY_STRING = getString("quality_auto");
-    private static final String SEEK_METHOD_NAME = "seekTo";
     /**
      * Prefix present in all Short player parameters signature.
      */
     private static final String SHORTS_PLAYER_PARAMETERS = "8AEB";
-
-    private static WeakReference<Object> playerControllerRef;
-    private static WeakReference<Object> mdxPlayerDirectorRef;
-    private static Method seekMethod;
-    private static Method mdxSeekMethod;
 
     @NonNull
     private static String channelId = "";
@@ -74,37 +65,19 @@ public final class VideoInformation {
 
     /**
      * Injection point.
-     *
-     * @param playerController player controller object.
      */
-    public static void initialize(@NonNull Object playerController) {
-        try {
-            playerControllerRef = new WeakReference<>(Objects.requireNonNull(playerController));
-            videoTime = -1;
-            videoLength = 0;
-            playbackSpeed = DEFAULT_YOUTUBE_PLAYBACK_SPEED;
-
-            seekMethod = playerController.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
-            seekMethod.setAccessible(true);
-        } catch (Exception ex) {
-            Logger.printException(() -> "Failed to initialize", ex);
-        }
+    public static void initialize(@NonNull Object ignoredPlayerController) {
+        videoTime = -1;
+        videoLength = 0;
+        playbackSpeed = DEFAULT_YOUTUBE_PLAYBACK_SPEED;
+        Logger.printDebug(() -> "Initialized Player");
     }
 
     /**
      * Injection point.
-     *
-     * @param mdxPlayerDirector MDX player director object (casting mode).
      */
-    public static void initializeMdx(@NonNull Object mdxPlayerDirector) {
-        try {
-            mdxPlayerDirectorRef = new WeakReference<>(Objects.requireNonNull(mdxPlayerDirector));
-
-            mdxSeekMethod = mdxPlayerDirector.getClass().getMethod(SEEK_METHOD_NAME, Long.TYPE);
-            mdxSeekMethod.setAccessible(true);
-        } catch (Exception ex) {
-            Logger.printException(() -> "Failed to initialize MDX", ex);
-        }
+    public static void initializeMdx(@NonNull Object ignoredMdxPlayerDirector) {
+        Logger.printDebug(() -> "Initialized Mdx Player");
     }
 
     public static boolean seekTo(final long seekTime) {
@@ -129,8 +102,7 @@ public final class VideoInformation {
 
             Logger.printDebug(() -> "Seeking to " + getFormattedTimeStamp(adjustedSeekTime));
             try {
-                //noinspection DataFlowIssue
-                if ((Boolean) seekMethod.invoke(playerControllerRef.get(), adjustedSeekTime)) {
+                if (overrideVideoTime(adjustedSeekTime)) {
                     return true;
                 } // Else the video is loading or changing videos, or video is casting to a different device.
             } catch (Exception ex) {
@@ -146,8 +118,7 @@ public final class VideoInformation {
                 return false;
             }
             try {
-                //noinspection DataFlowIssue
-                return (Boolean) mdxSeekMethod.invoke(mdxPlayerDirectorRef.get(), adjustedSeekTime);
+                return overrideMDXVideoTime(adjustedSeekTime);
             } catch (Exception ex) {
                 Logger.printInfo(() -> "seekTo (MDX) method call failed", ex);
                 return false;
@@ -509,6 +480,16 @@ public final class VideoInformation {
      * Rest of the implementation added by patch.
      */
     public static boolean overrideVideoTime(final long seekTime) {
+        // These instructions are ignored by patch.
+        Logger.printDebug(() -> "Seeking to " + seekTime);
+        return false;
+    }
+
+    /**
+     * Overrides the current video time by seeking. (MDX player)
+     * Rest of the implementation added by patch.
+     */
+    public static boolean overrideMDXVideoTime(final long seekTime) {
         // These instructions are ignored by patch.
         Logger.printDebug(() -> "Seeking to " + seekTime);
         return false;
