@@ -1,3 +1,24 @@
+# [0.155.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.154.0...v0.155.0-dev.1) (2024-07-29)
+
+
+### Bug Fixes
+
+* **YouTube - Client spoof:** Some side effects of iOS client ([37a814a](https://github.com/anddea/revanced-integrations/commit/37a814aa05f6c20cc479565963b88965fc88e25d))
+* **YouTube - Disable auto captions:** Turning on `Disable forced auto captions` will disable subtitles ([5d31427](https://github.com/anddea/revanced-integrations/commit/5d31427e75e692c2a0b4d7e9121255c4beb5f3b7))
+* **YouTube - Feed components:** `Hide recommended videos` setting does not work in home feed ([ddf22bb](https://github.com/anddea/revanced-integrations/commit/ddf22bb61ce6f38645e7586ea0fa981265ceed81))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting sometimes hides the Watch history in the You tab ([0732b8c](https://github.com/anddea/revanced-integrations/commit/0732b8ceda67cb5ffdcbbc30b17700cf5bcd5dff))
+* **YouTube - SponsorBlock:** The new SponsorBlock segment popup doesn't show minutes in the timestamp ([aec368b](https://github.com/anddea/revanced-integrations/commit/aec368b779549356a825cef82bc8a02713e50541))
+* **YouTube - Toolbar components:** Turning on the `Hide voice search button` setting makes the margin of the searchbar 0 ([26a4aa9](https://github.com/anddea/revanced-integrations/commit/26a4aa9ba5723ccd6a826585b22c65f14073b807))
+
+
+### Features
+
+* **YouTube - Description components:** Add `Hide Contents section` setting ([2065aad](https://github.com/anddea/revanced-integrations/commit/2065aadf62b38b0f2ce47ee506bfc94f9beb6679))
+* **YouTube - Player components:** Add `Hide zoom overlay` setting ([253c5d2](https://github.com/anddea/revanced-integrations/commit/253c5d29afdaa9db5874f29209955ee48903a267))
+* **YouTube - Video playback:** Show AlertDialog when changing `Skip preloaded buffer` setting ([1db72fb](https://github.com/anddea/revanced-integrations/commit/1db72fbba636f011e422ee923b2557c08d988722))
+* **YouTube Music - Hide layout components:** Add `Hide settings menu` setting ([262d068](https://github.com/anddea/revanced-integrations/commit/262d068a0d195d9d73e0217ffc7a71dde76f05fe))
+* **YouTube:** Add `Watch history` patch ([5963ac1](https://github.com/anddea/revanced-integrations/commit/5963ac14cd2350f243d056efcf436589db636c5b))
+
 # [0.154.0](https://github.com/anddea/revanced-integrations/compare/v0.153.0...v0.154.0) (2024-07-25)
 
 
