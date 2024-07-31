@@ -1,3 +1,16 @@
+# [0.155.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.1...v0.155.0-dev.2) (2024-07-31)
+
+
+### Bug Fixes
+
+* No longer hiding `Settings` ([f291c2c](https://github.com/anddea/revanced-integrations/commit/f291c2cc41e085713c41a76bcff2b35f57f5665f))
+* **YouTube - Hide feed components:** Sometimes `Hide carousel shelf` setting doesn't work ([c7476ec](https://github.com/anddea/revanced-integrations/commit/c7476ec90cd0aca35c9b9f557128f98258df185c))
+
+
+### Features
+
+* **YouTube Music - Player components:** Add settings `Disable miniplayer gesture`, `Disable player gesture` ([a2a6d4d](https://github.com/anddea/revanced-integrations/commit/a2a6d4dd0bdd82fde67188aa67b3f22c89e58ef9))
+
 # [0.155.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.154.0...v0.155.0-dev.1) (2024-07-29)
 
 
