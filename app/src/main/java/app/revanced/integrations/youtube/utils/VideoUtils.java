@@ -109,7 +109,15 @@ public class VideoUtils extends IntentUtils {
 
     public static void launchExternalDownloader(@NonNull String resourceId, boolean isPlaylist) {
         try {
-            String downloaderPackageName = externalDownloaderPackageName.get().trim();
+
+            String downloaderPackageName;
+
+            // use default downloader (YTDLnis) if user tries to download a playlist
+            // because most downloaders don't support playlist download
+            if (isPlaylist)
+                downloaderPackageName = externalDownloaderPackageName.defaultValue;
+            else
+                downloaderPackageName = externalDownloaderPackageName.get().trim();
 
             if (downloaderPackageName.isEmpty()) {
                 externalDownloaderPackageName.resetToDefault();
