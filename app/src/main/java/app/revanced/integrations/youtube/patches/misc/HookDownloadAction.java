@@ -4,7 +4,7 @@ import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.utils.VideoUtils;
 
 @SuppressWarnings("unused")
-public class DownloadPlaylistButton {
+public class HookDownloadAction {
 
     /*
      * Injection point
