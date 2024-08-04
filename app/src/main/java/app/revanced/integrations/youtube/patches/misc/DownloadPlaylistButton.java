@@ -19,7 +19,7 @@ public class DownloadPlaylistButton {
     public static String startPlaylistDownloadActivity(String playlistId) {
         if (!isPlaylistDownloadButtonHooked()) return playlistId;
 
-        VideoUtils.launchExternalDownloader(playlistId, true);
+        VideoUtils.launchPlaylistExternalDownloader(playlistId);
 
         // return an empty string to prevent
         // the original implementation from being called
