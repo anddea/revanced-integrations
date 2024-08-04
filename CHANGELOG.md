@@ -1,3 +1,10 @@
+# [0.155.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.3...v0.155.0-dev.4) (2024-08-04)
+
+
+### Features
+
+* **YouTube - Default Quality & Speed:** Add an option to disable toasts when changing the default values ([ebce7e9](https://github.com/anddea/revanced-integrations/commit/ebce7e9e0dfbb92e9959e6ae4701eb960ed1b084))
+
 # [0.155.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.2...v0.155.0-dev.3) (2024-08-04)
 
 
