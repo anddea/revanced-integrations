@@ -1,3 +1,10 @@
+# [0.155.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.2...v0.155.0-dev.3) (2024-08-04)
+
+
+### Features
+
+* **YouTube - Download Playlist Button:** Add playlist download button ([#26](https://github.com/anddea/revanced-integrations/issues/26)) ([52435a6](https://github.com/anddea/revanced-integrations/commit/52435a61b820b1665190e8a393c8f88478c855c1))
+
 # [0.155.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.1...v0.155.0-dev.2) (2024-07-31)
 
 
