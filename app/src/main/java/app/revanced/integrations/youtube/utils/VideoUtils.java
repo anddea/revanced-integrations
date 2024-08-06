@@ -1,13 +1,22 @@
 package app.revanced.integrations.youtube.utils;
 
+import static app.revanced.integrations.shared.utils.ResourceUtils.getStringArray;
+import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.userSelectedPlaybackSpeed;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.media.AudioManager;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.IntegerSetting;
 import app.revanced.integrations.shared.settings.StringSetting;
@@ -15,17 +24,9 @@ import app.revanced.integrations.shared.utils.IntentUtils;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.settings.preference.ExternalDownloaderPreference;
+import app.revanced.integrations.youtube.settings.preference.ExternalPlaylistDownloaderPreference;
 import app.revanced.integrations.youtube.shared.VideoInformation;
-import app.revanced.integrations.youtube.swipecontrols.controller.AudioVolumeController;
-
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static app.revanced.integrations.shared.utils.ResourceUtils.getStringArray;
-import static app.revanced.integrations.shared.utils.StringRef.str;
-import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.userSelectedPlaybackSpeed;
-import static app.revanced.integrations.youtube.settings.preference.ExternalDownloaderPreference.checkPackageIsEnabled;
 
 @SuppressWarnings("unused")
 public class VideoUtils extends IntentUtils {
@@ -33,29 +34,9 @@ public class VideoUtils extends IntentUtils {
             Settings.EXTERNAL_DOWNLOADER_ACTION_BUTTON;
     private static final StringSetting externalDownloaderPackageName =
             Settings.EXTERNAL_DOWNLOADER_PACKAGE_NAME;
+    private static final StringSetting playlistExternalDownloaderPackageName =
+            Settings.EXTERNAL_PLAYLIST_DOWNLOADER_BUTTON;
     private static final AtomicBoolean isExternalDownloaderLaunched = new AtomicBoolean(false);
-    public static AudioVolumeController audioVolumeController = new AudioVolumeController(getContext(), AudioManager.STREAM_MUSIC);
-    private static Integer previousVolumeLevel = 0;
-
-
-    public static void toggleMuteVolume() {
-        int currentVolume = audioVolumeController.getVolume();
-        if (currentVolume > 0) {
-            // Mute the volume
-            audioVolumeController.setVolume(0);
-            // save the current volume level to restore later
-            previousVolumeLevel = currentVolume;
-        } else {
-            // Unmute the volume - restore the previous volume level
-            audioVolumeController.setVolume(
-                    previousVolumeLevel > 0 ? previousVolumeLevel : audioVolumeController.getMaxVolume()
-            );
-        }
-    }
-
-    public static boolean isAudioMuted() {
-        return audioVolumeController.getVolume() == 0;
-    }
 
     public static void copyUrl(boolean withTimestamp) {
         StringBuilder builder = new StringBuilder("https://youtu.be/");
@@ -117,7 +98,7 @@ public class VideoUtils extends IntentUtils {
                 downloaderPackageName = externalDownloaderPackageName.defaultValue;
             }
 
-            if (!checkPackageIsEnabled()) {
+            if (!ExternalDownloaderPreference.checkPackageIsEnabled()) {
                 return;
             }
 
@@ -135,13 +116,17 @@ public class VideoUtils extends IntentUtils {
 
     public static void launchPlaylistExternalDownloader(@NonNull String playlistId) {
         try {
-            // use default downloader (YTDLnis) if user tries to download a playlist
-            // because most downloaders don't support playlist download
-            String downloaderPackageName = "com.deniscerri.ytdl";
+
+            String downloaderPackageName = playlistExternalDownloaderPackageName.get().trim();
+
+            if (downloaderPackageName.isEmpty()) {
+                playlistExternalDownloaderPackageName.resetToDefault();
+                downloaderPackageName = playlistExternalDownloaderPackageName.defaultValue;
+            }
 
             final String content = String.format("https://www.youtube.com/playlist?list=%s", playlistId);
 
-            if (!checkPackageIsEnabled(downloaderPackageName)) {
+            if (!ExternalPlaylistDownloaderPreference.checkPackageIsEnabled()) {
                 return;
             }
 
