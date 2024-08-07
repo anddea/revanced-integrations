@@ -22,7 +22,7 @@ public class VideoQualityPatch {
     /**
      * Injection point.
      */
-    public static void newVideoStarted(Object ignoredPlayerController) {
+    public static void newVideoStarted() {
         setVideoQuality(0);
     }
 
@@ -82,6 +82,9 @@ public class VideoQualityPatch {
             case MOBILE -> mobileQualitySetting.save(defaultQuality);
             default -> wifiQualitySetting.save(defaultQuality);
         }
+
+        if (!Settings.SHOW_TOAST_ON_DEFAULT_QUALITY_CHANGE.get())
+            return;
 
         Utils.showToastShort(str("revanced_remember_video_quality_" + networkType.getName(), defaultQuality + "p"));
     }

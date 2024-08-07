@@ -31,6 +31,7 @@ import app.revanced.integrations.youtube.patches.alternativethumbnails.Alternati
 import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.StillImagesAvailability;
 import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.ThumbnailOption;
 import app.revanced.integrations.youtube.patches.alternativethumbnails.AlternativeThumbnailsPatch.ThumbnailStillTime;
+import app.revanced.integrations.youtube.patches.misc.WatchHistoryPatch.WatchHistoryType;
 import app.revanced.integrations.youtube.patches.misc.requests.PlayerRoutes.ClientType;
 import app.revanced.integrations.youtube.patches.shorts.AnimationFeedbackPatch.AnimationType;
 import app.revanced.integrations.youtube.sponsorblock.SponsorBlockSettings;
@@ -138,6 +139,10 @@ public class Settings extends BaseSettings {
 
     public static final BooleanSetting ENABLE_PHONE_LAYOUT = new BooleanSetting("revanced_enable_phone_layout", FALSE, true);
     public static final BooleanSetting ENABLE_TABLET_LAYOUT = new BooleanSetting("revanced_enable_tablet_layout", FALSE, true);
+    public static final BooleanSetting OVERRIDE_VIDEO_DOWNLOAD_BUTTON = new BooleanSetting("revanced_override_video_download_button", FALSE);
+    public static final BooleanSetting OVERRIDE_PLAYLIST_DOWNLOAD_BUTTON = new BooleanSetting("revanced_override_playlist_download_button", FALSE);
+    public static final StringSetting EXTERNAL_DOWNLOADER_PACKAGE_NAME_VIDEO = new StringSetting("revanced_external_downloader_package_name_video", "com.deniscerri.ytdl");
+    public static final StringSetting EXTERNAL_DOWNLOADER_PACKAGE_NAME_PLAYLIST = new StringSetting("revanced_external_downloader_package_name_playlist", "com.deniscerri.ytdl");
     public static final BooleanSetting SPOOF_APP_VERSION = new BooleanSetting("revanced_spoof_app_version", FALSE, true, "revanced_spoof_app_version_user_dialog_message");
     public static final StringSetting SPOOF_APP_VERSION_TARGET = new StringSetting("revanced_spoof_app_version_target", "18.17.43", true, parent(SPOOF_APP_VERSION));
 
@@ -172,8 +177,6 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting ENABLE_TRANSLUCENT_NAVIGATION_BAR = new BooleanSetting("revanced_enable_translucent_navigation_bar", FALSE, true);
 
     // PreferenceScreen: General - Settings menu
-    public static final BooleanSetting HIDE_SETTINGS_MENU = new BooleanSetting("revanced_hide_settings_menu", FALSE);
-    public static final StringSetting HIDE_SETTINGS_MENU_FILTER_STRINGS = new StringSetting("revanced_hide_settings_menu_filter_strings", "", true, parent(HIDE_SETTINGS_MENU));
 
     // PreferenceScreen: General - Toolbar
     public static final BooleanSetting CHANGE_YOUTUBE_HEADER = new BooleanSetting("revanced_change_youtube_header", TRUE, true);
@@ -210,6 +213,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_TIMED_REACTIONS = new BooleanSetting("revanced_hide_timed_reactions", TRUE);
     public static final BooleanSetting HIDE_SUGGESTED_VIDEO_END_SCREEN = new BooleanSetting("revanced_hide_suggested_video_end_screen", TRUE, true);
     public static final BooleanSetting SKIP_AUTOPLAY_COUNTDOWN = new BooleanSetting("revanced_skip_autoplay_countdown", FALSE, true, parent(HIDE_SUGGESTED_VIDEO_END_SCREEN));
+    public static final BooleanSetting HIDE_ZOOM_OVERLAY = new BooleanSetting("revanced_hide_zoom_overlay", FALSE, true);
 
 
     // PreferenceScreen: Player - Action buttons
@@ -321,8 +325,6 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting OVERLAY_BUTTON_SPEED_DIALOG = new BooleanSetting("revanced_overlay_button_speed_dialog", TRUE);
     public static final BooleanSetting OVERLAY_BUTTON_TIME_ORDERED_PLAYLIST = new BooleanSetting("revanced_overlay_button_time_ordered_playlist", FALSE);
     public static final BooleanSetting OVERLAY_BUTTON_WHITELIST = new BooleanSetting("revanced_overlay_button_whitelist", FALSE);
-    public static final StringSetting EXTERNAL_DOWNLOADER_PACKAGE_NAME = new StringSetting("revanced_external_downloader_package_name", "com.deniscerri.ytdl");
-    public static final BooleanSetting EXTERNAL_DOWNLOADER_ACTION_BUTTON = new BooleanSetting("revanced_external_downloader_action", FALSE);
 
     // PreferenceScreen: Player - Seekbar
     public static final BooleanSetting APPEND_TIME_STAMP_INFORMATION = new BooleanSetting("revanced_append_time_stamp_information", TRUE, true);
@@ -342,6 +344,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting DISABLE_ROLLING_NUMBER_ANIMATIONS = new BooleanSetting("revanced_disable_rolling_number_animations", FALSE);
     public static final BooleanSetting HIDE_ATTRIBUTES_SECTION = new BooleanSetting("revanced_hide_attributes_section", FALSE);
     public static final BooleanSetting HIDE_CHAPTERS_SECTION = new BooleanSetting("revanced_hide_chapters_section", FALSE);
+    public static final BooleanSetting HIDE_CONTENTS_SECTION = new BooleanSetting("revanced_hide_contents_section", FALSE);
     public static final BooleanSetting HIDE_INFO_CARDS_SECTION = new BooleanSetting("revanced_hide_info_cards_section", FALSE);
     public static final BooleanSetting HIDE_KEY_CONCEPTS_SECTION = new BooleanSetting("revanced_hide_key_concepts_section", FALSE);
     public static final BooleanSetting HIDE_PODCAST_SECTION = new BooleanSetting("revanced_hide_podcast_section", FALSE);
@@ -353,13 +356,13 @@ public class Settings extends BaseSettings {
 
 
     // PreferenceScreen: Shorts
-    public static final IntegerSetting CHANGE_SHORTS_REPEAT_STATE = new IntegerSetting("revanced_change_shorts_repeat_state", 0);
     public static final BooleanSetting DISABLE_RESUMING_SHORTS_PLAYER = new BooleanSetting("revanced_disable_resuming_shorts_player", TRUE);
     public static final BooleanSetting HIDE_SHORTS_SHELF = new BooleanSetting("revanced_hide_shorts_shelf", TRUE, true);
     public static final BooleanSetting HIDE_SHORTS_SHELF_HOME_RELATED_VIDEOS = new BooleanSetting("revanced_hide_shorts_shelf_home_related_videos", TRUE, true);
     public static final BooleanSetting HIDE_SHORTS_SHELF_SUBSCRIPTIONS = new BooleanSetting("revanced_hide_shorts_shelf_subscriptions", TRUE, true);
     public static final BooleanSetting HIDE_SHORTS_SHELF_SEARCH = new BooleanSetting("revanced_hide_shorts_shelf_search", TRUE, true);
     public static final BooleanSetting HIDE_SHORTS_SHELF_HISTORY = new BooleanSetting("revanced_hide_shorts_shelf_history", FALSE, true);
+    public static final IntegerSetting CHANGE_SHORTS_REPEAT_STATE = new IntegerSetting("revanced_change_shorts_repeat_state", 0);
 
     // PreferenceScreen: Shorts - Shorts player components
     public static final BooleanSetting HIDE_SHORTS_JOIN_BUTTON = new BooleanSetting("revanced_hide_shorts_join_button", TRUE);
@@ -435,11 +438,13 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting CUSTOM_PLAYBACK_SPEED_MENU_TYPE = new BooleanSetting("revanced_custom_playback_speed_menu_type", FALSE, parent(ENABLE_CUSTOM_PLAYBACK_SPEED));
     public static final StringSetting CUSTOM_PLAYBACK_SPEEDS = new StringSetting("revanced_custom_playback_speeds", "0.25\n0.5\n0.75\n1.0\n1.25\n1.5\n1.75\n2.0\n2.25\n2.5", true, parent(ENABLE_CUSTOM_PLAYBACK_SPEED));
     public static final BooleanSetting REMEMBER_PLAYBACK_SPEED_LAST_SELECTED = new BooleanSetting("revanced_remember_playback_speed_last_selected", TRUE);
+    public static final BooleanSetting SHOW_TOAST_ON_DEFAULT_SPEED_CHANGE = new BooleanSetting("revanced_show_toast_remember_video_speed", TRUE);
     public static final BooleanSetting REMEMBER_VIDEO_QUALITY_LAST_SELECTED = new BooleanSetting("revanced_remember_video_quality_last_selected", TRUE);
+    public static final BooleanSetting SHOW_TOAST_ON_DEFAULT_QUALITY_CHANGE = new BooleanSetting("revanced_show_toast_remember_video_quality", TRUE);
     public static final BooleanSetting RESTORE_OLD_VIDEO_QUALITY_MENU = new BooleanSetting("revanced_restore_old_video_quality_menu", TRUE, true);
     // Experimental Flags
     public static final BooleanSetting ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS = new BooleanSetting("revanced_enable_default_playback_speed_shorts", FALSE);
-    public static final BooleanSetting SKIP_PRELOADED_BUFFER = new BooleanSetting("revanced_skip_preloaded_buffer", FALSE);
+    public static final BooleanSetting SKIP_PRELOADED_BUFFER = new BooleanSetting("revanced_skip_preloaded_buffer", FALSE, true, "revanced_skip_preloaded_buffer_user_dialog_message");
     public static final BooleanSetting SKIP_PRELOADED_BUFFER_TOAST = new BooleanSetting("revanced_skip_preloaded_buffer_toast", TRUE);
     public static final BooleanSetting SPOOF_DEVICE_DIMENSIONS = new BooleanSetting("revanced_spoof_device_dimensions", FALSE, true);
     public static final BooleanSetting REPLACE_AV1_CODEC = new BooleanSetting("revanced_replace_av1_codec", FALSE, true);
@@ -456,13 +461,15 @@ public class Settings extends BaseSettings {
     public static final EnumSetting<ClientType> SPOOF_CLIENT_GENERAL = new EnumSetting<>("revanced_spoof_client_general",
             ClientType.IOS);
     public static final EnumSetting<ClientType> SPOOF_CLIENT_LIVESTREAM = new EnumSetting<>("revanced_spoof_client_livestream",
-            ClientType.ANDROID_VR);
+            ClientType.IOS);
     public static final EnumSetting<ClientType> SPOOF_CLIENT_SHORTS = new EnumSetting<>("revanced_spoof_client_shorts",
             ClientType.IOS);
     public static final EnumSetting<ClientType> SPOOF_CLIENT_FALLBACK = new EnumSetting<>("revanced_spoof_client_fallback",
             // Some private videos cannot be played with {@code ClientType.IOS}.
             // Use {@code ClientType.ANDROID_TESTSUITE}.
             ClientType.ANDROID_TESTSUITE);
+
+    public static final EnumSetting<WatchHistoryType> WATCH_HISTORY_TYPE = new EnumSetting<>("revanced_watch_history_type", WatchHistoryType.REPLACE);
 
     public static final BooleanSetting ENABLE_OPUS_CODEC = new BooleanSetting("revanced_enable_opus_codec", FALSE, true);
 
