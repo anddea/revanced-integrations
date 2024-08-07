@@ -1,3 +1,11 @@
+# [0.155.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.5...v0.155.0-dev.6) (2024-08-07)
+
+
+### Bug Fixes
+
+* **YouTube - Hook download actions:** `Override playlist download button` setting does not work in `Download playlist` menu of flyout panel ([a9e7305](https://github.com/anddea/revanced-integrations/commit/a9e7305e9b16951ad9f52155052daf503008eeef))
+* **YouTube - Overlay buttons:** `Always repeat` button doesn't work when the video is minimized ([82e84f8](https://github.com/anddea/revanced-integrations/commit/82e84f803f94dfd0637088063fbbf691e28f8d82))
+
 # [0.155.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.4...v0.155.0-dev.5) (2024-08-07)
 
 
