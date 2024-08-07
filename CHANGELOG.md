@@ -1,3 +1,24 @@
+# [0.155.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.4...v0.155.0-dev.5) (2024-08-07)
+
+
+### Bug Fixes
+
+* **YouTube - Hide comments components:** `Hide Comments section in home feed` setting not working in new component name ([69e87d3](https://github.com/anddea/revanced-integrations/commit/69e87d34e3fe8fcf59ef1da269bc555038b9c895))
+* **YouTube - Return YouTube Dislike:** Dislikes not appearing due to new component name ([af63631](https://github.com/anddea/revanced-integrations/commit/af63631ef1d13732a9d37f8b06045e07050fc775))
+* **YouTube - SponsorBlock:** Improve create segment manual seek accuracy ([acc52f6](https://github.com/anddea/revanced-integrations/commit/acc52f65104fb7f03f46fb694e3884a985c6024c))
+* **YouTube - Spoof client:** Change default values ([f03800d](https://github.com/anddea/revanced-integrations/commit/f03800d80ac1930aecaa1151c2abc46e1a9e9b83))
+* **YouTube - Spoof client:** Fix background playback issue with livestream on iOS clients ([9bd14d2](https://github.com/anddea/revanced-integrations/commit/9bd14d286ebb9a35747d1030140dbb629b3521ba))
+* **YouTube - Spoof client:** Partial fix for watch history issue of brand accounts on iOS clients ([bd1db99](https://github.com/anddea/revanced-integrations/commit/bd1db99934af6ef9eda6b4c069a6a6544e4d5597))
+
+
+### Features
+
+* Merge RVX v1.12.1-dev.1 ([#27](https://github.com/anddea/revanced-integrations/issues/27)) ([b81f0a7](https://github.com/anddea/revanced-integrations/commit/b81f0a7161125fb54d50fa850ec3f91423b03923))
+* **YouTube - Client spoof:** Update hardcoded client version ([51c71c3](https://github.com/anddea/revanced-integrations/commit/51c71c31909dc921bbf8f50cc10e0ffddaa610b7))
+* **YouTube - Hook download actions:** Add package field in `Hook download actions` patch ([1e567ba](https://github.com/anddea/revanced-integrations/commit/1e567ba523b06aeda340d4486db05b836ab57523))
+* **YouTube - Shorts components:** Move `Change Shorts repeat state` setting to `Experimental Flags` ([6b3bd26](https://github.com/anddea/revanced-integrations/commit/6b3bd265cceabcad3a7da312f298fb42cf3e9d7a))
+* **YouTube Music:** Add `Change share sheet` patch ([0104756](https://github.com/anddea/revanced-integrations/commit/0104756a37ed69ef9cf9e9854742ece1290a1fc3))
+
 # [0.155.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.3...v0.155.0-dev.4) (2024-08-04)
 
 
