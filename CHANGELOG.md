@@ -1,3 +1,15 @@
+# [0.155.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.6...v0.155.0-dev.7) (2024-08-16)
+
+
+### Bug Fixes
+
+* **YouTube Music - Sanitize sharing links:** Tracking parameters are not removed from the system share panel ([645e1e4](https://github.com/anddea/revanced-integrations/commit/645e1e4f9481f6fcce06282ebf8e7a9bb2ccf905))
+
+
+### Features
+
+* **YouTube:** Add `Change share sheet` patch ([0fdeba2](https://github.com/anddea/revanced-integrations/commit/0fdeba246c9cef183010afd29721a5f0adda14c1))
+
 # [0.155.0-dev.6](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.5...v0.155.0-dev.6) (2024-08-07)
 
 
