@@ -322,7 +322,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting OVERLAY_BUTTON_COPY_VIDEO_URL_TIMESTAMP = new BooleanSetting("revanced_overlay_button_copy_video_url_timestamp", FALSE);
     public static final BooleanSetting OVERLAY_BUTTON_MUTE_VOLUME = new BooleanSetting("revanced_overlay_button_mute_volume", FALSE);
     public static final BooleanSetting OVERLAY_BUTTON_EXTERNAL_DOWNLOADER = new BooleanSetting("revanced_overlay_button_external_downloader", FALSE);
-    public static final BooleanSetting OVERLAY_BUTTON_SPEED_DIALOG = new BooleanSetting("revanced_overlay_button_speed_dialog", TRUE);
+    public static final BooleanSetting OVERLAY_BUTTON_SPEED_DIALOG = new BooleanSetting("revanced_overlay_button_speed_dialog", FALSE);
     public static final BooleanSetting OVERLAY_BUTTON_TIME_ORDERED_PLAYLIST = new BooleanSetting("revanced_overlay_button_time_ordered_playlist", FALSE);
     public static final BooleanSetting OVERLAY_BUTTON_WHITELIST = new BooleanSetting("revanced_overlay_button_whitelist", FALSE);
 
@@ -455,7 +455,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting ENABLE_EXTERNAL_BROWSER = new BooleanSetting("revanced_enable_external_browser", TRUE, true);
     public static final BooleanSetting ENABLE_OPEN_LINKS_DIRECTLY = new BooleanSetting("revanced_enable_open_links_directly", TRUE);
     public static final BooleanSetting DISABLE_QUIC_PROTOCOL = new BooleanSetting("revanced_disable_quic_protocol", FALSE, true);
-    public static final BooleanSetting SPOOF_CLIENT = new BooleanSetting("revanced_spoof_client", FALSE, true, "revanced_spoof_client_user_dialog_message");
+    public static final BooleanSetting SPOOF_CLIENT = new BooleanSetting("revanced_spoof_client", TRUE, true, "revanced_spoof_client_user_dialog_message");
+    public static final BooleanSetting SPOOF_CLIENT_IOS_FORCE_AVC = new BooleanSetting("revanced_spoof_client_ios_force_avc", FALSE, true, "revanced_spoof_client_ios_force_avc_user_dialog_message", new SpoofingToIOSAvailability());
+    public static final EnumSetting<ClientType> SPOOF_CLIENT_TYPE = new EnumSetting<>("revanced_spoof_client_type", ClientType.IOS, true, parent(SPOOF_CLIENT));
     public static final BooleanSetting SPOOF_CLIENT_STATS_FOR_NERDS = new BooleanSetting("revanced_spoof_client_stats_for_nerds", TRUE, parent(SPOOF_CLIENT));
     public static final EnumSetting<ClientType> SPOOF_CLIENT_GENERAL = new EnumSetting<>("revanced_spoof_client_general",
             ClientType.IOS);
