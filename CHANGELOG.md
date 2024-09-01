@@ -1,3 +1,30 @@
+# [0.155.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.7...v0.155.0-dev.8) (2024-09-01)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide expandable chip under videos` setting does not work (A/B tests) ([6cd2c22](https://github.com/anddea/revanced-integrations/commit/6cd2c22970950988fa6fd52d9c321e41e75544b7))
+* **YouTube - Navigation bar components:** Navigation buttons are not hidden when `Cairo navigation bar` is applied (A/B tests) ([da9bc06](https://github.com/anddea/revanced-integrations/commit/da9bc06b5ebde97ea15673d1574112c3fc65bdb2))
+* **YouTube - Shorts components:** `Hide Use this sound button` doesn't work ([e7285fd](https://github.com/anddea/revanced-integrations/commit/e7285fd4e592c60758bd1d6e41224cf2b485ff28))
+* **YouTube - SponsorBlock:** Handle if the user enters an invalid number into any SB settings ([60b0674](https://github.com/anddea/revanced-integrations/commit/60b067443b25ddb3ca984afd85819e7d61c47ae8))
+* **YouTube - Video playback:** Update the option to disable toasts when changing the default values ([c2ba880](https://github.com/anddea/revanced-integrations/commit/c2ba88032638d6224cd2b5f733bd8b03879302d9))
+* **YouTube Music - Return YouTube Dislike:** Likes and dislikes are switched in RTL layout ([df8edcc](https://github.com/anddea/revanced-integrations/commit/df8edcc382d5d4871ce9f8768a5974c9f5aa1d4b))
+
+
+### Features
+
+* Merge v1.13.1-dev.3 ([ea2ce99](https://github.com/anddea/revanced-integrations/commit/ea2ce992053b1ee9eb817d90c2648d960390d04a))
+* **YouTube - Hide feed components:** Add syntax to match whole keywords and not substrings ([da31e22](https://github.com/anddea/revanced-integrations/commit/da31e2293bff53973c23241ba73b942e79ab5e2d))
+* **YouTube - Hide player flyout menu:** Add `Hide Sleep timer` setting ([3469de0](https://github.com/anddea/revanced-integrations/commit/3469de08745c82f41472d64eeb9d8882c2e49b50))
+* **YouTube - Hide player flyout menu:** Remove `Hide Ambient mode menu` setting ([1fa19c4](https://github.com/anddea/revanced-integrations/commit/1fa19c4a38994df927ca7f29b79ec33ef5b77a34))
+* **YouTube - Shorts components:** Add `Hide Use this sound button` setting ([2a8cb5a](https://github.com/anddea/revanced-integrations/commit/2a8cb5a1c520c4ff9d98fd44a322fec073ba448a))
+* **YouTube - Shorts components:** Add settings - `Hide floating button`, `Hide Trends button`, `Hide Use template button` ([beb726f](https://github.com/anddea/revanced-integrations/commit/beb726fcb6ce668502f63c1cc918a7236a69213f))
+* **YouTube - Shorts components:** Clarify the description of some settings ([7ee5630](https://github.com/anddea/revanced-integrations/commit/7ee5630e5edfb5dc3908626167c49b2c812a8244))
+* **YouTube - Spoof client:** Allow forcing AVC codec with iOS ([8dfbdd4](https://github.com/anddea/revanced-integrations/commit/8dfbdd47a9427eee689db071c32cab5c8eeaba07))
+* **YouTube Music - Video playback:** Add an option to disable toasts when changing the default values ([9fcead1](https://github.com/anddea/revanced-integrations/commit/9fcead1cce0da53f238df8cbd687973432abb331))
+* **YouTube:** Add `Spoof streaming data` patch ([b1f53f9](https://github.com/anddea/revanced-integrations/commit/b1f53f941f7864f2cc98b39cb71a94794e43a5ba))
+* **YouTube:** Remove `Spoof client` patch ([809970a](https://github.com/anddea/revanced-integrations/commit/809970ae90025686c36113d28064b543122be9fe))
+
 # [0.155.0-dev.7](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.6...v0.155.0-dev.7) (2024-08-16)
 
 
