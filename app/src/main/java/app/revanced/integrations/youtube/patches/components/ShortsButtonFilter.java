@@ -30,6 +30,7 @@ public final class ShortsButtonFilter extends Filter {
     private final StringFilterGroup subscribeButton;
     private final StringFilterGroup joinButton;
     private final StringFilterGroup pausedOverlayButtons;
+    private final StringFilterGroup metaPanelButton;
     private final ByteArrayFilterGroupList pausedOverlayButtonsGroupList = new ByteArrayFilterGroupList();
 
     private final ByteArrayFilterGroup shortsCommentDisabled;
@@ -86,6 +87,11 @@ public final class ShortsButtonFilter extends Filter {
                 "reel_player_disclosure.eml"
         );
 
+        metaPanelButton = new StringFilterGroup(
+                null,
+                "|ContainerType|button.eml|"
+        );
+
         joinButton = new StringFilterGroup(
                 Settings.HIDE_SHORTS_JOIN_BUTTON,
                 "sponsor_button"
@@ -107,7 +113,7 @@ public final class ShortsButtonFilter extends Filter {
         );
 
         addPathCallbacks(
-                suggestedAction, actionBar, joinButton, subscribeButton,
+                suggestedAction, actionBar, joinButton, subscribeButton, metaPanelButton,
                 paidPromotionButton, pausedOverlayButtons, channelBar, fullVideoLinkLabel,
                 videoTitle, reelSoundMetadata, infoPanel, liveHeader
         );
@@ -198,6 +204,13 @@ public final class ShortsButtonFilter extends Filter {
         if (matchedGroup == subscribeButton || matchedGroup == joinButton) {
             // Selectively filter to avoid false positive filtering of other subscribe/join buttons.
             if (StringUtils.startsWithAny(path, REEL_CHANNEL_BAR_PATH, REEL_LIVE_HEADER_PATH, REEL_METAPANEL_PATH)) {
+                return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+            }
+            return false;
+        }
+
+        if (matchedGroup == metaPanelButton) {
+            if (path.startsWith(REEL_METAPANEL_PATH) && useThisSoundButton.check(protobufBufferArray).isFiltered()) {
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
             }
             return false;
