@@ -8,13 +8,16 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
+import java.util.Arrays;
+import java.util.List;
+
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.utils.Utils;
-import app.revanced.integrations.youtube.patches.misc.WatchHistoryPatch.WatchHistoryType;
+import app.revanced.integrations.youtube.patches.misc.client.AppClient.ClientType;
 import app.revanced.integrations.youtube.settings.Settings;
 
 @SuppressWarnings({"deprecation", "unused"})
-public class WatchHistoryStatusPreference extends Preference {
+public class SpoofStreamingDataSideEffectsPreference extends Preference {
 
     private final SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
         // Because this listener may run before the ReVanced settings fragment updates Settings,
@@ -25,19 +28,19 @@ public class WatchHistoryStatusPreference extends Preference {
         Utils.runOnMainThread(this::updateUI);
     };
 
-    public WatchHistoryStatusPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SpoofStreamingDataSideEffectsPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public WatchHistoryStatusPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SpoofStreamingDataSideEffectsPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public WatchHistoryStatusPreference(Context context, AttributeSet attrs) {
+    public SpoofStreamingDataSideEffectsPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public WatchHistoryStatusPreference(Context context) {
+    public SpoofStreamingDataSideEffectsPreference(Context context) {
         super(context);
     }
 
@@ -62,18 +65,20 @@ public class WatchHistoryStatusPreference extends Preference {
         removeChangeListener();
     }
 
+    private static final List<ClientType> selectableClientTypes = Arrays.asList(
+            ClientType.IOS,
+            ClientType.ANDROID_VR,
+            ClientType.ANDROID_UNPLUGGED
+    );
+
     private void updateUI() {
-        final WatchHistoryType watchHistoryType = Settings.WATCH_HISTORY_TYPE.get();
-        final boolean blockWatchHistory = watchHistoryType == WatchHistoryType.BLOCK;
-        final boolean replaceWatchHistory = watchHistoryType == WatchHistoryType.REPLACE;
+        final ClientType clientType = Settings.SPOOF_STREAMING_DATA_TYPE.get();
 
         final String summaryTextKey;
-        if (blockWatchHistory) {
-            summaryTextKey = "revanced_watch_history_about_status_blocked";
-        } else if (replaceWatchHistory) {
-            summaryTextKey = "revanced_watch_history_about_status_replaced";
+        if (selectableClientTypes.contains(clientType)) {
+            summaryTextKey = "revanced_spoof_streaming_data_side_effects_" + clientType.name().toLowerCase();
         } else {
-            summaryTextKey = "revanced_watch_history_about_status_original";
+            summaryTextKey = "revanced_spoof_streaming_data_side_effects_unknown";
         }
 
         setSummary(str(summaryTextKey));
