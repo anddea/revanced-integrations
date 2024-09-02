@@ -172,10 +172,4 @@ public class ExternalDownloaderVideoPreference extends Preference implements Pre
         return downloaderPackageName;
     }
 
-    public static boolean checkPackageIsEnabled(String packageName) {
-        final Context context = Utils.getActivity();
-        mClickedDialogEntryIndex = Arrays.asList(mEntryValues).indexOf(packageName);
-        return checkPackageIsValid(context, packageName);
-    }
-
 }
