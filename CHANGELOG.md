@@ -1,3 +1,10 @@
+# [0.155.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.8...v0.155.0-dev.9) (2024-09-02)
+
+
+### Bug Fixes
+
+* **YouTube - Settings:** Update default values for "Hide low views video" and "Spoof streaming data" ([a78233c](https://github.com/anddea/revanced-integrations/commit/a78233c73b999873a5ccd8fceff1b0f01f5aa75c))
+
 # [0.155.0-dev.8](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.7...v0.155.0-dev.8) (2024-09-01)
 
 
