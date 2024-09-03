@@ -1,3 +1,10 @@
+# [0.155.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.9...v0.155.0-dev.10) (2024-09-03)
+
+
+### Features
+
+* **YouTube - Settings:** Show categories while searching settings ([c8017f1](https://github.com/anddea/revanced-integrations/commit/c8017f185621a6f4701133e3237334cc3b03c95c))
+
 # [0.155.0-dev.9](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.8...v0.155.0-dev.9) (2024-09-02)
 
 
