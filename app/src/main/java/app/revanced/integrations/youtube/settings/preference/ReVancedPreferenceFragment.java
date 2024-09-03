@@ -41,6 +41,7 @@ import java.util.*;
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.utils.Logger;
+import app.revanced.integrations.shared.utils.ResourceUtils;
 import app.revanced.integrations.shared.utils.Utils;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.utils.ExtendedUtils;
@@ -326,8 +327,20 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     private void storeAllPreferences(PreferenceGroup preferenceGroup) {
         Logger.printDebug(() -> "SearchFragmentPrefGroup: " + preferenceGroup);
 
+        // Check if this is the root PreferenceScreen
+        boolean isRootScreen = preferenceGroup == getPreferenceScreen();
+
+        // Use the special top-level group only for the root PreferenceScreen
+        PreferenceGroup groupKey = isRootScreen
+                ? new PreferenceCategory(preferenceGroup.getContext())
+                : preferenceGroup;
+
+        if (isRootScreen) {
+            groupKey.setTitle(ResourceUtils.getString("revanced_extended_settings_title"));
+        }
+
         // Initialize a list to hold preferences of the current group
-        List<Preference> currentGroupPreferences = groupedPreferences.computeIfAbsent(preferenceGroup, k -> new ArrayList<>());
+        List<Preference> currentGroupPreferences = groupedPreferences.computeIfAbsent(groupKey, k -> new ArrayList<>());
 
         for (int i = 0; i < preferenceGroup.getPreferenceCount(); i++) {
             Preference preference = preferenceGroup.getPreference(i);
@@ -335,7 +348,8 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             // Add preference to the current group if not already added
             if (!currentGroupPreferences.contains(preference)) {
                 currentGroupPreferences.add(preference);
-                Logger.printDebug(() -> "SearchFragment: Stored preference with key: " + preference.getKey());
+                Logger.printDebug(() -> "SearchFragment: Stored preference with key: " + preference.getKey() +
+                        " in group: " + (isRootScreen ? "Top Level" : preferenceGroup.getTitle()));
             }
 
             // Store dependencies
