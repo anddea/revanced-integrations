@@ -1,3 +1,10 @@
+# [0.155.0-dev.11](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.10...v0.155.0-dev.11) (2024-09-03)
+
+
+### Features
+
+* **YouTube - Settings:** Add category to main menu entries while searching ([120d894](https://github.com/anddea/revanced-integrations/commit/120d894f9486d113bc566781f181703d362ede00))
+
 # [0.155.0-dev.10](https://github.com/anddea/revanced-integrations/compare/v0.155.0-dev.9...v0.155.0-dev.10) (2024-09-03)
 
 
