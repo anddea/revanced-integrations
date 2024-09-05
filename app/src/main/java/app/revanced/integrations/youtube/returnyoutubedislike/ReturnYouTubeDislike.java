@@ -55,6 +55,7 @@ import app.revanced.integrations.youtube.utils.ThemeUtils;
  * <p>
  * Because Litho creates spans using multiple threads, this entire class supports multithreading as well.
  */
+@SuppressWarnings("deprecation")
 public class ReturnYouTubeDislike {
 
     /**
@@ -134,7 +135,6 @@ public class ReturnYouTubeDislike {
 
         leftSeparatorShape = new ShapeDrawable(new RectShape());
         leftSeparatorShape.setBounds(leftSeparatorBounds);
-        // noinspection deprecation
         locale = resources.getConfiguration().locale;
 
         ReturnYouTubeDislikeApi.toastOnConnectionError = Settings.RYD_TOAST_ON_CONNECTION_ERROR.get();
@@ -410,7 +410,7 @@ public class ReturnYouTubeDislike {
     }
 
     /**
-     * Should be called if the user changes settings for dislikes appearance.
+     * Should be called if the user changes dislikes appearance settings.
      */
     public static void clearAllUICaches() {
         synchronized (fetchCache) {
