@@ -87,7 +87,7 @@ public class GmsCoreSupport {
                 PackageManager manager = mActivity.getPackageManager();
                 manager.getPackageInfo(GMS_CORE_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
             } catch (PackageManager.NameNotFoundException exception) {
-                Logger.printDebug(() -> "GmsCore was not found");
+                Logger.printInfo(() -> "GmsCore was not found");
                 // Cannot show a dialog and must show a toast,
                 // because on some installations the app crashes before a dialog can be displayed.
                 Utils.showToastLong(str("gms_core_toast_not_installed_message"));

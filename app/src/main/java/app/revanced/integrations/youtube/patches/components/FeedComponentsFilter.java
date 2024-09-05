@@ -1,17 +1,15 @@
 package app.revanced.integrations.youtube.patches.components;
 
-import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
-
 import androidx.annotation.Nullable;
-
-import org.apache.commons.lang3.StringUtils;
 
 import app.revanced.integrations.shared.patches.components.ByteArrayFilterGroup;
 import app.revanced.integrations.shared.patches.components.Filter;
 import app.revanced.integrations.shared.patches.components.StringFilterGroup;
 import app.revanced.integrations.shared.patches.components.StringFilterGroupList;
+import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.StringTrieSearch;
 import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.NavigationBar;
 import app.revanced.integrations.youtube.shared.RootView;
 
 @SuppressWarnings("unused")
@@ -20,6 +18,13 @@ public final class FeedComponentsFilter extends Filter {
             "horizontalCollectionSwipeProtector=null";
     private static final String CONVERSATION_CONTEXT_SUBSCRIPTIONS_IDENTIFIER =
             "heightConstraint=null";
+
+    private static final ByteArrayFilterGroup expansion =
+            new ByteArrayFilterGroup(
+                    null,
+                    "inline_expansion"
+            );
+
     private static final ByteArrayFilterGroup mixPlaylists =
             new ByteArrayFilterGroup(
                     Settings.HIDE_MIX_PLAYLISTS,
@@ -36,6 +41,8 @@ public final class FeedComponentsFilter extends Filter {
     public final StringFilterGroup carouselShelf;
     private final StringFilterGroup channelProfile;
     private final StringFilterGroup communityPosts;
+    private final StringFilterGroup libraryShelf;
+    private final StringFilterGroup newExpansion;
     private final ByteArrayFilterGroup visitStoreButton;
 
     private static final StringTrieSearch communityPostsFeedGroupSearch = new StringTrieSearch();
@@ -71,6 +78,7 @@ public final class FeedComponentsFilter extends Filter {
                 null,
                 "post_base_wrapper",
                 "image_post_root",
+                "images_post_root",
                 "text_post_root"
         );
 
@@ -79,11 +87,17 @@ public final class FeedComponentsFilter extends Filter {
                 "search_bar_entry_point"
         );
 
+        libraryShelf = new StringFilterGroup(
+                null,
+                "library_recent_shelf.eml"
+        );
+
         addIdentifierCallbacks(
                 carouselShelf,
                 chipsShelf,
                 communityPosts,
-                feedSearchBar
+                feedSearchBar,
+                libraryShelf
         );
 
         // Paths.
@@ -97,6 +111,19 @@ public final class FeedComponentsFilter extends Filter {
                 Settings.HIDE_BROWSE_STORE_BUTTON,
                 "channel_profile.eml",
                 "page_header.eml" // new layout
+        );
+
+        // The path for the new type of 'Expandable chip under videos' is as follows:
+        //
+        // CellType|CellType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|ContainerType|CellType|CellType|ContainerType|ContainerType|CollectionType|CellType|CellType|ContainerType|
+        //
+        // Unlike other litho elements, this one does not contain any words that can identify this layout.
+        // Since 'CellType' and 'ContainerType' are already used in several layouts, this filter alone has some limitations in identifying the layout.
+        //
+        // Related issues: https://github.com/inotia00/ReVanced_Extended/issues/2173
+        newExpansion = new StringFilterGroup(
+                Settings.HIDE_EXPANDABLE_CHIP,
+                "CellType|CellType|ContainerType|ContainerType|ContainerType|"
         );
 
         visitStoreButton = new ByteArrayFilterGroup(
@@ -182,6 +209,7 @@ public final class FeedComponentsFilter extends Filter {
                 imageShelf,
                 latestPosts,
                 movieShelf,
+                newExpansion,
                 notifyMe,
                 playables,
                 subscriptionsChannelBar,
@@ -225,24 +253,42 @@ public final class FeedComponentsFilter extends Filter {
             return true;
         }
 
+        // Check NavigationBar index. If not in Library tab, then filter.
+        if (NavigationBar.isNotLibraryTab()) {
+            return true;
+        }
+
         // Check browseId last.
         // Only filter in home feed, search results, playlist.
         final String browseId = RootView.getBrowseId();
+        Logger.printInfo(() -> "browseId: " + browseId);
 
-        if (StringUtils.startsWithAny(browseId, BROWSE_ID_DEFAULT, BROWSE_ID_PLAYLIST)) {
-            return true;
-        } else if (browseId.isEmpty()) {
-            NavigationButton selectedNavButton = NavigationButton.getSelectedNavigationButton();
-            return selectedNavButton != null && !selectedNavButton.isLibraryOrYouTab();
-        }
-        return false;
+        return browseId.startsWith(BROWSE_ID_PLAYLIST);
     }
 
     @Override
     public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                               StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
-        if (matchedGroup == carouselShelf) {
+        if (matchedGroup == libraryShelf) {
+            // The library shelf is hidden in the following situations:
+            //
+            // 1. Click on the Library tab.
+            // 2. Click on the Home tab.
+            // 3. Press the back button on the Home tab. The Library tab, which was the last tab opened, opens.
+            // 4. The library shelf (playlists) is hidden.
+            //
+            // As a temporary workaround, use the navigation bar index.
+            //
+            // If {@link libraryShelf}, a component of the Library tab, is detected, change the navigation bar index to 3
+            NavigationBar.setNavigationTabIndex(3);
+            return false;
+        } else if (matchedGroup == carouselShelf) {
             if (hideShelves()) {
+                return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+            }
+            return false;
+        } else if (matchedGroup == newExpansion) {
+            if (contentIndex == 0 && expansion.check(protobufBufferArray).isFiltered()) {
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
             }
             return false;

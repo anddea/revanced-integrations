@@ -3,7 +3,9 @@ package app.revanced.integrations.youtube.patches.general;
 import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.shared.utils.Utils.getChildView;
 import static app.revanced.integrations.shared.utils.Utils.hideViewByLayoutParams;
+import static app.revanced.integrations.shared.utils.Utils.hideViewGroupByMarginLayoutParams;
 import static app.revanced.integrations.shared.utils.Utils.hideViewUnderCondition;
+import static app.revanced.integrations.youtube.patches.utils.PatchStatus.ImageSearchButton;
 import static app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 
 import android.app.Activity;
@@ -12,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,8 +45,8 @@ import java.util.Objects;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.ResourceUtils;
 import app.revanced.integrations.shared.utils.Utils;
-import app.revanced.integrations.youtube.patches.utils.ViewGroupMarginLayoutParamsPatch;
 import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.ThemeUtils;
 
 /**
@@ -146,29 +147,16 @@ public class GeneralPatch {
 
     // region [Disable auto captions] patch
 
-    private static boolean subtitlePrefetched = true;
-    @NonNull
-    private static String videoId = "";
+    private static boolean captionsButtonStatus;
 
-    public static boolean disableAutoCaptions(boolean original) {
-        if (!Settings.DISABLE_AUTO_CAPTIONS.get())
-            return original;
-
-        return subtitlePrefetched;
+    public static boolean disableAutoCaptions() {
+        return Settings.DISABLE_AUTO_CAPTIONS.get() &&
+                !captionsButtonStatus &&
+                !PlayerType.getCurrent().isNoneHiddenOrSlidingMinimized();
     }
 
-    public static void newVideoStarted(@NonNull String newlyLoadedChannelId, @NonNull String newlyLoadedChannelName,
-                                       @NonNull String newlyLoadedVideoId, @NonNull String newlyLoadedVideoTitle,
-                                       final long newlyLoadedVideoLength, boolean newlyLoadedLiveStreamValue) {
-        if (Objects.equals(newlyLoadedVideoId, videoId)) {
-            return;
-        }
-        videoId = newlyLoadedVideoId;
-        subtitlePrefetched = false;
-    }
-
-    public static void prefetchSubtitleTrack() {
-        subtitlePrefetched = true;
+    public static void setCaptionsButtonStatus(boolean status) {
+        captionsButtonStatus = status;
     }
 
     // endregion
@@ -195,6 +183,16 @@ public class GeneralPatch {
     // endregion
 
     // region [Hide layout components] patch
+
+    private static String[] accountMenuBlockList;
+
+    static {
+        accountMenuBlockList = Settings.HIDE_ACCOUNT_MENU_FILTER_STRINGS.get().split("\\n");
+        // Some settings should not be hidden.
+        accountMenuBlockList = Arrays.stream(accountMenuBlockList)
+                .filter(item -> !Objects.equals(item, str("settings")))
+                .toArray(String[]::new);
+    }
 
     /**
      * hide account menu in you tab
@@ -228,13 +226,11 @@ public class GeneralPatch {
         hideAccountMenu(viewGroup, menuTitleCharSequence.toString());
     }
 
-    private static final String[] accountMenuBlockList = Settings.HIDE_ACCOUNT_MENU_FILTER_STRINGS.get().split("\\n");
-
     private static void hideAccountMenu(ViewGroup viewGroup, String menuTitleString) {
         for (String filter : accountMenuBlockList) {
             if (!filter.isEmpty() && menuTitleString.equals(filter)) {
                 if (viewGroup.getLayoutParams() instanceof MarginLayoutParams)
-                    ViewGroupMarginLayoutParamsPatch.hideViewGroupByMarginLayoutParams(viewGroup);
+                    hideViewGroupByMarginLayoutParams(viewGroup);
                 else
                     viewGroup.setLayoutParams(new LayoutParams(0, 0));
             }
@@ -243,39 +239,6 @@ public class GeneralPatch {
 
     public static int hideHandle(int originalValue) {
         return Settings.HIDE_HANDLE.get() ? 8 : originalValue;
-    }
-
-    private static String[] settingsMenuBlockList = Settings.HIDE_SETTINGS_MENU_FILTER_STRINGS.get().split("\\n");
-    private static final String rvxSettingsLabel = str("revanced_extended_settings_title");
-
-    public static void hideSettingsMenu(RecyclerView recyclerView) {
-        if (!Settings.HIDE_SETTINGS_MENU.get())
-            return;
-
-        settingsMenuBlockList = Arrays.stream(settingsMenuBlockList)
-                .filter(item -> !item.equals(rvxSettingsLabel))
-                .toArray(String[]::new);
-
-        recyclerView.getViewTreeObserver().addOnDrawListener(() -> {
-            final int childCount = recyclerView.getChildCount();
-            if (childCount == 0)
-                return;
-            for (int i = 0; i <= childCount; i++) {
-                if (recyclerView.getChildAt(i) instanceof ViewGroup linearLayout
-                        && linearLayout.getChildCount() > 1
-                        && linearLayout.getChildAt(1) instanceof ViewGroup relativeLayout
-                        && relativeLayout.getChildAt(0) instanceof TextView textView
-                ) {
-                    final String title = textView.getText().toString();
-                    Logger.printDebug(() -> title);
-                    for (String filter : settingsMenuBlockList) {
-                        if (!filter.isEmpty() && title.equals(filter)) {
-                            ViewGroupMarginLayoutParamsPatch.hideViewGroupByMarginLayoutParams(linearLayout);
-                        }
-                    }
-                }
-            }
-        });
     }
 
     public static boolean hideFloatingMicrophone(boolean original) {
@@ -293,10 +256,15 @@ public class GeneralPatch {
     private static final Map<NavigationButton, Boolean> shouldHideMap = new EnumMap<>(NavigationButton.class) {
         {
             put(NavigationButton.HOME, Settings.HIDE_NAVIGATION_HOME_BUTTON.get());
+            put(NavigationButton.HOME_CAIRO, Settings.HIDE_NAVIGATION_HOME_BUTTON.get());
             put(NavigationButton.SHORTS, Settings.HIDE_NAVIGATION_SHORTS_BUTTON.get());
+            put(NavigationButton.SHORTS_CAIRO, Settings.HIDE_NAVIGATION_SHORTS_BUTTON.get());
             put(NavigationButton.SUBSCRIPTIONS, Settings.HIDE_NAVIGATION_SUBSCRIPTIONS_BUTTON.get());
+            put(NavigationButton.SUBSCRIPTIONS_CAIRO, Settings.HIDE_NAVIGATION_SUBSCRIPTIONS_BUTTON.get());
             put(NavigationButton.CREATE, Settings.HIDE_NAVIGATION_CREATE_BUTTON.get());
+            put(NavigationButton.CREATE_CAIRO, Settings.HIDE_NAVIGATION_CREATE_BUTTON.get());
             put(NavigationButton.NOTIFICATIONS, Settings.HIDE_NAVIGATION_NOTIFICATIONS_BUTTON.get());
+            put(NavigationButton.NOTIFICATIONS_CAIRO, Settings.HIDE_NAVIGATION_NOTIFICATIONS_BUTTON.get());
 
             put(NavigationButton.LIBRARY_LOGGED_OUT, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
             put(NavigationButton.LIBRARY_INCOGNITO, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
@@ -572,7 +540,7 @@ public class GeneralPatch {
      * <p>
      * In this case, {@link Utils#hideViewByLayoutParams(View)} should be used.
      */
-    private static final boolean showImageSearchButtonAndHideVoiceSearchButton = !hideImageSearchButton && hideVoiceSearchButton;
+    private static final boolean showImageSearchButtonAndHideVoiceSearchButton = !hideImageSearchButton && hideVoiceSearchButton && ImageSearchButton();
 
     public static boolean hideImageSearchButton(boolean original) {
         return !hideImageSearchButton && original;

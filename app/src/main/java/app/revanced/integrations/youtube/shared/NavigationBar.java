@@ -169,14 +169,35 @@ public final class NavigationBar {
         }
     }
 
+    private static int lastIndex = 0;
+
     /**
      * Injection point.
      */
-    public static void navigationTabSelected(View navButtonImageView, boolean isSelected) {
+    public static void setNavigationTabIndex(int index) {
+        if (lastIndex == index) {
+            return;
+        }
+
+        lastIndex = index;
+        Logger.printDebug(() -> "Changed navigation index to : " + index);
+    }
+
+    public static boolean isNotLibraryTab() {
+        return lastIndex < 3;
+    }
+
+    /**
+     * Injection point.
+     */
+    public static void navigationTabSelected(View navButtonImageView, int index, boolean isSelected) {
         try {
-            if (!isSelected) {
+            if (!isSelected || lastIndex == index) {
                 return;
             }
+
+            lastIndex = index;
+            Logger.printDebug(() -> "Changed navigation index to : " + index);
 
             NavigationButton button = viewToButtonMap.get(navButtonImageView);
 
@@ -217,18 +238,23 @@ public final class NavigationBar {
 
     public enum NavigationButton {
         HOME("PIVOT_HOME"),
+        HOME_CAIRO("TAB_HOME_CAIRO"),
         SHORTS("TAB_SHORTS"),
+        SHORTS_CAIRO("TAB_SHORTS_CAIRO"),
         /**
          * Create new video tab.
          * This tab will never be in a selected state, even if the create video UI is on screen.
          */
         CREATE("CREATION_TAB_LARGE"),
+        CREATE_CAIRO("CREATION_TAB_LARGE_CAIRO"),
         SUBSCRIPTIONS("PIVOT_SUBSCRIPTIONS"),
+        SUBSCRIPTIONS_CAIRO("TAB_SUBSCRIPTIONS_CAIRO"),
         /**
          * Notifications tab.  Only present when
          * {@link Settings#SWITCH_CREATE_WITH_NOTIFICATIONS_BUTTON} is active.
          */
         NOTIFICATIONS("TAB_ACTIVITY"),
+        NOTIFICATIONS_CAIRO("TAB_ACTIVITY_CAIRO"),
         /**
          * Library tab when the user is not logged in.
          */
@@ -286,6 +312,22 @@ public final class NavigationBar {
 
         NavigationButton(String ytEnumName) {
             this.ytEnumName = ytEnumName;
+        }
+
+        public boolean isHomeTab() {
+            return this == HOME || this == HOME_CAIRO;
+        }
+
+        public boolean isShortsTab() {
+            return this == SHORTS || this == SHORTS_CAIRO;
+        }
+
+        public boolean isSubscriptionsTab() {
+            return this == SUBSCRIPTIONS || this == SUBSCRIPTIONS_CAIRO;
+        }
+
+        public boolean isNotificationTab() {
+            return this == NOTIFICATIONS || this == NOTIFICATIONS_CAIRO;
         }
 
         public boolean isLibraryOrYouTab() {
