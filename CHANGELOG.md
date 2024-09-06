@@ -1,3 +1,24 @@
+# [0.156.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.155.0...v0.156.0-dev.1) (2024-09-06)
+
+
+### Bug Fixes
+
+* **GmsCore support:** Show an error toast if GmsCore is included with root mounted installation ([b5d127d](https://github.com/anddea/revanced-integrations/commit/b5d127d1e38c3d280e86c275e9d8f0c5a1c45b9b))
+* **ReturnYouTubeDislike:** Show estimated like count for videos with hidden likes ([a13d605](https://github.com/anddea/revanced-integrations/commit/a13d605fe67801a43703e2d0003568713198f1f9))
+* **YouTube - Change share sheet:** Patch does not work (A/B tests) ([d340a1f](https://github.com/anddea/revanced-integrations/commit/d340a1fe7cc15f247e7950eafe85f84b4812cd9c))
+* **YouTube - Disable force auto captions:** Patch doesn't work with Shorts ([452a76d](https://github.com/anddea/revanced-integrations/commit/452a76da679879503db0a53fcbe9aa41107c50b7))
+* **YouTube - Video playback:** `Disable playback speed for music` setting sometimes applies to non-music videos as well ([8ef9b4a](https://github.com/anddea/revanced-integrations/commit/8ef9b4af0f7c145900a3dff968db4813843581a2))
+* **YouTube Music - SponsorBlock:** SponsorBlock segments at the end of a song cause the player to get stuck ([fd9eea7](https://github.com/anddea/revanced-integrations/commit/fd9eea717ab4fd1e3c4950af3bf6e02b0a2051a0))
+
+
+### Features
+
+* **YouTube - Hide ads:** Add `Hide promotion alert banner` setting ([7eba6b1](https://github.com/anddea/revanced-integrations/commit/7eba6b162cad7d1bfd638f9d979cfad90e3cbc88))
+* **YouTube - Hide player flyout menu:** Restore `Hide Ambient mode menu` setting ([3e3a43c](https://github.com/anddea/revanced-integrations/commit/3e3a43c6e720992892cf4e81cf8cb0680074497d))
+* **YouTube - Player components:** Add `Disable switch mix playlists` setting ([495e337](https://github.com/anddea/revanced-integrations/commit/495e337ad3fae4adcee254056df9ab4cd769043e))
+* **YouTube - Video playback:** Add `Disable playback speed for music` setting ([6f5cb2e](https://github.com/anddea/revanced-integrations/commit/6f5cb2ec8474a4a7f9c19b7d133c41f53b09c0ca))
+* **YouTube Music - Hide ads:** Add `Hide promotion alert banner` setting ([1f35d81](https://github.com/anddea/revanced-integrations/commit/1f35d811be904835b8cf0b928410fe2015f302ed))
+
 # [0.155.0](https://github.com/anddea/revanced-integrations/compare/v0.154.0...v0.155.0) (2024-09-05)
 
 
