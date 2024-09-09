@@ -547,7 +547,9 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
      */
     private void addPreferenceWithDependencies(PreferenceGroup preferenceGroup, Preference preference) {
         String key = preference.getKey();
-        if (key != null && !addedPreferences.contains(key)) {
+
+        // Instead of just using preference keys, we combine the category and key to ensure uniqueness
+        if (key != null && !addedPreferences.contains(preferenceGroup.getTitle() + ":" + key)) {
             // Add dependencies first
             if (preference.getDependency() != null) {
                 String dependencyKey = preference.getDependency();
@@ -557,16 +559,16 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                     addPreferenceWithDependencies(preferenceGroup, dependency);
                 } else {
                     Logger.printDebug(() -> "SearchFragment: Dependency not found for key: " + dependencyKey);
-                    // Skip adding this preference as its dependency is not found
                     return;
                 }
             }
 
+            // Add the preference using a combination of the category and the key
             preferenceGroup.addPreference(preference);
-            addedPreferences.add(key);
+            addedPreferences.add(preferenceGroup.getTitle() + ":" + key); // Track based on both category and key
             Logger.printDebug(() -> "SearchFragment: Added preference with key: " + key);
 
-            // Add dependent preferences
+            // Handle dependent preferences
             if (dependencyMap.containsKey(key)) {
                 Logger.printDebug(() -> "SearchFragment: Adding dependent preferences for key: " + key);
                 for (Preference dependentPreference : Objects.requireNonNull(dependencyMap.get(key))) {
