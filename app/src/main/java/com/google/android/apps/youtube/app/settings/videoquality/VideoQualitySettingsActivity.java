@@ -11,16 +11,15 @@ import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import android.widget.Toolbar;
-
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.util.Objects;
-
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.ResourceUtils;
 import app.revanced.integrations.shared.utils.Utils;
 import app.revanced.integrations.youtube.settings.preference.ReVancedPreferenceFragment;
 import app.revanced.integrations.youtube.utils.ThemeUtils;
+
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.util.Objects;
 
 @SuppressWarnings("deprecation")
 public class VideoQualitySettingsActivity extends Activity {
@@ -185,10 +184,19 @@ public class VideoQualitySettingsActivity extends Activity {
         // Set the listener for query text changes
         searchView.setOnQueryTextListener(onQueryTextListener);
 
-        // Clear focus on SearchView to prevent autofocus when returning to the activity
-        searchView.clearFocus();
-
         // Keep a weak reference to the SearchView
         searchViewRef = new WeakReference<>(searchView);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus || searchViewRef.get() == null) return;
+
+        SearchView searchView = searchViewRef.get();
+
+        if (searchView.getQuery().length() != 0) return;
+
+        searchView.clearFocus();
     }
 }
