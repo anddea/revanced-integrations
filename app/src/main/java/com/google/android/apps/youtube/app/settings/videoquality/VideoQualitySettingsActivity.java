@@ -182,7 +182,13 @@ public class VideoQualitySettingsActivity extends Activity {
 
         // endregion
 
+        // Set the listener for query text changes
         searchView.setOnQueryTextListener(onQueryTextListener);
+
+        // Clear focus on SearchView to prevent autofocus when returning to the activity
+        searchView.clearFocus();
+
+        // Keep a weak reference to the SearchView
         searchViewRef = new WeakReference<>(searchView);
     }
 }
