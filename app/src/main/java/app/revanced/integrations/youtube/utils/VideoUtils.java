@@ -21,6 +21,7 @@ import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.settings.preference.ExternalDownloaderPlaylistPreference;
+import app.revanced.integrations.youtube.settings.preference.ExternalDownloaderVideoLongPressPreference;
 import app.revanced.integrations.youtube.settings.preference.ExternalDownloaderVideoPreference;
 import app.revanced.integrations.youtube.shared.VideoInformation;
 
@@ -56,6 +57,27 @@ public class VideoUtils extends IntentUtils {
         try {
             final String downloaderPackageName = ExternalDownloaderVideoPreference.getExternalDownloaderPackageName();
             if (ExternalDownloaderVideoPreference.checkPackageIsDisabled()) {
+                return;
+            }
+
+            isExternalDownloaderLaunched.compareAndSet(false, true);
+            final String content = String.format("https://youtu.be/%s", videoId);
+            launchExternalDownloader(content, downloaderPackageName);
+        } catch (Exception ex) {
+            Logger.printException(() -> "launchExternalDownloader failure", ex);
+        } finally {
+            runOnMainThreadDelayed(() -> isExternalDownloaderLaunched.compareAndSet(true, false), 500);
+        }
+    }
+
+    public static void launchLongPressVideoExternalDownloader() {
+        launchLongPressVideoExternalDownloader(VideoInformation.getVideoId());
+    }
+
+    public static void launchLongPressVideoExternalDownloader(@NonNull String videoId) {
+        try {
+            final String downloaderPackageName = ExternalDownloaderVideoLongPressPreference.getExternalDownloaderPackageName();
+            if (ExternalDownloaderVideoLongPressPreference.checkPackageIsDisabled()) {
                 return;
             }
 
