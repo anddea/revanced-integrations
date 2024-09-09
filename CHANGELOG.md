@@ -1,3 +1,10 @@
+# [0.156.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.2...v0.156.0-dev.3) (2024-09-09)
+
+
+### Bug Fixes
+
+* **YouTube - Settings:** Actually prevent autofocus on the search bar ([b46fd8a](https://github.com/anddea/revanced-integrations/commit/b46fd8a4fb686e59cae30a43bc6f9005c5d48637))
+
 # [0.156.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.1...v0.156.0-dev.2) (2024-09-09)
 
 
