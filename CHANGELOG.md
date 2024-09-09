@@ -1,3 +1,17 @@
+# [0.156.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.1...v0.156.0-dev.2) (2024-09-09)
+
+
+### Bug Fixes
+
+* **YouTube - Settings:** Preferences with the same key in different categories did not appear in search results ([e23c3e3](https://github.com/anddea/revanced-integrations/commit/e23c3e3878ee9292d248574d5f30e6369e879b6d))
+* **YouTube - Settings:** Prevent autofocus on the search bar ([08c3622](https://github.com/anddea/revanced-integrations/commit/08c36220af370f69b38a52926fed541756ce7fc1))
+
+
+### Features
+
+* **YouTube - Overlay buttons:** Add an option to select a different downloader on long press ([4fba913](https://github.com/anddea/revanced-integrations/commit/4fba913de878d3cf725b2379c9f637f846f649a2))
+* **YouTube Music:** Rename `Enable Cairo splash animation` to `Disable Cairo splash animation` ([db330d2](https://github.com/anddea/revanced-integrations/commit/db330d2bd0cb25ecf09b280f476b96cf034f0a9e))
+
 # [0.156.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.155.0...v0.156.0-dev.1) (2024-09-06)
 
 
