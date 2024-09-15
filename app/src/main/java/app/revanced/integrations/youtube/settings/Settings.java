@@ -112,10 +112,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_KEYWORD_CONTENT_COMMENTS = new BooleanSetting("revanced_hide_keyword_content_comments", FALSE);
     public static final StringSetting HIDE_KEYWORD_CONTENT_PHRASES = new StringSetting("revanced_hide_keyword_content_phrases", "",
             parentsAny(HIDE_KEYWORD_CONTENT_HOME, HIDE_KEYWORD_CONTENT_SEARCH, HIDE_KEYWORD_CONTENT_SUBSCRIPTIONS, HIDE_KEYWORD_CONTENT_COMMENTS));
-    public static final BooleanSetting HIDE_KEYWORD_CONTENT_FULL_WORD = new BooleanSetting("revanced_hide_keyword_content_full_word", FALSE);
 
     public static final BooleanSetting HIDE_RECOMMENDED_VIDEO = new BooleanSetting("revanced_hide_recommended_video", FALSE);
-    public static final BooleanSetting HIDE_LOW_VIEWS_VIDEO = new BooleanSetting("revanced_hide_low_views_video", FALSE);
+    public static final BooleanSetting HIDE_LOW_VIEWS_VIDEO = new BooleanSetting("revanced_hide_low_views_video", TRUE);
 
     public static final BooleanSetting HIDE_VIDEO_BY_DURATION = new BooleanSetting("revanced_hide_video_by_duration", FALSE);
     public static final StringSetting HIDE_VIDEO_BY_DURATION_SHORTER_THAN = new StringSetting("revanced_hide_video_by_duration_shorter_than", "0:10", parent(HIDE_VIDEO_BY_DURATION));
@@ -143,7 +142,6 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting OVERRIDE_VIDEO_DOWNLOAD_BUTTON = new BooleanSetting("revanced_override_video_download_button", FALSE);
     public static final BooleanSetting OVERRIDE_PLAYLIST_DOWNLOAD_BUTTON = new BooleanSetting("revanced_override_playlist_download_button", FALSE);
     public static final StringSetting EXTERNAL_DOWNLOADER_PACKAGE_NAME_VIDEO = new StringSetting("revanced_external_downloader_package_name_video", "com.deniscerri.ytdl");
-    public static final StringSetting EXTERNAL_DOWNLOADER_PACKAGE_NAME_VIDEO_LONG_PRESS = new StringSetting("revanced_external_downloader_package_name_video_long_press", "com.junkfood.seal");
     public static final StringSetting EXTERNAL_DOWNLOADER_PACKAGE_NAME_PLAYLIST = new StringSetting("revanced_external_downloader_package_name_playlist", "com.deniscerri.ytdl");
     public static final BooleanSetting SPOOF_APP_VERSION = new BooleanSetting("revanced_spoof_app_version", FALSE, true, "revanced_spoof_app_version_user_dialog_message");
     public static final StringSetting SPOOF_APP_VERSION_TARGET = new StringSetting("revanced_spoof_app_version_target", "18.17.43", true, parent(SPOOF_APP_VERSION));
@@ -395,7 +393,6 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_SHORTS_LIKE_BUTTON = new BooleanSetting("revanced_hide_shorts_like_button", FALSE);
     public static final BooleanSetting HIDE_SHORTS_DISLIKE_BUTTON = new BooleanSetting("revanced_hide_shorts_dislike_button", FALSE);
     public static final BooleanSetting HIDE_SHORTS_COMMENTS_BUTTON = new BooleanSetting("revanced_hide_shorts_comments_button", FALSE);
-    public static final BooleanSetting HIDE_SHORTS_COMMENTS_DISABLED_BUTTON = new BooleanSetting("revanced_hide_shorts_comments_disabled_button", TRUE);
     public static final BooleanSetting HIDE_SHORTS_REMIX_BUTTON = new BooleanSetting("revanced_hide_shorts_remix_button", TRUE);
     public static final BooleanSetting HIDE_SHORTS_SHARE_BUTTON = new BooleanSetting("revanced_hide_shorts_share_button", FALSE);
     public static final BooleanSetting HIDE_SHORTS_SOUND_BUTTON = new BooleanSetting("revanced_hide_shorts_sound_button", TRUE);
@@ -452,7 +449,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting REMEMBER_VIDEO_QUALITY_LAST_SELECTED_TOAST = new BooleanSetting("revanced_remember_video_quality_last_selected_toast", TRUE, parent(REMEMBER_VIDEO_QUALITY_LAST_SELECTED));
     public static final BooleanSetting RESTORE_OLD_VIDEO_QUALITY_MENU = new BooleanSetting("revanced_restore_old_video_quality_menu", TRUE, true);
     // Experimental Flags
-    public static final BooleanSetting DISABLE_DEFAULT_PLAYBACK_SPEED_MUSIC = new BooleanSetting("revanced_disable_default_playback_speed_music", TRUE, true);
+    public static final BooleanSetting DISABLE_DEFAULT_PLAYBACK_SPEED_MUSIC = new BooleanSetting("revanced_disable_default_playback_speed_music", FALSE, true);
     public static final BooleanSetting ENABLE_DEFAULT_PLAYBACK_SPEED_SHORTS = new BooleanSetting("revanced_enable_default_playback_speed_shorts", FALSE);
     public static final BooleanSetting SKIP_PRELOADED_BUFFER = new BooleanSetting("revanced_skip_preloaded_buffer", FALSE, true, "revanced_skip_preloaded_buffer_user_dialog_message");
     public static final BooleanSetting SKIP_PRELOADED_BUFFER_TOAST = new BooleanSetting("revanced_skip_preloaded_buffer_toast", TRUE);
@@ -465,14 +462,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting ENABLE_EXTERNAL_BROWSER = new BooleanSetting("revanced_enable_external_browser", TRUE, true);
     public static final BooleanSetting ENABLE_OPEN_LINKS_DIRECTLY = new BooleanSetting("revanced_enable_open_links_directly", TRUE);
     public static final BooleanSetting DISABLE_QUIC_PROTOCOL = new BooleanSetting("revanced_disable_quic_protocol", FALSE, true);
-    public static final BooleanSetting SPOOF_STREAMING_DATA = new BooleanSetting("revanced_spoof_streaming_data", FALSE, true, "revanced_spoof_streaming_data_user_dialog_message");
-    public static final BooleanSetting SPOOF_STREAMING_DATA_IOS_FORCE_AVC = new BooleanSetting("revanced_spoof_streaming_data_ios_force_avc", FALSE, true,
-            "revanced_spoof_streaming_data_ios_force_avc_user_dialog_message", new SpoofStreamingDataPatch.ForceiOSAVCAvailability());
-    public static final EnumSetting<ClientType> SPOOF_STREAMING_DATA_TYPE = new EnumSetting<>("revanced_spoof_streaming_data_type", ClientType.ANDROID_VR, true, parent(SPOOF_STREAMING_DATA));
-    public static final BooleanSetting SPOOF_STREAMING_DATA_STATS_FOR_NERDS = new BooleanSetting("revanced_spoof_streaming_data_stats_for_nerds", TRUE, parent(SPOOF_STREAMING_DATA));
 
-    public static final EnumSetting<WatchHistoryType> WATCH_HISTORY_TYPE = new EnumSetting<>("revanced_watch_history_type", WatchHistoryType.REPLACE);
-
+    // Experimental Flags
     public static final BooleanSetting CHANGE_SHARE_SHEET = new BooleanSetting("revanced_change_share_sheet", FALSE, true);
     public static final BooleanSetting ENABLE_OPUS_CODEC = new BooleanSetting("revanced_enable_opus_codec", FALSE, true);
 
@@ -482,6 +473,15 @@ public class Settings extends BaseSettings {
     @Deprecated
     public static final LongSetting DOUBLE_BACK_TO_CLOSE_TIMEOUT = new LongSetting("revanced_double_back_to_close_timeout", 2000L);
 
+    // PreferenceScreen: Miscellaneous - Watch history
+    public static final EnumSetting<WatchHistoryType> WATCH_HISTORY_TYPE = new EnumSetting<>("revanced_watch_history_type", WatchHistoryType.REPLACE);
+
+    // PreferenceScreen: Miscellaneous - Spoof streaming data
+    public static final BooleanSetting SPOOF_STREAMING_DATA = new BooleanSetting("revanced_spoof_streaming_data", TRUE, true, "revanced_spoof_streaming_data_user_dialog_message");
+    public static final BooleanSetting SPOOF_STREAMING_DATA_IOS_FORCE_AVC = new BooleanSetting("revanced_spoof_streaming_data_ios_force_avc", FALSE, true,
+            "revanced_spoof_streaming_data_ios_force_avc_user_dialog_message", new SpoofStreamingDataPatch.ForceiOSAVCAvailability());
+    public static final EnumSetting<ClientType> SPOOF_STREAMING_DATA_TYPE = new EnumSetting<>("revanced_spoof_streaming_data_type", ClientType.ANDROID_VR, true, parent(SPOOF_STREAMING_DATA));
+    public static final BooleanSetting SPOOF_STREAMING_DATA_STATS_FOR_NERDS = new BooleanSetting("revanced_spoof_streaming_data_stats_for_nerds", TRUE, parent(SPOOF_STREAMING_DATA));
 
     // PreferenceScreen: Return YouTube Dislike
     public static final BooleanSetting RYD_ENABLED = new BooleanSetting("ryd_enabled", TRUE);
