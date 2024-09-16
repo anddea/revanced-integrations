@@ -15,7 +15,7 @@ public final class LithoFilterPatch {
     /**
      * Simple wrapper to pass the litho parameters through the prefix search.
      */
-    private static final class LithoFilterParameters {
+    public static final class LithoFilterParameters {
         @Nullable
         final String identifier;
         final String path;
@@ -49,7 +49,7 @@ public final class LithoFilterPatch {
         /**
          * Search through a byte array for all ASCII strings.
          */
-        private static void findAsciiStrings(StringBuilder builder, byte[] buffer) {
+        public static void findAsciiStrings(StringBuilder builder, byte[] buffer) {
             // Valid ASCII values (ignore control characters).
             final int minimumAscii = 32;  // 32 = space character
             final int maximumAscii = 126; // 127 = delete character

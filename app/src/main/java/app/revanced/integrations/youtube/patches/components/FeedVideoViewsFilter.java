@@ -3,15 +3,20 @@ package app.revanced.integrations.youtube.patches.components;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import app.revanced.integrations.shared.patches.components.Filter;
 import app.revanced.integrations.shared.patches.components.StringFilterGroup;
+import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.NavigationBar;
 import app.revanced.integrations.youtube.shared.RootView;
+
+import static app.revanced.integrations.shared.patches.components.LithoFilterPatch.LithoFilterParameters.findAsciiStrings;
 
 @SuppressWarnings("all")
 public final class FeedVideoViewsFilter extends Filter {
@@ -25,6 +30,8 @@ public final class FeedVideoViewsFilter extends Filter {
     public FeedVideoViewsFilter() {
         addPathCallbacks(feedVideoFilter);
     }
+
+    private final Set<String> savedTitles = new HashSet<>();
 
     private boolean hideFeedVideoViewsSettingIsActive() {
         final boolean hideHome = Settings.HIDE_VIDEO_BY_VIEW_COUNTS_HOME.get();
@@ -66,6 +73,20 @@ public final class FeedVideoViewsFilter extends Filter {
         if (hideFeedVideoViewsSettingIsActive() &&
                 filterByViews(protobufBufferArray)) {
             return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+        }
+
+        String buf = protoBufferToString(protobufBufferArray);
+
+        if (Settings.HIDE_VIDEO_BY_DURATION.get()) {
+            filterByDurationAndSaveTitle(buf);
+            if (!savedTitles.isEmpty()) {
+                for (String savedTitle : savedTitles) {
+                    if (filterByTitle(savedTitle, buf)) {
+                        Logger.printDebug(() -> "Filtered by saved title: " + savedTitle);
+                        return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+                    }
+                }
+            }
         }
 
         return false;
@@ -177,5 +198,86 @@ public final class FeedVideoViewsFilter extends Filter {
         }
 
         return 1L; // Default value if not found
+    }
+
+    /**
+     * Hide videos based on duration
+     */
+    private String filterByDurationAndSaveTitle(String protobufString) {
+        Pattern pattern = getDurationAndTitlePattern();
+
+        String shorterThanStr = Settings.HIDE_VIDEO_BY_DURATION_SHORTER_THAN.get();
+        String longerThanStr = Settings.HIDE_VIDEO_BY_DURATION_LONGER_THAN.get();
+
+        long shorterThan = parseDuration(shorterThanStr);
+        long longerThan = parseDuration(longerThanStr);
+
+        Matcher matcher = pattern.matcher(protobufString);
+
+        // Check if pattern matches
+        if (matcher.find()) {
+            Logger.printDebug(() -> "DURATIONtest: " + matcher.group(2) + ":" + matcher.group(3) + " - " + matcher.group(4));
+
+            // Group 1 to 3 are the duration components (hours?, minutes, seconds)
+            String durationString = matcher.group(1) != null ? matcher.group(1) + ":" + matcher.group(2) + ":" + matcher.group(3)
+                    : matcher.group(2) + ":" + matcher.group(3);
+            long durationInSeconds = convertToSeconds(durationString);
+
+            // Check the duration conditions
+            if (checkDuration(durationInSeconds, shorterThan, longerThan)) {
+                // Group 4 contains the title
+                String title = matcher.group(4);
+                savedTitles.add(title);
+                return title;  // Return the title if the duration matches
+            }
+        }
+
+        return null;
+    }
+
+    private boolean filterByTitle(String title, String protobufString) {
+        Pattern titlePattern = Pattern.compile(Pattern.quote(title));
+        Matcher titleMatcher = titlePattern.matcher(protobufString);
+        return titleMatcher.find();
+    }
+
+    private Pattern getDurationAndTitlePattern() {
+        // Extract both duration and title: hours? : minutes : seconds ... title
+        return Pattern.compile("(?:(\\d+):)?(\\d+):(\\d+).+decoder❙([^❙]+)");
+    }
+
+    private long parseDuration(String durationString) {
+        if (durationString.contains(":")) {
+            return convertToSeconds(durationString);
+        } else {
+            return Long.parseLong(durationString);
+        }
+    }
+
+    private long convertToSeconds(String durationString) {
+        String[] parts = durationString.split(":");
+        int length = parts.length;
+        long seconds = 0;
+        for (int i = length - 1; i >= 0; i--) {
+            long value = Long.parseLong(parts[i]);
+            seconds += (long) (value * Math.pow(60, length - 1 - i));
+        }
+        return seconds;
+    }
+
+    private boolean checkDuration(long durationInSeconds, long shorterThan, long longerThan) {
+        if (shorterThan < 0 || longerThan < 0)
+            throw new IllegalArgumentException("Duration cannot be negative.");
+
+        return durationInSeconds < shorterThan || durationInSeconds > longerThan;
+    }
+
+    public String protoBufferToString(byte[] protoBuffer) {
+        // Estimate the percentage of the buffer that are Strings.
+        StringBuilder builder = new StringBuilder(Math.max(100, protoBuffer.length / 2));
+        builder.append("\nBufferStrings: ");
+        findAsciiStrings(builder, protoBuffer);
+
+        return builder.toString();
     }
 }

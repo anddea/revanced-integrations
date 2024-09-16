@@ -127,6 +127,10 @@ public class Settings extends BaseSettings {
     public static final StringSetting HIDE_VIDEO_VIEW_COUNTS_MULTIPLIER = new StringSetting("revanced_hide_video_view_counts_multiplier", str("revanced_hide_video_view_counts_multiplier_default_value"), true,
             parentsAny(HIDE_VIDEO_BY_VIEW_COUNTS_HOME, HIDE_VIDEO_BY_VIEW_COUNTS_SEARCH, HIDE_VIDEO_BY_VIEW_COUNTS_SUBSCRIPTIONS));
 
+    public static final BooleanSetting HIDE_VIDEO_BY_DURATION = new BooleanSetting("revanced_hide_video_by_duration", FALSE);
+    public static final StringSetting HIDE_VIDEO_BY_DURATION_SHORTER_THAN = new StringSetting("revanced_hide_video_by_duration_shorter_than", "0:10", parent(HIDE_VIDEO_BY_DURATION));
+    public static final StringSetting HIDE_VIDEO_BY_DURATION_LONGER_THAN = new StringSetting("revanced_hide_video_by_duration_longer_than", "10:10:10:10", parent(HIDE_VIDEO_BY_DURATION));
+
 
     // PreferenceScreen: General
     public static final StringSetting CHANGE_START_PAGE = new StringSetting("revanced_change_start_page", "", true);
