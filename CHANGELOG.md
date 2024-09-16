@@ -1,3 +1,29 @@
+# [0.156.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.3...v0.156.0-dev.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hide ads:** Ads are not hidden from feed (A/B tests) ([77daa8a](https://github.com/anddea/revanced-integrations/commit/77daa8ae161851b329012453227244211eeef102))
+* **YouTube - Hide feed components:** `Hide expandable chip under videos` setting does not work ([dc5b34a](https://github.com/anddea/revanced-integrations/commit/dc5b34a81c5590dcaa97ce56e5fbdc79a4d91a2f))
+* **YouTube - Navigation bar components:** Library button is not hidden when `Cairo navigation bar` is applied (A/B tests) ([2017cb3](https://github.com/anddea/revanced-integrations/commit/2017cb3e2badc4d3ac17db0e1ed89e64f08af2e3))
+* **YouTube - Return YouTube Dislike:** Show correct value when swiping back to prior Short and disliking ([6de47b6](https://github.com/anddea/revanced-integrations/commit/6de47b62b54132babb3677845d28511a8a14dbe3))
+* **YouTube - Settings:** `Swap Create and Notifications button` description cuts off ([921032d](https://github.com/anddea/revanced-integrations/commit/921032d159baae24968e09bc83ef08b9185bb86b))
+* **YouTube - Settings:** Some settings are disabled on tablets or tablet layouts ([b7876cb](https://github.com/anddea/revanced-integrations/commit/b7876cbaf2508b8361b1ffde8f6b298eb0691fc5))
+* **YouTube - SponsorBlock:** Add summary text to 'view my segments' button ([b92b86e](https://github.com/anddea/revanced-integrations/commit/b92b86eab3d4e71ad0e4edf2e350a94abf69e89b))
+* **YouTube Music - Disable auto captions:** Captions cannot be changed when `Disable forced auto captions` is turned on ([1cce551](https://github.com/anddea/revanced-integrations/commit/1cce551df188589e1c65ad4f319282e1594e88c0))
+* **YouTube Music - Player components:** Crash at first launch on old clients ([a50bf3f](https://github.com/anddea/revanced-integrations/commit/a50bf3ff1d6377ae5626a7a0ccc54dcb5e852aad))
+* **YouTube Music - SponsorBlock:** SponsorBlock skips entire song when in background ([c126157](https://github.com/anddea/revanced-integrations/commit/c126157a1e2a612d0aba5c2200dbce01c8d1721a))
+
+
+### Features
+
+* **Hide ads:** Remove `Close fullscreen ads` setting ([1ea28f4](https://github.com/anddea/revanced-integrations/commit/1ea28f4df1db9fb9723b0f909b5693d560aa4d4d))
+* **YouTube - Hide feed components:** Add `Hide expandable shelves` setting ([4fef61a](https://github.com/anddea/revanced-integrations/commit/4fef61a1de83977eac9b89e1ceaf25e4ddc8a2cc))
+* **YouTube - Hide feed components:** Remove `Duration filter` setting as it no longer works due to server side changes ([3f0f0da](https://github.com/anddea/revanced-integrations/commit/3f0f0dae38419ccb7aef5eaa1332bf2da8e4939b))
+* **YouTube - Hide feed components:** Selectively hide video by views for Home / Subscription / Search ([13f8a55](https://github.com/anddea/revanced-integrations/commit/13f8a55f42c5844701059c87fda675ef376ec6d1))
+* **YouTube - Video playback:** Add `Disable VP9 codec` setting ([cb38e7b](https://github.com/anddea/revanced-integrations/commit/cb38e7b1b379c969ebad2e0452e07b7de4305b6f))
+* **YouTube Music:** Add support version `6.20.51` ([3db1dc4](https://github.com/anddea/revanced-integrations/commit/3db1dc49efa4ee6c43ab48216689f80d2fa8a02a))
+
 # [0.156.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.2...v0.156.0-dev.3) (2024-09-09)
 
 
