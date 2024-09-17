@@ -1,3 +1,10 @@
+# [0.156.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.4...v0.156.0-dev.5) (2024-09-17)
+
+
+### Features
+
+* **YouTube - SponsorBlock:** Make new segment window draggable ([335d929](https://github.com/anddea/revanced-integrations/commit/335d929f8b1f7b39f256b7f4c25a0c98bf5a1a94))
+
 # [0.156.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.3...v0.156.0-dev.4) (2024-09-16)
 
 
