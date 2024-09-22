@@ -42,49 +42,43 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
+import app.revanced.integrations.shared.settings.StringSetting;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.ResourceUtils;
 import app.revanced.integrations.shared.utils.Utils;
 import app.revanced.integrations.youtube.settings.Settings;
-import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.utils.ThemeUtils;
 
-/**
- * @noinspection ALL
- */
 @SuppressWarnings("unused")
 public class GeneralPatch {
 
     // region [Change start page] patch
 
+    private static final String CHANGE_START_PAGE;
+    private static final boolean CHANGE_START_PAGE_TO_SHORTCUTS;
+    private static final boolean CHANGE_START_PAGE_TO_URL;
     private static final String MAIN_ACTIONS = "android.intent.action.MAIN";
 
-    /**
-     * Change the start page only when the user starts the app on the launcher.
-     * <p>
-     * If the app starts with a widget or the app starts through a shortcut,
-     * Action of intent is not {@link #MAIN_ACTIONS}.
-     *
-     * @param intent original intent
-     */
-    public static void changeStartPage(@NonNull Intent intent) {
-        if (!Objects.equals(intent.getAction(), MAIN_ACTIONS))
-            return;
-
-        final String startPage = Settings.CHANGE_START_PAGE.get();
-        if (startPage.isEmpty())
-            return;
-
-        if (startPage.startsWith("open.")) {
-            intent.setAction("com.google.android.youtube.action." + startPage);
-        } else if (startPage.startsWith("www.youtube.com")) {
-            intent.setData(Uri.parse(startPage));
-        } else {
-            Utils.showToastShort(str("revanced_change_start_page_invalid_toast"));
-            Settings.CHANGE_START_PAGE.resetToDefault();
+    public static void changeStartPageToShortcuts(@NonNull Intent intent) {
+        if (!Objects.equals(intent.getAction(), MAIN_ACTIONS)) {
             return;
         }
-        Logger.printDebug(() -> "Changing start page to " + startPage);
+        if (!CHANGE_START_PAGE_TO_SHORTCUTS) {
+            return;
+        }
+        intent.setAction("com.google.android.youtube.action." + CHANGE_START_PAGE);
+        Logger.printDebug(() -> "Changing start page to Shortcuts - " + CHANGE_START_PAGE);
+    }
+
+    public static void changeStartPageToUrl(@NonNull Intent intent) {
+        if (!Objects.equals(intent.getAction(), MAIN_ACTIONS)) {
+            return;
+        }
+        if (!CHANGE_START_PAGE_TO_URL) {
+            return;
+        }
+        intent.setData(Uri.parse(CHANGE_START_PAGE));
+        Logger.printDebug(() -> "Changing start page to Url - " + CHANGE_START_PAGE);
     }
 
     // endregion
@@ -95,7 +89,7 @@ public class GeneralPatch {
     private static ArrayList<Object> formatStreamModelArray;
 
     /**
-     * Find the stream format containing the parameter {@link DEFAULT_AUDIO_TRACKS_IDENTIFIER}, and save to the array.
+     * Find the stream format containing the parameter {@link GeneralPatch#DEFAULT_AUDIO_TRACKS_IDENTIFIER}, and save to the array.
      *
      * @param formatStreamModel stream format model including audio tracks.
      */
@@ -145,22 +139,6 @@ public class GeneralPatch {
 
     // endregion
 
-    // region [Disable auto captions] patch
-
-    private static boolean captionsButtonStatus;
-
-    public static boolean disableAutoCaptions() {
-        return Settings.DISABLE_AUTO_CAPTIONS.get() &&
-                !captionsButtonStatus &&
-                !PlayerType.getCurrent().isNoneHiddenOrSlidingMinimized();
-    }
-
-    public static void setCaptionsButtonStatus(boolean status) {
-        captionsButtonStatus = status;
-    }
-
-    // endregion
-
     // region [Disable splash animation] patch
 
     public static boolean disableSplashAnimation(boolean original) {
@@ -192,6 +170,22 @@ public class GeneralPatch {
         accountMenuBlockList = Arrays.stream(accountMenuBlockList)
                 .filter(item -> !Objects.equals(item, str("settings")))
                 .toArray(String[]::new);
+
+
+        final StringSetting changeStartPage = Settings.CHANGE_START_PAGE;
+        String startPage = changeStartPage.get();
+        CHANGE_START_PAGE_TO_SHORTCUTS = startPage.startsWith("open.");
+        CHANGE_START_PAGE_TO_URL = startPage.startsWith("www.youtube.com");
+
+        if (!startPage.isEmpty() &&
+                !CHANGE_START_PAGE_TO_SHORTCUTS &&
+                !CHANGE_START_PAGE_TO_URL) {
+            Utils.showToastShort(str("revanced_change_start_page_invalid_toast"));
+            Settings.CHANGE_START_PAGE.resetToDefault();
+            startPage = changeStartPage.defaultValue;
+        }
+
+        CHANGE_START_PAGE = startPage;
     }
 
     /**
@@ -256,21 +250,11 @@ public class GeneralPatch {
     private static final Map<NavigationButton, Boolean> shouldHideMap = new EnumMap<>(NavigationButton.class) {
         {
             put(NavigationButton.HOME, Settings.HIDE_NAVIGATION_HOME_BUTTON.get());
-            put(NavigationButton.HOME_CAIRO, Settings.HIDE_NAVIGATION_HOME_BUTTON.get());
             put(NavigationButton.SHORTS, Settings.HIDE_NAVIGATION_SHORTS_BUTTON.get());
-            put(NavigationButton.SHORTS_CAIRO, Settings.HIDE_NAVIGATION_SHORTS_BUTTON.get());
             put(NavigationButton.SUBSCRIPTIONS, Settings.HIDE_NAVIGATION_SUBSCRIPTIONS_BUTTON.get());
-            put(NavigationButton.SUBSCRIPTIONS_CAIRO, Settings.HIDE_NAVIGATION_SUBSCRIPTIONS_BUTTON.get());
             put(NavigationButton.CREATE, Settings.HIDE_NAVIGATION_CREATE_BUTTON.get());
-            put(NavigationButton.CREATE_CAIRO, Settings.HIDE_NAVIGATION_CREATE_BUTTON.get());
             put(NavigationButton.NOTIFICATIONS, Settings.HIDE_NAVIGATION_NOTIFICATIONS_BUTTON.get());
-            put(NavigationButton.NOTIFICATIONS_CAIRO, Settings.HIDE_NAVIGATION_NOTIFICATIONS_BUTTON.get());
-
-            put(NavigationButton.LIBRARY_LOGGED_OUT, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
-            put(NavigationButton.LIBRARY_INCOGNITO, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
-            put(NavigationButton.LIBRARY_OLD_UI, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
-            put(NavigationButton.LIBRARY_PIVOT_UNKNOWN, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
-            put(NavigationButton.LIBRARY_YOU, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
+            put(NavigationButton.LIBRARY, Settings.HIDE_NAVIGATION_LIBRARY_BUTTON.get());
         }
     };
 
@@ -327,7 +311,7 @@ public class GeneralPatch {
      * <p>
      * The {@link AlertDialog#getButton(int)} method must be used after {@link AlertDialog#show()} is called.
      * Otherwise {@link AlertDialog#getButton(int)} method will always return null.
-     * https://stackoverflow.com/a/4604145
+     * <a href="https://stackoverflow.com/a/4604145"/>
      * <p>
      * That's why {@link AlertDialog#show()} is absolutely necessary.
      * Instead, use two tricks to hide Alertdialog.
@@ -581,17 +565,19 @@ public class GeneralPatch {
         if (!isCreateButton(enumString))
             return;
         ImageView imageView = getChildView((ViewGroup) toolbarView, view -> view instanceof ImageView);
+        if (imageView == null)
+            return;
 
         // Overriding is possible only after OnClickListener is assigned to the create button.
         Utils.runOnMainThreadDelayed(() -> {
             if (Settings.REPLACE_TOOLBAR_CREATE_BUTTON_TYPE.get()) {
-                imageView.setOnClickListener(button -> openRVXSettings(button));
+                imageView.setOnClickListener(GeneralPatch::openRVXSettings);
                 imageView.setOnLongClickListener(button -> {
                     openYouTubeSettings(button);
                     return true;
                 });
             } else {
-                imageView.setOnClickListener(button -> openYouTubeSettings(button));
+                imageView.setOnClickListener(GeneralPatch::openYouTubeSettings);
                 imageView.setOnLongClickListener(button -> {
                     openRVXSettings(button);
                     return true;
@@ -631,7 +617,7 @@ public class GeneralPatch {
             return;
 
         base.setTheme(ThemeUtils.getThemeId());
-        Utils.runOnMainThreadDelayed(() -> base.finish(), 0);
+        Utils.runOnMainThreadDelayed(base::finish, 0);
     }
 
 

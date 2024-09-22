@@ -55,12 +55,22 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
     private final ByteArrayFilterGroupList videoIdFilterGroup = new ByteArrayFilterGroupList();
 
     public ReturnYouTubeDislikeFilterPatch() {
-        addPathCallbacks(new StringFilterGroup(Settings.RYD_SHORTS, "|shorts_dislike_button.eml|"));
-        // After the dislikes icon name is some binary data and then the video id for that specific short.
+        // When a new Short is opened, the like buttons always seem to load before the dislike.
+        // But if swiping back to a previous video and liking/disliking, then only that single button reloads.
+        // So must check for both buttons.
+        addPathCallbacks(
+                new StringFilterGroup(null, "|shorts_like_button.eml"),
+                new StringFilterGroup(null, "|shorts_dislike_button.eml")
+        );
+
+        // After the likes icon name is some binary data and then the video id for that specific short.
         videoIdFilterGroup.addAll(
-                // Video was previously disliked before video was opened.
+                // on_shadowed  = Video was previously like/disliked before opening.
+                // off_shadowed = Video was not previously liked/disliked before opening.
+                new ByteArrayFilterGroup(null, "ic_right_like_on_shadowed"),
+                new ByteArrayFilterGroup(null, "ic_right_like_off_shadowed"),
+
                 new ByteArrayFilterGroup(null, "ic_right_dislike_on_shadowed"),
-                // Video was not already disliked.
                 new ByteArrayFilterGroup(null, "ic_right_dislike_off_shadowed")
         );
     }
@@ -92,7 +102,7 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
      */
     public static void newPlayerResponseVideoId(String videoId, boolean isShortAndOpeningOrPlaying) {
         try {
-            if (!isShortAndOpeningOrPlaying || !Settings.RYD_SHORTS.get()) {
+            if (!isShortAndOpeningOrPlaying || !Settings.RYD_ENABLED.get() || !Settings.RYD_SHORTS.get()) {
                 return;
             }
             synchronized (lastVideoIds) {
@@ -122,12 +132,17 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
                 return true;
             }
         }
+
         return false;
     }
 
     @Override
     public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                               StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
+        if (!Settings.RYD_ENABLED.get() || !Settings.RYD_SHORTS.get()) {
+            return false;
+        }
+
         FilterGroup.FilterGroupResult result = videoIdFilterGroup.check(protobufBufferArray);
         if (result.isFiltered()) {
             String matchedVideoId = findVideoId(protobufBufferArray);
@@ -149,6 +164,7 @@ public final class ReturnYouTubeDislikeFilterPatch extends Filter {
                     return videoId;
                 }
             }
+
             return null;
         }
     }

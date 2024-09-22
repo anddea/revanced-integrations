@@ -2,6 +2,7 @@ package app.revanced.integrations.shared.patches;
 
 import static app.revanced.integrations.shared.settings.BaseSettings.GMS_SHOW_DIALOG;
 import static app.revanced.integrations.shared.utils.StringRef.str;
+import static app.revanced.integrations.shared.utils.Utils.isSDKAbove;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +17,8 @@ import android.net.Uri;
 import android.os.PowerManager;
 import android.provider.Settings;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,16 +26,20 @@ import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.Utils;
 
-/**
- * @noinspection unused
- */
+@SuppressWarnings({"unused", "deprecation"})
 public class GmsCoreSupport {
+    private static final String PACKAGE_NAME_YOUTUBE = "com.google.android.youtube";
+    private static final String PACKAGE_NAME_YOUTUBE_MUSIC = "com.google.android.apps.youtube.music";
+
     private static final String GMS_CORE_PACKAGE_NAME
             = getGmsCoreVendorGroupId() + ".android.gms";
     private static final Uri GMS_CORE_PROVIDER
             = Uri.parse("content://" + getGmsCoreVendorGroupId() + ".android.gsf.gservices/prefix");
     private static final String DONT_KILL_MY_APP_LINK
             = "https://dontkillmyapp.com";
+
+    private static final String META_SPOOF_PACKAGE_NAME =
+            GMS_CORE_PACKAGE_NAME + ".SPOOFED_PACKAGE_NAME";
 
     private static void open(Activity mActivity, String queryOrLink) {
         Intent intent;
@@ -54,8 +61,8 @@ public class GmsCoreSupport {
 
     private static void showBatteryOptimizationDialog(Activity context,
                                                       String dialogMessageRef,
-                                                      BooleanSetting setting,
                                                       String positiveButtonStringRef,
+                                                      BooleanSetting setting,
                                                       DialogInterface.OnClickListener onPositiveClickListener,
                                                       boolean showNegativeButton) {
         // Use a delay to allow the activity to finish initializing.
@@ -82,6 +89,21 @@ public class GmsCoreSupport {
      */
     public static void checkGmsCore(Activity mActivity) {
         try {
+            // Verify the user has not included GmsCore for a root installation.
+            // GmsCore Support changes the package name, but with a mounted installation
+            // all manifest changes are ignored and the original package name is used.
+            if (StringUtils.equalsAny(mActivity.getPackageName(), PACKAGE_NAME_YOUTUBE, PACKAGE_NAME_YOUTUBE_MUSIC)) {
+                Logger.printInfo(() -> "App is mounted with root, but GmsCore patch was included");
+                // Cannot use localize text here, since the app will load
+                // resources from the unpatched app and all patch strings are missing.
+                Utils.showToastLong("The 'GmsCore support' patch breaks mount installations");
+
+                // Do not exit. If the app exits before launch completes (and without
+                // opening another activity), then on some devices such as Pixel phone Android 10
+                // no toast will be shown and the app will continually be relaunched
+                // with the appearance of a hung app.
+            }
+
             // Verify GmsCore is installed.
             try {
                 PackageManager manager = mActivity.getPackageManager();
@@ -95,20 +117,16 @@ public class GmsCoreSupport {
                 return;
             }
 
-            // Check if GmsCore is running in the background.
-            // Do this check before the battery optimization check.
-            try (ContentProviderClient client = mActivity.getContentResolver().acquireContentProviderClient(GMS_CORE_PROVIDER)) {
-                if (client == null) {
-                    Logger.printInfo(() -> "GmsCore is not running in the background");
+            if (contentProviderClientUnAvailable(mActivity)) {
+                Logger.printInfo(() -> "GmsCore is not running in the background");
 
-                    showBatteryOptimizationDialog(mActivity,
-                            "gms_core_dialog_not_whitelisted_not_allowed_in_background_message",
-                            null,
-                            "gms_core_dialog_open_website_text",
-                            (dialog, id) -> open(mActivity, DONT_KILL_MY_APP_LINK),
-                            false);  // Do not show the negative button
-                    return;
-                }
+                showBatteryOptimizationDialog(mActivity,
+                        "gms_core_dialog_not_whitelisted_not_allowed_in_background_message",
+                        "gms_core_dialog_open_website_text",
+                        null,
+                        (dialog, id) -> open(mActivity, DONT_KILL_MY_APP_LINK),
+                        false);  // Do not show the negative button
+                return;
             }
 
             // Check if GmsCore is whitelisted from battery optimizations.
@@ -117,8 +135,8 @@ public class GmsCoreSupport {
                 if (GMS_SHOW_DIALOG.get()) {
                     showBatteryOptimizationDialog(mActivity,
                             "gms_core_dialog_not_whitelisted_using_battery_optimizations_message",
-                            GMS_SHOW_DIALOG,
                             "gms_core_dialog_continue_text",
+                            GMS_SHOW_DIALOG,
                             (dialog, id) -> openGmsCoreDisableBatteryOptimizationsIntent(mActivity),
                             true);  // Show the negative button
                 }
@@ -128,8 +146,33 @@ public class GmsCoreSupport {
         }
     }
 
+    /**
+     * @return If GmsCore is not running in the background.
+     */
+    @SuppressWarnings("deprecation")
+    private static boolean contentProviderClientUnAvailable(Context context) {
+        // Check if GmsCore is running in the background.
+        // Do this check before the battery optimization check.
+        if (isSDKAbove(24)) {
+            try (ContentProviderClient client = context.getContentResolver().acquireContentProviderClient(GMS_CORE_PROVIDER)) {
+                return client == null;
+            }
+        } else {
+            ContentProviderClient client = null;
+            try {
+                //noinspection resource
+                client = context.getContentResolver()
+                        .acquireContentProviderClient(GMS_CORE_PROVIDER);
+                return client == null;
+            } finally {
+                if (client != null) client.release();
+            }
+        }
+    }
+
     @SuppressLint("BatteryLife") // Permission is part of GmsCore
     private static void openGmsCoreDisableBatteryOptimizationsIntent(Activity mActivity) {
+        if (!isSDKAbove(23)) return;
         Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
         intent.setData(Uri.fromParts("package", GMS_CORE_PACKAGE_NAME, null));
         mActivity.startActivityForResult(intent, 0);
@@ -138,11 +181,57 @@ public class GmsCoreSupport {
     /**
      * @return If GmsCore is not whitelisted from battery optimizations.
      */
-    private static boolean batteryOptimizationsEnabled(Activity mActivity) {
-        if (mActivity.getSystemService(Context.POWER_SERVICE) instanceof PowerManager powerManager) {
+    private static boolean batteryOptimizationsEnabled(Context context) {
+        if (isSDKAbove(23) && context.getSystemService(Context.POWER_SERVICE) instanceof PowerManager powerManager) {
             return !powerManager.isIgnoringBatteryOptimizations(GMS_CORE_PACKAGE_NAME);
         }
         return false;
+    }
+
+    /**
+     * Injection point.
+     */
+    public static String spoofPackageName(Context context) {
+        // Package name of ReVanced.
+        final String packageName = context.getPackageName();
+
+        try {
+            final PackageManager packageManager = context.getPackageManager();
+
+            // Package name of YouTube or YouTube Music.
+            String originalPackageName;
+
+            try {
+                originalPackageName = packageManager
+                        .getPackageInfo(packageName, PackageManager.GET_META_DATA)
+                        .applicationInfo
+                        .metaData
+                        .getString(META_SPOOF_PACKAGE_NAME);
+            } catch (PackageManager.NameNotFoundException exception) {
+                Logger.printDebug(() -> "Failed to parsing metadata");
+                return packageName;
+            }
+
+            if (StringUtils.isBlank(originalPackageName)) {
+                Logger.printDebug(() -> "Failed to parsing spoofed package name");
+                return packageName;
+            }
+
+            try {
+                packageManager.getPackageInfo(originalPackageName, PackageManager.GET_ACTIVITIES);
+            } catch (PackageManager.NameNotFoundException exception) {
+                Logger.printDebug(() -> "Original app '" + originalPackageName + "' was not found");
+                return packageName;
+            }
+
+            Logger.printDebug(() -> "Package name of '" + packageName + "' spoofed to '" + originalPackageName + "'");
+
+            return originalPackageName;
+        } catch (Exception ex) {
+            Logger.printException(() -> "spoofPackageName failure", ex);
+        }
+
+        return packageName;
     }
 
     private static String getGmsCoreDownload() {

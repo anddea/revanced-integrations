@@ -1,23 +1,18 @@
 package app.revanced.integrations.youtube.settings.preference;
 
-import static app.revanced.integrations.shared.utils.StringRef.str;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
-import java.util.Arrays;
-import java.util.List;
-
+import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.utils.Utils;
-import app.revanced.integrations.youtube.patches.misc.client.AppClient.ClientType;
 import app.revanced.integrations.youtube.settings.Settings;
 
 @SuppressWarnings({"deprecation", "unused"})
-public class SpoofStreamingDataSideEffectsPreference extends Preference {
+public class ViewCountAboutPreference extends Preference {
 
     private final SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
         // Because this listener may run before the ReVanced settings fragment updates Settings,
@@ -28,19 +23,19 @@ public class SpoofStreamingDataSideEffectsPreference extends Preference {
         Utils.runOnMainThread(this::updateUI);
     };
 
-    public SpoofStreamingDataSideEffectsPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ViewCountAboutPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public SpoofStreamingDataSideEffectsPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ViewCountAboutPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public SpoofStreamingDataSideEffectsPreference(Context context, AttributeSet attrs) {
+    public ViewCountAboutPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SpoofStreamingDataSideEffectsPreference(Context context) {
+    public ViewCountAboutPreference(Context context) {
         super(context);
     }
 
@@ -65,23 +60,17 @@ public class SpoofStreamingDataSideEffectsPreference extends Preference {
         removeChangeListener();
     }
 
-    private static final List<ClientType> selectableClientTypes = Arrays.asList(
-            ClientType.IOS,
-            ClientType.ANDROID_VR,
-            ClientType.ANDROID_UNPLUGGED
-    );
-
     private void updateUI() {
-        final ClientType clientType = Settings.SPOOF_STREAMING_DATA_TYPE.get();
+        boolean viewCountFilterEnabled = false;
 
-        final String summaryTextKey;
-        if (selectableClientTypes.contains(clientType)) {
-            summaryTextKey = "revanced_spoof_streaming_data_side_effects_" + clientType.name().toLowerCase();
-        } else {
-            summaryTextKey = "revanced_spoof_streaming_data_side_effects_unknown";
+        final BooleanSetting[] viewCountFilterSettings = {
+                Settings.HIDE_VIDEO_BY_VIEW_COUNTS_HOME,
+                Settings.HIDE_VIDEO_BY_VIEW_COUNTS_SEARCH,
+                Settings.HIDE_VIDEO_BY_VIEW_COUNTS_SUBSCRIPTIONS
+        };
+        for (BooleanSetting s : viewCountFilterSettings) {
+            viewCountFilterEnabled |= s.get();
         }
-
-        setSummary(str(summaryTextKey));
-        setEnabled(Settings.SPOOF_STREAMING_DATA.get());
+        setEnabled(viewCountFilterEnabled);
     }
 }

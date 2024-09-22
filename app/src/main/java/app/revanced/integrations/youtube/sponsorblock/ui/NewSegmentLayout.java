@@ -3,15 +3,18 @@ package app.revanced.integrations.youtube.sponsorblock.ui;
 import static app.revanced.integrations.shared.utils.ResourceUtils.getIdentifier;
 import static app.revanced.integrations.shared.utils.ResourceUtils.getLayoutIdentifier;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.RippleDrawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
+import android.widget.ImageView;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.ResourceUtils;
 import app.revanced.integrations.youtube.settings.Settings;
@@ -24,6 +27,10 @@ public final class NewSegmentLayout extends FrameLayout {
             new int[]{0x33ffffff} // sets the ripple color to white
     );
     private final int rippleEffectId;
+
+    private float dX, dY;
+    private boolean isDragging = false;
+    private ImageView dragHandle;
 
     public NewSegmentLayout(final Context context) {
         this(context, null);
@@ -89,6 +96,37 @@ public final class NewSegmentLayout extends FrameLayout {
                 SponsorBlockUtils::onPublishClicked,
                 "Publish button clicked"
         );
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        dragHandle = findViewById(getIdentifier("revanced_sb_new_segment_drag_handle", ResourceUtils.ResourceType.ID, getContext()));
+        setupDragHandle();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupDragHandle() {
+        dragHandle.setOnTouchListener((v, event) -> {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    dX = getX() - event.getRawX();
+                    dY = getY() - event.getRawY();
+                    isDragging = true;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if (isDragging) {
+                        setY(event.getRawY() + dY);
+                        setX(event.getRawX() + dX);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    isDragging = false;
+                    break;
+            }
+            return true;
+        });
     }
 
     /**
