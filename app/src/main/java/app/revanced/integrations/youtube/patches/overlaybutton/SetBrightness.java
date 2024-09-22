@@ -1,20 +1,27 @@
 package app.revanced.integrations.youtube.patches.overlaybutton;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings.System;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.settings.Settings;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS;
+import static android.provider.Settings.System.SCREEN_BRIGHTNESS;
 import static app.revanced.integrations.shared.utils.Utils.getActivity;
 
 @SuppressWarnings("unused")
 public class SetBrightness extends BottomControlButton {
     @Nullable
     private static SetBrightness instance;
-    private static float previousBrightness = -2f;
+    private static int previousBrightness = -1;
 
     private SetBrightness(ViewGroup bottomControlsViewGroup) {
         super(
@@ -24,22 +31,32 @@ public class SetBrightness extends BottomControlButton {
                 view -> {
                     try {
                         Activity activity = getActivity();
-                        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes();
-                        Logger.printInfo(() -> "Current Brightness: " + layoutParams.screenBrightness);
+                        ContentResolver contentResolver = activity.getContentResolver();
 
-                        if (previousBrightness == -2f) {
-                            previousBrightness = (float) android.provider.Settings.System.getInt(activity.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
+                        if (!System.canWrite(activity)) {
+                            Intent intent = new Intent(ACTION_MANAGE_WRITE_SETTINGS);
+                            intent.setData(Uri.parse("package:" + ((Context) activity).getPackageName()));
+                            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                            ((Context) activity).startActivity(intent);
+                            return;
                         }
 
-                        float newBrightness = (layoutParams.screenBrightness == 0f) ? previousBrightness : 0f;
-                        layoutParams.screenBrightness = newBrightness;
-                        activity.getWindow().setAttributes(layoutParams);
+                        int currentBrightness = System.getInt(contentResolver, SCREEN_BRIGHTNESS);
 
-                        if (instance != null) {
+                        if (previousBrightness == -1)
+                            previousBrightness = currentBrightness;
+
+                        Logger.printInfo(() -> "Current brightness: " + currentBrightness);
+
+                        int newBrightness = currentBrightness == 0 ? previousBrightness : 0;
+
+                        System.putInt(contentResolver, SCREEN_BRIGHTNESS, newBrightness);
+
+                        if (instance != null)
                             changeActivated(instance);
-                        }
 
                         Logger.printInfo(() -> "Brightness set to: " + newBrightness);
+
                     } catch (Exception e) {
                         Logger.printException(() -> "Error toggling brightness", e);
                     }
@@ -47,18 +64,33 @@ public class SetBrightness extends BottomControlButton {
                 view -> {
                     try {
                         Activity activity = getActivity();
-                        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes();
-                        if (previousBrightness == -2f) {
-                            previousBrightness = (float) android.provider.Settings.System.getInt(activity.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
-                        }
-                        layoutParams.screenBrightness = 1f;
-                        activity.getWindow().setAttributes(layoutParams);
+                        ContentResolver contentResolver = activity.getContentResolver();
 
-                        if (instance != null) {
+                        if (!System.canWrite(activity)) {
+                            Intent intent = new Intent(ACTION_MANAGE_WRITE_SETTINGS);
+                            intent.setData(Uri.parse("package:" + ((Context) activity).getPackageName()));
+                            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                            ((Context) activity).startActivity(intent);
+                            return true;
+                        }
+
+                        int currentBrightness = System.getInt(contentResolver, SCREEN_BRIGHTNESS);
+
+                        // TODO: why previousBrightness is always 0?
+                        if (previousBrightness == -1)
+                            previousBrightness = currentBrightness;
+
+                        Logger.printInfo(() -> "Current brightness: " + currentBrightness);
+
+                        int newBrightness = currentBrightness == 255 ? previousBrightness : 255;
+
+                        System.putInt(contentResolver, SCREEN_BRIGHTNESS, newBrightness);
+
+                        if (instance != null)
                             changeActivated(instance);
-                        }
 
-                        Logger.printInfo(() -> "Brightness set to maximum");
+                        Logger.printInfo(() -> "Brightness set to: " + newBrightness);
+
                     } catch (Exception e) {
                         Logger.printException(() -> "Error setting brightness to maximum", e);
                     }
@@ -99,10 +131,9 @@ public class SetBrightness extends BottomControlButton {
 
     private static void changeActivated(SetBrightness instance) {
         try {
-            Activity activity = getActivity();
-            WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes();
-            boolean isMinBrightness = layoutParams.screenBrightness <= 0.4f;
-            instance.changeActivated(isMinBrightness);
+            ContentResolver contentResolver = getActivity().getContentResolver();
+            boolean isBrightnessLowEnough = System.getInt(contentResolver, SCREEN_BRIGHTNESS) <= 120; // less than ~50%
+            instance.changeActivated(isBrightnessLowEnough);
         } catch (Exception e) {
             Logger.printException(() -> "Error updating activation state", e);
         }
