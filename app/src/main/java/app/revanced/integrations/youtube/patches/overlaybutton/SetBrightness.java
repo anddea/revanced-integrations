@@ -1,33 +1,65 @@
 package app.revanced.integrations.youtube.patches.overlaybutton;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.settings.Settings;
 
-import static app.revanced.integrations.shared.utils.Utils.context;
+import static app.revanced.integrations.shared.utils.Utils.getActivity;
 
 @SuppressWarnings("unused")
 public class SetBrightness extends BottomControlButton {
     @Nullable
     private static SetBrightness instance;
+    private static float previousBrightness = -2f;
 
-    public SetBrightness(ViewGroup bottomControlsViewGroup) {
+    private SetBrightness(ViewGroup bottomControlsViewGroup) {
         super(
                 bottomControlsViewGroup,
                 "set_brightness_button",
                 Settings.OVERLAY_BUTTON_SET_BRIGHTNESS,
                 view -> {
-                    // between: 0 and 255
-                    int brightness = android.provider.Settings.System.getInt(context.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS, 0);
-                    Logger.printInfo(() -> "Brightness: " + brightness);
-                    // TODO: Tap to toggle between minimum and restored brightness
-                    //  Restore the previous brightness
-                    //  Store the current brightness and set it to minimum
+                    try {
+                        Activity activity = getActivity();
+                        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes();
+                        Logger.printInfo(() -> "Current Brightness: " + layoutParams.screenBrightness);
+
+                        if (previousBrightness == -2f) {
+                            previousBrightness = layoutParams.screenBrightness;
+                        }
+
+                        float newBrightness = (layoutParams.screenBrightness == 0f) ? previousBrightness : 0f;
+                        layoutParams.screenBrightness = newBrightness;
+                        activity.getWindow().setAttributes(layoutParams);
+
+                        if (instance != null) {
+                            changeActivated(instance);
+                        }
+
+                        Logger.printInfo(() -> "Brightness set to: " + newBrightness);
+                    } catch (Exception e) {
+                        Logger.printException(() -> "Error toggling brightness", e);
+                    }
                 },
                 view -> {
-                    // TODO: Long press to set brightness to maximum
+                    try {
+                        Activity activity = getActivity();
+                        WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes();
+                        previousBrightness = layoutParams.screenBrightness;
+                        layoutParams.screenBrightness = 1f;
+                        activity.getWindow().setAttributes(layoutParams);
+
+                        if (instance != null) {
+                            changeActivated(instance);
+                        }
+
+                        Logger.printInfo(() -> "Brightness set to maximum");
+                    } catch (Exception e) {
+                        Logger.printException(() -> "Error setting brightness to maximum", e);
+                    }
                     return true;
                 }
         );
@@ -64,7 +96,13 @@ public class SetBrightness extends BottomControlButton {
     }
 
     private static void changeActivated(SetBrightness instance) {
-        // TODO: Make this dynamic based on the current brightness
-        instance.changeActivated(true);
+        try {
+            Activity activity = getActivity();
+            WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes();
+            boolean isMinBrightness = layoutParams.screenBrightness <= 0.4f;
+            instance.changeActivated(isMinBrightness);
+        } catch (Exception e) {
+            Logger.printException(() -> "Error updating activation state", e);
+        }
     }
 }
