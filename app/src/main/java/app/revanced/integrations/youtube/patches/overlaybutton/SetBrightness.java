@@ -28,7 +28,7 @@ public class SetBrightness extends BottomControlButton {
                         Logger.printInfo(() -> "Current Brightness: " + layoutParams.screenBrightness);
 
                         if (previousBrightness == -2f) {
-                            previousBrightness = layoutParams.screenBrightness;
+                            previousBrightness = (float) android.provider.Settings.System.getInt(activity.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
                         }
 
                         float newBrightness = (layoutParams.screenBrightness == 0f) ? previousBrightness : 0f;
@@ -48,7 +48,9 @@ public class SetBrightness extends BottomControlButton {
                     try {
                         Activity activity = getActivity();
                         WindowManager.LayoutParams layoutParams = activity.getWindow().getAttributes();
-                        previousBrightness = layoutParams.screenBrightness;
+                        if (previousBrightness == -2f) {
+                            previousBrightness = (float) android.provider.Settings.System.getInt(activity.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
+                        }
                         layoutParams.screenBrightness = 1f;
                         activity.getWindow().setAttributes(layoutParams);
 
