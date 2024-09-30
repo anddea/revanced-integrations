@@ -84,6 +84,11 @@ public final class ShortsButtonFilter extends Filter {
                 "shorts_info_panel_overview"
         );
 
+        StringFilterGroup stickers = new StringFilterGroup(
+                Settings.HIDE_SHORTS_STICKERS,
+                "stickers_layer.eml"
+        );
+
         StringFilterGroup liveHeader = new StringFilterGroup(
                 Settings.HIDE_SHORTS_LIVE_HEADER,
                 "immersive_live_header"
@@ -122,7 +127,7 @@ public final class ShortsButtonFilter extends Filter {
         addPathCallbacks(
                 suggestedAction, actionBar, joinButton, subscribeButton, metaPanelButton,
                 paidPromotionButton, pausedOverlayButtons, channelBar, fullVideoLinkLabel,
-                videoTitle, reelSoundMetadata, infoPanel, liveHeader
+                videoTitle, reelSoundMetadata, infoPanel, liveHeader, stickers
         );
 
         //
@@ -198,7 +203,7 @@ public final class ShortsButtonFilter extends Filter {
                         "yt_outline_location_point_"
                 ),
                 new ByteArrayFilterGroup(
-                        Settings.HIDE_SHORTS_SAVE_SOUND_BUTTON,
+                        Settings.HIDE_SHORTS_SAVE_MUSIC_BUTTON,
                         "yt_outline_list_add_",
                         "yt_outline_bookmark_"
                 ),
