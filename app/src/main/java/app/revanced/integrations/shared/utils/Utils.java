@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -32,6 +31,7 @@ import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.text.Bidi;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.SortedMap;
@@ -45,9 +45,7 @@ import java.util.concurrent.TimeUnit;
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import kotlin.text.Regex;
 
-/**
- * @noinspection deprecation
- */
+@SuppressWarnings("deprecation")
 public class Utils {
 
     private static WeakReference<Activity> activityRef = new WeakReference<>(null);
@@ -288,10 +286,18 @@ public class Utils {
         }
 
         // Locale of MainActivity.
-        Locale applicationLocale = mActivity.getResources().getConfiguration().getLocales().get(0);
+        Locale applicationLocale;
 
         // Locale of Context.
-        Locale contextLocale = mContext.getResources().getConfiguration().getLocales().get(0);
+        Locale contextLocale;
+
+        if (isSDKAbove(24)) {
+            applicationLocale = mActivity.getResources().getConfiguration().getLocales().get(0);
+            contextLocale = mContext.getResources().getConfiguration().getLocales().get(0);
+        } else {
+            applicationLocale = mActivity.getResources().getConfiguration().locale;
+            contextLocale = mContext.getResources().getConfiguration().locale;
+        }
 
         // If they are identical, no need to override them.
         if (applicationLocale == contextLocale) {
@@ -320,9 +326,6 @@ public class Utils {
             return;
         }
 
-        if (appContext instanceof ContextWrapper contextWrapper) {
-            appContext = contextWrapper.getBaseContext();
-        }
         context = appContext;
 
         // In some apps like TikTok, the Setting classes can load in weird orders due to cyclic class dependencies.
@@ -350,8 +353,41 @@ public class Utils {
         // Do not show a toast if using Android 13+ as it shows it's own toast.
         // But if the user copied with a timestamp then show a toast.
         // Unfortunately this will show 2 toasts on Android 13+, but no way around this.
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 && toastMessage != null) {
-            showToastShort(toastMessage);
+        if (isSDKAbove(33) || toastMessage == null) return;
+        showToastShort(toastMessage);
+    }
+
+    public static String getFormattedTimeStamp(long videoTime) {
+        return "'" + videoTime +
+                "' (" +
+                getTimeStamp(videoTime) +
+                ")\n";
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static String getTimeStamp(long time) {
+        long hours;
+        long minutes;
+        long seconds;
+
+        if (isSDKAbove(26)) {
+            final Duration duration = Duration.ofMillis(time);
+
+            hours = duration.toHours();
+            minutes = duration.toMinutes() % 60;
+            seconds = duration.getSeconds() % 60;
+        } else {
+            final long currentVideoTimeInSeconds = time / 1000;
+
+            hours = currentVideoTimeInSeconds / (60 * 60);
+            minutes = (currentVideoTimeInSeconds / 60) % 60;
+            seconds = currentVideoTimeInSeconds % 60;
+        }
+
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
         }
     }
 
@@ -411,6 +447,30 @@ public class Utils {
             isRightToLeftTextLayout = new Bidi(displayLanguage, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT).isRightToLeft();
         }
         return isRightToLeftTextLayout;
+    }
+
+    /**
+     * @return if the text contains at least 1 number character,
+     *         including any unicode numbers such as Arabic.
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean containsNumber(@NonNull CharSequence text) {
+        for (int index = 0, length = text.length(); index < length;) {
+            final int codePoint = Character.codePointAt(text, index);
+            if (Character.isDigit(codePoint)) {
+                return true;
+            }
+            index += Character.charCount(codePoint);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return whether the device's API level is higher than a specific SDK version.
+     */
+    public static boolean isSDKAbove(int sdk) {
+        return Build.VERSION.SDK_INT >= sdk;
     }
 
     /**
@@ -479,7 +539,11 @@ public class Utils {
      * @return if the calling thread is on the main thread
      */
     public static boolean isCurrentlyOnMainThread() {
-        return Looper.getMainLooper().isCurrentThread();
+        if (isSDKAbove(23)) {
+            return Looper.getMainLooper().isCurrentThread();
+        } else {
+            return Looper.getMainLooper().getThread() == Thread.currentThread();
+        }
     }
 
     /**

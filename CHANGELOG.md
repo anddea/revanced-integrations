@@ -1,3 +1,78 @@
+# [0.156.0-dev.5](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.4...v0.156.0-dev.5) (2024-09-17)
+
+
+### Features
+
+* **YouTube - SponsorBlock:** Make new segment window draggable ([335d929](https://github.com/anddea/revanced-integrations/commit/335d929f8b1f7b39f256b7f4c25a0c98bf5a1a94))
+
+# [0.156.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.3...v0.156.0-dev.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hide ads:** Ads are not hidden from feed (A/B tests) ([77daa8a](https://github.com/anddea/revanced-integrations/commit/77daa8ae161851b329012453227244211eeef102))
+* **YouTube - Hide feed components:** `Hide expandable chip under videos` setting does not work ([dc5b34a](https://github.com/anddea/revanced-integrations/commit/dc5b34a81c5590dcaa97ce56e5fbdc79a4d91a2f))
+* **YouTube - Navigation bar components:** Library button is not hidden when `Cairo navigation bar` is applied (A/B tests) ([2017cb3](https://github.com/anddea/revanced-integrations/commit/2017cb3e2badc4d3ac17db0e1ed89e64f08af2e3))
+* **YouTube - Return YouTube Dislike:** Show correct value when swiping back to prior Short and disliking ([6de47b6](https://github.com/anddea/revanced-integrations/commit/6de47b62b54132babb3677845d28511a8a14dbe3))
+* **YouTube - Settings:** `Swap Create and Notifications button` description cuts off ([921032d](https://github.com/anddea/revanced-integrations/commit/921032d159baae24968e09bc83ef08b9185bb86b))
+* **YouTube - Settings:** Some settings are disabled on tablets or tablet layouts ([b7876cb](https://github.com/anddea/revanced-integrations/commit/b7876cbaf2508b8361b1ffde8f6b298eb0691fc5))
+* **YouTube - SponsorBlock:** Add summary text to 'view my segments' button ([b92b86e](https://github.com/anddea/revanced-integrations/commit/b92b86eab3d4e71ad0e4edf2e350a94abf69e89b))
+* **YouTube Music - Disable auto captions:** Captions cannot be changed when `Disable forced auto captions` is turned on ([1cce551](https://github.com/anddea/revanced-integrations/commit/1cce551df188589e1c65ad4f319282e1594e88c0))
+* **YouTube Music - Player components:** Crash at first launch on old clients ([a50bf3f](https://github.com/anddea/revanced-integrations/commit/a50bf3ff1d6377ae5626a7a0ccc54dcb5e852aad))
+* **YouTube Music - SponsorBlock:** SponsorBlock skips entire song when in background ([c126157](https://github.com/anddea/revanced-integrations/commit/c126157a1e2a612d0aba5c2200dbce01c8d1721a))
+
+
+### Features
+
+* **Hide ads:** Remove `Close fullscreen ads` setting ([1ea28f4](https://github.com/anddea/revanced-integrations/commit/1ea28f4df1db9fb9723b0f909b5693d560aa4d4d))
+* **YouTube - Hide feed components:** Add `Hide expandable shelves` setting ([4fef61a](https://github.com/anddea/revanced-integrations/commit/4fef61a1de83977eac9b89e1ceaf25e4ddc8a2cc))
+* **YouTube - Hide feed components:** Remove `Duration filter` setting as it no longer works due to server side changes ([3f0f0da](https://github.com/anddea/revanced-integrations/commit/3f0f0dae38419ccb7aef5eaa1332bf2da8e4939b))
+* **YouTube - Hide feed components:** Selectively hide video by views for Home / Subscription / Search ([13f8a55](https://github.com/anddea/revanced-integrations/commit/13f8a55f42c5844701059c87fda675ef376ec6d1))
+* **YouTube - Video playback:** Add `Disable VP9 codec` setting ([cb38e7b](https://github.com/anddea/revanced-integrations/commit/cb38e7b1b379c969ebad2e0452e07b7de4305b6f))
+* **YouTube Music:** Add support version `6.20.51` ([3db1dc4](https://github.com/anddea/revanced-integrations/commit/3db1dc49efa4ee6c43ab48216689f80d2fa8a02a))
+
+# [0.156.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.2...v0.156.0-dev.3) (2024-09-09)
+
+
+### Bug Fixes
+
+* **YouTube - Settings:** Actually prevent autofocus on the search bar ([b46fd8a](https://github.com/anddea/revanced-integrations/commit/b46fd8a4fb686e59cae30a43bc6f9005c5d48637))
+
+# [0.156.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.156.0-dev.1...v0.156.0-dev.2) (2024-09-09)
+
+
+### Bug Fixes
+
+* **YouTube - Settings:** Preferences with the same key in different categories did not appear in search results ([e23c3e3](https://github.com/anddea/revanced-integrations/commit/e23c3e3878ee9292d248574d5f30e6369e879b6d))
+* **YouTube - Settings:** Prevent autofocus on the search bar ([08c3622](https://github.com/anddea/revanced-integrations/commit/08c36220af370f69b38a52926fed541756ce7fc1))
+
+
+### Features
+
+* **YouTube - Overlay buttons:** Add an option to select a different downloader on long press ([4fba913](https://github.com/anddea/revanced-integrations/commit/4fba913de878d3cf725b2379c9f637f846f649a2))
+* **YouTube Music:** Rename `Enable Cairo splash animation` to `Disable Cairo splash animation` ([db330d2](https://github.com/anddea/revanced-integrations/commit/db330d2bd0cb25ecf09b280f476b96cf034f0a9e))
+
+# [0.156.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.155.0...v0.156.0-dev.1) (2024-09-06)
+
+
+### Bug Fixes
+
+* **GmsCore support:** Show an error toast if GmsCore is included with root mounted installation ([b5d127d](https://github.com/anddea/revanced-integrations/commit/b5d127d1e38c3d280e86c275e9d8f0c5a1c45b9b))
+* **ReturnYouTubeDislike:** Show estimated like count for videos with hidden likes ([a13d605](https://github.com/anddea/revanced-integrations/commit/a13d605fe67801a43703e2d0003568713198f1f9))
+* **YouTube - Change share sheet:** Patch does not work (A/B tests) ([d340a1f](https://github.com/anddea/revanced-integrations/commit/d340a1fe7cc15f247e7950eafe85f84b4812cd9c))
+* **YouTube - Disable force auto captions:** Patch doesn't work with Shorts ([452a76d](https://github.com/anddea/revanced-integrations/commit/452a76da679879503db0a53fcbe9aa41107c50b7))
+* **YouTube - Video playback:** `Disable playback speed for music` setting sometimes applies to non-music videos as well ([8ef9b4a](https://github.com/anddea/revanced-integrations/commit/8ef9b4af0f7c145900a3dff968db4813843581a2))
+* **YouTube Music - SponsorBlock:** SponsorBlock segments at the end of a song cause the player to get stuck ([fd9eea7](https://github.com/anddea/revanced-integrations/commit/fd9eea717ab4fd1e3c4950af3bf6e02b0a2051a0))
+
+
+### Features
+
+* **YouTube - Hide ads:** Add `Hide promotion alert banner` setting ([7eba6b1](https://github.com/anddea/revanced-integrations/commit/7eba6b162cad7d1bfd638f9d979cfad90e3cbc88))
+* **YouTube - Hide player flyout menu:** Restore `Hide Ambient mode menu` setting ([3e3a43c](https://github.com/anddea/revanced-integrations/commit/3e3a43c6e720992892cf4e81cf8cb0680074497d))
+* **YouTube - Player components:** Add `Disable switch mix playlists` setting ([495e337](https://github.com/anddea/revanced-integrations/commit/495e337ad3fae4adcee254056df9ab4cd769043e))
+* **YouTube - Video playback:** Add `Disable playback speed for music` setting ([6f5cb2e](https://github.com/anddea/revanced-integrations/commit/6f5cb2ec8474a4a7f9c19b7d133c41f53b09c0ca))
+* **YouTube Music - Hide ads:** Add `Hide promotion alert banner` setting ([1f35d81](https://github.com/anddea/revanced-integrations/commit/1f35d811be904835b8cf0b928410fe2015f302ed))
+
 # [0.155.0](https://github.com/anddea/revanced-integrations/compare/v0.154.0...v0.155.0) (2024-09-05)
 
 

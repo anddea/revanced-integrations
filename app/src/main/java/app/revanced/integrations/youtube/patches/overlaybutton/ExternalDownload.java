@@ -20,7 +20,10 @@ public class ExternalDownload extends BottomControlButton {
                 "external_download_button",
                 Settings.OVERLAY_BUTTON_EXTERNAL_DOWNLOADER,
                 view -> VideoUtils.launchVideoExternalDownloader(),
-                null
+                view -> {
+                    VideoUtils.launchLongPressVideoExternalDownloader();
+                    return true;
+                }
         );
     }
 

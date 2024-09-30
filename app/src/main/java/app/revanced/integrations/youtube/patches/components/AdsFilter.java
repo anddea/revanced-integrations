@@ -9,25 +9,14 @@ public final class AdsFilter extends Filter {
 
     public AdsFilter() {
 
+        final StringFilterGroup alertBannerPromo = new StringFilterGroup(
+                Settings.HIDE_PROMOTION_ALERT_BANNER,
+                "alert_banner_promo.eml"
+        );
+
         final StringFilterGroup carouselAd = new StringFilterGroup(
                 Settings.HIDE_GENERAL_ADS,
                 "carousel_ad"
-        );
-
-        final StringFilterGroup merchandise = new StringFilterGroup(
-                Settings.HIDE_MERCHANDISE_SHELF,
-                "product_carousel",
-                "shopping_carousel"
-        );
-
-        final StringFilterGroup paidContent = new StringFilterGroup(
-                Settings.HIDE_PAID_PROMOTION_LABEL,
-                "paid_content_overlay"
-        );
-
-        final StringFilterGroup selfSponsor = new StringFilterGroup(
-                Settings.HIDE_SELF_SPONSOR_CARDS,
-                "cta_shelf_card"
         );
 
         final StringFilterGroup generalAds = new StringFilterGroup(
@@ -58,6 +47,29 @@ public final class AdsFilter extends Filter {
                 "_image_layout"
         );
 
+        addIdentifierCallbacks(
+                alertBannerPromo,
+                carouselAd,
+                // In the new layout, filter strings are not included in the path, but instead in the identifier.
+                generalAds
+        );
+
+        final StringFilterGroup merchandise = new StringFilterGroup(
+                Settings.HIDE_MERCHANDISE_SHELF,
+                "product_carousel",
+                "shopping_carousel"
+        );
+
+        final StringFilterGroup paidContent = new StringFilterGroup(
+                Settings.HIDE_PAID_PROMOTION_LABEL,
+                "paid_content_overlay"
+        );
+
+        final StringFilterGroup selfSponsor = new StringFilterGroup(
+                Settings.HIDE_SELF_SPONSOR_CARDS,
+                "cta_shelf_card"
+        );
+
         final StringFilterGroup viewProducts = new StringFilterGroup(
                 Settings.HIDE_VIEW_PRODUCTS,
                 "product_item",
@@ -78,7 +90,5 @@ public final class AdsFilter extends Filter {
                 viewProducts,
                 webSearchPanel
         );
-
-        addIdentifierCallbacks(carouselAd);
     }
 }

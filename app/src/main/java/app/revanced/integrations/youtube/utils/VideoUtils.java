@@ -4,16 +4,14 @@ import static app.revanced.integrations.shared.utils.ResourceUtils.getStringArra
 import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.youtube.patches.video.PlaybackSpeedPatch.userSelectedPlaybackSpeed;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.media.AudioManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,6 +21,7 @@ import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.youtube.patches.video.CustomPlaybackSpeedPatch;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.settings.preference.ExternalDownloaderPlaylistPreference;
+import app.revanced.integrations.youtube.settings.preference.ExternalDownloaderVideoLongPressPreference;
 import app.revanced.integrations.youtube.settings.preference.ExternalDownloaderVideoPreference;
 import app.revanced.integrations.youtube.shared.VideoInformation;
 
@@ -71,6 +70,27 @@ public class VideoUtils extends IntentUtils {
         }
     }
 
+    public static void launchLongPressVideoExternalDownloader() {
+        launchLongPressVideoExternalDownloader(VideoInformation.getVideoId());
+    }
+
+    public static void launchLongPressVideoExternalDownloader(@NonNull String videoId) {
+        try {
+            final String downloaderPackageName = ExternalDownloaderVideoLongPressPreference.getExternalDownloaderPackageName();
+            if (ExternalDownloaderVideoLongPressPreference.checkPackageIsDisabled()) {
+                return;
+            }
+
+            isExternalDownloaderLaunched.compareAndSet(false, true);
+            final String content = String.format("https://youtu.be/%s", videoId);
+            launchExternalDownloader(content, downloaderPackageName);
+        } catch (Exception ex) {
+            Logger.printException(() -> "launchExternalDownloader failure", ex);
+        } finally {
+            runOnMainThreadDelayed(() -> isExternalDownloaderLaunched.compareAndSet(true, false), 500);
+        }
+    }
+
     public static void launchPlaylistExternalDownloader(@NonNull String playlistId) {
         try {
             final String downloaderPackageName = ExternalDownloaderPlaylistPreference.getExternalDownloaderPackageName();
@@ -92,14 +112,30 @@ public class VideoUtils extends IntentUtils {
      * Create playlist from all channel videos from oldest to newest,
      * starting from the video where button is clicked.
      */
-    public static void playlistFromChannelVideosListener(boolean activated) {
-        final String videoId = VideoInformation.getVideoId();
-        String baseUri = "vnd.youtube://" + videoId + "?start=" + VideoInformation.getVideoTime() / 1000;
+    public static void openVideo(boolean activated) {
+        openVideo(activated, VideoInformation.getVideoId(), VideoInformation.getVideoTime());
+    }
+
+    public static void openVideo(@NonNull String videoId) {
+        openVideo(false, videoId, 0);
+    }
+
+    public static void openVideo(boolean activated, @NonNull String videoId, long videoTime) {
+        String baseUri = "vnd.youtube://" + videoId + "?start=" + videoTime / 1000;
         if (activated) {
             baseUri += "&list=UL" + videoId;
         }
 
         launchView(baseUri, getContext().getPackageName());
+    }
+
+    /**
+     * Pause the media by changing audio focus.
+     */
+    public static void pauseMedia() {
+        if (context != null && context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE) instanceof AudioManager audioManager) {
+            audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        }
     }
 
     public static void showPlaybackSpeedDialog(@NonNull Context context) {
@@ -149,30 +185,6 @@ public class VideoUtils extends IntentUtils {
             showVideoQualityFlyoutMenu();
         } else {
             showPlaybackSpeedFlyoutMenu();
-        }
-    }
-
-    public static String getFormattedTimeStamp(long videoTime) {
-        return "'" + videoTime +
-                "' (" +
-                getTimeStamp(videoTime) +
-                ")\n";
-    }
-
-    @TargetApi(26)
-    @SuppressLint("DefaultLocale")
-    public static String getTimeStamp(long time) {
-        final Duration duration = Duration.ofMillis(time);
-
-        final long hours = duration.toHours();
-        final long minutes = duration.toMinutes() % 60;
-        final long seconds = duration.getSeconds() % 60;
-        final long millis = duration.toMillis() % 1000;
-
-        if (hours > 0) {
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        } else {
-            return String.format("%02d:%02d", minutes, seconds);
         }
     }
 

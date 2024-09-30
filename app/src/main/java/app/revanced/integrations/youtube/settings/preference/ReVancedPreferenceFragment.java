@@ -8,6 +8,7 @@ import static app.revanced.integrations.shared.utils.ResourceUtils.getIdIdentifi
 import static app.revanced.integrations.shared.utils.ResourceUtils.getXmlIdentifier;
 import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.shared.utils.Utils.getChildView;
+import static app.revanced.integrations.shared.utils.Utils.isSDKAbove;
 import static app.revanced.integrations.shared.utils.Utils.showToastShort;
 import static app.revanced.integrations.youtube.settings.Settings.DEFAULT_PLAYBACK_SPEED;
 import static app.revanced.integrations.youtube.settings.Settings.HIDE_PREVIEW_COMMENT;
@@ -21,9 +22,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.icu.text.SimpleDateFormat;
+import java.text.SimpleDateFormat;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.*;
 import android.util.TypedValue;
@@ -57,6 +57,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     @SuppressLint("SuspiciousIndentation")
     private final SharedPreferences.OnSharedPreferenceChangeListener listener = (sharedPreferences, str) -> {
         try {
+            if (str == null) return;
             Setting<?> setting = Setting.getSettingFromPath(str);
 
             if (setting == null) return;
@@ -108,7 +109,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             }
 
             if (!showingUserDialogMessage) {
-                final Context context = getContext();
+                final Context context = getActivity();
 
                 if (setting.userDialogMessage != null
                         && mPreference instanceof SwitchPreference switchPreference
@@ -230,7 +231,12 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                                 TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()
                         );
 
-                        toolbar.setTitleMargin(margin, 0, margin, 0);
+                        if (isSDKAbove(24)) {
+                            toolbar.setTitleMargin(margin, 0, margin, 0);
+                        } else {
+                            // Untested
+                            toolbar.setContentInsetsAbsolute(margin, margin);
+                        }
 
                         TextView toolbarTextView = getChildView(toolbar, TextView.class::isInstance);
                         if (toolbarTextView != null) {
@@ -355,7 +361,16 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             // Store dependencies
             if (preference.getDependency() != null) {
                 String dependencyKey = preference.getDependency();
-                dependencyMap.computeIfAbsent(dependencyKey, k -> new ArrayList<>()).add(preference);
+                if (isSDKAbove(24)) {
+                    dependencyMap.computeIfAbsent(dependencyKey, k -> new ArrayList<>()).add(preference);
+                } else {
+                    // Untested
+                    if (!dependencyMap.containsKey(dependencyKey)) {
+                        dependencyMap.put(dependencyKey, new ArrayList<>() {{
+                            add(preference);
+                        }});
+                    }
+                }
                 Logger.printDebug(() -> "SearchFragment: Added dependency for key: " + dependencyKey + " on preference: " + preference.getKey());
             }
 
@@ -547,7 +562,9 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
      */
     private void addPreferenceWithDependencies(PreferenceGroup preferenceGroup, Preference preference) {
         String key = preference.getKey();
-        if (key != null && !addedPreferences.contains(key)) {
+
+        // Instead of just using preference keys, we combine the category and key to ensure uniqueness
+        if (key != null && !addedPreferences.contains(preferenceGroup.getTitle() + ":" + key)) {
             // Add dependencies first
             if (preference.getDependency() != null) {
                 String dependencyKey = preference.getDependency();
@@ -557,16 +574,16 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                     addPreferenceWithDependencies(preferenceGroup, dependency);
                 } else {
                     Logger.printDebug(() -> "SearchFragment: Dependency not found for key: " + dependencyKey);
-                    // Skip adding this preference as its dependency is not found
                     return;
                 }
             }
 
+            // Add the preference using a combination of the category and the key
             preferenceGroup.addPreference(preference);
-            addedPreferences.add(key);
+            addedPreferences.add(preferenceGroup.getTitle() + ":" + key); // Track based on both category and key
             Logger.printDebug(() -> "SearchFragment: Added preference with key: " + key);
 
-            // Add dependent preferences
+            // Handle dependent preferences
             if (dependencyMap.containsKey(key)) {
                 Logger.printDebug(() -> "SearchFragment: Adding dependent preferences for key: " + key);
                 for (Preference dependentPreference : Objects.requireNonNull(dependencyMap.get(key))) {
@@ -632,14 +649,14 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
      */
     private void exportActivity() {
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        var appName = ExtendedUtils.getApplicationLabel();
-        var versionName = ExtendedUtils.getVersionName();
-        var formatDate = dateFormat.format(new Date(System.currentTimeMillis()));
-        var fileName = String.format("%s_v%s_%s.txt", appName, versionName, formatDate);
+        final String appName = ExtendedUtils.getApplicationLabel();
+        final String versionName = ExtendedUtils.getVersionName();
+        final String formatDate = dateFormat.format(new Date(System.currentTimeMillis()));
+        final String fileName = String.format("%s_v%s_%s.txt", appName, versionName, formatDate);
 
-        var intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        final Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TITLE, fileName);
@@ -652,7 +669,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     private void importActivity() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType(Build.VERSION.SDK_INT <= 28 ? "*/*" : "text/plain");
+        intent.setType(isSDKAbove(29) ? "text/plain" : "*/*");
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
@@ -671,7 +688,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     }
 
     private void exportText(Uri uri) {
-        final Context context = this.getContext();
+        final Context context = this.getActivity();
 
         try {
             @SuppressLint("Recycle")
@@ -694,7 +711,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     }
 
     private void importText(Uri uri) {
-        final Context context = this.getContext();
+        final Context context = this.getActivity();
         StringBuilder sb = new StringBuilder();
         String line;
 

@@ -74,7 +74,7 @@ public class ReturnYouTubeDislikePatch {
     private static volatile boolean lithoShortsShouldUseCurrentData;
 
     /**
-     * Last video id prefetched. Field is prevent prefetching the same video id multiple times in a row.
+     * Last video id prefetched. Field is to prevent prefetching the same video id multiple times in a row.
      */
     @Nullable
     private static volatile String lastPrefetchedVideoId;
@@ -134,7 +134,10 @@ public class ReturnYouTubeDislikePatch {
 
             String conversionContextString = conversionContext.toString();
 
-            final CharSequence replacement;
+            if (isRollingNumber && !conversionContextString.contains("video_action_bar.eml")) {
+                return original;
+            }
+
             if (conversionContextString.contains("segmented_like_dislike_button.eml")) {
                 // Regular video.
                 ReturnYouTubeDislike videoData = currentVideoData;
@@ -144,40 +147,23 @@ public class ReturnYouTubeDislikePatch {
                 if (!(original instanceof Spanned)) {
                     original = new SpannableString(original);
                 }
-                replacement = videoData.getDislikesSpanForRegularVideo((Spanned) original,
+                return videoData.getDislikesSpanForRegularVideo((Spanned) original,
                         true, isRollingNumber);
-            } else if (!isRollingNumber && conversionContextString.contains("|shorts_dislike_button.eml|")) {
-                // Litho Shorts player.
-                if (!Settings.RYD_SHORTS.get()) {
-                    // Must clear the current video here, otherwise if the user opens a regular video
-                    // then opens a litho short (while keeping the regular video on screen), then closes the short,
-                    // the original video may show the incorrect dislike value.
-                    clearData();
-                    return original;
-                }
-                ReturnYouTubeDislike videoData = lastLithoShortsVideoData;
-                if (videoData == null) {
-                    // The Shorts litho video id filter did not detect the video id.
-                    // This is normal in incognito mode, but otherwise is abnormal.
-                    Logger.printDebug(() -> "Cannot modify Shorts litho span, data is null");
-                    return original;
-                }
-                // Use the correct dislikes data after voting.
-                if (lithoShortsShouldUseCurrentData) {
-                    lithoShortsShouldUseCurrentData = false;
-                    videoData = currentVideoData;
-                    if (videoData == null) {
-                        Logger.printException(() -> "currentVideoData is null"); // Should never happen
-                        return original;
-                    }
-                    Logger.printDebug(() -> "Using current video data for litho span");
-                }
-                replacement = videoData.getDislikeSpanForShort((Spanned) original);
-            } else {
-                return original;
             }
 
-            return replacement;
+            if (isRollingNumber) {
+                return original; // No need to check for Shorts in the context.
+            }
+
+            if (conversionContextString.contains("|shorts_dislike_button.eml")) {
+                return getShortsSpan(original, true);
+            }
+
+            if (conversionContextString.contains("|shorts_like_button.eml")
+                    && !Utils.containsNumber(original)) {
+                Logger.printDebug(() -> "Replacing hidden likes count");
+                return getShortsSpan(original, false);
+            }
         } catch (Exception ex) {
             Logger.printException(() -> "onLithoTextLoaded failure", ex);
         }
@@ -230,6 +216,40 @@ public class ReturnYouTubeDislikePatch {
         return original;
     }
 
+
+    private static CharSequence getShortsSpan(@NonNull CharSequence original, boolean isDislikesSpan) {
+        // Litho Shorts player.
+        if (!Settings.RYD_SHORTS.get() || (isDislikesSpan && Settings.HIDE_SHORTS_DISLIKE_BUTTON.get())
+                || (!isDislikesSpan && Settings.HIDE_SHORTS_LIKE_BUTTON.get())) {
+            return original;
+        }
+
+        ReturnYouTubeDislike videoData = lastLithoShortsVideoData;
+        if (videoData == null) {
+            // The Shorts litho video id filter did not detect the video id.
+            // This is normal in incognito mode, but otherwise is abnormal.
+            Logger.printDebug(() -> "Cannot modify Shorts litho span, data is null");
+            return original;
+        }
+
+        // Use the correct dislikes data after voting.
+        if (lithoShortsShouldUseCurrentData) {
+            if (isDislikesSpan) {
+                lithoShortsShouldUseCurrentData = false;
+            }
+            videoData = currentVideoData;
+            if (videoData == null) {
+                Logger.printException(() -> "currentVideoData is null"); // Should never happen
+                return original;
+            }
+            Logger.printDebug(() -> "Using current video data for litho span");
+        }
+
+        return isDislikesSpan
+                ? videoData.getDislikeSpanForShort((Spanned) original)
+                : videoData.getLikeSpanForShort((Spanned) original);
+    }
+
     //
     // Rolling Number
     //
@@ -247,13 +267,12 @@ public class ReturnYouTubeDislikePatch {
     public static String onRollingNumberLoaded(@NonNull Object conversionContext,
                                                @NonNull String original) {
         try {
-            if (!conversionContext.toString().contains("video_action_bar.eml")) {
-                return original;
-            }
             CharSequence replacement = onLithoTextLoaded(conversionContext, original, true);
-            if (!replacement.toString().equals(original)) {
+
+            String replacementString = replacement.toString();
+            if (!replacementString.equals(original)) {
                 rollingNumberSpan = replacement;
-                return replacement.toString();
+                return replacementString;
             } // Else, the text was not a likes count but instead the view count or something else.
         } catch (Exception ex) {
             Logger.printException(() -> "onRollingNumberLoaded failure", ex);
@@ -306,9 +325,8 @@ public class ReturnYouTubeDislikePatch {
                 view.setCompoundDrawables(separator, null, null, null);
             }
 
-            // Liking/disliking can cause the span to grow in size,
-            // which is ok and is laid out correctly,
-            // but if the user then undoes their action the layout will not remove the extra padding.
+            // Disliking can cause the span to grow in size, which is ok and is laid out correctly,
+            // but if the user then removes their dislike the layout will not adjust to the new shorter width.
             // Use a center alignment to take up any extra space.
             view.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
@@ -413,7 +431,7 @@ public class ReturnYouTubeDislikePatch {
             if (!Settings.RYD_ENABLED.get()) {
                 return false;
             }
-            if (!Settings.RYD_SHORTS.get()) {
+            if (!Settings.RYD_SHORTS.get() || Settings.HIDE_SHORTS_DISLIKE_BUTTON.get()) {
                 // Must clear the data here, in case a new video was loaded while PlayerType
                 // suggested the video was not a short (can happen when spoofing to an old app version).
                 clearData();
@@ -526,10 +544,6 @@ public class ReturnYouTubeDislikePatch {
             if (!Settings.RYD_ENABLED.get()) {
                 return;
             }
-            if (Utils.isNetworkNotConnected()) {
-                Logger.printDebug(() -> "Network not connected, ignoring video");
-                return;
-            }
             if (videoId.equals(lastPrefetchedVideoId)) {
                 return;
             }
@@ -558,6 +572,7 @@ public class ReturnYouTubeDislikePatch {
                 Logger.printDebug(() -> "Waiting for prefetch to complete: " + videoId);
                 fetch.getFetchData(20000); // Any arbitrarily large max wait time.
             }
+
             // Set the fields after the fetch completes, so any concurrent calls will also wait.
             lastPlayerResponseWasShort = videoIdIsShort;
             lastPrefetchedVideoId = videoId;
@@ -575,11 +590,6 @@ public class ReturnYouTubeDislikePatch {
                 return;
             }
             Objects.requireNonNull(videoId);
-
-            if (Utils.isNetworkNotConnected()) {
-                Logger.printDebug(() -> "Network not connected, ignoring video");
-                return;
-            }
 
             final PlayerType currentPlayerType = PlayerType.getCurrent();
             final boolean isNoneHiddenOrSlidingMinimized = currentPlayerType.isNoneHiddenOrSlidingMinimized();
@@ -616,6 +626,7 @@ public class ReturnYouTubeDislikePatch {
         if (videoIdIsSame(lastLithoShortsVideoData, videoId)) {
             return;
         }
+
         if (videoId == null) {
             // Litho filter did not detect the video id.  App is in incognito mode,
             // or the proto buffer structure was changed and the video id is no longer present.
@@ -625,6 +636,7 @@ public class ReturnYouTubeDislikePatch {
             clearData();
             return;
         }
+
         Logger.printDebug(() -> "New litho Shorts video id: " + videoId);
         ReturnYouTubeDislike videoData = ReturnYouTubeDislike.getFetchForVideoId(videoId);
         videoData.setVideoIdIsShort(true);
@@ -641,6 +653,8 @@ public class ReturnYouTubeDislikePatch {
      * Injection point.
      * <p>
      * Called when the user likes or dislikes.
+     *
+     * @param vote int that matches {@link Vote#value}
      */
     public static void sendVote(int vote) {
         try {
