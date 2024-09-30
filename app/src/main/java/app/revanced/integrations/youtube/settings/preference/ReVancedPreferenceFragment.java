@@ -25,7 +25,15 @@ import android.content.SharedPreferences;
 import java.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.*;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
+import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -36,7 +44,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.Setting;
@@ -231,12 +249,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                                 TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()
                         );
 
-                        if (isSDKAbove(24)) {
-                            toolbar.setTitleMargin(margin, 0, margin, 0);
-                        } else {
-                            // Untested
-                            toolbar.setContentInsetsAbsolute(margin, margin);
-                        }
+                        toolbar.setTitleMargin(margin, 0, margin, 0);
 
                         TextView toolbarTextView = getChildView(toolbar, TextView.class::isInstance);
                         if (toolbarTextView != null) {
@@ -250,13 +263,14 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         }
     }
 
-    // TODO: SEARCH BAR
-    //  - Add ability to search for SB and RYD settings
+    // TODO: Add ability to search for SB and RYD settings
 
     // Map to store dependencies: key is the preference key, value is a list of dependent preferences
     private final Map<String, List<Preference>> dependencyMap = new HashMap<>();
     // Set to track already added preferences to avoid duplicates
     private final Set<String> addedPreferences = new HashSet<>();
+    // Map to store preferences grouped by their parent PreferenceGroup
+    private final Map<PreferenceGroup, List<Preference>> groupedPreferences = new LinkedHashMap<>();
 
     @SuppressLint("ResourceType")
     @Override
@@ -321,10 +335,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
         super.onDestroy();
     }
-
-    // Map to store preferences grouped by their parent PreferenceGroup
-    private final Map<PreferenceGroup, List<Preference>> groupedPreferences = new LinkedHashMap<>();
-
+    
     /**
      * Recursively stores all preferences and their dependencies grouped by their parent PreferenceGroup.
      *
@@ -361,17 +372,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             // Store dependencies
             if (preference.getDependency() != null) {
                 String dependencyKey = preference.getDependency();
-                if (isSDKAbove(24)) {
-                    dependencyMap.computeIfAbsent(dependencyKey, k -> new ArrayList<>()).add(preference);
-                } else {
-                    // Untested
-                    if (!dependencyMap.containsKey(dependencyKey)) {
-                        dependencyMap.put(dependencyKey, new ArrayList<>() {{
-                            add(preference);
-                        }});
-                    }
-                }
-                Logger.printDebug(() -> "SearchFragment: Added dependency for key: " + dependencyKey + " on preference: " + preference.getKey());
+                dependencyMap.computeIfAbsent(dependencyKey, k -> new ArrayList<>()).add(preference);
             }
 
             // Recursively handle nested PreferenceGroups
@@ -392,7 +393,6 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     public void filterPreferences(String query) {
         // If the query is null or empty, reset preferences to their default state
         if (query == null || query.isEmpty()) {
-            Logger.printDebug(() -> "SearchFragment: Query is null or empty. Resetting preferences.");
             resetPreferences();
             return;
         }
@@ -585,7 +585,6 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
 
             // Handle dependent preferences
             if (dependencyMap.containsKey(key)) {
-                Logger.printDebug(() -> "SearchFragment: Adding dependent preferences for key: " + key);
                 for (Preference dependentPreference : Objects.requireNonNull(dependencyMap.get(key))) {
                     addPreferenceWithDependencies(preferenceGroup, dependentPreference);
                 }
@@ -618,8 +617,6 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         preferenceScreen.removeAll();
         for (Preference preference : getAllPreferencesBy(originalPreferenceScreen))
             preferenceScreen.addPreference(preference);
-
-        Logger.printDebug(() -> "SearchFragment: Reset preferences completed.");
     }
 
     private List<Preference> getAllPreferencesBy(PreferenceGroup preferenceGroup) {
