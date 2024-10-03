@@ -60,11 +60,6 @@ public class StreamingDataRequest {
     }
 
     /**
-     * How long to keep fetches until they are expired.
-     */
-    private static final long CACHE_RETENTION_TIME_MILLISECONDS = 5 * 60 * 1000; // 5 Minutes
-
-    /**
      * TCP connection and HTTP read timeout.
      */
     private static final int HTTP_TIMEOUT_MILLISECONDS = 10 * 1000;
@@ -76,7 +71,7 @@ public class StreamingDataRequest {
 
     @GuardedBy("itself")
     private static final Map<String, StreamingDataRequest> cache = Collections.synchronizedMap(
-            new LinkedHashMap<>(30) {
+            new LinkedHashMap<>(100) {
                 /**
                  * Cache limit must be greater than the maximum number of videos open at once,
                  * which theoretically is more than 4 (3 Shorts + one regular minimized video).
@@ -84,7 +79,7 @@ public class StreamingDataRequest {
                  * is somehow still referenced.  Each stream is a small array of Strings
                  * so memory usage is not a concern.
                  */
-                private static final int CACHE_LIMIT = 15;
+                private static final int CACHE_LIMIT = 50;
 
                 @Override
                 protected boolean removeEldestEntry(Entry eldest) {
@@ -93,28 +88,23 @@ public class StreamingDataRequest {
             });
 
     public static void fetchRequest(@NonNull String videoId, Map<String, String> fetchHeaders) {
-        synchronized (cache) {
-            // Remove any expired entries.
-            final long now = System.currentTimeMillis();
-            cache.values().removeIf(request -> {
-                final boolean expired = request.isExpired(now);
-                if (expired) Logger.printDebug(() -> "Removing expired stream: " + request.videoId);
-                return expired;
-            });
-            cache.put(videoId, new StreamingDataRequest(videoId, fetchHeaders));
-        }
+        cache.put(videoId, new StreamingDataRequest(videoId, fetchHeaders));
     }
 
     @Nullable
     public static StreamingDataRequest getRequestForVideoId(@Nullable String videoId) {
-        synchronized (cache) {
-            return cache.get(videoId);
-        }
+        return cache.get(videoId);
     }
 
     private static void handleConnectionError(String toastMessage, @Nullable Exception ex) {
         Logger.printInfo(() -> toastMessage, ex);
     }
+
+    private static final String[] REQUEST_HEADER_KEYS = {
+            "Authorization", // Available only to logged in users.
+            "X-GOOG-API-FORMAT-VERSION",
+            "X-Goog-Visitor-Id"
+    };
 
     @Nullable
     private static HttpURLConnection send(ClientType clientType, String videoId,
@@ -132,10 +122,11 @@ public class StreamingDataRequest {
             connection.setConnectTimeout(HTTP_TIMEOUT_MILLISECONDS);
             connection.setReadTimeout(HTTP_TIMEOUT_MILLISECONDS);
 
-            String authHeader = playerHeaders.get("Authorization");
-            String visitorId = playerHeaders.get("X-Goog-Visitor-Id");
-            connection.setRequestProperty("Authorization", authHeader);
-            connection.setRequestProperty("X-Goog-Visitor-Id", visitorId);
+            for (String key : REQUEST_HEADER_KEYS) {
+                if (playerHeaders.containsKey(key)) {
+                    connection.setRequestProperty(key, playerHeaders.get(key));
+                }
+            }
 
             String innerTubeBody = PlayerRoutes.createInnertubeBody(clientType, videoId);
             byte[] requestBody = innerTubeBody.getBytes(StandardCharsets.UTF_8);
@@ -195,25 +186,13 @@ public class StreamingDataRequest {
         return null;
     }
 
-    private final long timeFetched;
     private final String videoId;
     private final Future<ByteBuffer> future;
 
     private StreamingDataRequest(String videoId, Map<String, String> playerHeaders) {
         Objects.requireNonNull(playerHeaders);
-        this.timeFetched = System.currentTimeMillis();
         this.videoId = videoId;
         this.future = Utils.submitOnBackgroundThread(() -> fetch(videoId, playerHeaders));
-    }
-
-    public boolean isExpired(long now) {
-        final long timeSinceCreation = now - timeFetched;
-        if (timeSinceCreation > CACHE_RETENTION_TIME_MILLISECONDS) {
-            return true;
-        }
-
-        // Only expired if the fetch failed (API null response).
-        return (fetchCompleted() && getStream() == null);
     }
 
     public boolean fetchCompleted() {
