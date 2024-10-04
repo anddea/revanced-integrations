@@ -1,3 +1,17 @@
+# [0.157.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.1...v0.157.0-dev.2) (2024-10-04)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide Latest videos button` setting does not support tablets ([47d53e2](https://github.com/anddea/revanced-integrations/commit/47d53e2344a4760d4defc14ac668726b13bc4e2c))
+* **YouTube - Shorts components:** `Hide paused header` setting does not work ([43cd18b](https://github.com/anddea/revanced-integrations/commit/43cd18bddeacd2170c713da20cc7be9931008d45))
+* **YouTube - Spoof streaming data:** Playback issues can occur when the data connection changes or when RVX has been open for a long time ([c342d6f](https://github.com/anddea/revanced-integrations/commit/c342d6f852e02ee7e2f1152fc71792fb8b4e4395))
+
+
+### Features
+
+* **YouTube Music - Spoof app version:** Add target version `7.16.53` ([7a3ec5e](https://github.com/anddea/revanced-integrations/commit/7a3ec5eed351800b0ef18af02a2cc82ffb0cf2fd))
+
 # [0.157.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.156.0...v0.157.0-dev.1) (2024-09-30)
 
 
