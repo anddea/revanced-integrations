@@ -1,3 +1,42 @@
+# [0.157.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.1...v0.157.0-dev.2) (2024-10-04)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide Latest videos button` setting does not support tablets ([47d53e2](https://github.com/anddea/revanced-integrations/commit/47d53e2344a4760d4defc14ac668726b13bc4e2c))
+* **YouTube - Shorts components:** `Hide paused header` setting does not work ([43cd18b](https://github.com/anddea/revanced-integrations/commit/43cd18bddeacd2170c713da20cc7be9931008d45))
+* **YouTube - Spoof streaming data:** Playback issues can occur when the data connection changes or when RVX has been open for a long time ([c342d6f](https://github.com/anddea/revanced-integrations/commit/c342d6f852e02ee7e2f1152fc71792fb8b4e4395))
+
+
+### Features
+
+* **YouTube Music - Spoof app version:** Add target version `7.16.53` ([7a3ec5e](https://github.com/anddea/revanced-integrations/commit/7a3ec5eed351800b0ef18af02a2cc82ffb0cf2fd))
+
+# [0.157.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.156.0...v0.157.0-dev.1) (2024-09-30)
+
+
+### Bug Fixes
+
+* **YouTube - Hide comments components:** `Hide Comments by members banner` setting hides Channel guidelines ([a2d32ef](https://github.com/anddea/revanced-integrations/commit/a2d32efca6a1610065b9670e1706f645026144d4))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting sometimes hides the library shelf ([fd6e7d9](https://github.com/anddea/revanced-integrations/commit/fd6e7d985f89d6b83e645d010fff1e3acdf1d53d))
+* **YouTube - Hide feed components:** New kind of community posts are not hidden ([e6de272](https://github.com/anddea/revanced-integrations/commit/e6de272016fb291921f29b3da3f4046b925493a6))
+* **YouTube - Hide feed components:** New kind of survey shelves are not hidden ([8ed7a93](https://github.com/anddea/revanced-integrations/commit/8ed7a9330af719b45677990cfe750678198cc14a))
+* **YouTube - Settings:** `Search bar in settings` can't find `RYD` and `SponsorBlock` settings ([2d6e03a](https://github.com/anddea/revanced-integrations/commit/2d6e03ac56fc44b475026839d16a413b7d3a4a64))
+* **YouTube - Shorts components:** `Hide save sound to playlist button` setting does not work ([2711a55](https://github.com/anddea/revanced-integrations/commit/2711a55f9017d72533fa344ccd8ef99d568d8699))
+* **YouTube Music - Flyout menu components:** `Hide 3-column component` setting does not work ([5af8ca7](https://github.com/anddea/revanced-integrations/commit/5af8ca78321bcd20f3e46be2681d243401939f09))
+* **YouTube Music - Player components:** `Remember shuffle state` setting does not remember the correct state ([509ef96](https://github.com/anddea/revanced-integrations/commit/509ef96cd077caa54bb8b254991aa213dddf999a))
+
+
+### Features
+
+* **YouTube - Change start page:** Add `Change start page type` setting ([ce2d61f](https://github.com/anddea/revanced-integrations/commit/ce2d61f3fbad66a3630a6e85ddbd12d9555fb1dc))
+* **YouTube - Hide feed components:** Add `Hide related videos` setting ([33fb91c](https://github.com/anddea/revanced-integrations/commit/33fb91ce4d21ed9a815df4a9be869c97e46a8594))
+* **YouTube - Hide feed components:** Add `Hide UPCOMING video` setting ([78adbfc](https://github.com/anddea/revanced-integrations/commit/78adbfc61bdd8d7098da055d875dba4ed9f7da6c))
+* **YouTube - Navigation bar components:** Add `Hide navigation bar` setting ([ac2b858](https://github.com/anddea/revanced-integrations/commit/ac2b8584718e6dc1cc5246241a345621d19f2d78))
+* **YouTube - Shorts Component:** Add `Disable Like button animation` setting ([fbc515f](https://github.com/anddea/revanced-integrations/commit/fbc515f0195d5ec4d1dc65d8a8d440556f770891))
+* **YouTube - Shorts components:** Add `Hide stickers` setting ([d72d807](https://github.com/anddea/revanced-integrations/commit/d72d807a880bf692d24aaef4a834b2c17fbaef41))
+* **YouTube Music - Settings:** Add `Open default app settings` setting ([669d719](https://github.com/anddea/revanced-integrations/commit/669d7196f859f70ba16ee9a1b561f6009bfae9f8))
+
 # [0.156.0](https://github.com/anddea/revanced-integrations/compare/v0.155.0...v0.156.0) (2024-09-30)
 
 

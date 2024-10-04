@@ -263,7 +263,7 @@ public class Utils {
 
     public static Resources getResources() {
         if (resources == null) {
-            return getLocalizedContextAndSetResources(context).getResources();
+            return getLocalizedContextAndSetResources(getContext()).getResources();
         } else {
             return resources;
         }
@@ -391,12 +391,6 @@ public class Utils {
         }
     }
 
-    public static void setPreferenceIcon(Preference preference, String str) {
-        final int iconResourceId = ResourceUtils.getDrawableIdentifier(str);
-        if (iconResourceId == 0) return;
-        preference.setIcon(iconResourceId);
-    }
-
     public static void setEditTextDialogTheme(final AlertDialog.Builder builder) {
         setEditTextDialogTheme(builder, false);
     }
@@ -451,11 +445,11 @@ public class Utils {
 
     /**
      * @return if the text contains at least 1 number character,
-     *         including any unicode numbers such as Arabic.
+     * including any unicode numbers such as Arabic.
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean containsNumber(@NonNull CharSequence text) {
-        for (int index = 0, length = text.length(); index < length;) {
+        for (int index = 0, length = text.length(); index < length; ) {
             final int codePoint = Character.codePointAt(text, index);
             if (Character.isDigit(codePoint)) {
                 return true;

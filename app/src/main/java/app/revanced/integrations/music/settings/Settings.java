@@ -135,7 +135,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FULLSCREEN_SHARE_BUTTON = new BooleanSetting("revanced_hide_fullscreen_share_button", FALSE, true);
     public static final BooleanSetting REMEMBER_REPEAT_SATE = new BooleanSetting("revanced_remember_repeat_state", TRUE);
     public static final BooleanSetting REMEMBER_SHUFFLE_SATE = new BooleanSetting("revanced_remember_shuffle_state", TRUE);
-    public static final IntegerSetting SHUFFLE_SATE = new IntegerSetting("revanced_shuffle_state", 1);
+    public static final BooleanSetting ALWAYS_SHUFFLE = new BooleanSetting("revanced_always_shuffle", FALSE);
     public static final BooleanSetting RESTORE_OLD_COMMENTS_POPUP_PANELS = new BooleanSetting("revanced_restore_old_comments_popup_panels", FALSE, true);
     public static final BooleanSetting RESTORE_OLD_PLAYER_BACKGROUND = new BooleanSetting("revanced_restore_old_player_background", FALSE, true);
     public static final BooleanSetting RESTORE_OLD_PLAYER_LAYOUT = new BooleanSetting("revanced_restore_old_player_layout", FALSE, true);
@@ -195,6 +195,8 @@ public class Settings extends BaseSettings {
     // SB settings not exported
     public static final LongSetting SB_LAST_VIP_CHECK = new LongSetting("sb_last_vip_check", 0L, false, false);
 
+    public static final String OPEN_DEFAULT_APP_SETTINGS = "revanced_default_app_settings";
+
     /**
      * If a setting path has this prefix, then remove it.
      */
@@ -214,6 +216,7 @@ public class Settings extends BaseSettings {
             SB_API_URL.key,
             SETTINGS_IMPORT_EXPORT.key,
             SPOOF_APP_VERSION_TARGET.key,
+            OPEN_DEFAULT_APP_SETTINGS,
             OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX
     };
 
