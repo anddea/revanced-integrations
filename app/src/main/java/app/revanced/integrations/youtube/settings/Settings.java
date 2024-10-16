@@ -533,7 +533,7 @@ public class Settings extends BaseSettings {
     public static final EnumSetting<WatchHistoryType> WATCH_HISTORY_TYPE = new EnumSetting<>("revanced_watch_history_type", WatchHistoryType.REPLACE);
 
     // PreferenceScreen: Miscellaneous - Spoof streaming data
-    public static final BooleanSetting SPOOF_STREAMING_DATA = new BooleanSetting("revanced_spoof_streaming_data", TRUE, true, "revanced_spoof_streaming_data_user_dialog_message");
+    public static final BooleanSetting SPOOF_STREAMING_DATA = new BooleanSetting("revanced_spoof_streaming_data", FALSE, true, "revanced_spoof_streaming_data_user_dialog_message");
     public static final BooleanSetting SPOOF_STREAMING_DATA_IOS_FORCE_AVC = new BooleanSetting("revanced_spoof_streaming_data_ios_force_avc", FALSE, true,
             "revanced_spoof_streaming_data_ios_force_avc_user_dialog_message", new SpoofStreamingDataPatch.ForceiOSAVCAvailability());
     public static final EnumSetting<ClientType> SPOOF_STREAMING_DATA_TYPE = new EnumSetting<>("revanced_spoof_streaming_data_type", ClientType.ANDROID_VR, true, parent(SPOOF_STREAMING_DATA));
