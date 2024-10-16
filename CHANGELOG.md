@@ -1,3 +1,24 @@
+# [0.157.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.2...v0.157.0-dev.3) (2024-10-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide Carousel Shelf` setting sometimes hides the library shelf when a user is playing a video in the library tab ([ad3b6fb](https://github.com/anddea/revanced-integrations/commit/ad3b6fb40960fcb078100fcb4b026ab0ad242aa6))
+* **YouTube - Hide feed components:** `Hide UPCOMING video` setting now only hides the video when the thumbnail can be hidden ([afd9da0](https://github.com/anddea/revanced-integrations/commit/afd9da0356e6797f052275e32c6627585f5ae912))
+* **YouTube - Shorts components:** Shorts are hidden in Watch history shelf in Library tab ([ab6f255](https://github.com/anddea/revanced-integrations/commit/ab6f255985f277df346862c4ef9fe7cf4b08d1c0))
+* **YouTube & YouTube Music - Hide settings menu:** Add switch preferences for each setting entry ([a72e637](https://github.com/anddea/revanced-integrations/commit/a72e637409ea9c26c545a201de34c4d8dac3534e))
+* **YouTube Music - Player components:** `Hide Audio / Video toggle` setting not working in landscape mode ([b6a41ab](https://github.com/anddea/revanced-integrations/commit/b6a41ab3a3be7883665056a7928b01e4547ab5c3))
+* **YouTube Music - Spoof app version:** ListPreference sometimes selects wrong values ([88488f6](https://github.com/anddea/revanced-integrations/commit/88488f6a5dce9b787377781089d272b0da372a61))
+
+
+### Features
+
+* **YouTube - Hide player flyout menu:** Add `Hide 1080p Premium menu` setting ([4964614](https://github.com/anddea/revanced-integrations/commit/49646148edb8b88c4b426427e689327ad77c0ca9))
+* **YouTube - Seekbar components:** Add `Disable seekbar chapters` setting ([f530872](https://github.com/anddea/revanced-integrations/commit/f530872f77faa2d3dff32feab7204e8dbbcf517f))
+* **YouTube - Toolbar components:** Add `Hide YouTube Doodles` setting ([df0ad50](https://github.com/anddea/revanced-integrations/commit/df0ad500e18ca4ff69924c8ac100dfaded11b39f))
+* **YouTube & YouTube Music - Return YouTube Dislike:** Add `Show estimated likes` setting ([c614ed4](https://github.com/anddea/revanced-integrations/commit/c614ed47fac5dfbb025f880bacb676bcd3276bb8))
+* **YouTube & YouTube Music:** Add `Return YouTube Username` patch ([835c4c7](https://github.com/anddea/revanced-integrations/commit/835c4c720fd2d9ddced43b40aaef6a8b12760791))
+
 # [0.157.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.1...v0.157.0-dev.2) (2024-10-04)
 
 
