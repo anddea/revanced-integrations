@@ -3,6 +3,8 @@ package app.revanced.integrations.shared.settings;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
+import app.revanced.integrations.shared.patches.ReturnYouTubeUsernamePatch.DisplayFormat;
+
 /**
  * Settings shared across multiple apps.
  * <p>
@@ -31,6 +33,7 @@ public class BaseSettings {
     public static final StringSetting BYPASS_IMAGE_REGION_RESTRICTIONS_DOMAIN = new StringSetting("revanced_bypass_image_region_restrictions_domain", "yt4.ggpht.com", true);
 
     public static final BooleanSetting RETURN_YOUTUBE_USERNAME_ENABLED = new BooleanSetting("revanced_return_youtube_username_enabled", FALSE, true);
+    public static final EnumSetting<DisplayFormat> RETURN_YOUTUBE_USERNAME_DISPLAY_FORMAT = new EnumSetting<>("revanced_return_youtube_username_display_format", DisplayFormat.USERNAME_ONLY, true);
     public static final StringSetting RETURN_YOUTUBE_USERNAME_YOUTUBE_DATA_API_V3_DEVELOPER_KEY = new StringSetting("revanced_return_youtube_username_youtube_data_api_v3_developer_key", "", true, false);
 
     public static final BooleanSetting SANITIZE_SHARING_LINKS = new BooleanSetting("revanced_sanitize_sharing_links", TRUE, true);
