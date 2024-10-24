@@ -1,3 +1,31 @@
+# [0.157.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.3...v0.157.0-dev.4) (2024-10-24)
+
+
+### Bug Fixes
+
+* **YouTube - Hide ads:** `Hide view products banner` is not hidden ([2933d48](https://github.com/anddea/revanced-integrations/commit/2933d48fe14cd62c6b40b3ea51e04ee46d82867f))
+* **YouTube - Hide ads:** `Hide view products banner` setting is not working ([469a716](https://github.com/anddea/revanced-integrations/commit/469a71652e94e9c882b62f795fd1c270590b66e3))
+* **YouTube - Hide ads:** New type of ads are not hidden ([353b868](https://github.com/anddea/revanced-integrations/commit/353b868fa3acc9eb7e3ad2ff02ae27eb724cf776))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting hides the library shelf ([fad5045](https://github.com/anddea/revanced-integrations/commit/fad5045d3458aaea2b7e36cf31087e6556529376))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting hides the library shelf ([c52b282](https://github.com/anddea/revanced-integrations/commit/c52b282cd8f5f60c3f8426ef38aa3490b0eb8d76))
+* **YouTube - Hide feed components:** New type of Playable is not hidden ([46d1b60](https://github.com/anddea/revanced-integrations/commit/46d1b608564c78326672f128f01c5d923ebe5e78))
+* **YouTube - Hook YouTube Music actions:** App crashes when first installed ([554ebec](https://github.com/anddea/revanced-integrations/commit/554ebec6a37c6f91b1b02f16a7f5536f575048af))
+* **YouTube - Shorts components:** App crashes when `Replace channel handle` setting is turned on ([3136600](https://github.com/anddea/revanced-integrations/commit/3136600ec830d2b80ff6db19607915eb373f5099))
+* **YouTube - Shorts components:** New type of shelf is not hidden ([fb2af77](https://github.com/anddea/revanced-integrations/commit/fb2af7754005c174e61b12073ac7addfd7c2c51e))
+
+
+### Features
+
+* **YouTube - Hide comments components:** Add `Hide highlighted search links` setting ([409db69](https://github.com/anddea/revanced-integrations/commit/409db6930c19c29dc725ed0189e25c11bffb4229))
+* **YouTube - Hide feed components:** Remove `Hide UPCOMING video` setting ([91d8c3c](https://github.com/anddea/revanced-integrations/commit/91d8c3c5b0999b91ece1b9a33c26f24c0f007cb3))
+* **YouTube - Player components:** Add `Sanitize video subtitle` setting ([bd55027](https://github.com/anddea/revanced-integrations/commit/bd550273fe5a07c1d8c9d94c09a8de962ae122d6))
+* **YouTube - Shorts components:** Add `Hide in channel` setting (Hide the Shorts shelf on the channel home tab) ([0d93d8e](https://github.com/anddea/revanced-integrations/commit/0d93d8e1c6e19558e108e355132efcd622a72161))
+* **YouTube - Spoof app version:** Show the dialog when the app is first installed ([7287672](https://github.com/anddea/revanced-integrations/commit/7287672350ce18723ed8db7d0a8264a997038be5))
+* **YouTube - Swipe controls:** Add `Swipe sensitivity` settings ([23958f4](https://github.com/anddea/revanced-integrations/commit/23958f40eba312c136f48f367ae3b51b47eb7c82))
+* **YouTube & YouTube Music - Return YouTube Username:** Add `Display format` setting ([4ba31b3](https://github.com/anddea/revanced-integrations/commit/4ba31b39487e8aedbc920c3a96a7a4f5e726e324))
+* **YouTube Music - Navigation bar components:** Do not use hardcoded color, `Enable black navigation bar` setting is turned off ([6a05e8f](https://github.com/anddea/revanced-integrations/commit/6a05e8f90627d054734c692e5eae8d2843fea50c))
+* **YouTube Music - Spoof app version:** App crashes when first installed ([582f3f1](https://github.com/anddea/revanced-integrations/commit/582f3f18b43537280c31c3fdf237962635e1521d))
+
 # [0.157.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.2...v0.157.0-dev.3) (2024-10-16)
 
 
