@@ -18,6 +18,7 @@ public class ExtendedUtils extends PackageUtils {
 
         if (value < min || value > max) {
             showToastShort(str(message));
+            showToastShort(str("revanced_extended_reset_to_default_toast"));
             settings.resetToDefault();
             value = settings.defaultValue;
         }
@@ -30,6 +31,7 @@ public class ExtendedUtils extends PackageUtils {
 
         if (value < min || value > max) {
             showToastShort(str(message));
+            showToastShort(str("revanced_extended_reset_to_default_toast"));
             settings.resetToDefault();
             value = settings.defaultValue;
         }
@@ -38,17 +40,7 @@ public class ExtendedUtils extends PackageUtils {
     }
 
     public static boolean isFullscreenHidden() {
-        boolean isFullscreenHidden = isTablet() &&
-                !Settings.ENABLE_PHONE_LAYOUT.get();
-        final BooleanSetting[] hideFullscreenSettings = {
-                Settings.ENABLE_TABLET_LAYOUT,
-                Settings.DISABLE_ENGAGEMENT_PANEL,
-                Settings.HIDE_QUICK_ACTIONS
-        };
-        for (BooleanSetting s : hideFullscreenSettings) {
-            isFullscreenHidden |= s.get();
-        }
-        return isFullscreenHidden;
+        return Settings.DISABLE_ENGAGEMENT_PANEL.get() || Settings.HIDE_QUICK_ACTIONS.get();
     }
 
     public static boolean isSpoofingToLessThan(@NonNull String versionName) {

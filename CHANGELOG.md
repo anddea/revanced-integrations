@@ -1,3 +1,91 @@
+# [0.157.0-dev.4](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.3...v0.157.0-dev.4) (2024-10-24)
+
+
+### Bug Fixes
+
+* **YouTube - Hide ads:** `Hide view products banner` is not hidden ([2933d48](https://github.com/anddea/revanced-integrations/commit/2933d48fe14cd62c6b40b3ea51e04ee46d82867f))
+* **YouTube - Hide ads:** `Hide view products banner` setting is not working ([469a716](https://github.com/anddea/revanced-integrations/commit/469a71652e94e9c882b62f795fd1c270590b66e3))
+* **YouTube - Hide ads:** New type of ads are not hidden ([353b868](https://github.com/anddea/revanced-integrations/commit/353b868fa3acc9eb7e3ad2ff02ae27eb724cf776))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting hides the library shelf ([fad5045](https://github.com/anddea/revanced-integrations/commit/fad5045d3458aaea2b7e36cf31087e6556529376))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting hides the library shelf ([c52b282](https://github.com/anddea/revanced-integrations/commit/c52b282cd8f5f60c3f8426ef38aa3490b0eb8d76))
+* **YouTube - Hide feed components:** New type of Playable is not hidden ([46d1b60](https://github.com/anddea/revanced-integrations/commit/46d1b608564c78326672f128f01c5d923ebe5e78))
+* **YouTube - Hook YouTube Music actions:** App crashes when first installed ([554ebec](https://github.com/anddea/revanced-integrations/commit/554ebec6a37c6f91b1b02f16a7f5536f575048af))
+* **YouTube - Shorts components:** App crashes when `Replace channel handle` setting is turned on ([3136600](https://github.com/anddea/revanced-integrations/commit/3136600ec830d2b80ff6db19607915eb373f5099))
+* **YouTube - Shorts components:** New type of shelf is not hidden ([fb2af77](https://github.com/anddea/revanced-integrations/commit/fb2af7754005c174e61b12073ac7addfd7c2c51e))
+
+
+### Features
+
+* **YouTube - Hide comments components:** Add `Hide highlighted search links` setting ([409db69](https://github.com/anddea/revanced-integrations/commit/409db6930c19c29dc725ed0189e25c11bffb4229))
+* **YouTube - Hide feed components:** Remove `Hide UPCOMING video` setting ([91d8c3c](https://github.com/anddea/revanced-integrations/commit/91d8c3c5b0999b91ece1b9a33c26f24c0f007cb3))
+* **YouTube - Player components:** Add `Sanitize video subtitle` setting ([bd55027](https://github.com/anddea/revanced-integrations/commit/bd550273fe5a07c1d8c9d94c09a8de962ae122d6))
+* **YouTube - Shorts components:** Add `Hide in channel` setting (Hide the Shorts shelf on the channel home tab) ([0d93d8e](https://github.com/anddea/revanced-integrations/commit/0d93d8e1c6e19558e108e355132efcd622a72161))
+* **YouTube - Spoof app version:** Show the dialog when the app is first installed ([7287672](https://github.com/anddea/revanced-integrations/commit/7287672350ce18723ed8db7d0a8264a997038be5))
+* **YouTube - Swipe controls:** Add `Swipe sensitivity` settings ([23958f4](https://github.com/anddea/revanced-integrations/commit/23958f40eba312c136f48f367ae3b51b47eb7c82))
+* **YouTube & YouTube Music - Return YouTube Username:** Add `Display format` setting ([4ba31b3](https://github.com/anddea/revanced-integrations/commit/4ba31b39487e8aedbc920c3a96a7a4f5e726e324))
+* **YouTube Music - Navigation bar components:** Do not use hardcoded color, `Enable black navigation bar` setting is turned off ([6a05e8f](https://github.com/anddea/revanced-integrations/commit/6a05e8f90627d054734c692e5eae8d2843fea50c))
+* **YouTube Music - Spoof app version:** App crashes when first installed ([582f3f1](https://github.com/anddea/revanced-integrations/commit/582f3f18b43537280c31c3fdf237962635e1521d))
+
+# [0.157.0-dev.3](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.2...v0.157.0-dev.3) (2024-10-16)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide Carousel Shelf` setting sometimes hides the library shelf when a user is playing a video in the library tab ([ad3b6fb](https://github.com/anddea/revanced-integrations/commit/ad3b6fb40960fcb078100fcb4b026ab0ad242aa6))
+* **YouTube - Hide feed components:** `Hide UPCOMING video` setting now only hides the video when the thumbnail can be hidden ([afd9da0](https://github.com/anddea/revanced-integrations/commit/afd9da0356e6797f052275e32c6627585f5ae912))
+* **YouTube - Shorts components:** Shorts are hidden in Watch history shelf in Library tab ([ab6f255](https://github.com/anddea/revanced-integrations/commit/ab6f255985f277df346862c4ef9fe7cf4b08d1c0))
+* **YouTube & YouTube Music - Hide settings menu:** Add switch preferences for each setting entry ([a72e637](https://github.com/anddea/revanced-integrations/commit/a72e637409ea9c26c545a201de34c4d8dac3534e))
+* **YouTube Music - Player components:** `Hide Audio / Video toggle` setting not working in landscape mode ([b6a41ab](https://github.com/anddea/revanced-integrations/commit/b6a41ab3a3be7883665056a7928b01e4547ab5c3))
+* **YouTube Music - Spoof app version:** ListPreference sometimes selects wrong values ([88488f6](https://github.com/anddea/revanced-integrations/commit/88488f6a5dce9b787377781089d272b0da372a61))
+
+
+### Features
+
+* **YouTube - Hide player flyout menu:** Add `Hide 1080p Premium menu` setting ([4964614](https://github.com/anddea/revanced-integrations/commit/49646148edb8b88c4b426427e689327ad77c0ca9))
+* **YouTube - Seekbar components:** Add `Disable seekbar chapters` setting ([f530872](https://github.com/anddea/revanced-integrations/commit/f530872f77faa2d3dff32feab7204e8dbbcf517f))
+* **YouTube - Toolbar components:** Add `Hide YouTube Doodles` setting ([df0ad50](https://github.com/anddea/revanced-integrations/commit/df0ad500e18ca4ff69924c8ac100dfaded11b39f))
+* **YouTube & YouTube Music - Return YouTube Dislike:** Add `Show estimated likes` setting ([c614ed4](https://github.com/anddea/revanced-integrations/commit/c614ed47fac5dfbb025f880bacb676bcd3276bb8))
+* **YouTube & YouTube Music:** Add `Return YouTube Username` patch ([835c4c7](https://github.com/anddea/revanced-integrations/commit/835c4c720fd2d9ddced43b40aaef6a8b12760791))
+
+# [0.157.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.157.0-dev.1...v0.157.0-dev.2) (2024-10-04)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide Latest videos button` setting does not support tablets ([47d53e2](https://github.com/anddea/revanced-integrations/commit/47d53e2344a4760d4defc14ac668726b13bc4e2c))
+* **YouTube - Shorts components:** `Hide paused header` setting does not work ([43cd18b](https://github.com/anddea/revanced-integrations/commit/43cd18bddeacd2170c713da20cc7be9931008d45))
+* **YouTube - Spoof streaming data:** Playback issues can occur when the data connection changes or when RVX has been open for a long time ([c342d6f](https://github.com/anddea/revanced-integrations/commit/c342d6f852e02ee7e2f1152fc71792fb8b4e4395))
+
+
+### Features
+
+* **YouTube Music - Spoof app version:** Add target version `7.16.53` ([7a3ec5e](https://github.com/anddea/revanced-integrations/commit/7a3ec5eed351800b0ef18af02a2cc82ffb0cf2fd))
+
+# [0.157.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.156.0...v0.157.0-dev.1) (2024-09-30)
+
+
+### Bug Fixes
+
+* **YouTube - Hide comments components:** `Hide Comments by members banner` setting hides Channel guidelines ([a2d32ef](https://github.com/anddea/revanced-integrations/commit/a2d32efca6a1610065b9670e1706f645026144d4))
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting sometimes hides the library shelf ([fd6e7d9](https://github.com/anddea/revanced-integrations/commit/fd6e7d985f89d6b83e645d010fff1e3acdf1d53d))
+* **YouTube - Hide feed components:** New kind of community posts are not hidden ([e6de272](https://github.com/anddea/revanced-integrations/commit/e6de272016fb291921f29b3da3f4046b925493a6))
+* **YouTube - Hide feed components:** New kind of survey shelves are not hidden ([8ed7a93](https://github.com/anddea/revanced-integrations/commit/8ed7a9330af719b45677990cfe750678198cc14a))
+* **YouTube - Settings:** `Search bar in settings` can't find `RYD` and `SponsorBlock` settings ([2d6e03a](https://github.com/anddea/revanced-integrations/commit/2d6e03ac56fc44b475026839d16a413b7d3a4a64))
+* **YouTube - Shorts components:** `Hide save sound to playlist button` setting does not work ([2711a55](https://github.com/anddea/revanced-integrations/commit/2711a55f9017d72533fa344ccd8ef99d568d8699))
+* **YouTube Music - Flyout menu components:** `Hide 3-column component` setting does not work ([5af8ca7](https://github.com/anddea/revanced-integrations/commit/5af8ca78321bcd20f3e46be2681d243401939f09))
+* **YouTube Music - Player components:** `Remember shuffle state` setting does not remember the correct state ([509ef96](https://github.com/anddea/revanced-integrations/commit/509ef96cd077caa54bb8b254991aa213dddf999a))
+
+
+### Features
+
+* **YouTube - Change start page:** Add `Change start page type` setting ([ce2d61f](https://github.com/anddea/revanced-integrations/commit/ce2d61f3fbad66a3630a6e85ddbd12d9555fb1dc))
+* **YouTube - Hide feed components:** Add `Hide related videos` setting ([33fb91c](https://github.com/anddea/revanced-integrations/commit/33fb91ce4d21ed9a815df4a9be869c97e46a8594))
+* **YouTube - Hide feed components:** Add `Hide UPCOMING video` setting ([78adbfc](https://github.com/anddea/revanced-integrations/commit/78adbfc61bdd8d7098da055d875dba4ed9f7da6c))
+* **YouTube - Navigation bar components:** Add `Hide navigation bar` setting ([ac2b858](https://github.com/anddea/revanced-integrations/commit/ac2b8584718e6dc1cc5246241a345621d19f2d78))
+* **YouTube - Shorts Component:** Add `Disable Like button animation` setting ([fbc515f](https://github.com/anddea/revanced-integrations/commit/fbc515f0195d5ec4d1dc65d8a8d440556f770891))
+* **YouTube - Shorts components:** Add `Hide stickers` setting ([d72d807](https://github.com/anddea/revanced-integrations/commit/d72d807a880bf692d24aaef4a834b2c17fbaef41))
+* **YouTube Music - Settings:** Add `Open default app settings` setting ([669d719](https://github.com/anddea/revanced-integrations/commit/669d7196f859f70ba16ee9a1b561f6009bfae9f8))
+
 # [0.156.0](https://github.com/anddea/revanced-integrations/compare/v0.155.0...v0.156.0) (2024-09-30)
 
 

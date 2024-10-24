@@ -16,7 +16,7 @@ enum class LockModeState {
 
     companion object {
 
-        private val nameToLockModeState = values().associateBy { it.name }
+        private val nameToLockModeState = entries.associateBy { it.name }
 
         @JvmStatic
         fun setFromString(enumName: String) {
@@ -37,7 +37,7 @@ enum class LockModeState {
             get() = currentLockModeState
             private set(value) {
                 currentLockModeState = value
-                onChange(currentLockModeState)
+                onChange(value)
             }
 
         @Volatile // value is read/write from different threads

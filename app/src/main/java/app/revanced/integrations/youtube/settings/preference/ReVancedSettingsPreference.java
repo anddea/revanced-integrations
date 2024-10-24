@@ -1,15 +1,20 @@
 package app.revanced.integrations.youtube.settings.preference;
 
+import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.shared.utils.Utils.isSDKAbove;
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.MODERN_1;
 import static app.revanced.integrations.youtube.patches.general.MiniplayerPatch.MiniplayerType.MODERN_3;
 import static app.revanced.integrations.youtube.utils.ExtendedUtils.isSpoofingToLessThan;
 
 import android.preference.Preference;
+import android.preference.SwitchPreference;
 
 import app.revanced.integrations.shared.settings.Setting;
+import app.revanced.integrations.youtube.patches.general.LayoutSwitchPatch;
 import app.revanced.integrations.youtube.patches.general.MiniplayerPatch;
 import app.revanced.integrations.youtube.patches.utils.PatchStatus;
+import app.revanced.integrations.youtube.patches.utils.ReturnYouTubeDislikePatch;
+import app.revanced.integrations.youtube.returnyoutubedislike.ReturnYouTubeDislike;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.utils.ExtendedUtils;
 
@@ -41,11 +46,13 @@ public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
         enableDisablePreferences();
 
         AmbientModePreferenceLinks();
+        ChangeHeaderPreferenceLinks();
         ExternalDownloaderPreferenceLinks();
         FullScreenPanelPreferenceLinks();
         LayoutOverrideLinks();
         MiniPlayerPreferenceLinks();
         NavigationPreferenceLinks();
+        RYDPreferenceLinks();
         SpeedOverlayPreferenceLinks();
         QuickActionsPreferenceLinks();
         TabletLayoutLinks();
@@ -60,6 +67,16 @@ public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
                 Settings.DISABLE_AMBIENT_MODE.get(),
                 Settings.BYPASS_AMBIENT_MODE_RESTRICTIONS,
                 Settings.DISABLE_AMBIENT_MODE_IN_FULLSCREEN
+        );
+    }
+
+    /**
+     * Enable/Disable Preference related to Change header
+     */
+    private static void ChangeHeaderPreferenceLinks() {
+        enableDisablePreferences(
+                PatchStatus.MinimalHeader(),
+                Settings.CHANGE_YOUTUBE_HEADER
         );
     }
 
@@ -81,12 +98,7 @@ public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
     private static void LayoutOverrideLinks() {
         enableDisablePreferences(
                 ExtendedUtils.isTablet(),
-                Settings.ENABLE_TABLET_LAYOUT,
                 Settings.FORCE_FULLSCREEN
-        );
-        enableDisablePreferences(
-                !ExtendedUtils.isTablet(),
-                Settings.ENABLE_PHONE_LAYOUT
         );
     }
 
@@ -94,18 +106,14 @@ public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
      * Enable/Disable Preferences not working in tablet layout
      */
     private static void TabletLayoutLinks() {
-        final boolean isTabletDevice = ExtendedUtils.isTablet() &&
-                !Settings.ENABLE_PHONE_LAYOUT.get();
-        final boolean isEnabledTabletLayout = Settings.ENABLE_TABLET_LAYOUT.get();
-
-        final boolean isTablet = isTabletDevice || isEnabledTabletLayout;
+        final boolean isTablet = ExtendedUtils.isTablet() &&
+                !LayoutSwitchPatch.phoneLayoutEnabled();
 
         enableDisablePreferences(
                 isTablet,
                 Settings.DISABLE_ENGAGEMENT_PANEL,
                 Settings.HIDE_COMMUNITY_POSTS_HOME_RELATED_VIDEOS,
                 Settings.HIDE_COMMUNITY_POSTS_SUBSCRIPTIONS,
-                Settings.HIDE_LATEST_VIDEOS_BUTTON,
                 Settings.HIDE_MIX_PLAYLISTS,
                 Settings.HIDE_RELATED_VIDEO_OVERLAY,
                 Settings.SHOW_VIDEO_TITLE_SECTION
@@ -198,6 +206,40 @@ public class ReVancedSettingsPreference extends ReVancedPreferenceFragment {
                 !isSDKAbove(31),
                 Settings.ENABLE_TRANSLUCENT_NAVIGATION_BAR
         );
+    }
+
+    /**
+     * Enable/Disable Preference related to RYD settings
+     */
+    private static void RYDPreferenceLinks() {
+        if (!(mPreferenceManager.findPreference(Settings.RYD_ENABLED.key) instanceof SwitchPreference enabledPreference)) {
+            return;
+        }
+        if (!(mPreferenceManager.findPreference(Settings.RYD_SHORTS.key) instanceof SwitchPreference shortsPreference)) {
+            return;
+        }
+        if (!(mPreferenceManager.findPreference(Settings.RYD_DISLIKE_PERCENTAGE.key) instanceof SwitchPreference percentagePreference)) {
+            return;
+        }
+        if (!(mPreferenceManager.findPreference(Settings.RYD_COMPACT_LAYOUT.key) instanceof SwitchPreference compactLayoutPreference)) {
+            return;
+        }
+        final Preference.OnPreferenceChangeListener clearAllUICaches = (pref, newValue) -> {
+            ReturnYouTubeDislike.clearAllUICaches();
+
+            return true;
+        };
+        enabledPreference.setOnPreferenceChangeListener((pref, newValue) -> {
+            ReturnYouTubeDislikePatch.onRYDStatusChange();
+
+            return true;
+        });
+        String shortsSummary = ReturnYouTubeDislikePatch.IS_SPOOFING_TO_NON_LITHO_SHORTS_PLAYER
+                ? str("revanced_ryd_shorts_summary_on")
+                : str("revanced_ryd_shorts_summary_on_disclaimer");
+        shortsPreference.setSummaryOn(shortsSummary);
+        percentagePreference.setOnPreferenceChangeListener(clearAllUICaches);
+        compactLayoutPreference.setOnPreferenceChangeListener(clearAllUICaches);
     }
 
     /**

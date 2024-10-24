@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
+import java.util.Objects;
 
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.utils.Logger;
@@ -54,6 +55,10 @@ public class SpoofStreamingDataPatch {
      * Injection point.
      * <p>
      * Blocks /initplayback requests.
+     * <p>
+     * In some cases, blocking all URLs containing the path `initplayback`
+     * using localhost can also cause playback issues.
+     * See <a href="https://github.com/inotia00/ReVanced_Extended/issues/2416">this GitHub Issue</a>.
      */
     public static String blockInitPlaybackRequest(String originalUrlString) {
         if (SPOOF_STREAMING_DATA) {
@@ -62,9 +67,9 @@ public class SpoofStreamingDataPatch {
                 String path = originalUri.getPath();
 
                 if (path != null && path.contains("initplayback")) {
-                    Logger.printDebug(() -> "Blocking 'initplayback' by returning unreachable url");
+                    Logger.printDebug(() -> "Blocking 'initplayback' by clearing query");
 
-                    return UNREACHABLE_HOST_URI_STRING;
+                    return originalUri.buildUpon().clearQuery().build().toString();
                 }
             } catch (Exception ex) {
                 Logger.printException(() -> "blockInitPlaybackRequest failure", ex);
@@ -89,12 +94,9 @@ public class SpoofStreamingDataPatch {
             try {
                 Uri uri = Uri.parse(url);
                 String path = uri.getPath();
-                String videoId = uri.getQueryParameter("id");
                 // 'heartbeat' has no video id and appears to be only after playback has started.
-                if (path != null &&
-                        path.contains("player") &&
-                        !path.contains("heartbeat") &&
-                        videoId != null) {
+                if (path != null && path.contains("player") && !path.contains("heartbeat")) {
+                    String videoId = Objects.requireNonNull(uri.getQueryParameter("id"));
                     StreamingDataRequest.fetchRequest(videoId, requestHeaders);
                 }
             } catch (Exception ex) {
@@ -149,13 +151,11 @@ public class SpoofStreamingDataPatch {
                 final int methodPost = 2;
                 if (method == methodPost) {
                     String path = uri.getPath();
-                    String clientName = "c";
-                    final boolean iosClient = ClientType.IOS.name().equals(uri.getQueryParameter(clientName));
-                    if (iosClient && path != null && path.contains("videoplayback")) {
+                    if (path != null && path.contains("videoplayback")) {
                         return null;
                     }
                 }
-            }  catch (Exception ex) {
+            } catch (Exception ex) {
                 Logger.printException(() -> "removeVideoPlaybackPostBody failure", ex);
             }
         }

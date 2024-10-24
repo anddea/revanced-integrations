@@ -39,6 +39,7 @@ import app.revanced.integrations.youtube.patches.utils.PatchStatus;
 import app.revanced.integrations.youtube.shared.VideoInformation;
 import app.revanced.integrations.youtube.utils.ThemeUtils;
 
+@SuppressWarnings("deprecation")
 public class Whitelist {
     private static final String ZERO_WIDTH_SPACE_CHARACTER = "\u200B";
     private static final Map<WhitelistType, ArrayList<VideoChannel>> whitelistMap = parseWhitelist();
@@ -112,7 +113,7 @@ public class Whitelist {
 
         AlertDialog dialog = builder.show();
 
-        final ColorFilter cf = new PorterDuffColorFilter(ThemeUtils.getTextColor(), PorterDuff.Mode.SRC_ATOP);
+        final ColorFilter cf = new PorterDuffColorFilter(ThemeUtils.getForegroundColor(), PorterDuff.Mode.SRC_ATOP);
         Button sponsorBlockButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         Button playbackSpeedButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
         if (sponsorBlockButton != null && sponsorBlockDrawable != null) {

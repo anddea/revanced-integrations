@@ -6,6 +6,7 @@ import static app.revanced.integrations.music.sponsorblock.objects.CategoryBehav
 
 import androidx.annotation.NonNull;
 
+import app.revanced.integrations.music.patches.utils.PatchStatus;
 import app.revanced.integrations.shared.settings.BaseSettings;
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.FloatSetting;
@@ -102,8 +103,10 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_VOICE_SEARCH_BUTTON = new BooleanSetting("revanced_hide_voice_search_button", FALSE, true);
     public static final BooleanSetting REMOVE_VIEWER_DISCRETION_DIALOG = new BooleanSetting("revanced_remove_viewer_discretion_dialog", FALSE);
     public static final BooleanSetting RESTORE_OLD_STYLE_LIBRARY_SHELF = new BooleanSetting("revanced_restore_old_style_library_shelf", FALSE, true);
-    public static final BooleanSetting SPOOF_APP_VERSION = new BooleanSetting("revanced_spoof_app_version", FALSE, true);
-    public static final StringSetting SPOOF_APP_VERSION_TARGET = new StringSetting("revanced_spoof_app_version_target", "4.27.53", true);
+    public static final BooleanSetting SPOOF_APP_VERSION = new BooleanSetting("revanced_spoof_app_version",
+            PatchStatus.SpoofAppVersionDefaultBoolean(), true);
+    public static final StringSetting SPOOF_APP_VERSION_TARGET = new StringSetting("revanced_spoof_app_version_target",
+            PatchStatus.SpoofAppVersionDefaultString(), true);
 
 
     // PreferenceScreen: Navigation bar
@@ -135,10 +138,23 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FULLSCREEN_SHARE_BUTTON = new BooleanSetting("revanced_hide_fullscreen_share_button", FALSE, true);
     public static final BooleanSetting REMEMBER_REPEAT_SATE = new BooleanSetting("revanced_remember_repeat_state", TRUE);
     public static final BooleanSetting REMEMBER_SHUFFLE_SATE = new BooleanSetting("revanced_remember_shuffle_state", TRUE);
-    public static final IntegerSetting SHUFFLE_SATE = new IntegerSetting("revanced_shuffle_state", 1);
+    public static final BooleanSetting ALWAYS_SHUFFLE = new BooleanSetting("revanced_always_shuffle", FALSE);
     public static final BooleanSetting RESTORE_OLD_COMMENTS_POPUP_PANELS = new BooleanSetting("revanced_restore_old_comments_popup_panels", FALSE, true);
     public static final BooleanSetting RESTORE_OLD_PLAYER_BACKGROUND = new BooleanSetting("revanced_restore_old_player_background", FALSE, true);
     public static final BooleanSetting RESTORE_OLD_PLAYER_LAYOUT = new BooleanSetting("revanced_restore_old_player_layout", FALSE, true);
+
+
+    // PreferenceScreen: Settings menu
+    public static final BooleanSetting HIDE_SETTINGS_MENU_PARENT_TOOLS = new BooleanSetting("revanced_hide_settings_menu_parent_tools", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_GENERAL = new BooleanSetting("revanced_hide_settings_menu_general", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_PLAYBACK = new BooleanSetting("revanced_hide_settings_menu_playback", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_DATA_SAVING = new BooleanSetting("revanced_hide_settings_menu_data_saving", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_DOWNLOADS_AND_STORAGE = new BooleanSetting("revanced_hide_settings_menu_downloads_and_storage", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_NOTIFICATIONS = new BooleanSetting("revanced_hide_settings_menu_notification", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_PRIVACY_AND_LOCATION = new BooleanSetting("revanced_hide_settings_menu_privacy_and_location", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_RECOMMENDATIONS = new BooleanSetting("revanced_hide_settings_menu_recommendations", FALSE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_PAID_MEMBERSHIPS = new BooleanSetting("revanced_hide_settings_menu_paid_memberships", TRUE, true);
+    public static final BooleanSetting HIDE_SETTINGS_MENU_ABOUT = new BooleanSetting("revanced_hide_settings_menu_about", FALSE, true);
 
 
     // PreferenceScreen: Video
@@ -164,7 +180,11 @@ public class Settings extends BaseSettings {
     public static final StringSetting RYD_USER_ID = new StringSetting("revanced_ryd_user_id", "", false, false);
     public static final BooleanSetting RYD_DISLIKE_PERCENTAGE = new BooleanSetting("revanced_ryd_dislike_percentage", FALSE);
     public static final BooleanSetting RYD_COMPACT_LAYOUT = new BooleanSetting("revanced_ryd_compact_layout", FALSE);
+    public static final BooleanSetting RYD_ESTIMATED_LIKE = new BooleanSetting("revanced_ryd_estimated_like", FALSE, true);
     public static final BooleanSetting RYD_TOAST_ON_CONNECTION_ERROR = new BooleanSetting("revanced_ryd_toast_on_connection_error", FALSE);
+
+    // PreferenceScreen: Return YouTube Username
+    public static final BooleanSetting RETURN_YOUTUBE_USERNAME_ABOUT = new BooleanSetting("revanced_return_youtube_username_youtube_data_api_v3_about", FALSE, false);
 
 
     // PreferenceScreen: SponsorBlock
@@ -195,6 +215,8 @@ public class Settings extends BaseSettings {
     // SB settings not exported
     public static final LongSetting SB_LAST_VIP_CHECK = new LongSetting("sb_last_vip_check", 0L, false, false);
 
+    public static final String OPEN_DEFAULT_APP_SETTINGS = "revanced_default_app_settings";
+
     /**
      * If a setting path has this prefix, then remove it.
      */
@@ -210,10 +232,13 @@ public class Settings extends BaseSettings {
             CUSTOM_PLAYBACK_SPEEDS.key,
             EXTERNAL_DOWNLOADER_PACKAGE_NAME.key,
             HIDE_ACCOUNT_MENU_FILTER_STRINGS.key,
-            HIDE_SETTINGS_MENU_FILTER_STRINGS.key,
             SB_API_URL.key,
             SETTINGS_IMPORT_EXPORT.key,
             SPOOF_APP_VERSION_TARGET.key,
+            RETURN_YOUTUBE_USERNAME_ABOUT.key,
+            RETURN_YOUTUBE_USERNAME_DISPLAY_FORMAT.key,
+            RETURN_YOUTUBE_USERNAME_YOUTUBE_DATA_API_V3_DEVELOPER_KEY.key,
+            OPEN_DEFAULT_APP_SETTINGS,
             OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX
     };
 
