@@ -1,3 +1,21 @@
+# [0.158.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.157.0...v0.158.0-dev.1) (2024-10-29)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting hides the library shelf ([4be6d9e](https://github.com/anddea/revanced-integrations/commit/4be6d9ef70f7a4728c8d33511b0eb06e08b56fe3))
+* **YouTube - Settings:** Restart dialog appears twice when the app is first installed ([050f58e](https://github.com/anddea/revanced-integrations/commit/050f58e5d2a9714b3069f57366915a90b5cabe23))
+* **YouTube - Shorts components:** `Hide Shorts shelves` setting sometimes hides shelves in the library tab ([4ad3857](https://github.com/anddea/revanced-integrations/commit/4ad38571002a3912e6a8d2cc964e8b002ce30f23))
+* **YouTube - Video playback:** Custom playback speed not working due to A/B tests ([9ad3df4](https://github.com/anddea/revanced-integrations/commit/9ad3df4eb574bb0b56fb822a6e40cd9a54544f44))
+* **YouTube Music:** App crashes on Android 5, 6 ([fdab51b](https://github.com/anddea/revanced-integrations/commit/fdab51bc5a03723fabffd6ebca9c2bf365ea32a5))
+
+
+### Features
+
+* **YouTube - Hide ads:** Add `Hide player shopping shelf` setting ([afe17f6](https://github.com/anddea/revanced-integrations/commit/afe17f68052a7eeeb8388d6937e778ebd3960741))
+* **YouTube - Hide feed components:** Add `Hide floating button` setting ([2b27006](https://github.com/anddea/revanced-integrations/commit/2b270064ec048785e8a3fb01477f362c254b1edb))
+* **YouTube - Seekbar components:** Add `Enable high quality thumbnails` setting ([13329aa](https://github.com/anddea/revanced-integrations/commit/13329aa49e194b1a5119b25adc04c567e7b1dcfc))
+
 # [0.157.0](https://github.com/anddea/revanced-integrations/compare/v0.156.0...v0.157.0) (2024-10-29)
 
 
