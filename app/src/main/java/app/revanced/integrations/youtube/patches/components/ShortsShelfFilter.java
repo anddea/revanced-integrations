@@ -6,7 +6,6 @@ import app.revanced.integrations.shared.patches.components.ByteArrayFilterGroup;
 import app.revanced.integrations.shared.patches.components.Filter;
 import app.revanced.integrations.shared.patches.components.StringFilterGroup;
 import app.revanced.integrations.shared.settings.BooleanSetting;
-import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.StringTrieSearch;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.RootView;
@@ -14,31 +13,69 @@ import app.revanced.integrations.youtube.shared.RootView;
 @SuppressWarnings("unused")
 public final class ShortsShelfFilter extends Filter {
     private static final String BROWSE_ID_HISTORY = "FEhistory";
+    private static final String BROWSE_ID_LIBRARY = "FElibrary";
+    private static final String BROWSE_ID_NOTIFICATION_INBOX = "FEnotifications_inbox";
     private static final String BROWSE_ID_SUBSCRIPTIONS = "FEsubscriptions";
     private static final String CONVERSATION_CONTEXT_FEED_IDENTIFIER =
             "horizontalCollectionSwipeProtector=null";
     private static final String SHELF_HEADER_PATH = "shelf_header.eml";
-    private final StringFilterGroup shortsCompactFeedVideoPath;
-    private final ByteArrayFilterGroup shortsCompactFeedVideoBuffer;
-    private final StringFilterGroup shelfHeader;
+    private final StringFilterGroup compactFeedVideoPath;
+    private final ByteArrayFilterGroup compactFeedVideoBuffer;
+    private final StringFilterGroup shelfHeaderIdentifier;
+    private final StringFilterGroup shelfHeaderPath;
     private static final StringTrieSearch feedGroup = new StringTrieSearch();
     private static final BooleanSetting hideShortsShelf = Settings.HIDE_SHORTS_SHELF;
+    private static final BooleanSetting hideChannel = Settings.HIDE_SHORTS_SHELF_CHANNEL;
     private static final boolean hideHomeAndRelatedVideos = Settings.HIDE_SHORTS_SHELF_HOME_RELATED_VIDEOS.get();
     private static final boolean hideSubscriptions = Settings.HIDE_SHORTS_SHELF_SUBSCRIPTIONS.get();
     private static final boolean hideSearch = Settings.HIDE_SHORTS_SHELF_SEARCH.get();
     private static final boolean hideHistory = Settings.HIDE_SHORTS_SHELF_HISTORY.get();
     private final StringTrieSearch exceptions = new StringTrieSearch();
+    private static final ByteArrayFilterGroup channelProfileShelfHeader =
+            new ByteArrayFilterGroup(
+                    hideChannel,
+                    "Shorts"
+            );
 
     public ShortsShelfFilter() {
         if (!hideHistory) {
             exceptions.addPattern("library_recent_shelf.eml");
         }
-
         feedGroup.addPattern(CONVERSATION_CONTEXT_FEED_IDENTIFIER);
+
+        final StringFilterGroup channelProfile = new StringFilterGroup(
+                hideChannel,
+                "shorts_pivot_item"
+        );
+
+        shelfHeaderIdentifier = new StringFilterGroup(
+                hideShortsShelf,
+                SHELF_HEADER_PATH
+        );
+
+        addIdentifierCallbacks(channelProfile, shelfHeaderIdentifier);
+
+        compactFeedVideoPath = new StringFilterGroup(
+                hideShortsShelf,
+                // Shorts that appear in the feed/search when the device is using tablet layout.
+                "compact_video.eml",
+                // 'video_lockup_with_attachment.eml' is used instead of 'compact_video.eml' for some users. (A/B tests)
+                "video_lockup_with_attachment.eml",
+                // Search results that appear in a horizontal shelf.
+                "video_card.eml"
+        );
+
+        // Filter out items that use the 'frame0' thumbnail.
+        // This is a valid thumbnail for both regular videos and Shorts,
+        // but it appears these thumbnails are used only for Shorts.
+        compactFeedVideoBuffer = new ByteArrayFilterGroup(
+                hideShortsShelf,
+                "/frame0.jpg"
+        );
 
         // Feed Shorts shelf header.
         // Use a different filter group for this pattern, as it requires an additional check after matching.
-        shelfHeader = new StringFilterGroup(
+        shelfHeaderPath = new StringFilterGroup(
                 hideShortsShelf,
                 SHELF_HEADER_PATH
         );
@@ -49,57 +86,54 @@ public final class ShortsShelfFilter extends Filter {
                 "inline_shorts",
                 "shorts_grid",
                 "shorts_video_cell"
-                // "shorts_pivot_item" appears when you click 'Shorts' in the category bar in the search results, and also in the channel profile.
-                // RVX does not hide the shelf header in the channel profile, so only the 'Shorts' header is left in the channel profile.
-                // This doesn't look good, so just don't hide this component.
-                // "shorts_pivot_item"
         );
 
-        addIdentifierCallbacks(shelfHeader, shorts);
-
-        shortsCompactFeedVideoPath = new StringFilterGroup(
-                hideShortsShelf,
-                // Shorts that appear in the feed/search when the device is using tablet layout.
-                "compact_video.eml",
-                // Search results that appear in a horizontal shelf.
-                "video_card.eml"
-        );
-
-        // Filter out items that use the 'frame0' thumbnail.
-        // This is a valid thumbnail for both regular videos and Shorts,
-        // but it appears these thumbnails are used only for Shorts.
-        shortsCompactFeedVideoBuffer = new ByteArrayFilterGroup(
-                hideShortsShelf,
-                "/frame0.jpg"
-        );
-
-        addPathCallbacks(shortsCompactFeedVideoPath);
+        addPathCallbacks(compactFeedVideoPath, shelfHeaderPath, shorts);
     }
 
     @Override
     public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                               StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
-        if (exceptions.matches(path))
+        if (exceptions.matches(path)) {
             return false;
-        if (!shouldHideShortsFeedItems())
+        }
+        // Check channel profile components first
+        if (matchedGroup == shelfHeaderPath) {
+            // Because the header is used in watch history and possibly other places, check for the index,
+            // which is 0 when the shelf header is used for Shorts.
+            if (contentIndex != 0) {
+                return false;
+            }
+            if (!channelProfileShelfHeader.check(protobufBufferArray).isFiltered()) {
+                return false;
+            }
+            if (feedGroup.matches(allValue)) {
+                return false;
+            }
+            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+        }
+        // Check feed components
+        if (!hideShelves()) {
             return false;
-
-        if (matchedGroup == shortsCompactFeedVideoPath) {
-            if (shortsCompactFeedVideoBuffer.check(protobufBufferArray).isFiltered())
+        }
+        if (matchedGroup == compactFeedVideoPath) {
+            if (compactFeedVideoBuffer.check(protobufBufferArray).isFiltered()) {
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+            }
             return false;
-        } else if (matchedGroup == shelfHeader) {
+        } else if (matchedGroup == shelfHeaderIdentifier) {
             // Check ConversationContext to not hide shelf header in channel profile
             // This value does not exist in the shelf header in the channel profile
-            if (!feedGroup.matches(allValue))
+            if (!feedGroup.matches(allValue)) {
                 return false;
+            }
         }
 
         // Super class handles logging.
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
     }
 
-    private static boolean shouldHideShortsFeedItems() {
+    private static boolean hideShelves() {
         if (hideHomeAndRelatedVideos && hideSubscriptions && hideSearch && hideHistory) {
             // Shorts suggestions can load in the background if a video is opened and
             // then immediately minimized before any suggestions are loaded.
@@ -129,9 +163,8 @@ public final class ShortsShelfFilter extends Filter {
         }
 
         final String browseId = RootView.getBrowseId();
-        Logger.printDebug(() -> "Current browseId: " + browseId);
         switch (browseId) {
-            case BROWSE_ID_HISTORY -> {
+            case BROWSE_ID_HISTORY, BROWSE_ID_LIBRARY, BROWSE_ID_NOTIFICATION_INBOX -> {
                 return hideHistory;
             }
             case BROWSE_ID_SUBSCRIPTIONS -> {

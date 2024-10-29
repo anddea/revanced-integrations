@@ -7,6 +7,11 @@ public class PatchStatus {
         return false;
     }
 
+    public static boolean MinimalHeader() {
+        // Replace this with true If the Custom header patch succeeds and the patch option was `youtube_minimal_header`
+        return false;
+    }
+
     public static boolean PlayerButtons() {
         // Replace this with true if the Hide player buttons patch succeeds
         return false;
@@ -30,6 +35,16 @@ public class PatchStatus {
     public static boolean ToolBarComponents() {
         // Replace this with true if the Toolbar components patch succeeds
         return false;
+    }
+
+    // Modified by a patch. Do not touch.
+    public static String RVXMusicPackageName() {
+        return "com.google.android.apps.youtube.music";
+    }
+
+    // Modified by a patch. Do not touch.
+    public static String SpoofAppVersionDefaultString() {
+        return "18.17.43";
     }
 
 }

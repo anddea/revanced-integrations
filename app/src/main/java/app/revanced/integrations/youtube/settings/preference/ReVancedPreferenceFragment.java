@@ -1,10 +1,7 @@
 package app.revanced.integrations.youtube.settings.preference;
 
-import static com.google.android.apps.youtube.app.settings.videoquality.VideoQualitySettingsActivity.setSearchViewVisibility;
-import static com.google.android.apps.youtube.app.settings.videoquality.VideoQualitySettingsActivity.setToolbarText;
 import static app.revanced.integrations.shared.settings.preference.AbstractPreferenceFragment.showRestartDialog;
 import static app.revanced.integrations.shared.settings.preference.AbstractPreferenceFragment.updateListPreferenceSummary;
-import static app.revanced.integrations.shared.utils.ResourceUtils.getIdIdentifier;
 import static app.revanced.integrations.shared.utils.ResourceUtils.getXmlIdentifier;
 import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.shared.utils.Utils.getChildView;
@@ -15,17 +12,23 @@ import static app.revanced.integrations.youtube.settings.Settings.HIDE_PREVIEW_C
 import static app.revanced.integrations.youtube.settings.Settings.HIDE_PREVIEW_COMMENT_TYPE;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import java.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.*;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
+import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -36,7 +39,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import app.revanced.integrations.shared.settings.BooleanSetting;
 import app.revanced.integrations.shared.settings.Setting;
@@ -65,6 +79,10 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             Preference mPreference = findPreference(str);
 
             if (mPreference == null) return;
+
+            if (mPreference instanceof app.revanced.integrations.youtube.settings.preference.SegmentCategoryListPreference) {
+                return;
+            }
 
             if (mPreference instanceof SwitchPreference switchPreference) {
                 BooleanSetting boolSetting = (BooleanSetting) setting;
@@ -155,40 +173,6 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         // Required empty public constructor
     }
 
-    @TargetApi(26)
-    public void setPreferenceFragmentToolbar(final String key) {
-        PreferenceFragment fragment;
-        switch (key) {
-            case "revanced_preference_screen_ryd" ->
-                    fragment = new ReturnYouTubeDislikePreferenceFragment();
-            case "revanced_preference_screen_sb" -> fragment = new SponsorBlockPreferenceFragment();
-            default -> {
-                Logger.printException(() -> "Unknown key: " + key);
-                return;
-            }
-        }
-
-        final Preference mPreference = mPreferenceManager.findPreference(key);
-        if (mPreference == null) {
-            return;
-        }
-        mPreference.setOnPreferenceClickListener(pref -> {
-            // Set toolbar text
-            setToolbarText(pref.getTitle());
-
-            // Hide the search bar
-            setSearchViewVisibility(false);
-
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(getIdIdentifier("revanced_settings_fragments"), fragment)
-                    .addToBackStack(null)
-                    .setReorderingAllowed(true)
-                    .commitAllowingStateLoss();
-            return false;
-        });
-    }
-
     private void putPreferenceScreenMap(SortedMap<String, PreferenceScreen> preferenceScreenMap, PreferenceGroup preferenceGroup) {
         if (preferenceGroup instanceof PreferenceScreen mPreferenceScreen) {
             preferenceScreenMap.put(mPreferenceScreen.getKey(), mPreferenceScreen);
@@ -231,16 +215,11 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                                 TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()
                         );
 
-                        if (isSDKAbove(24)) {
-                            toolbar.setTitleMargin(margin, 0, margin, 0);
-                        } else {
-                            // Untested
-                            toolbar.setContentInsetsAbsolute(margin, margin);
-                        }
+                        toolbar.setTitleMargin(margin, 0, margin, 0);
 
                         TextView toolbarTextView = getChildView(toolbar, TextView.class::isInstance);
                         if (toolbarTextView != null) {
-                            toolbarTextView.setTextColor(ThemeUtils.getTextColor());
+                            toolbarTextView.setTextColor(ThemeUtils.getForegroundColor());
                         }
 
                         rootView.addView(toolbar, 0);
@@ -250,13 +229,12 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         }
     }
 
-    // TODO: SEARCH BAR
-    //  - Add ability to search for SB and RYD settings
-
     // Map to store dependencies: key is the preference key, value is a list of dependent preferences
     private final Map<String, List<Preference>> dependencyMap = new HashMap<>();
     // Set to track already added preferences to avoid duplicates
     private final Set<String> addedPreferences = new HashSet<>();
+    // Map to store preferences grouped by their parent PreferenceGroup
+    private final Map<PreferenceGroup, List<Preference>> groupedPreferences = new LinkedHashMap<>();
 
     @SuppressLint("ResourceType")
     @Override
@@ -269,12 +247,11 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             addPreferencesFromResource(getXmlIdentifier("revanced_prefs"));
 
             // Initialize toolbars and other UI elements
-            setPreferenceFragmentToolbar("revanced_preference_screen_ryd");
-            setPreferenceFragmentToolbar("revanced_preference_screen_sb");
             setPreferenceScreenToolbar();
 
             // Initialize ReVanced settings
             ReVancedSettingsPreference.initializeReVancedSettings();
+            SponsorBlockSettingsPreference.init(getActivity());
 
             // Import/export
             setBackupRestorePreference();
@@ -285,6 +262,9 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             // Load and set initial preferences states
             for (Setting<?> setting : Setting.allLoadedSettings()) {
                 final Preference preference = mPreferenceManager.findPreference(setting.key);
+                if (preference != null && isSDKAbove(26)) {
+                    preference.setSingleLineTitle(false);
+                }
 
                 if (preference instanceof SwitchPreference switchPreference) {
                     BooleanSetting boolSetting = (BooleanSetting) setting;
@@ -321,10 +301,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
         super.onDestroy();
     }
-
-    // Map to store preferences grouped by their parent PreferenceGroup
-    private final Map<PreferenceGroup, List<Preference>> groupedPreferences = new LinkedHashMap<>();
-
+    
     /**
      * Recursively stores all preferences and their dependencies grouped by their parent PreferenceGroup.
      *
@@ -361,17 +338,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             // Store dependencies
             if (preference.getDependency() != null) {
                 String dependencyKey = preference.getDependency();
-                if (isSDKAbove(24)) {
-                    dependencyMap.computeIfAbsent(dependencyKey, k -> new ArrayList<>()).add(preference);
-                } else {
-                    // Untested
-                    if (!dependencyMap.containsKey(dependencyKey)) {
-                        dependencyMap.put(dependencyKey, new ArrayList<>() {{
-                            add(preference);
-                        }});
-                    }
-                }
-                Logger.printDebug(() -> "SearchFragment: Added dependency for key: " + dependencyKey + " on preference: " + preference.getKey());
+                dependencyMap.computeIfAbsent(dependencyKey, k -> new ArrayList<>()).add(preference);
             }
 
             // Recursively handle nested PreferenceGroups
@@ -392,7 +359,6 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     public void filterPreferences(String query) {
         // If the query is null or empty, reset preferences to their default state
         if (query == null || query.isEmpty()) {
-            Logger.printDebug(() -> "SearchFragment: Query is null or empty. Resetting preferences.");
             resetPreferences();
             return;
         }
@@ -475,7 +441,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
      * Checks if a preference matches the given query.
      *
      * @param preference The preference to check.
-     * @param query The search query.
+     * @param query      The search query.
      * @return True if the preference matches the query, false otherwise.
      */
     private boolean preferenceMatches(Preference preference, String query) {
@@ -527,7 +493,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     /**
      * Recursively adds a preference and its dependencies to the set of keys to include.
      *
-     * @param preference The preference to add.
+     * @param preference    The preference to add.
      * @param keysToInclude The set of keys to include.
      */
     private void addPreferenceAndDependencies(Preference preference, Set<String> keysToInclude) {
@@ -585,7 +551,6 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
 
             // Handle dependent preferences
             if (dependencyMap.containsKey(key)) {
-                Logger.printDebug(() -> "SearchFragment: Adding dependent preferences for key: " + key);
                 for (Preference dependentPreference : Objects.requireNonNull(dependencyMap.get(key))) {
                     addPreferenceWithDependencies(preferenceGroup, dependentPreference);
                 }
@@ -618,8 +583,6 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
         preferenceScreen.removeAll();
         for (Preference preference : getAllPreferencesBy(originalPreferenceScreen))
             preferenceScreen.addPreference(preference);
-
-        Logger.printDebug(() -> "SearchFragment: Reset preferences completed.");
     }
 
     private List<Preference> getAllPreferencesBy(PreferenceGroup preferenceGroup) {
@@ -648,8 +611,7 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
      * Invoke the SAF(Storage Access Framework) to export settings
      */
     private void exportActivity() {
-        @SuppressLint("SimpleDateFormat")
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         final String appName = ExtendedUtils.getApplicationLabel();
         final String versionName = ExtendedUtils.getVersionName();

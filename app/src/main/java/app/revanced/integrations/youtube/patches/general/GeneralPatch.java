@@ -27,8 +27,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.apps.youtube.app.application.Shell_SettingsActivity;
 import com.google.android.apps.youtube.app.settings.SettingsActivity;
 import com.google.android.apps.youtube.app.settings.videoquality.VideoQualitySettingsActivity;
@@ -42,7 +40,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-import app.revanced.integrations.shared.settings.StringSetting;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.ResourceUtils;
 import app.revanced.integrations.shared.utils.Utils;
@@ -51,37 +48,6 @@ import app.revanced.integrations.youtube.utils.ThemeUtils;
 
 @SuppressWarnings("unused")
 public class GeneralPatch {
-
-    // region [Change start page] patch
-
-    private static final String CHANGE_START_PAGE;
-    private static final boolean CHANGE_START_PAGE_TO_SHORTCUTS;
-    private static final boolean CHANGE_START_PAGE_TO_URL;
-    private static final String MAIN_ACTIONS = "android.intent.action.MAIN";
-
-    public static void changeStartPageToShortcuts(@NonNull Intent intent) {
-        if (!Objects.equals(intent.getAction(), MAIN_ACTIONS)) {
-            return;
-        }
-        if (!CHANGE_START_PAGE_TO_SHORTCUTS) {
-            return;
-        }
-        intent.setAction("com.google.android.youtube.action." + CHANGE_START_PAGE);
-        Logger.printDebug(() -> "Changing start page to Shortcuts - " + CHANGE_START_PAGE);
-    }
-
-    public static void changeStartPageToUrl(@NonNull Intent intent) {
-        if (!Objects.equals(intent.getAction(), MAIN_ACTIONS)) {
-            return;
-        }
-        if (!CHANGE_START_PAGE_TO_URL) {
-            return;
-        }
-        intent.setData(Uri.parse(CHANGE_START_PAGE));
-        Logger.printDebug(() -> "Changing start page to Url - " + CHANGE_START_PAGE);
-    }
-
-    // endregion
 
     // region [Disable auto audio tracks] patch
 
@@ -170,22 +136,6 @@ public class GeneralPatch {
         accountMenuBlockList = Arrays.stream(accountMenuBlockList)
                 .filter(item -> !Objects.equals(item, str("settings")))
                 .toArray(String[]::new);
-
-
-        final StringSetting changeStartPage = Settings.CHANGE_START_PAGE;
-        String startPage = changeStartPage.get();
-        CHANGE_START_PAGE_TO_SHORTCUTS = startPage.startsWith("open.");
-        CHANGE_START_PAGE_TO_URL = startPage.startsWith("www.youtube.com");
-
-        if (!startPage.isEmpty() &&
-                !CHANGE_START_PAGE_TO_SHORTCUTS &&
-                !CHANGE_START_PAGE_TO_URL) {
-            Utils.showToastShort(str("revanced_change_start_page_invalid_toast"));
-            Settings.CHANGE_START_PAGE.resetToDefault();
-            startPage = changeStartPage.defaultValue;
-        }
-
-        CHANGE_START_PAGE = startPage;
     }
 
     /**
@@ -280,26 +230,8 @@ public class GeneralPatch {
         hideViewUnderCondition(Settings.HIDE_NAVIGATION_LABEL.get(), view);
     }
 
-    // endregion
-
-    // region [Layout switch] patch
-
-    public static boolean enableTabletLayout() {
-        try {
-            return Settings.ENABLE_TABLET_LAYOUT.get();
-        } catch (Exception ex) {
-            Logger.printException(() -> "enableTabletLayout failed", ex);
-        }
-        return false;
-    }
-
-    public static int enablePhoneLayout(int original) {
-        try {
-            return Settings.ENABLE_PHONE_LAYOUT.get() ? 480 : original;
-        } catch (Exception ex) {
-            Logger.printException(() -> "getLayoutOverride failed", ex);
-        }
-        return original;
+    public static void hideNavigationBar(View view) {
+        hideViewUnderCondition(Settings.HIDE_NAVIGATION_BAR.get(), view);
     }
 
     // endregion
@@ -358,10 +290,9 @@ public class GeneralPatch {
     // region [Spoof app version] patch
 
     public static String getVersionOverride(String appVersion) {
-        if (!Settings.SPOOF_APP_VERSION.get())
-            return appVersion;
-
-        return Settings.SPOOF_APP_VERSION_TARGET.get();
+        return Settings.SPOOF_APP_VERSION.get()
+                ? Settings.SPOOF_APP_VERSION_TARGET.get()
+                : appVersion;
     }
 
     // endregion
@@ -550,10 +481,18 @@ public class GeneralPatch {
         }
     }
 
-    private static final int settingsDrawableId = ResourceUtils.getDrawableIdentifier("yt_outline_gear_black_24");
+    public static void hideYouTubeDoodles(ImageView imageView, Drawable drawable) {
+        if (!Settings.HIDE_YOUTUBE_DOODLES.get()) {
+            imageView.setImageDrawable(drawable);
+        }
+    }
+
+    private static final int settingsDrawableId =
+            ResourceUtils.getDrawableIdentifier("yt_outline_gear_black_24");
 
     public static int getCreateButtonDrawableId(int original) {
-        return Settings.REPLACE_TOOLBAR_CREATE_BUTTON.get()
+        return Settings.REPLACE_TOOLBAR_CREATE_BUTTON.get() &&
+                settingsDrawableId != 0
                 ? settingsDrawableId
                 : original;
     }

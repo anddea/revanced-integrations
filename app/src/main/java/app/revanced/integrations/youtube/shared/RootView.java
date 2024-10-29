@@ -1,12 +1,12 @@
 package app.revanced.integrations.youtube.shared;
 
+import static app.revanced.integrations.youtube.patches.components.RelatedVideoFilter.isActionBarVisible;
+
 import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-/**
- * @noinspection ALL
- */
+@SuppressWarnings("unused")
 public final class RootView {
     private static volatile WeakReference<View> searchBarResultsRef = new WeakReference<>(null);
 
@@ -28,7 +28,7 @@ public final class RootView {
     }
 
     public static boolean isPlayerActive() {
-        return PlayerType.getCurrent().isMaximizedOrFullscreenOrSliding();
+        return PlayerType.getCurrent().isMaximizedOrFullscreen() || isActionBarVisible.get();
     }
 
     /**

@@ -6,14 +6,17 @@ import static app.revanced.integrations.music.settings.Settings.CUSTOM_FILTER_ST
 import static app.revanced.integrations.music.settings.Settings.CUSTOM_PLAYBACK_SPEEDS;
 import static app.revanced.integrations.music.settings.Settings.EXTERNAL_DOWNLOADER_PACKAGE_NAME;
 import static app.revanced.integrations.music.settings.Settings.HIDE_ACCOUNT_MENU_FILTER_STRINGS;
-import static app.revanced.integrations.music.settings.Settings.HIDE_SETTINGS_MENU_FILTER_STRINGS;
+import static app.revanced.integrations.music.settings.Settings.OPEN_DEFAULT_APP_SETTINGS;
 import static app.revanced.integrations.music.settings.Settings.OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX;
+import static app.revanced.integrations.music.settings.Settings.RETURN_YOUTUBE_USERNAME_ABOUT;
 import static app.revanced.integrations.music.settings.Settings.SB_API_URL;
 import static app.revanced.integrations.music.settings.Settings.SETTINGS_IMPORT_EXPORT;
 import static app.revanced.integrations.music.settings.Settings.SPOOF_APP_VERSION_TARGET;
 import static app.revanced.integrations.music.utils.ExtendedUtils.getDialogBuilder;
 import static app.revanced.integrations.music.utils.ExtendedUtils.getLayoutParams;
 import static app.revanced.integrations.music.utils.RestartUtils.showRestartDialog;
+import static app.revanced.integrations.shared.settings.BaseSettings.RETURN_YOUTUBE_USERNAME_DISPLAY_FORMAT;
+import static app.revanced.integrations.shared.settings.BaseSettings.RETURN_YOUTUBE_USERNAME_YOUTUBE_DATA_API_V3_DEVELOPER_KEY;
 import static app.revanced.integrations.shared.settings.Setting.getSettingFromPath;
 import static app.revanced.integrations.shared.utils.ResourceUtils.getStringArray;
 import static app.revanced.integrations.shared.utils.StringRef.str;
@@ -51,8 +54,10 @@ import app.revanced.integrations.music.settings.ActivityHook;
 import app.revanced.integrations.music.settings.Settings;
 import app.revanced.integrations.music.utils.ExtendedUtils;
 import app.revanced.integrations.shared.settings.BooleanSetting;
+import app.revanced.integrations.shared.settings.EnumSetting;
 import app.revanced.integrations.shared.settings.Setting;
 import app.revanced.integrations.shared.settings.StringSetting;
+import app.revanced.integrations.shared.settings.preference.YouTubeDataAPIDialogBuilder;
 import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.Utils;
 
@@ -120,6 +125,9 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
             if (dataString.startsWith(OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX)) {
                 SponsorBlockCategoryPreference.showDialog(baseActivity, dataString.replaceAll(OPTIONAL_SPONSOR_BLOCK_SETTINGS_PREFIX, ""));
                 return;
+            } else if (dataString.equals(OPEN_DEFAULT_APP_SETTINGS)) {
+                openDefaultAppSetting();
+                return;
             }
 
             final Setting<?> settings = getSettingFromPath(dataString);
@@ -130,22 +138,28 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
                         || settings.equals(CUSTOM_FILTER_STRINGS)
                         || settings.equals(CUSTOM_PLAYBACK_SPEEDS)
                         || settings.equals(HIDE_ACCOUNT_MENU_FILTER_STRINGS)
-                        || settings.equals(HIDE_SETTINGS_MENU_FILTER_STRINGS)) {
+                        || settings.equals(RETURN_YOUTUBE_USERNAME_YOUTUBE_DATA_API_V3_DEVELOPER_KEY)) {
                     ResettableEditTextPreference.showDialog(mActivity, stringSetting);
                 } else if (settings.equals(EXTERNAL_DOWNLOADER_PACKAGE_NAME)) {
                     ExternalDownloaderPreference.showDialog(mActivity);
                 } else if (settings.equals(SB_API_URL)) {
                     SponsorBlockApiUrlPreference.showDialog(mActivity);
                 } else if (settings.equals(SPOOF_APP_VERSION_TARGET)) {
-                    ResettableListPreference.showDialog(mActivity, stringSetting, 1);
+                    ResettableListPreference.showDialog(mActivity, stringSetting, 0);
                 } else {
                     Logger.printDebug(() -> "Failed to find the right value: " + dataString);
                 }
             } else if (settings instanceof BooleanSetting) {
                 if (settings.equals(SETTINGS_IMPORT_EXPORT)) {
                     importExportListDialogBuilder();
+                } else if (settings.equals(RETURN_YOUTUBE_USERNAME_ABOUT)) {
+                    YouTubeDataAPIDialogBuilder.showDialog(mActivity);
                 } else {
                     Logger.printDebug(() -> "Failed to find the right value: " + dataString);
+                }
+            } else if (settings instanceof EnumSetting<?> enumSetting) {
+                if (settings.equals(RETURN_YOUTUBE_USERNAME_DISPLAY_FORMAT)) {
+                    ResettableListPreference.showDialog(mActivity, enumSetting, 0);
                 }
             }
         } catch (Exception ex) {
@@ -156,6 +170,19 @@ public class ReVancedPreferenceFragment extends PreferenceFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private void openDefaultAppSetting() {
+        try {
+            Context context = getActivity();
+            final Uri uri = Uri.parse("package:" + context.getPackageName());
+            final Intent intent = isSDKAbove(31)
+                    ? new Intent(android.provider.Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS, uri)
+                    : new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+            context.startActivity(intent);
+        } catch (Exception exception) {
+            Logger.printException(() -> "openDefaultAppSetting failed");
+        }
     }
 
     /**

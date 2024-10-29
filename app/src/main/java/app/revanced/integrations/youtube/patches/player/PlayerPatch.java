@@ -35,6 +35,7 @@ import app.revanced.integrations.youtube.patches.utils.PatchStatus;
 import app.revanced.integrations.youtube.settings.Settings;
 import app.revanced.integrations.youtube.shared.PlayerType;
 import app.revanced.integrations.youtube.shared.RootView;
+import app.revanced.integrations.youtube.shared.ShortsPlayerState;
 import app.revanced.integrations.youtube.shared.VideoInformation;
 import app.revanced.integrations.youtube.utils.VideoUtils;
 
@@ -445,9 +446,7 @@ public class PlayerPatch {
         if (isLiveChatOrPlaylistPanel) {
             return true;
         }
-        // There is a bug where 'Description' does not open in the flyout menu of Shorts.
-        // Check PlayerType to fix this bug.
-        return isAutoPopupPanel && !PlayerType.getCurrent().isNoneHiddenOrSlidingMinimized();
+        return isAutoPopupPanel && ShortsPlayerState.getCurrent().isClosed();
     }
 
     public static void setInitVideoPanel(boolean initVideoPanel) {
@@ -458,8 +457,8 @@ public class PlayerPatch {
     public static String videoId = "";
 
     public static void disableAutoSwitchMixPlaylists(@NonNull String newlyLoadedChannelId, @NonNull String newlyLoadedChannelName,
-                                       @NonNull String newlyLoadedVideoId, @NonNull String newlyLoadedVideoTitle,
-                                       final long newlyLoadedVideoLength, boolean newlyLoadedLiveStreamValue) {
+                                                     @NonNull String newlyLoadedVideoId, @NonNull String newlyLoadedVideoTitle,
+                                                     final long newlyLoadedVideoLength, boolean newlyLoadedLiveStreamValue) {
         if (!Settings.DISABLE_AUTO_SWITCH_MIX_PLAYLISTS.get()) {
             return;
         }
@@ -552,6 +551,15 @@ public class PlayerPatch {
     // endregion
 
     // region [Hide player flyout menu] patch
+
+    private static final String QUALITY_LABEL_PREMIUM = "1080p Premium";
+
+    public static String hidePlayerFlyoutMenuEnhancedBitrate(String qualityLabel) {
+        return Settings.HIDE_PLAYER_FLYOUT_MENU_ENHANCED_BITRATE.get() &&
+                Objects.equals(QUALITY_LABEL_PREMIUM, qualityLabel)
+                ? null
+                : qualityLabel;
+    }
 
     public static void hidePlayerFlyoutMenuCaptionsFooter(View view) {
         Utils.hideViewUnderCondition(
@@ -686,8 +694,12 @@ public class PlayerPatch {
         return Settings.HIDE_SEEKBAR.get();
     }
 
-    public static boolean hideSeekbarChapters(View view) {
-        return Settings.HIDE_SEEKBAR_CHAPTERS.get() && view.getId() == timeBarChapterViewId;
+    public static boolean disableSeekbarChapters() {
+        return Settings.DISABLE_SEEKBAR_CHAPTERS.get();
+    }
+
+    public static boolean hideSeekbarChapterLabel(View view) {
+        return Settings.HIDE_SEEKBAR_CHAPTER_LABEL.get() && view.getId() == timeBarChapterViewId;
     }
 
     public static boolean hideTimeStamp() {

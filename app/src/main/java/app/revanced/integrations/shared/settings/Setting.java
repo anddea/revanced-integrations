@@ -4,7 +4,6 @@ import static app.revanced.integrations.shared.utils.StringRef.str;
 import static app.revanced.integrations.shared.utils.Utils.isSDKAbove;
 
 import android.content.Context;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -305,6 +304,11 @@ public abstract class Setting<T> {
      * Persistently saves the value.
      */
     public abstract void save(@NonNull T newValue);
+
+    /**
+     * Persistently saves the value using strings.
+     */
+    public abstract void saveValueFromString(@NonNull String newValue);
 
     @NonNull
     public abstract T get();
