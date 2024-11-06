@@ -1,3 +1,17 @@
+# [0.158.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.158.0-dev.1...v0.158.0-dev.2) (2024-11-06)
+
+
+### Bug Fixes
+
+* **YouTube - Return YouTube Dislike:** Height of the separator does not match ([5b30abb](https://github.com/anddea/revanced-integrations/commit/5b30abb0202fa44c1de92f33955c999d04be4004))
+* **YouTube - Shorts components:** Shorts are not hidden in Home feed ([2164b67](https://github.com/anddea/revanced-integrations/commit/2164b677465ed76ebce145a32d61890ba177ac59))
+* **YouTube - SponsorBlock:** Wrong segment behavior selected ([be37863](https://github.com/anddea/revanced-integrations/commit/be37863d543420150d44587934aa4ef29417f576))
+
+
+### Features
+
+* **YouTube - Description components:** Add `Hide AI-generated video summary section` setting ([76ffbcb](https://github.com/anddea/revanced-integrations/commit/76ffbcb87c55210337b1abff52f2602f53f3e137))
+
 # [0.158.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.157.0...v0.158.0-dev.1) (2024-10-29)
 
 
