@@ -6,8 +6,10 @@ import app.revanced.integrations.shared.patches.components.ByteArrayFilterGroup;
 import app.revanced.integrations.shared.patches.components.Filter;
 import app.revanced.integrations.shared.patches.components.StringFilterGroup;
 import app.revanced.integrations.shared.settings.BooleanSetting;
+import app.revanced.integrations.shared.utils.Logger;
 import app.revanced.integrations.shared.utils.StringTrieSearch;
 import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.integrations.youtube.shared.NavigationBar.NavigationButton;
 import app.revanced.integrations.youtube.shared.RootView;
 
 @SuppressWarnings("unused")
@@ -19,6 +21,7 @@ public final class ShortsShelfFilter extends Filter {
     private static final String CONVERSATION_CONTEXT_FEED_IDENTIFIER =
             "horizontalCollectionSwipeProtector=null";
     private static final String SHELF_HEADER_PATH = "shelf_header.eml";
+    private final StringFilterGroup channelProfile;
     private final StringFilterGroup compactFeedVideoPath;
     private final ByteArrayFilterGroup compactFeedVideoBuffer;
     private final StringFilterGroup shelfHeaderIdentifier;
@@ -26,11 +29,6 @@ public final class ShortsShelfFilter extends Filter {
     private static final StringTrieSearch feedGroup = new StringTrieSearch();
     private static final BooleanSetting hideShortsShelf = Settings.HIDE_SHORTS_SHELF;
     private static final BooleanSetting hideChannel = Settings.HIDE_SHORTS_SHELF_CHANNEL;
-    private static final boolean hideHomeAndRelatedVideos = Settings.HIDE_SHORTS_SHELF_HOME_RELATED_VIDEOS.get();
-    private static final boolean hideSubscriptions = Settings.HIDE_SHORTS_SHELF_SUBSCRIPTIONS.get();
-    private static final boolean hideSearch = Settings.HIDE_SHORTS_SHELF_SEARCH.get();
-    private static final boolean hideHistory = Settings.HIDE_SHORTS_SHELF_HISTORY.get();
-    private final StringTrieSearch exceptions = new StringTrieSearch();
     private static final ByteArrayFilterGroup channelProfileShelfHeader =
             new ByteArrayFilterGroup(
                     hideChannel,
@@ -38,14 +36,19 @@ public final class ShortsShelfFilter extends Filter {
             );
 
     public ShortsShelfFilter() {
-        if (!hideHistory) {
-            exceptions.addPattern("library_recent_shelf.eml");
-        }
         feedGroup.addPattern(CONVERSATION_CONTEXT_FEED_IDENTIFIER);
 
-        final StringFilterGroup channelProfile = new StringFilterGroup(
+        channelProfile = new StringFilterGroup(
                 hideChannel,
                 "shorts_pivot_item"
+        );
+
+        final StringFilterGroup shortsIdentifiers = new StringFilterGroup(
+                hideShortsShelf,
+                "shorts_shelf",
+                "inline_shorts",
+                "shorts_grid",
+                "shorts_video_cell"
         );
 
         shelfHeaderIdentifier = new StringFilterGroup(
@@ -53,7 +56,7 @@ public final class ShortsShelfFilter extends Filter {
                 SHELF_HEADER_PATH
         );
 
-        addIdentifierCallbacks(channelProfile, shelfHeaderIdentifier);
+        addIdentifierCallbacks(channelProfile, shortsIdentifiers, shelfHeaderIdentifier);
 
         compactFeedVideoPath = new StringFilterGroup(
                 hideShortsShelf,
@@ -80,51 +83,51 @@ public final class ShortsShelfFilter extends Filter {
                 SHELF_HEADER_PATH
         );
 
-        final StringFilterGroup shorts = new StringFilterGroup(
-                hideShortsShelf,
-                "shorts_shelf",
-                "inline_shorts",
-                "shorts_grid",
-                "shorts_video_cell"
-        );
-
-        addPathCallbacks(compactFeedVideoPath, shelfHeaderPath, shorts);
+        addPathCallbacks(compactFeedVideoPath, shelfHeaderPath);
     }
 
     @Override
     public boolean isFiltered(String path, @Nullable String identifier, String allValue, byte[] protobufBufferArray,
                               StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
-        if (exceptions.matches(path)) {
-            return false;
-        }
-        // Check channel profile components first
-        if (matchedGroup == shelfHeaderPath) {
-            // Because the header is used in watch history and possibly other places, check for the index,
-            // which is 0 when the shelf header is used for Shorts.
-            if (contentIndex != 0) {
+        final boolean playerActive = RootView.isPlayerActive();
+        final boolean searchBarActive = RootView.isSearchBarActive();
+        final NavigationButton navigationButton = NavigationButton.getSelectedNavigationButton();
+        final String navigation = navigationButton == null ? "null" : navigationButton.name();
+        final String browseId = RootView.getBrowseId();
+        final boolean hideShelves = shouldHideShortsFeedItems(playerActive, searchBarActive, navigationButton, browseId);
+        Logger.printDebug(() -> "hideShelves: " + hideShelves + "\nplayerActive: " + playerActive + "\nsearchBarActive: " + searchBarActive + "\nbrowseId: " + browseId + "\nnavigation: " + navigation);
+        if (contentType == FilterContentType.PATH) {
+            if (matchedGroup == compactFeedVideoPath) {
+                if (hideShelves && compactFeedVideoBuffer.check(protobufBufferArray).isFiltered()) {
+                    return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+                }
                 return false;
-            }
-            if (!channelProfileShelfHeader.check(protobufBufferArray).isFiltered()) {
-                return false;
-            }
-            if (feedGroup.matches(allValue)) {
-                return false;
-            }
-            return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
-        }
-        // Check feed components
-        if (!hideShelves()) {
-            return false;
-        }
-        if (matchedGroup == compactFeedVideoPath) {
-            if (compactFeedVideoBuffer.check(protobufBufferArray).isFiltered()) {
+            } else if (matchedGroup == shelfHeaderPath) {
+                // Because the header is used in watch history and possibly other places, check for the index,
+                // which is 0 when the shelf header is used for Shorts.
+                if (contentIndex != 0) {
+                    return false;
+                }
+                if (!channelProfileShelfHeader.check(protobufBufferArray).isFiltered()) {
+                    return false;
+                }
+                if (feedGroup.matches(allValue)) {
+                    return false;
+                }
                 return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
             }
-            return false;
-        } else if (matchedGroup == shelfHeaderIdentifier) {
-            // Check ConversationContext to not hide shelf header in channel profile
-            // This value does not exist in the shelf header in the channel profile
-            if (!feedGroup.matches(allValue)) {
+        } else if (contentType == FilterContentType.IDENTIFIER) {
+            // Feed/search identifier components.
+            if (matchedGroup == shelfHeaderIdentifier) {
+                // Check ConversationContext to not hide shelf header in channel profile
+                // This value does not exist in the shelf header in the channel profile
+                if (!feedGroup.matches(allValue)) {
+                    return false;
+                }
+            } else if (matchedGroup == channelProfile) {
+                return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
+            }
+            if (!hideShelves) {
                 return false;
             }
         }
@@ -133,8 +136,12 @@ public final class ShortsShelfFilter extends Filter {
         return super.isFiltered(path, identifier, allValue, protobufBufferArray, matchedGroup, contentType, contentIndex);
     }
 
-    private static boolean hideShelves() {
-        if (hideHomeAndRelatedVideos && hideSubscriptions && hideSearch && hideHistory) {
+    private static boolean shouldHideShortsFeedItems(boolean playerActive, boolean searchBarActive, NavigationButton selectedNavButton, String browseId) {
+        final boolean hideHomeAndRelatedVideos = Settings.HIDE_SHORTS_SHELF_HOME_RELATED_VIDEOS.get();
+        final boolean hideSubscriptions = Settings.HIDE_SHORTS_SHELF_SUBSCRIPTIONS.get();
+        final boolean hideSearch = Settings.HIDE_SHORTS_SHELF_SEARCH.get();
+
+        if (hideHomeAndRelatedVideos && hideSubscriptions && hideSearch) {
             // Shorts suggestions can load in the background if a video is opened and
             // then immediately minimized before any suggestions are loaded.
             // In this state the player type will show minimized, which makes it not possible to
@@ -147,25 +154,28 @@ public final class ShortsShelfFilter extends Filter {
         }
 
         // Must check player type first, as search bar can be active behind the player.
-        if (RootView.isPlayerActive()) {
+        if (playerActive) {
             // For now, consider the under video results the same as the home feed.
             return hideHomeAndRelatedVideos;
         }
 
         // Must check second, as search can be from any tab.
-        if (RootView.isSearchBarActive()) {
+        if (searchBarActive) {
             return hideSearch;
         }
 
         // Avoid checking navigation button status if all other Shorts should show.
-        if (!hideHomeAndRelatedVideos && !hideSubscriptions && !hideHistory) {
+        if (!hideHomeAndRelatedVideos && !hideSubscriptions) {
             return false;
         }
 
-        final String browseId = RootView.getBrowseId();
+        if (selectedNavButton == null) {
+            return hideHomeAndRelatedVideos; // Unknown tab, treat the same as home.
+        }
+
         switch (browseId) {
             case BROWSE_ID_HISTORY, BROWSE_ID_LIBRARY, BROWSE_ID_NOTIFICATION_INBOX -> {
-                return hideHistory;
+                return false;
             }
             case BROWSE_ID_SUBSCRIPTIONS -> {
                 return hideSubscriptions;
