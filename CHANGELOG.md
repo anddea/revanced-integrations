@@ -1,3 +1,25 @@
+# [0.158.0](https://github.com/anddea/revanced-integrations/compare/v0.157.0...v0.158.0) (2024-11-07)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** `Hide carousel shelf` setting hides the library shelf ([4be6d9e](https://github.com/anddea/revanced-integrations/commit/4be6d9ef70f7a4728c8d33511b0eb06e08b56fe3))
+* **YouTube - Return YouTube Dislike:** Height of the separator does not match ([5b30abb](https://github.com/anddea/revanced-integrations/commit/5b30abb0202fa44c1de92f33955c999d04be4004))
+* **YouTube - Settings:** Restart dialog appears twice when the app is first installed ([050f58e](https://github.com/anddea/revanced-integrations/commit/050f58e5d2a9714b3069f57366915a90b5cabe23))
+* **YouTube - Shorts components:** `Hide Shorts shelves` setting sometimes hides shelves in the library tab ([4ad3857](https://github.com/anddea/revanced-integrations/commit/4ad38571002a3912e6a8d2cc964e8b002ce30f23))
+* **YouTube - Shorts components:** Shorts are not hidden in Home feed ([2164b67](https://github.com/anddea/revanced-integrations/commit/2164b677465ed76ebce145a32d61890ba177ac59))
+* **YouTube - SponsorBlock:** Wrong segment behavior selected ([be37863](https://github.com/anddea/revanced-integrations/commit/be37863d543420150d44587934aa4ef29417f576))
+* **YouTube - Video playback:** Custom playback speed not working due to A/B tests ([9ad3df4](https://github.com/anddea/revanced-integrations/commit/9ad3df4eb574bb0b56fb822a6e40cd9a54544f44))
+* **YouTube Music:** App crashes on Android 5, 6 ([fdab51b](https://github.com/anddea/revanced-integrations/commit/fdab51bc5a03723fabffd6ebca9c2bf365ea32a5))
+
+
+### Features
+
+* **YouTube - Description components:** Add `Hide AI-generated video summary section` setting ([76ffbcb](https://github.com/anddea/revanced-integrations/commit/76ffbcb87c55210337b1abff52f2602f53f3e137))
+* **YouTube - Hide ads:** Add `Hide player shopping shelf` setting ([afe17f6](https://github.com/anddea/revanced-integrations/commit/afe17f68052a7eeeb8388d6937e778ebd3960741))
+* **YouTube - Hide feed components:** Add `Hide floating button` setting ([2b27006](https://github.com/anddea/revanced-integrations/commit/2b270064ec048785e8a3fb01477f362c254b1edb))
+* **YouTube - Seekbar components:** Add `Enable high quality thumbnails` setting ([13329aa](https://github.com/anddea/revanced-integrations/commit/13329aa49e194b1a5119b25adc04c567e7b1dcfc))
+
 # [0.158.0-dev.2](https://github.com/anddea/revanced-integrations/compare/v0.158.0-dev.1...v0.158.0-dev.2) (2024-11-06)
 
 
