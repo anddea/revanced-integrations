@@ -1,3 +1,19 @@
+# [0.159.0-dev.1](https://github.com/anddea/revanced-integrations/compare/v0.158.0...v0.159.0-dev.1) (2024-11-10)
+
+
+### Bug Fixes
+
+* **YouTube - Hide feed components:** Rollback `CarouselShelfFilter` ([15dff30](https://github.com/anddea/revanced-integrations/commit/15dff30e761ab606bd2a77c82950e2f400b734a4))
+* **YouTube - Toolbar components:** Premium header not applied when `Hide YouTube Doodles` is turned on ([e8e9923](https://github.com/anddea/revanced-integrations/commit/e8e9923458e67f9fa67e8ae099677ed292ece5ec))
+
+
+### Features
+
+* **YouTube - Spoof app version:** Remove obsolete `19.13.37` spoof target ([78ffd65](https://github.com/anddea/revanced-integrations/commit/78ffd6571e682fd05f7c81fb83725a3e942f910a))
+* **YouTube - Spoof streaming data:** Add `iOS Compatibility mode` setting ([07b3d8a](https://github.com/anddea/revanced-integrations/commit/07b3d8ac3c0f3b774e4ad2126c6d820faf40939c))
+* **YouTube - Spoof streaming data:** Change default client to iOS ([79d34e4](https://github.com/anddea/revanced-integrations/commit/79d34e44023817d087e79a32d63a3a104d455a13))
+* **YouTube - Spoof streaming data:** Update the hardcoded iOS client version ([74d26e5](https://github.com/anddea/revanced-integrations/commit/74d26e5923648c93eaa8031d4fc64b491b9af1c0))
+
 # [0.158.0](https://github.com/anddea/revanced-integrations/compare/v0.157.0...v0.158.0) (2024-11-07)
 
 
